@@ -679,6 +679,11 @@ typedef XrResult(*xr_func)(...);
 /* avoid hard dependency on libopenxr_loader for the three functions that we only ever call when running a VR app */
 /* NOTE: our use of __builtin_va_arg_pack means this only works as long as we don't need to call a function
  * that takes an integer type shorter than int or a floating point type shorter than double */
+
+#define ARRRAY_SIZE(arr) (sizeof(arr) / sizeof(arr[0]))
+
+static XrInstance xr_current_instance = NULL;
+
 static void *openxr_loader_handle = NULL;
 static inline __attribute__((__always_inline__)) XrResult xr_lazy_call(char *func_name, ...) {
 	if(!openxr_loader_handle) {
@@ -686,6 +691,20 @@ static inline __attribute__((__always_inline__)) XrResult xr_lazy_call(char *fun
 	}
 
 	xr_func func = dlsym(openxr_loader_handle, func_name);
+	return func(__builtin_va_arg_pack());
+}
+
+static inline __attribute__((__always_inline__)) XrResult xr_lazy_call_getproc(char *func_name, ...) {
+	if(!openxr_loader_handle) {
+		openxr_loader_handle = dlopen("libopenxr_loader.so.1", RTLD_LAZY);
+	}
+
+	xr_func func = NULL;
+	XrResult ret = xr_lazy_call("xrGetInstanceProcAddr", xr_current_instance, func_name, &func);
+	if (!func) {
+		fprintf(stderr, "Failed to get %s: %d (instance=0x%x)\n", func_name, ret, xr_current_instance);
+		return XR_ERROR_RUNTIME_FAILURE;
+	}
 	return func(__builtin_va_arg_pack());
 }
 
@@ -784,6 +803,13 @@ XrResult bionic_xrCreateReferenceSpace(XrSession session, const XrReferenceSpace
 	return xr_lazy_call("xrCreateReferenceSpace", session, createInfo, space);
 }
 
+static XrResult xrGetSwapchainStateFB(XrSwapchain swapchain, XrSwapchainStateBaseHeaderFB* state)
+{
+	fprintf(stderr, "xrGetSwapchainStateFB(state->type == %d)\n", state->type);
+
+	return xr_lazy_call_getproc("xrGetSwapchainStateFB", swapchain, state);
+}
+
 /*
  * NOTE: Here we implement a NIH OpenXR API layer.
  *
@@ -808,6 +834,7 @@ struct xr_proc_override {
 };
 
 #define XR_PROC_BIONIC(name) {#name, (void (**)(void))bionic_ ## name }
+#define XR_PROC_STATIC(name) {#name, (void (**)(void))name }
 
 /* Please keep the alphabetical order */
 static const struct xr_proc_override xr_proc_override_tbl[] = {
@@ -815,12 +842,16 @@ static const struct xr_proc_override xr_proc_override_tbl[] = {
 	XR_PROC_BIONIC(xrCreateReferenceSpace),
 	XR_PROC_BIONIC(xrCreateSession),
 	XR_PROC_BIONIC(xrGetInstanceProperties),
+	XR_PROC_STATIC(xrGetSwapchainStateFB),
 	XR_PROC_BIONIC(xrInitializeLoaderKHR),
 };
 
 XrResult bionic_xrGetInstanceProcAddr(XrInstance instance, const char *name, PFN_xrVoidFunction *func)
 {
 	printf("xrGetInstanceProcAddr(%s)\n", name);
+
+	if (instance)
+		xr_current_instance = instance;
 
 	struct xr_proc_override *match = bsearch(name, xr_proc_override_tbl,
 	                                         ARRAY_SIZE(xr_proc_override_tbl),
@@ -842,3 +873,19 @@ void ANativeActivity_setWindowFormat(ANativeActivity *activity, int32_t format)
 {
 	printf("STUB: %s called\n", __func__);
 }
+
+/* HACK: This is for ovrplugin */
+
+int bionic_ovrp_GetSystemMultiViewSupported2(bool *supported)
+{
+	fprintf(stderr, "STUB: ovrp_GetSystemMultiViewSupported2 called. Returning FALSE!\n");
+	*supported = 0;
+	return 0;
+}
+
+int bionic_ovrp_GetSystemMultiViewSupported(void)
+{
+	fprintf(stderr, "STUB: ovrp_GetSystemMultiViewSupported called. Returning FALSE!\n");
+	return 0;
+}
+

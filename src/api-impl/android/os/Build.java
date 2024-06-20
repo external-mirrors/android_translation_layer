@@ -63,7 +63,7 @@ public class Build {
 	/**
 	 * The manufacturer of the product/hardware.
 	 */
-	public static final String MANUFACTURER = "HTC"/* HTC picked at random; getString("ro.product.manufacturer")*/;
+	public static final String MANUFACTURER = "Not oculus bro";// getString("ro.product.manufacturer");
 
 	/**
 	 * The brand (e.g., carrier) the software is customized for, if any.
