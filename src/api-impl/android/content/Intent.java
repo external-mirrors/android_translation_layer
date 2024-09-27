@@ -350,6 +350,7 @@ public class Intent implements Parcelable {
 
 	public void setExtrasClassLoader(ClassLoader loader) {}
 	public Intent setClassName(Context packageContext, String className) {
+		setComponent(new ComponentName(packageContext, className));
 		return this;
 	}
 

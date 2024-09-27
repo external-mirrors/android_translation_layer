@@ -67,4 +67,6 @@ public interface MenuItem {
 	public CharSequence getTitleCondensed();
 
 	public CharSequence getTitle();
+
+	public MenuItem setNumericShortcut(char numericChar);
 }

@@ -268,7 +268,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		System.out.printf("%x\n", root_view.id);
 		System.out.println("~~~~~~~~~~~");
 
-		setContentView(root_view);
+		window.setContentView(root_view);
+		onContentChanged();
 	}
 
 	public void setContentView(View view, ViewGroup.LayoutParams layoutParams) {

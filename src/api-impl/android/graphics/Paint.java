@@ -37,6 +37,10 @@ public class Paint {
 		native_set_color(paint, color);
 	}
 
+	public void setARGB(int a, int r, int g, int b) {
+		setColor(Color.argb(a, r, g, b));
+	}
+
 	public int getColor() {
 		return native_get_color(paint);
 	}

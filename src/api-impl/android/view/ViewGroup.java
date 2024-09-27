@@ -97,7 +97,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	// Reusing removeView in removeViewInLayout is not possible, because e.g.
 	// ViewPager overrides removeView to call removeViewInLayout
 	protected void removeViewInternal(View child) {
-		if (child.parent != this)
+		if (child == null || child.parent != this)
 			return;
 		child.parent = null;
 		children.remove(child);

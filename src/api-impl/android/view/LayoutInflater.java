@@ -84,6 +84,7 @@ public class LayoutInflater {
 			context = new ContextThemeWrapper(context, themeResId);
 		}
 		ta.recycle();
+		constructor.setAccessible(true);
 		View view_instance = (View)constructor.newInstance(context, attrs);
 
 		return view_instance;

@@ -5,7 +5,7 @@ import android.database.DataSetObserver;
 import android.util.AttributeSet;
 
 public class Spinner extends AbsSpinner {
-	private Observer observer = new Observer();
+	private Observer observer;
 
 	public Spinner(Context context) {
 		super(context);
@@ -27,6 +27,8 @@ public class Spinner extends AbsSpinner {
 	protected native void native_setAdapter(long widget, SpinnerAdapter adapter);
 
 	public void setAdapter(SpinnerAdapter adapter) {
+		if (observer == null)
+			observer = new Observer();
 		SpinnerAdapter oldAdapter = getAdapter();
 		if (oldAdapter != null)
 			oldAdapter.unregisterDataSetObserver(observer);

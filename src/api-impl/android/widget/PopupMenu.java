@@ -539,6 +539,12 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'getTitle'");
 		}
+
+		@Override
+		public MenuItem setNumericShortcut(char numericChar) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'setNumericShortcut'");
+		}
 	}
 
 }
