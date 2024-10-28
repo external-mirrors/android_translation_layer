@@ -795,4 +795,8 @@ public class Environment {
 		// Unable to translate to internal path; use original
 		return path;
 	}
+
+	public static boolean isExternalStorageLegacy() {
+		return true;
+	}
 }

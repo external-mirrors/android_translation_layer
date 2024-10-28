@@ -356,4 +356,14 @@ public class TextView extends View {
 	public int getLineHeight() {
 		return 10; // FIXME
 	}
+
+	public boolean isAllCaps() { return false; }
+
+	public int getAutoSizeStepGranularity() {
+		return -1;
+	}
+
+	public void setAutoSizeTextTypeUniformWithPresetSizes(int[] presetSizes, int unit) {}
+
+	public void setCompoundDrawableTintList(ColorStateList tint) {}
 }

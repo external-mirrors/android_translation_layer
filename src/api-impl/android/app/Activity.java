@@ -576,4 +576,14 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public void setDefaultKeyMode(int flag) {}
 	public void registerForContextMenu(View view) {}
 	public native boolean isInMultiWindowMode();
+
+	public void registerActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) {}
+
+	public void setDisablePreviewScreenshots(boolean disable) {}
+	public final View requireViewById(int id) {
+		View view = findViewById(id);
+		if (view == null)
+			throw new IllegalArgumentException("ID does not reference a View inside this View");
+		return view;
+	}
 }

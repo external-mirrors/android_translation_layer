@@ -1,6 +1,8 @@
 package android.app;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -106,4 +108,14 @@ public class NotificationManager {
 	protected native void nativeShowMPRIS(String packageName, String identiy);
 	protected native void nativeCancel(int id);
 	protected native void nativeCancelMPRIS();
+
+	public void createNotificationChannelGroup(NotificationChannelGroup v) {}
+
+	public List<NotificationChannel> getNotificationChannels() {
+		return Collections.emptyList();
+	}
+
+	public List<NotificationChannelGroup> getNotificationChannelGroups() {
+		return Collections.emptyList();
+	}
 }

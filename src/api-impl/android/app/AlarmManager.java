@@ -8,4 +8,6 @@ public class AlarmManager {
 	public void setExact(int type, long triggerTime, PendingIntent operation) {}
 
 	public void set(int type, long triggerTime, PendingIntent operation) {}
+
+	public void setExactAndAllowWhileIdle(int type, long triggerAtMillis, PendingIntent operation) {}
 }

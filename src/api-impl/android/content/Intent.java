@@ -364,4 +364,8 @@ public class Intent implements Parcelable {
 	public byte[] getByteArrayExtra(String name) {
 		return extras.getByteArray(name);
 	}
+
+	public void removeExtra(String name) {
+		extras.remove(name);
+	}
 }

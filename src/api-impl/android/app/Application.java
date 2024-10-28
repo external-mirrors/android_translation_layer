@@ -96,4 +96,8 @@ public class Application extends ContextWrapper {
 	}
 	public void unregisterOnProvideAssistDataListener(OnProvideAssistDataListener callback) {
 	}
+	public static String getProcessName() {
+		// note: we currently don't set the process name
+		return Context.this_application.getPackageName();
+	}
 }

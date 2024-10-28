@@ -70,4 +70,8 @@ public class ViewConfiguration {
 	public static int getScrollDefaultDelay() {
 		return 16;
 	}
+
+	public boolean shouldShowMenuShortcutsWhenKeyboardPresent() {
+		return true;
+	}
 }

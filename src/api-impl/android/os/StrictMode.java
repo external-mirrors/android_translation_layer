@@ -76,6 +76,9 @@ public final class StrictMode {
 			public ThreadPolicy build() {
 				return new ThreadPolicy(mask, listener, executor);
 			}
+			public Builder detectUnbufferedIo() {
+				return this;
+			}
 		}
 	}
 	public static final class VmPolicy {

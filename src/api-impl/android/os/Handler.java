@@ -230,6 +230,10 @@ public class Handler {
 		mAsynchronous = async;
 	}
 
+	public static Handler createAsync(Looper looper) {
+		return new Handler(looper, null, true);
+	}
+
 	/**
 	 * Returns a string representing the name of the specified message.
 	 * The default implementation will either return the class name of the

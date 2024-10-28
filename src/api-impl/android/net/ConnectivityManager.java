@@ -1,6 +1,6 @@
 package android.net;
 
-class Network {}
+import android.os.Handler;
 
 public class ConnectivityManager {
 
@@ -26,4 +26,11 @@ public class ConnectivityManager {
 	public NetworkInfo[] getAllNetworkInfo() {
 		return new NetworkInfo[] { getActiveNetworkInfo() };
 	}
+
+	public Network getActiveNetwork() {
+		return new Network();
+	}
+
+	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
+
 }

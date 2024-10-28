@@ -2100,4 +2100,16 @@ public class View implements Drawable.Callback {
 
 	public int getVerticalFadingEdgeLength() {return 0;}
 	public int getVerticalScrollbarWidth() {return 0;}
+
+	public void saveAttributeDataForStyleable(Context ctxt, int[] styleable, AttributeSet attrs, TypedArray t, int defStyleAttr, int defStyleRes) {}
+
+	public final View requireViewById(int id) {
+		View view = findViewById(id);
+		if (view == null)
+			throw new IllegalArgumentException("ID does not reference a View inside this View");
+		return view;
+	}
+	public float getTransitionAlpha() {
+		return 1.0f;
+	}
 }

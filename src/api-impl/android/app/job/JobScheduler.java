@@ -13,4 +13,8 @@ public class JobScheduler {
 	public List<JobInfo> getAllPendingJobs() {
 		return new ArrayList<JobInfo>();
 	};
+
+	public int enqueue(JobInfo job, JobWorkItem work) {
+		return 1; //RESULT_SUCCESS
+	}
 }

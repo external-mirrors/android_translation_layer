@@ -830,4 +830,6 @@ public class Process {
 		 */
 		public boolean usingWrapper;
 	}
+
+	public static final native boolean is64Bit();
 }

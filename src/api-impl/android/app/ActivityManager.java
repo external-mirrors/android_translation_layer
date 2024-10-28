@@ -8,6 +8,7 @@ import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Collections;
 
 public class ActivityManager {
 
@@ -80,4 +81,8 @@ public class ActivityManager {
 	}
 
 	public int getLargeMemoryClass() {return getMemoryClass();}
+
+	public List<ApplicationExitInfo> getHistoricalProcessExitReasons(String pkgname, int pid, int maxNum) {
+		return Collections.emptyList();
+	}
 }

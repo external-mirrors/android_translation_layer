@@ -297,6 +297,14 @@ JNIEXPORT jintArray JNICALL Java_android_os_Process_getPidsForCommands
 JNIEXPORT jlong JNICALL Java_android_os_Process_getPss
   (JNIEnv *, jclass, jint);
 
+/*
+ * Class:     android_os_Process
+ * Method:    is64Bit
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_os_Process_is64Bit
+  (JNIEnv *, jclass);
+
 #ifdef __cplusplus
 }
 #endif

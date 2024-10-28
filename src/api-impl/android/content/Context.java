@@ -15,6 +15,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
+import android.content.pm.ShortcutManager;
 import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -39,6 +40,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
+import android.os.UserManager;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
 import android.util.AttributeSet;
@@ -386,6 +388,10 @@ public class Context extends Object {
 		return prefs_dir;
 	}
 
+	public File[] getExternalMediaDirs() {
+		return getExternalFilesDirs("media");
+	}
+
 	public File getDir(String name, int mode) {
 		File dir = new File(getFilesDir(), name);
 		if (!dir.exists()) {
@@ -655,5 +661,12 @@ public class Context extends Object {
 
 	public void revokeUriPermission(Uri uri, int mode) {
 		System.out.println("revokeUriPermission(" + uri + ", " + mode + ") called");
+	}
+
+	public String getAttributionTag() {
+		return null;
+	}
+	public boolean isDeviceProtectedStorage() {
+		return false;
 	}
 }
