@@ -463,7 +463,7 @@ public class Context extends Object {
 	}
 
 	public int checkCallingOrSelfPermission(String permission) {
-		Slog.w(TAG, "!!! app wants to know if it has a permission: >" + permission + "< (returning PREMISSION_DENIED)");
+		Slog.w(TAG, "!!! app wants to know if it has a permission: >" + permission + "< (returning PERMISSION_DENIED)");
 
 		return PackageManager.PERMISSION_DENIED;
 	}
