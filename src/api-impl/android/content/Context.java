@@ -10,6 +10,7 @@ import android.app.NotificationManager;
 import android.app.Service;
 import android.app.SharedPreferencesImpl;
 import android.app.UiModeManager;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -22,9 +23,9 @@ import android.content.res.XmlResourceParser;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
-import android.hardware.input.InputManager;
 import android.hardware.SensorManager;
 import android.hardware.display.DisplayManager;
+import android.hardware.input.InputManager;
 import android.hardware.usb.UsbManager;
 import android.location.LocationManager;
 import android.media.AudioManager;
@@ -48,17 +49,16 @@ import android.view.LayoutInflater;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
 import android.view.inputmethod.InputMethodManager;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.io.IOException;
 
 public class Context extends Object {
 	private final static String TAG = "Context";
@@ -80,7 +80,7 @@ public class Context extends Object {
 	public static Resources r;
 	static ApplicationInfo application_info;
 	static Resources.Theme theme;
-	private static Map<Class<? extends Service>,Service> runningServices = new HashMap<>();
+	private static Map<Class<? extends Service>, Service> runningServices = new HashMap<>();
 	public static PackageParser.Package pkg;
 	public static PackageManager package_manager;
 
@@ -111,7 +111,7 @@ public class Context extends Object {
 				Slog.e(TAG, parseError[0]);
 				System.exit(1);
 			}
-			
+
 			packageParser.collectCertificates(pkg, 0);
 			application_info = pkg.applicationInfo;
 		} catch (Exception e) {
@@ -145,7 +145,8 @@ public class Context extends Object {
 		// HACK: Set WhatsApp's custom logging mechanism to verbose for easier debugging. Should be removed again once WhatsApp is fully supported
 		try {
 			Class.forName("com.whatsapp.util.Log").getField("level").setInt(null, 5);
-		} catch (Exception e) {} // ignore for other apps
+		} catch (Exception e) {
+		} // ignore for other apps
 		return application;
 	}
 
@@ -221,6 +222,9 @@ public class Context extends Object {
 				return new WifiManager();
 			case "bluetooth":
 				return new BluetoothManager();
+			case "jobscheduler":
+				return new JobScheduler();
+
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;
@@ -256,7 +260,7 @@ public class Context extends Object {
 		return r.getString(resId);
 	}
 
-	public final String getString (int resId, Object... formatArgs) {
+	public final String getString(int resId, Object... formatArgs) {
 		return r.getString(resId, formatArgs);
 	}
 
@@ -422,7 +426,7 @@ public class Context extends Object {
 
 	public ComponentName startService(Intent intent) {
 		ComponentName component = intent.getComponent();
-		if(component == null) {
+		if (component == null) {
 			Slog.w(TAG, "startService: component is null");
 			return null;
 		}
@@ -438,7 +442,7 @@ public class Context extends Object {
 						service.onCreate();
 						runningServices.put(cls, service);
 					}
-					
+
 					runningServices.get(cls).onStartCommand(intent, 0, 0);
 				} catch (ReflectiveOperationException e) {
 					e.printStackTrace();
@@ -471,7 +475,7 @@ public class Context extends Object {
 	public void registerComponentCallbacks(ComponentCallbacks callbacks) {}
 
 	public boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int dummy3) {
-		if(intent.getComponent() == null) {
+		if (intent.getComponent() == null) {
 			Slog.w(TAG, "Context.bindService: intent.getComponent() is null");
 			return false;
 		}
@@ -498,10 +502,10 @@ public class Context extends Object {
 	public void startActivity(Intent intent) {
 		Slog.i(TAG, "startActivity(" + intent + ") called");
 		if (intent.getAction() != null && intent.getAction().equals("android.intent.action.CHOOSER")) {
-			intent = (Intent) intent.getExtras().get("android.intent.extra.INTENT");
+			intent = (Intent)intent.getExtras().get("android.intent.extra.INTENT");
 		}
 		if (intent.getComponent() == null) {
-			if(intent.getAction() != null && intent.getAction().equals("android.intent.action.SEND")) {
+			if (intent.getAction() != null && intent.getAction().equals("android.intent.action.SEND")) {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
 				String text = intent.getStringExtra("android.intent.extra.TEXT");
 				if (text == null)
@@ -575,7 +579,7 @@ public class Context extends Object {
 		return getResources().getDrawable(resId);
 	}
 
-	public boolean isRestricted() {return false;}
+	public boolean isRestricted() { return false; }
 
 	public File getDatabasePath(String dbName) {
 		File databaseDir = new File(getDataDirFile(), "databases");
@@ -620,7 +624,7 @@ public class Context extends Object {
 
 	public SQLiteDatabase openOrCreateDatabase(String filename, int mode, SQLiteDatabase.CursorFactory factory, DatabaseErrorHandler errorHandler) {
 		int flags = SQLiteDatabase.CREATE_IF_NECESSARY;
-		if ((mode & (1 <<3) /*MODE_ENABLE_WRITE_AHEAD_LOGGING*/) != 0) {
+		if ((mode & (1 << 3) /*MODE_ENABLE_WRITE_AHEAD_LOGGING*/) != 0) {
 			flags |= SQLiteDatabase.ENABLE_WRITE_AHEAD_LOGGING;
 		}
 		SQLiteDatabase db = SQLiteDatabase.openDatabase(filename, factory, flags, errorHandler);

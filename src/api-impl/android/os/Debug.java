@@ -23,4 +23,8 @@ public final class Debug {
 	public static long getNativeHeapAllocatedSize() {
 		return 0;
 	}
+
+	public static boolean waitingForDebugger() {
+		return false;
+	}
 }

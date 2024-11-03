@@ -163,6 +163,9 @@ extern const char* AMEDIAFORMAT_KEY_REPEAT_PREVIOUS_FRAME_AFTER;
 extern const char* AMEDIAFORMAT_KEY_SAMPLE_RATE;
 extern const char* AMEDIAFORMAT_KEY_WIDTH;
 extern const char* AMEDIAFORMAT_KEY_STRIDE;
+const char* AMEDIAFORMAT_KEY_MIME = "mime";
+const char* AMEDIAFORMAT_KEY_CHANNEL_COUNT = "channel-count";
+const char* AMEDIAFORMAT_KEY_SAMPLE_RATE = "sample-rate";
 
 
 

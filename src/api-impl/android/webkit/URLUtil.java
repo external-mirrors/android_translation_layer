@@ -8,4 +8,13 @@ public class URLUtil {
 			filename = filename.substring(0, filename.indexOf('?'));
 		return filename;
 	}
+
+	/**
+	 * @return {@code true} if the url is an https: url.
+	 */
+	public static boolean isHttpsUrl(String url) {
+		return (null != url)
+			&& (url.length() > 7)
+			&& url.substring(0, 8).equalsIgnoreCase("https://");
+	}
 }

@@ -22,7 +22,7 @@ package android.os;
  * processes, by creating a Messenger pointing to a Handler in one process,
  * and handing that Messenger to another process.
  */
-public final class Messenger {
+public final class Messenger implements Parcelable {
 	private final IMessenger mTarget;
 
 	/**
@@ -82,5 +82,19 @@ public final class Messenger {
 
 	public int describeContents() {
 		return 0;
+	}
+
+	/**
+	 * Create a Messenger from a raw IBinder, which had previously been
+	 * retrieved with {@link #getBinder}.
+	 *
+	 * @param target The IBinder this Messenger should communicate with.
+	 */
+	public Messenger(IBinder target) {
+		mTarget = new IMessenger() {
+			@Override
+			public void send(Message msg) {
+			}
+		};
 	}
 }
