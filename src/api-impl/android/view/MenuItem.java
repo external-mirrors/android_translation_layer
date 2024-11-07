@@ -58,4 +58,5 @@ public interface MenuItem {
 
 	public MenuItem setAlphabeticShortcut(char alphaChar);
 
+	public MenuItem setShortcut(char numeric, char alpha);
 }

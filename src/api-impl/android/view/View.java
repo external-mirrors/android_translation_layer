@@ -27,6 +27,7 @@ import android.util.Slog;
 import android.util.SparseArray;
 import android.view.animation.Animation;
 
+import java.lang.CharSequence;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -1861,4 +1862,10 @@ public class View implements Drawable.Callback {
 		else
 			return null;
 	}
+
+	public void setTooltipText(CharSequence tooltip) {}
+
+	public int getImportantForAutofill() {return 0;}
+
+	public void setImportantForAutofill(int flag) {}
 }

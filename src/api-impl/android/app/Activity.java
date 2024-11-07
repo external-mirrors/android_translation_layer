@@ -572,4 +572,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public void reportFullyDrawn() {}
 	public void setVisible(boolean visible) {}
 	public Uri getReferrer() { return null; }
+	public void setDefaultKeyMode(int flag) {}
+	public void registerForContextMenu(View view) {}
 }

@@ -54,4 +54,12 @@ public class ViewConfiguration {
 	public int getScaledWindowTouchSlop() {
 		return 8;
 	}
+
+	public float getScaledHorizontalScrollFactor() {
+		return 1;
+	}
+
+	public float getScaledVerticalScrollFactor() {
+		return 1;
+	}
 }

@@ -11,6 +11,10 @@ public class Html {
 	}
 
 	public static Spanned fromHtml(String source) {
+		return Html.fromHtml(source, 0);
+	}
+
+	public static Spanned fromHtml(String source, int flags) {
 		return new SpannableString(source.replace("<br/>", "\n")
 		                                 .replace("<br>", "\n")
 		                                 .replace("&nbsp;", " "));

@@ -16,7 +16,9 @@
 
 package android.widget;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.Menu;
@@ -310,6 +312,11 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'addSubMenu'");
 		}
+
+		@Override
+		public int addIntentOptions (int groupId, int itemId, int order, ComponentName caller, Intent[] specifics, Intent intent, int flags, MenuItem[] outSpecificItems) {
+			return 0;
+		}
 	}
 
 	private class SubMenuImpl extends MenuImpl implements SubMenu {
@@ -505,6 +512,9 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'setAlphabeticShortcut'");
 		}
+
+		@Override
+		public MenuItem setShortcut(char numeric, char alpha) { return this; }
 	}
 
 }
