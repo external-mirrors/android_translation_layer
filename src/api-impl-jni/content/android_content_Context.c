@@ -3,7 +3,9 @@
 #include <gtk/gtk.h>
 #include <string.h>
 #include <libportal/portal.h>
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
 #include <libportal/settings.h>
+#endif
 
 #include "portal-openuri.h"
 
@@ -18,6 +20,7 @@ JNIEXPORT jstring JNICALL Java_android_content_Context_native_1get_1apk_1path(JN
 	return _JSTRING(apk_path);
 }
 
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
 static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gchar *key, GVariant* value, jobject configuration)
 {
 	JNIEnv *env;
@@ -39,9 +42,11 @@ static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gc
 }
 
 static XdpSettings *xdp_settings = NULL;
+#endif
 
 JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv *env, jclass this, jobject config)
 {
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
 	if (!xdp_settings) {
 		XdpPortal *portal = xdp_portal_new();
 		xdp_settings = xdp_portal_get_settings(portal);
@@ -53,6 +58,7 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv 
 		settings_changed_cb(xdp_settings, "org.freedesktop.appearance", "color-scheme", color_sheme, config);
 		g_variant_unref(color_sheme);
 	}
+#endif
 }
 
 JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile(JNIEnv *env, jclass class, jint fd)
