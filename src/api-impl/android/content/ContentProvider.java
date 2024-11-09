@@ -14,15 +14,17 @@ public abstract class ContentProvider {
 
 	static Map<String, ContentProvider> providers = new HashMap<String, ContentProvider>();
 
-	static void createContentProviders() throws Exception {
+	static void createContentProviders() {
 		for (PackageParser.Provider provider_parsed : Context.pkg.providers) {
-			String providerName = provider_parsed.className;
-			System.out.println("creating " + providerName);
-			Class<? extends ContentProvider> providerCls = Class.forName(providerName).asSubclass(ContentProvider.class);
-			ContentProvider provider = providerCls.getConstructor().newInstance();
-			provider.attachInfo(Context.this_application, provider_parsed.info);
-			provider.onCreate();
-			providers.put(provider_parsed.info.authority, provider);
+			try {
+				String providerName = provider_parsed.className;
+				System.out.println("creating " + providerName);
+				Class<? extends ContentProvider> providerCls = Class.forName(providerName).asSubclass(ContentProvider.class);
+				ContentProvider provider = providerCls.getConstructor().newInstance();
+				provider.attachInfo(Context.this_application, provider_parsed.info);
+				provider.onCreate();
+				providers.put(provider_parsed.info.authority, provider);
+			} catch(Exception e) { e.printStackTrace(); }
 		}
 	}
 
