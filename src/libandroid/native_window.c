@@ -56,6 +56,7 @@
 #include "../api-impl-jni/defines.h"
 
 #include "native_window.h"
+#include "wayland_server.h"
 
 /**
  * Transforms that can be applied to buffers as they are displayed to a window.
@@ -233,6 +234,14 @@ void wl_registry_global_handler(void *data, struct wl_registry *registry, uint32
 	}
 }
 
+void wl_registry_global_handler_compositor(void *data, struct wl_registry *registry, uint32_t name, const char *interface, uint32_t version)
+{
+	struct wl_subcompositor **compositor = data;
+	if (!strcmp(interface,"wl_compositor")) {
+		*compositor = wl_registry_bind(registry, name, &wl_compositor_interface, 1);
+	}
+}
+
 void wl_registry_global_remove_handler(void *data, struct wl_registry *registry, uint32_t name)
 {
 	printf("removed: %u\n", name);
@@ -249,6 +258,8 @@ static void on_resize(GtkWidget* self, gint width, gint height, EGLNativeWindowT
 	}
 }
 
+static struct wl_display *wl_display_client = NULL;
+
 extern GThread *main_thread_id;
 ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 {
@@ -264,6 +275,11 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 	static struct wl_subcompositor *wl_subcompositor = NULL;
 	static struct wl_registry_listener wl_registry_listener = {
 		.global = wl_registry_global_handler,
+		.global_remove = wl_registry_global_remove_handler
+	};
+	static struct wl_compositor *wl_compositor = NULL;
+	static struct wl_registry_listener wl_registry_listener_compositor = {
+		.global = wl_registry_global_handler_compositor,
 		.global_remove = wl_registry_global_remove_handler
 	};
 
@@ -295,7 +311,33 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 
 	GdkDisplay *display = gtk_root_get_display(GTK_ROOT(window));
 
-	if (GDK_IS_WAYLAND_DISPLAY (display)) {
+	if (!getenv("ATL_DIRECT_EGL")) {
+		GtkWidget *graphics_offload = gtk_widget_get_first_child(surface_view_widget);
+		if (!GTK_IS_GRAPHICS_OFFLOAD(graphics_offload)) {
+			graphics_offload = gtk_graphics_offload_new(gtk_picture_new());
+			gtk_widget_insert_after(graphics_offload, surface_view_widget, NULL);
+		}
+		GtkPicture *gtk_picture = GTK_PICTURE(gtk_graphics_offload_get_child(GTK_GRAPHICS_OFFLOAD(graphics_offload)));
+
+		if (!wl_compositor) {
+			if (!wl_display_client)
+				wl_display_client = wayland_server_start();
+			struct wl_registry *registry = wl_display_get_registry(wl_display_client);
+			wl_registry_add_listener(registry, &wl_registry_listener_compositor, &wl_compositor);
+			wl_display_roundtrip(wl_display_client);
+			printf("XXX: wl_compositor: %p\n", wl_compositor);
+		}
+		struct wl_surface *wayland_surface = wl_compositor_create_surface(wl_compositor);
+		// transfer the GtkPicture pointer to the wayland server abusing the set_buffer_scale and set_buffer_transform methods
+		g_object_ref(gtk_picture);
+		wl_surface_set_buffer_scale(wayland_surface, _INTPTR(gtk_picture));
+		wl_surface_set_buffer_transform(wayland_surface, _INTPTR(gtk_picture)>>32);
+		struct wl_egl_window *egl_window = wl_egl_window_create(wayland_surface, width, height);
+		native_window->egl_window = (EGLNativeWindowType)egl_window;
+		native_window->wayland_display = wl_display_client;
+		native_window->wayland_surface = wayland_surface;
+		printf("EGL::: wayland_surface: %p\n", wayland_surface);
+	} else if (GDK_IS_WAYLAND_DISPLAY (display)) {
 		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(display);
 		struct wl_compositor *wl_compositor = gdk_wayland_display_get_wl_compositor(display);
 
@@ -466,7 +508,13 @@ EGLDisplay bionic_eglGetDisplay(NativeDisplayType native_display)
 	 * than the "default" display (especially on Wayland)
 	 */
 	GdkDisplay *display = gtk_root_get_display(GTK_ROOT(window));
-	if (GDK_IS_WAYLAND_DISPLAY (display)) {
+
+	if (!getenv("ATL_DIRECT_EGL")) {
+		if (!wl_display_client)
+			wl_display_client = wayland_server_start();
+		EGLDisplay egl_display = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display_client, NULL);
+		return egl_display;
+	} else if (GDK_IS_WAYLAND_DISPLAY (display)) {
 		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(display);
 		return eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display, NULL);
 	} else if (GDK_IS_X11_DISPLAY (display)) {

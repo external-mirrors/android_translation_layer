@@ -65,6 +65,7 @@ libandroid_so = shared_library('android', [
                                           	'src/libandroid/native_window.c',
                                           	'src/libandroid/sensor.c',
                                           	'src/libandroid/trace.c',
+                                          	'src/libandroid/wayland_server.c',
                                           ],
                                           install: true,
                                           soversion: 0,
