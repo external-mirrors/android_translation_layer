@@ -1,7 +1,7 @@
 aapt = find_program('aapt', required: false)
 
 if aapt.found()
-  aapt_command = [aapt, 'package', '-x', '-f', '-S', join_paths(dir_base, 'res/res'), '-A', join_paths(dir_base, 'res/assets'), '-M', join_paths(dir_base, 'res/AndroidManifest.xml'), '-J', join_paths(dir_base, 'src/api-impl/com/android/internal'), '-F', '@OUTPUT@']
+  aapt_command = [aapt, 'package', '-x', '-f', '--custom-package', 'com.android.internal', '-S', join_paths(dir_base, 'res/res'), '-A', join_paths(dir_base, 'res/assets'), '-M', join_paths(dir_base, 'res/AndroidManifest.xml'), '-J', join_paths(dir_base, 'src/api-impl/com/android/internal'), '-F', '@OUTPUT@']
 else  # fallback to prebuilt APK
   aapt_command = ['cp', join_paths(dir_base, 'res/framework-res.apk'), '@OUTPUT@']
 endif

@@ -41,56 +41,44 @@ please see themes_device_defaults.xml.
          #Theme_Holo} or {@link #Theme_DeviceDefault}.</p>
     -->
     <style name="Theme">
-
         <item name="isLightTheme">false</item>
+
         <item name="colorForeground">@color/bright_foreground_dark</item>
         <item name="colorForegroundInverse">@color/bright_foreground_dark_inverse</item>
         <item name="colorBackground">@color/background_dark</item>
         <item name="colorBackgroundFloating">?attr/colorBackground</item>
         <item name="colorBackgroundCacheHint">?attr/colorBackground</item>
-
-        <item name="colorPressedHighlight">@color/legacy_pressed_highlight</item>
-        <item name="colorLongPressedHighlight">@color/legacy_long_pressed_highlight</item>
-        <item name="colorFocusedHighlight">@color/legacy_selected_highlight</item>
-        <item name="colorMultiSelectHighlight">@color/legacy_selected_highlight</item>
-        <item name="colorActivatedHighlight">@color/legacy_selected_highlight</item>
-
-        <item name="colorPrimaryDark">@color/legacy_primary_dark</item>
-        <item name="colorPrimary">@color/legacy_primary</item>
-        <item name="colorControlActivated">@color/legacy_control_activated</item>
-        <item name="colorControlNormal">@color/legacy_control_normal</item>
-        <item name="colorControlHighlight">@color/legacy_button_pressed</item>
-        <item name="colorButtonNormal">@color/legacy_button_normal</item>
-        <item name="colorEdgeEffect">?attr/colorPrimary</item>
-
         <item name="disabledAlpha">0.5</item>
+        <item name="primaryContentAlpha">@dimen/primary_content_alpha_material_dark</item>
+        <item name="secondaryContentAlpha">@dimen/secondary_content_alpha_material_dark</item>
         <item name="backgroundDimAmount">0.6</item>
+        <item name="colorError">@color/red</item>
 
         <!-- Text styles -->
         <item name="textAppearance">@style/TextAppearance</item>
         <item name="textAppearanceInverse">@style/TextAppearance.Inverse</item>
 
         <item name="textColorPrimary">@color/primary_text_dark</item>
-        <item name="textColorSecondary">@color/secondary_text_dark</item>
-        <item name="textColorTertiary">@color/tertiary_text_dark</item>
         <item name="textColorPrimaryInverse">@color/primary_text_light</item>
-        <item name="textColorSecondaryInverse">@color/secondary_text_light</item>
-        <item name="textColorTertiaryInverse">@color/tertiary_text_light</item>
         <item name="textColorPrimaryActivated">@color/primary_text_dark</item>
-        <item name="textColorSecondaryActivated">@color/secondary_text_dark</item>
         <item name="textColorPrimaryDisableOnly">@color/primary_text_dark_disable_only</item>
         <item name="textColorPrimaryInverseDisableOnly">@color/primary_text_light_disable_only</item>
-        <item name="textColorPrimaryNoDisable">@color/primary_text_dark_nodisable</item>
-        <item name="textColorSecondaryNoDisable">@color/secondary_text_dark_nodisable</item>
         <item name="textColorPrimaryInverseNoDisable">@color/primary_text_light_nodisable</item>
+        <item name="textColorPrimaryNoDisable">@color/primary_text_dark_nodisable</item>
+        <item name="textColorSecondary">@color/secondary_text_dark</item>
+        <item name="textColorSecondaryInverse">@color/secondary_text_light</item>
+        <item name="textColorSecondaryActivated">@color/secondary_text_dark</item>
+        <item name="textColorSecondaryNoDisable">@color/secondary_text_dark_nodisable</item>
         <item name="textColorSecondaryInverseNoDisable">@color/secondary_text_light_nodisable</item>
+        <item name="textColorTertiary">@color/tertiary_text_dark</item>
+        <item name="textColorTertiaryInverse">@color/tertiary_text_light</item>
         <item name="textColorHint">@color/hint_foreground_dark</item>
         <item name="textColorHintInverse">@color/hint_foreground_light</item>
-        <item name="textColorSearchUrl">@color/search_url_text</item>
         <item name="textColorHighlight">@color/highlighted_text_dark</item>
         <item name="textColorHighlightInverse">@color/highlighted_text_light</item>
         <item name="textColorLink">@color/link_text_dark</item>
         <item name="textColorLinkInverse">@color/link_text_light</item>
+        <item name="textColorSearchUrl">@color/search_url_text</item>
         <item name="textColorAlertDialogListItem">@color/primary_text_light_disable_only</item>
 
         <item name="textAppearanceLarge">@style/TextAppearance.Large</item>
@@ -105,6 +93,7 @@ please see themes_device_defaults.xml.
         <item name="textAppearanceEasyCorrectSuggestion">@style/TextAppearance.EasyCorrectSuggestion</item>
         <item name="textAppearanceMisspelledSuggestion">@style/TextAppearance.MisspelledSuggestion</item>
         <item name="textAppearanceAutoCorrectionSuggestion">@style/TextAppearance.AutoCorrectionSuggestion</item>
+        <item name="textAppearanceGrammarErrorSuggestion">@style/TextAppearance.GrammarErrorSuggestion</item>
 
         <item name="textAppearanceButton">@style/TextAppearance.Widget.Button</item>
 
@@ -121,11 +110,15 @@ please see themes_device_defaults.xml.
 
         <!-- Button styles -->
         <item name="buttonStyle">@style/Widget.Button</item>
+
         <item name="buttonStyleSmall">@style/Widget.Button.Small</item>
         <item name="buttonStyleInset">@style/Widget.Button.Inset</item>
+
         <item name="buttonStyleToggle">@style/Widget.Button.Toggle</item>
+        <item name="buttonCornerRadius">0dp</item>
 
         <item name="switchStyle">@style/Widget.CompoundButton.Switch</item>
+        <item name="mediaRouteButtonStyle">@style/Widget.DeviceDefault.MediaRouteButton</item>
 
         <item name="selectableItemBackground">@drawable/item_background</item>
         <item name="selectableItemBackgroundBorderless">?attr/selectableItemBackground</item>
@@ -154,7 +147,6 @@ please see themes_device_defaults.xml.
         <item name="listChoiceIndicatorMultiple">@drawable/btn_check</item>
 
         <item name="listChoiceBackgroundIndicator">@drawable/list_selector_background</item>
-
         <item name="activatedBackgroundIndicator">@drawable/activated_background</item>
 
         <item name="listDividerAlertDialog">@drawable/divider_horizontal_bright</item>
@@ -175,6 +167,10 @@ please see themes_device_defaults.xml.
         <!-- Window attributes -->
         <item name="windowBackground">@drawable/screen_background_selector_dark</item>
         <item name="windowBackgroundFallback">?attr/colorBackground</item>
+        <item name="windowSplashScreenBackground">@color/transparent</item>
+        <item name="windowSplashScreenAnimatedIcon">@null</item>
+        <item name="windowSplashScreenBrandingImage">@null</item>
+        <item name="windowSplashScreenIconBackgroundColor">@color/transparent</item>
         <item name="windowClipToOutline">false</item>
         <item name="windowFrame">@null</item>
         <item name="windowNoTitle">false</item>
@@ -195,7 +191,7 @@ please see themes_device_defaults.xml.
         <item name="windowTranslucentNavigation">false</item>
         <item name="windowDrawsSystemBarBackgrounds">false</item>
         <item name="statusBarColor">@color/black</item>
-        <item name="navigationBarColor">@color/black</item>
+        <item name="navigationBarColor">@color/navigation_bar_default</item>
         <item name="windowActionBarFullscreenDecorLayout">@layout/screen_action_bar</item>
         <item name="windowContentTransitions">false</item>
         <item name="windowActivityTransitions">false</item>
@@ -213,6 +209,7 @@ please see themes_device_defaults.xml.
         <item name="dialogCustomTitleDecorLayout">@layout/dialog_custom_title</item>
         <item name="dialogTitleDecorLayout">@layout/dialog_title</item>
         <item name="dialogPreferredPadding">@dimen/dialog_padding</item>
+        <item name="dialogCornerRadius">0dp</item>
 
         <!-- AlertDialog attributes -->
         <item name="alertDialogTheme">@style/Theme.Dialog.Alert</item>
@@ -248,16 +245,14 @@ please see themes_device_defaults.xml.
         <item name="scrollbarTrackVertical">@null</item>
 
         <!-- Text selection handle attributes -->
-        <item name="textSelectHandleLeft">@drawable/text_select_handle_left</item>
-        <item name="textSelectHandleRight">@drawable/text_select_handle_right</item>
-        <item name="textSelectHandle">@drawable/text_select_handle_middle</item>
+        <item name="textSelectHandleLeft">@drawable/text_select_handle_left_material</item>
+        <item name="textSelectHandleRight">@drawable/text_select_handle_right_material</item>
+        <item name="textSelectHandle">@drawable/text_select_handle_middle_material</item>
         <item name="textSelectHandleWindowStyle">@style/Widget.TextSelectHandle</item>
         <item name="textEditPasteWindowLayout">@layout/text_edit_paste_window</item>
         <item name="textEditNoPasteWindowLayout">@layout/text_edit_no_paste_window</item>
         <item name="textEditSidePasteWindowLayout">@layout/text_edit_side_paste_window</item>
         <item name="textEditSideNoPasteWindowLayout">@layout/text_edit_side_no_paste_window</item>
-        <item name="textSuggestionsWindowStyle">@style/Widget.TextSuggestionsPopupWindow</item>
-        <item name="textEditSuggestionItemLayout">@layout/text_edit_suggestion_item</item>
         <item name="textCursorDrawable">@null</item>
 
         <!-- Widget styles -->
@@ -316,9 +311,11 @@ please see themes_device_defaults.xml.
         <item name="quickContactBadgeStyleSmallWindowLarge">@style/Widget.QuickContactBadgeSmall.WindowLarge</item>
         <item name="listPopupWindowStyle">@style/Widget.ListPopupWindow</item>
         <item name="popupMenuStyle">@style/Widget.PopupMenu</item>
+        <item name="popupTheme">@null</item>
         <item name="activityChooserViewStyle">@style/Widget.ActivityChooserView</item>
-        <item name="mediaRouteButtonStyle">@style/Widget.DeviceDefault.MediaRouteButton</item>
         <item name="fragmentBreadCrumbsStyle">@style/Widget.FragmentBreadCrumbs</item>
+        <item name="contextPopupMenuStyle">?attr/popupMenuStyle</item>
+        <item name="magnifierStyle">@style/Widget.Magnifier</item>
 
         <!-- Preference styles -->
         <item name="preferenceScreenStyle">@style/Preference.PreferenceScreen</item>
@@ -361,6 +358,8 @@ please see themes_device_defaults.xml.
         <item name="actionModeShareDrawable">@drawable/ic_menu_share_holo_dark</item>
         <item name="actionModeFindDrawable">@drawable/ic_menu_find_holo_dark</item>
         <item name="actionModeWebSearchDrawable">@drawable/ic_menu_search</item>
+        <item name="actionModeUndoDrawable">@drawable/ic_menu_undo_material</item>
+        <item name="actionModeRedoDrawable">@drawable/ic_menu_redo_material</item>
         <item name="actionBarTabStyle">@style/Widget.ActionBar.TabView</item>
         <item name="actionBarTabBarStyle">@style/Widget.ActionBar.TabBar</item>
         <item name="actionBarTabTextStyle">@style/Widget.ActionBar.TabText</item>
@@ -392,11 +391,10 @@ please see themes_device_defaults.xml.
 
         <!-- Floating toolbar styles -->
         <item name="floatingToolbarCloseDrawable">@drawable/ic_ab_back_material_dark</item>
-        <item name="floatingToolbarForegroundColor">@color/foreground_material_dark</item>
         <item name="floatingToolbarItemBackgroundBorderlessDrawable">@drawable/item_background_borderless_material_dark</item>
         <item name="floatingToolbarItemBackgroundDrawable">@drawable/item_background_material_dark</item>
         <item name="floatingToolbarOpenDrawable">@drawable/ic_menu_moreoverflow_material_dark</item>
-        <item name="floatingToolbarPopupBackgroundDrawable">@drawable/floating_popup_background_dark</item>
+        <item name="floatingToolbarDividerColor">@color/floating_popup_divider_dark</item>
 
         <!-- SearchView attributes -->
         <item name="searchViewStyle">@style/Widget.Holo.SearchView</item>
@@ -430,11 +428,27 @@ please see themes_device_defaults.xml.
         <item name="fastScrollOverlayPosition">floating</item>
         <item name="fastScrollTextColor">@color/primary_text_dark</item>
 
-        <!-- Pointer style -->
-        <item name="pointerStyle">@style/Pointer</item>
+
+        <item name="colorPressedHighlight">@color/legacy_pressed_highlight</item>
+        <item name="colorLongPressedHighlight">@color/legacy_long_pressed_highlight</item>
+        <item name="colorFocusedHighlight">@color/legacy_selected_highlight</item>
+        <item name="colorMultiSelectHighlight">@color/legacy_selected_highlight</item>
+        <item name="colorActivatedHighlight">@color/legacy_selected_highlight</item>
+
+        <item name="colorPrimaryDark">@color/legacy_primary_dark</item>
+        <item name="colorPrimary">@color/legacy_primary</item>
+        <item name="colorSecondary">?attr/colorPrimary</item>
+        <item name="colorControlActivated">@color/legacy_control_activated</item>
+        <item name="colorControlNormal">@color/legacy_control_normal</item>
+        <item name="colorControlHighlight">@color/legacy_button_pressed</item>
+        <item name="colorButtonNormal">@color/legacy_button_normal</item>
+        <item name="colorEdgeEffect">?attr/colorPrimary</item>
 
         <!-- Accessibility focused drawable -->
         <item name="accessibilityFocusedDrawable">@drawable/view_accessibility_focused</item>
+
+        <!-- Autofilled highlight drawable -->
+        <item name="autofilledHighlight">@drawable/autofilled_highlight</item>
 
         <!-- Lighting and shadow properties -->
         <item name="lightY">@dimen/light_y</item>
@@ -442,6 +456,12 @@ please see themes_device_defaults.xml.
         <item name="lightRadius">@dimen/light_radius</item>
         <item name="ambientShadowAlpha">@dimen/ambient_shadow_alpha</item>
         <item name="spotShadowAlpha">@dimen/spot_shadow_alpha</item>
+
+        <!-- Tooltip popup properties -->
+        <item name="tooltipFrameBackground">@drawable/tooltip_frame</item>
+        <item name="tooltipForegroundColor">@color/bright_foreground_light</item>
+        <item name="tooltipBackgroundColor">@color/tooltip_background_light</item>
+
     </style>
 
     <!-- Variant of {@link #Theme} with no title bar -->
@@ -551,11 +571,14 @@ please see themes_device_defaults.xml.
 
         <!-- Floating toolbar styles -->
         <item name="floatingToolbarCloseDrawable">@drawable/ic_ab_back_material_light</item>
-        <item name="floatingToolbarForegroundColor">@color/foreground_material_light</item>
         <item name="floatingToolbarItemBackgroundBorderlessDrawable">@drawable/item_background_borderless_material_light</item>
         <item name="floatingToolbarItemBackgroundDrawable">@drawable/item_background_material_light</item>
         <item name="floatingToolbarOpenDrawable">@drawable/ic_menu_moreoverflow_material_light</item>
-        <item name="floatingToolbarPopupBackgroundDrawable">@drawable/floating_popup_background_light</item>
+        <item name="floatingToolbarDividerColor">@color/floating_popup_divider_light</item>
+
+        <!-- Tooltip popup colors -->
+        <item name="tooltipForegroundColor">@color/bright_foreground_dark</item>
+        <item name="tooltipBackgroundColor">@color/tooltip_background_dark</item>
     </style>
 
     <!-- Variant of {@link #Theme_Light} with no title bar -->
@@ -673,6 +696,12 @@ please see themes_device_defaults.xml.
         <item name="windowAnimationStyle">@null</item>
         <item name="windowDisablePreview">true</item>
         <item name="windowNoDisplay">true</item>
+    </style>
+
+    <style name="Theme.Dream">
+        <item name="windowBackground">@color/black</item>
+        <item name="windowDisablePreview">true</item>
+        <item name="windowActivityTransitions">true</item>
     </style>
 
     <!-- Default theme for dialog windows and activities (on API level 10 and lower),
@@ -843,13 +872,6 @@ please see themes_device_defaults.xml.
     <!-- System themes -->
     <eat-comment />
 
-    <!-- Theme for the dialog shown when an app crashes or ANRs. -->
-    <style name="Theme.Dialog.AppError" parent="Theme.DeviceDefault.Light.Dialog.Alert">
-        <item name="windowContentTransitions">false</item>
-        <item name="windowActivityTransitions">false</item>
-        <item name="windowCloseOnTouchOutside">false</item>
-    </style>
-
     <!-- Special theme for the recent apps dialog, to allow customization
          with overlays. -->
     <style name="Theme.Dialog.RecentApplications" parent="Theme.DeviceDefault.Light.Dialog">
@@ -861,6 +883,25 @@ please see themes_device_defaults.xml.
         <item name="windowActivityTransitions">false</item>
     </style>
 
+    <!-- @hide Special theme for the default system Activity-based Alert dialogs. -->
+    <style name="Theme.Dialog.Confirmation" parent="Theme.DeviceDefault.Dialog.Alert.DayNight" />
+
+    <!-- @hide Theme for GameSessionTrampolineActivity that prevents showing UI and activity
+         transitions. -->
+    <style name="Theme.GameSessionTrampoline">
+        <item name="backgroundDimEnabled">false</item>
+        <item name="colorBackgroundCacheHint">@null</item>
+        <item name="navigationBarColor">@color/transparent</item>
+        <item name="statusBarColor">@color/transparent</item>
+        <item name="windowAnimationStyle">@null</item>
+        <item name="windowBackground">@null</item>
+        <item name="windowContentOverlay">@null</item>
+        <item name="windowDrawsSystemBarBackgrounds">true</item>
+        <item name="windowIsFloating">true</item>
+        <item name="windowIsTranslucent">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <!-- Theme for a window that looks like a toast. -->
     <style name="Theme.Toast" parent="Theme.DeviceDefault.Dialog">
         <item name="windowBackground">?attr/toastFrameBackground</item>
@@ -870,5 +911,4 @@ please see themes_device_defaults.xml.
         <item name="windowContentTransitions">false</item>
         <item name="windowActivityTransitions">false</item>
     </style>
-
 </resources>

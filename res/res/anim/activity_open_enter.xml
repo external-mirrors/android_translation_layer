@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
 ** Copyright 2009, The Android Open Source Project
 **
@@ -18,15 +17,37 @@
 -->
 
 <set xmlns:android="http://schemas.android.com/apk/res/android"
-        android:shareInterpolator="false"
-        android:zAdjustment="top">
-    <alpha android:fromAlpha="0.0" android:toAlpha="1.0"
-            android:interpolator="@interpolator/decelerate_quart"
-            android:fillEnabled="true"
-            android:fillBefore="false" android:fillAfter="true"
-            android:duration="200"/>
-    <translate android:fromYDelta="8%" android:toYDelta="0"
-            android:fillEnabled="true" android:fillBefore="true" android:fillAfter="true"
-            android:interpolator="@interpolator/decelerate_quint"
-            android:duration="350"/>
+    android:shareInterpolator="false">
+
+    <alpha
+        android:fromAlpha="0"
+        android:toAlpha="1.0"
+        android:fillEnabled="true"
+        android:fillBefore="true"
+        android:fillAfter="true"
+        android:interpolator="@interpolator/linear"
+        android:startOffset="50"
+        android:duration="83" />
+
+    <translate
+        android:fromXDelta="96dp"
+        android:toXDelta="0"
+        android:fillEnabled="true"
+        android:fillBefore="true"
+        android:fillAfter="true"
+        android:interpolator="@interpolator/fast_out_extra_slow_in"
+        android:duration="450" />
+
+    <extend
+        android:fromExtendLeft="96dp"
+        android:fromExtendTop="0"
+        android:fromExtendRight="0"
+        android:fromExtendBottom="0"
+        android:toExtendLeft="96dp"
+        android:toExtendTop="0"
+        android:toExtendRight="0"
+        android:toExtendBottom="0"
+        android:interpolator="@interpolator/fast_out_extra_slow_in"
+        android:startOffset="0"
+        android:duration="450" />
 </set>

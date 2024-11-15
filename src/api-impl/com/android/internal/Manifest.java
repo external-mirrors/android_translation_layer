@@ -161,9 +161,6 @@ public final class Manifest {
          @hide  
          */
         public static final String ASEC_RENAME="android.permission.ASEC_RENAME";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String AUTHENTICATE_ACCOUNTS="android.permission.AUTHENTICATE_ACCOUNTS";
         /**   Allows an application to control the backup and restore process.
     <p>Not for use by third-party applications.
          @hide pending API council 
@@ -683,11 +680,6 @@ public final class Manifest {
          of user events (keys, touch, trackball) before they are dispatched to any window. 
          */
         public static final String FILTER_EVENTS="android.permission.FILTER_EVENTS";
-        /**  Allows access to the flashlight.
-         <p>Protection level: normal
-    
-         */
-        public static final String FLASHLIGHT="android.permission.FLASHLIGHT";
         /**   Allows an application to force a BACK operation on whatever is the
          top activity.
          <p>Not for use by third-party applications.
@@ -894,9 +886,6 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String LOOP_RADIO="android.permission.LOOP_RADIO";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String MANAGE_ACCOUNTS="android.permission.MANAGE_ACCOUNTS";
         /**   @hide Allows an application to create/manage/remove stacks 
          */
         @android.annotation.SystemApi
@@ -1176,9 +1165,6 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String READ_FRAME_BUFFER="android.permission.READ_FRAME_BUFFER";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String READ_HISTORY_BOOKMARKS="com.android.browser.permission.READ_HISTORY_BOOKMARKS";
         /**  Allows an application to retrieve the current state of keys and
          switches.
          <p>Not for use by third-party applications.
@@ -1224,12 +1210,6 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String READ_PRIVILEGED_PHONE_STATE="android.permission.READ_PRIVILEGED_PHONE_STATE";
-        /**  ====================================================================== 
- REMOVED PERMISSIONS                                                    
- ====================================================================== 
- @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String READ_PROFILE="android.permission.READ_PROFILE";
         /**   Internal permission to allows an application to read indexable data.
         @hide 
          */
@@ -1240,9 +1220,6 @@ public final class Manifest {
     
          */
         public static final String READ_SMS="android.permission.READ_SMS";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String READ_SOCIAL_STREAM="android.permission.READ_SOCIAL_STREAM";
         /**  Allows applications to read the sync settings.
          <p>Protection level: normal
     
@@ -1253,9 +1230,6 @@ public final class Manifest {
     
          */
         public static final String READ_SYNC_STATS="android.permission.READ_SYNC_STATS";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String READ_USER_DICTIONARY="android.permission.READ_USER_DICTIONARY";
         /**  Allows an application to read voicemails in the system.
          <p>Protection level: system|signature
     
@@ -1577,12 +1551,6 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String STOP_APP_SWITCHES="android.permission.STOP_APP_SWITCHES";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String SUBSCRIBED_FEEDS_READ="android.permission.SUBSCRIBED_FEEDS_READ";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String SUBSCRIBED_FEEDS_WRITE="android.permission.SUBSCRIBED_FEEDS_WRITE";
         /**  Allows an application to open windows using the type
          {@link android.view.WindowManager.LayoutParams#TYPE_SYSTEM_ALERT},
          shown on top of all other applications.  Very few applications
@@ -1648,9 +1616,6 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String USER_ACTIVITY="android.permission.USER_ACTIVITY";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String USE_CREDENTIALS="android.permission.USE_CREDENTIALS";
         /**  Allows an app to use fingerprint hardware.
          <p>Protection level: normal
     
@@ -1729,17 +1694,11 @@ public final class Manifest {
          */
         @android.annotation.SystemApi
         public static final String WRITE_GSERVICES="android.permission.WRITE_GSERVICES";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String WRITE_HISTORY_BOOKMARKS="com.android.browser.permission.WRITE_HISTORY_BOOKMARKS";
         /**   Allows an application to write to internal media storage
          @hide  
          */
         @android.annotation.SystemApi
         public static final String WRITE_MEDIA_STORAGE="android.permission.WRITE_MEDIA_STORAGE";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String WRITE_PROFILE="android.permission.WRITE_PROFILE";
         /**   Allows an application to read or write the secure system settings.
     <p>Not for use by third-party applications. 
          */
@@ -1750,20 +1709,11 @@ public final class Manifest {
     
          */
         public static final String WRITE_SETTINGS="android.permission.WRITE_SETTINGS";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String WRITE_SMS="android.permission.WRITE_SMS";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String WRITE_SOCIAL_STREAM="android.permission.WRITE_SOCIAL_STREAM";
         /**  Allows applications to write the sync settings.
          <p>Protection level: normal
     
          */
         public static final String WRITE_SYNC_SETTINGS="android.permission.WRITE_SYNC_SETTINGS";
-        /**  @hide We need to keep this around for backwards compatibility 
-         */
-        public static final String WRITE_USER_DICTIONARY="android.permission.WRITE_USER_DICTIONARY";
         /**  Allows an application to modify and remove existing voicemails in the system
         <p>Protection level: system|signature
     

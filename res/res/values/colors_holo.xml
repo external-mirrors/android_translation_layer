@@ -50,46 +50,44 @@
     <!-- General purpose colors for Holo-themed elements -->
     <eat-comment />
 
-    <!-- A light Holo shade of blue -->
+    <!-- A light Holo shade of blue. Equivalent to #ff33b5e5. -->
     <color name="holo_blue_light">#ff33b5e5</color>
-    <!-- A light Holo shade of gray -->
+    <!-- A light Holo shade of gray. Equivalent to #33999999. -->
     <color name="holo_gray_light">#33999999</color>
-    <!-- A light Holo shade of green -->
+    <!-- A light Holo shade of green. Equivalent to #ff99cc00. -->
     <color name="holo_green_light">#ff99cc00</color>
-    <!-- A light Holo shade of red -->
+    <!-- A light Holo shade of red. Equivalent to #ffff4444. <-->
     <color name="holo_red_light">#ffff4444</color>
-    <!-- A dark Holo shade of blue -->
+    <!-- A dark Holo shade of blue. Equivalent to #ff0099cc -->
     <color name="holo_blue_dark">#ff0099cc</color>
-    <!-- A dark Holo shade of green -->
+    <!-- A dark Holo shade of green. Equivalent to #ff669900 -->
     <color name="holo_green_dark">#ff669900</color>
-    <!-- A dark Holo shade of red -->
+    <!-- A dark Holo shade of red. Equivalent to #ffcc0000 -->
     <color name="holo_red_dark">#ffcc0000</color>
-    <!-- A Holo shade of purple -->
+    <!-- A Holo shade of purple. Equivalent to #ffaa66cc -->
     <color name="holo_purple">#ffaa66cc</color>
-    <!-- A light Holo shade of orange -->
+    <!-- A light Holo shade of orange. Equivalent to #ffffbb33. -->
     <color name="holo_orange_light">#ffffbb33</color>
-    <!-- A dark Holo shade of orange -->
+    <!-- A dark Holo shade of orange. Equivalent to ffff8800. -->
     <color name="holo_orange_dark">#ffff8800</color>
-    <!-- A really bright Holo shade of blue -->
+    <!-- A really bright Holo shade of blue. Equivalent to #ff00ddff. -->
     <color name="holo_blue_bright">#ff00ddff</color>
-    <!-- A really bright Holo shade of gray -->
+    <!-- A really bright Holo shade of gray. Equivalent to #33cccccc. -->
     <color name="holo_gray_bright">#33CCCCCC</color>
 
     <!-- Forward compatibility for Material-style theme colors -->
     <eat-comment />
 
-    <color name="holo_primary_dark">#ff000000</color>
-    <color name="holo_primary">#ffe6e6e6</color>
-    <color name="holo_primary_light">#ffffffff</color>
+    <color name="holo_primary_dark">@color/black</color>
+    <color name="holo_primary">#ff222222</color>
     <color name="holo_control_activated">@color/holo_blue_light</color>
     <color name="holo_control_normal">#39cccccc</color>
     <color name="holo_button_pressed">#59f0f0f0</color>
     <color name="holo_button_normal">#bd292f34</color>
 
-    <color name="holo_light_primary_dark">#ff000000</color>
+    <color name="holo_light_primary_dark">@color/black</color>
     <color name="holo_light_primary">#ffe6e6e6</color>
-    <color name="holo_light_primary_light">#ffffffff</color>
-    <color name="holo_light_control_activated">@color/holo_control_activated</color>
+    <color name="holo_light_control_activated">@color/holo_blue_light</color>
     <color name="holo_light_control_normal">#dacccccc</color>
     <color name="holo_light_button_pressed">#66666666</color>
     <color name="holo_light_button_normal">#b3cccccc</color>
