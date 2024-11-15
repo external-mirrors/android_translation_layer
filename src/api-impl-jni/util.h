@@ -17,6 +17,7 @@ struct handle_cache {
 		jmethodID onDestroy;
 		jmethodID onStop;
 		jmethodID onPause;
+		jmethodID onBackPressed;
 	} activity;
 	struct {
 		jclass class;

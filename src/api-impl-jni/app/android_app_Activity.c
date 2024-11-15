@@ -6,6 +6,7 @@
 
 #include "../defines.h"
 #include "../util.h"
+#include "../main-executable/back_button.h"
 #include "android_app_Activity.h"
 #include "../generated_headers/android_app_Activity.h"
 
@@ -75,6 +76,19 @@ static void activity_update_current(JNIEnv *env)
 
 		activity_current = activity_new;
 	}
+
+	if(activity_current != NULL){
+		jclass current_activity_class = (*env)->GetObjectClass(env, activity_current);
+		jmethodID current_activity_on_back_pressed_method_id = (*env) ->GetMethodID(env, current_activity_class, "onBackPressed", "()V");
+		if((*env)->ExceptionCheck(env))
+			(*env)->ExceptionDescribe(env);
+
+		if(g_list_length(activity_backlog) > 1 || handle_cache.activity.onBackPressed != current_activity_on_back_pressed_method_id){
+			back_button_set_sensitive(true);
+		} else {
+			back_button_set_sensitive(false);
+		}
+	}
 }
 
 void activity_window_ready(void)
@@ -85,6 +99,24 @@ void activity_window_ready(void)
 		(*env)->CallVoidMethod(env, l->data, handle_cache.activity.onWindowFocusChanged, true);
 		if((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
+	}
+}
+
+void current_activity_back_pressed(void){
+	JNIEnv *env = get_jni_env();
+
+	jclass current_activity_class = (*env)->GetObjectClass(env, activity_current);
+	jmethodID current_activity_on_back_pressed_method_id = (*env) ->GetMethodID(env, current_activity_class, "onBackPressed", "()V");
+	if((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+	
+	// Either a new activity was added to the backlog or the current activity's onBackPressed method was changed
+	if(g_list_length(activity_backlog) > 1 || handle_cache.activity.onBackPressed != current_activity_on_back_pressed_method_id){
+		(*env)->CallVoidMethod(env, activity_current, handle_cache.activity.onBackPressed);
+		if((*env)->ExceptionCheck(env))
+			(*env)->ExceptionDescribe(env);
+	} else {
+		back_button_set_sensitive(false);
 	}
 }
 

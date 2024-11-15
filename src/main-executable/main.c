@@ -10,6 +10,8 @@
 #include "../api-impl-jni/util.h"
 #include "../api-impl-jni/app/android_app_Activity.h"
 
+#include "back_button.h"
+
 #include <dlfcn.h>
 #include <errno.h>
 #include <libgen.h>
@@ -547,6 +549,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	gtk_window_set_default_size(GTK_WINDOW(window), d->window_width, d->window_height);
 	g_signal_connect(window, "close-request", G_CALLBACK(app_exit), env);
 
+	GtkWidget *header_bar = gtk_header_bar_new();
+	GtkWidget *back_button = back_button_new();
+
+	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), back_button);
+	gtk_window_set_titlebar(GTK_WINDOW(window), header_bar);
 	gtk_window_present(GTK_WINDOW(window));
 
 	// set package name as application id for window icon on Wayland. Needs a {package_name}.desktop file defining the icon

@@ -169,7 +169,8 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
 
 executable('android-translation-layer', [
                                         	'src/main-executable/main.c',
-                                        	'src/main-executable/r_debug.c'
+                                        	'src/main-executable/r_debug.c',
+                                        	'src/main-executable/back_button.c'
                                         ],
                                         install: true,
                                         dependencies: [
