@@ -77,9 +77,9 @@ public class AbsoluteLayout extends ViewGroup {
 		}
 
 		// Account for padding too
-/*		maxWidth += mPaddingLeft + mPaddingRight;
-		maxHeight += mPaddingTop + mPaddingBottom;
-*/
+		maxWidth += paddingLeft + paddingRight;
+		maxHeight += paddingTop + paddingBottom;
+
 		// Check against minimum height and width
 		maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
 		maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
@@ -111,8 +111,8 @@ public class AbsoluteLayout extends ViewGroup {
 				AbsoluteLayout.LayoutParams lp =
 				    (AbsoluteLayout.LayoutParams)child.getLayoutParams();
 
-				int childLeft = /*mPaddingLeft +*/ lp.x;
-				int childTop = /*mPaddingTop +*/ lp.y;
+				int childLeft = paddingLeft + lp.x;
+				int childTop = paddingTop + lp.y;
 				child.layout(childLeft, childTop,
 					     childLeft + child.getMeasuredWidth(),
 					     childTop + child.getMeasuredHeight());

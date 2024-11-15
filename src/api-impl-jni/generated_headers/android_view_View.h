@@ -345,6 +345,14 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setVisibility
 
 /*
  * Class:     android_view_View
+ * Method:    native_setPadding
+ * Signature: (JIIII)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1setPadding
+  (JNIEnv *, jobject, jlong, jint, jint, jint, jint);
+
+/*
+ * Class:     android_view_View
  * Method:    nativeSetOnLongClickListener
  * Signature: (J)V
  */

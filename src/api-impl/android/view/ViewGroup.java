@@ -261,20 +261,16 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 					       int parentWidthMeasureSpec, int widthUsed,
 					       int parentHeightMeasureSpec, int heightUsed) {
 		final MarginLayoutParams lp = (MarginLayoutParams)child.getLayoutParams();
-		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
-								      /*mPaddingLeft + mPaddingRight +*/ lp.leftMargin + lp.rightMargin + widthUsed, lp.width);
-		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
-								       /*mPaddingTop + mPaddingBottom +*/ lp.topMargin + lp.bottomMargin + heightUsed, lp.height);
+		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin + widthUsed, lp.width);
+		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin + heightUsed, lp.height);
 		child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 	}
 
 	protected void measureChild(View child, int parentWidthMeasureSpec,
 				    int parentHeightMeasureSpec) {
 		final LayoutParams lp = child.getLayoutParams();
-		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec,
-								      /*mPaddingLeft + mPaddingRight*/ 0, lp.width);
-		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec,
-								       /*mPaddingTop + mPaddingBottom*/ 0, lp.height);
+		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, paddingLeft + paddingRight, lp.width);
+		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, paddingTop + paddingBottom, lp.height);
 		child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 	}
 
@@ -453,8 +449,20 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 		public MarginLayoutParams(Context context, AttributeSet attributeSet) {
 			super(context, attributeSet);
-			TypedArray a = context.obtainStyledAttributes(attributeSet, R.styleable.ViewGroup_MarginLayout);
+			TypedArray a = context.obtainStyledAttributes(attributeSet, com.android.internal.R.styleable.ViewGroup_MarginLayout);
+
 			int margin = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_margin, -1);
+
+			int marginVertical = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginVertical, -1);
+			int marginHorizontal = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginHorizontal, -1);
+
+			int marginStart = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginStart, -1);
+			int marginEnd = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginEnd, -1);
+
+			leftMargin = 0;
+			topMargin = 0;
+			rightMargin = 0;
+			bottomMargin = 0;
 
 			if (margin >= 0) {
 				leftMargin = margin;
@@ -462,10 +470,29 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 				rightMargin= margin;
 				bottomMargin = margin;
 			} else {
-				leftMargin = a.getDimensionPixelSize(R.styleable.ViewGroup_MarginLayout_layout_marginLeft,0);
-				rightMargin = a.getDimensionPixelSize(R.styleable.ViewGroup_MarginLayout_layout_marginRight,0);
-				topMargin = a.getDimensionPixelSize(R.styleable.ViewGroup_MarginLayout_layout_marginTop,0);
-				bottomMargin = a.getDimensionPixelSize(R.styleable.ViewGroup_MarginLayout_layout_marginBottom,0);
+				if(marginVertical >= 0){
+					topMargin = marginVertical;
+					bottomMargin = marginVertical;
+				} else {
+					topMargin = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginTop, 0);
+					bottomMargin = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginBottom, 0);
+				}
+
+				if (marginHorizontal >= 0) {
+					leftMargin = marginHorizontal;
+					rightMargin = marginHorizontal;
+				} else {
+					leftMargin = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginLeft, 0);
+					rightMargin = a.getDimensionPixelSize(com.android.internal.R.styleable.ViewGroup_MarginLayout_layout_marginRight, 0);
+
+					if (marginStart >= 0) {
+						leftMargin = marginStart;
+					}
+
+					if (marginEnd >= 0) {
+						rightMargin = marginEnd;
+					}
+				}
 			}
 			
 			a.recycle();

@@ -834,6 +834,11 @@ public class View implements Drawable.Callback {
 	private int minWidth = 0;
 	private int minHeight = 0;
 
+	protected int paddingLeft = 0;
+	protected int paddingTop = 0;
+	protected int paddingRight = 0;
+	protected int paddingBottom = 0;
+
 	public static final Property<View, Float> TRANSLATION_X = new Property<View, Float>(Float.class, "translationX") {
 		@Override
 		public Float get(View object) {
@@ -896,6 +901,47 @@ public class View implements Drawable.Callback {
 			if (a.hasValue(com.android.internal.R.styleable.View_minHeight)) {
 				minHeight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minHeight, 0);
 			}
+
+			int padding = a.getDimensionPixelSize(com.android.internal.R.styleable.View_padding, -1);
+			
+			int paddingVertical = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingVertical, -1);
+			int paddingHorizontal = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingHorizontal, -1);
+
+			int paddingStart = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingStart, -1);
+			int paddingEnd = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingEnd, -1);
+
+			if(padding >= 0) {
+				paddingLeft = padding;
+				paddingTop = padding;
+				paddingRight = padding;
+				paddingBottom = padding;
+			} else {
+				if(paddingVertical >= 0) {
+					paddingTop = paddingVertical;
+					paddingBottom = paddingVertical;
+				} else {
+					paddingTop = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingTop, 0);
+					paddingBottom = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingBottom, 0);
+				}
+
+				if(paddingHorizontal >= 0) {
+					paddingLeft = paddingHorizontal;
+					paddingRight = paddingHorizontal;
+				} else {
+					paddingLeft = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingLeft, 0);
+					paddingRight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingRight, 0);
+
+					if(paddingStart >= 0) {
+						paddingLeft = paddingStart;
+					}
+
+					if(paddingEnd >= 0) {
+						paddingRight = paddingEnd;
+					}
+				}
+			}
+
+			native_setPadding(widget, paddingLeft, paddingTop, paddingRight, paddingBottom);
 		}
 		onCreateDrawableState(0);
 	}
@@ -1105,7 +1151,16 @@ public class View implements Drawable.Callback {
 		}
 		this.visibility = visibility;
 	}
-	public void setPadding(int left, int top, int right, int bottom) {}
+
+	public void setPadding(int left, int top, int right, int bottom) {
+		paddingLeft = left;
+		paddingTop = top;
+		paddingRight = right;
+		paddingBottom = bottom;
+		native_setPadding(widget, left, top, right, bottom);
+	}
+	public native void native_setPadding(long widget, int left, int top, int right, int bottom);
+
 	public void setBackgroundResource(int resid) {
 		setBackgroundDrawable(resid == 0 ? null : getResources().getDrawable(resid));
 	}
@@ -1149,27 +1204,27 @@ public class View implements Drawable.Callback {
 	}
 
 	public int getPaddingLeft() {
-		return 0;
+		return paddingLeft;
 	}
 
 	public int getPaddingRight() {
-		return 0;
+		return paddingRight;
 	}
 
 	public int getPaddingTop() {
-		return 0;
+		return paddingTop;
 	}
 
 	public int getPaddingBottom() {
-		return 0;
+		return paddingBottom;
 	}
 
 	public int getPaddingStart() {
-		return 0;
+		return paddingLeft;
 	}
 
 	public int getPaddingEnd() {
-		return 0;
+		return paddingRight;
 	}
 
 	public void postInvalidate() {

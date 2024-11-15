@@ -50,9 +50,9 @@ public abstract class AbsListView extends AdapterView {
 
 	public void setCacheColorHint(int color) {}
 
-	public int getListPaddingTop() {return 0;}
+	public int getListPaddingTop() {return paddingTop;}
 
-	public int getListPaddingBottom() {return 0;}
+	public int getListPaddingBottom() {return paddingBottom;}
 
 	public ListAdapter getAdapter() {
 		return (ListAdapter) super.getAdapter();

@@ -562,7 +562,7 @@ public class TableLayout extends LinearLayout {
 			totalWidth += width;
 		}
 
-		int size = MeasureSpec.getSize(widthMeasureSpec) /*- mPaddingLeft - mPaddingRight*/;
+		int size = MeasureSpec.getSize(widthMeasureSpec) - paddingLeft - paddingRight;
 
 		if ((totalWidth > size) && (mShrinkAllColumns || mShrinkableColumns.size() > 0)) {
 			// oops, the largest columns are wider than the row itself

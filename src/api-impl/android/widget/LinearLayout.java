@@ -506,10 +506,10 @@ public class LinearLayout extends ViewGroup {
 			if (majorGravity != Gravity.TOP) {
 			   switch (majorGravity) {
 				   case Gravity.BOTTOM:
-					   childTop = getBottom() - getTop() - /*mPaddingBottom*/ 0 - mTotalLength;
+					   childTop = getBottom() - getTop() - paddingBottom - mTotalLength;
 					   break;
 				   case Gravity.CENTER_VERTICAL:
-					   childTop += ((getBottom() - getTop() - /*mPaddingTop*/ 0 - /*mPaddingBottom*/ 0) -
+					   childTop += ((getBottom() - getTop() - paddingTop - paddingBottom) -
 							   mTotalLength) / 2;
 					   break;
 			   }
@@ -827,7 +827,7 @@ public class LinearLayout extends ViewGroup {
 			}
 		}
 		// Add in our padding
-		mTotalLength += /*mPaddingTop*/ 0 + /*mPaddingBottom*/ 0;
+		mTotalLength += paddingTop + paddingBottom;
 		int heightSize = mTotalLength;
 		// Check against our minimum height
 		heightSize = Math.max(heightSize, getSuggestedMinimumHeight());
@@ -870,7 +870,7 @@ public class LinearLayout extends ViewGroup {
 					final int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(
 							Math.max(0, childHeight), MeasureSpec.EXACTLY);
 					final int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec,
-							/*mPaddingLeft*/ 0 + /*mPaddingRight*/ 0 + lp.leftMargin + lp.rightMargin,
+							paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin,
 							lp.width);
 					child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 					// Child may now not fit in vertical dimension.
@@ -890,7 +890,7 @@ public class LinearLayout extends ViewGroup {
 						lp.topMargin + lp.bottomMargin + getNextLocationOffset(child));
 			}
 			// Add in our padding
-			mTotalLength += /*mPaddingTop*/ 0 + /*mPaddingBottom*/ 0;
+			mTotalLength += paddingTop + paddingBottom;
 			// TODO: Should we recompute the heightSpec based on the new total length?
 		} else {
 			alternativeMaxWidth = Math.max(alternativeMaxWidth,
@@ -919,7 +919,7 @@ public class LinearLayout extends ViewGroup {
 		if (!allFillParent && widthMode != MeasureSpec.EXACTLY) {
 			maxWidth = alternativeMaxWidth;
 		}
-		maxWidth += /*mPaddingLeft*/ 0 + /*mPaddingRight*/ 0;
+		maxWidth += paddingLeft + paddingRight;
 		// Check against our minimum width
 		maxWidth = Math.max(maxWidth, getSuggestedMinimumWidth());
 		setMeasuredDimension(resolveSizeAndState(maxWidth, widthMeasureSpec, childState),
@@ -1157,7 +1157,7 @@ public class LinearLayout extends ViewGroup {
 			}
 		}
 		// Add in our padding
-		mTotalLength += /*mPaddingLeft*/ 0 + /*mPaddingRight*/ 0;
+		mTotalLength += paddingLeft + paddingRight;
 		int widthSize = mTotalLength;
 		// Check against our minimum width
 		widthSize = Math.max(widthSize, getSuggestedMinimumWidth());
@@ -1208,7 +1208,7 @@ public class LinearLayout extends ViewGroup {
 					final int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
 							Math.max(0, childWidth), MeasureSpec.EXACTLY);
 					final int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-							/*mPaddingTop*/ 0 + /*mPaddingBottom*/ 0 + lp.topMargin + lp.bottomMargin,
+							paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin,
 							lp.height);
 					child.measure(childWidthMeasureSpec, childHeightMeasureSpec);
 					// Child may now not fit in horizontal dimension.
@@ -1249,7 +1249,7 @@ public class LinearLayout extends ViewGroup {
 				mTotalLength += mDividerWidth;
 			}
 			// Add in our padding
-			mTotalLength += /*mPaddingLeft*/ 0 + /*mPaddingRight*/ 0;
+			mTotalLength += paddingLeft + paddingRight;
 			// TODO: Should we update widthSize with the new total length?
 			// Check mMaxAscent[INDEX_TOP] first because it maps to Gravity.TOP,
 			// the most common case
@@ -1290,7 +1290,7 @@ public class LinearLayout extends ViewGroup {
 		if (!allFillParent && heightMode != MeasureSpec.EXACTLY) {
 			maxHeight = alternativeMaxHeight;
 		}
-		maxHeight += /*mPaddingTop*/ 0 + /*mPaddingBottom*/ 0;
+		maxHeight += paddingTop + paddingBottom;
 		// Check against our minimum height
 		maxHeight = Math.max(maxHeight, getSuggestedMinimumHeight());
 		setMeasuredDimension(widthSizeAndState | (childState&MEASURED_STATE_MASK),
@@ -1412,29 +1412,28 @@ public class LinearLayout extends ViewGroup {
 	 * @param bottom
 	 */
 	void layoutVertical(int left, int top, int right, int bottom) {
-		final int paddingLeft = /*mPaddingLeft*/ 0;
 		int childTop;
 		int childLeft;
 		// Where right end of child should go
 		final int width = right - left;
-		int childRight = width - /*mPaddingRight*/ 0;
+		int childRight = width - paddingRight;
 		// Space available for child
-		int childSpace = width - paddingLeft - /*mPaddingRight*/ 0;
+		int childSpace = width - paddingLeft - paddingRight;
 		final int count = getVirtualChildCount();
 		final int majorGravity = mGravity & Gravity.VERTICAL_GRAVITY_MASK;
 		final int minorGravity = mGravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
 		switch (majorGravity) {
 		   case Gravity.BOTTOM:
 			   // mTotalLength contains the padding already
-			   childTop = /*mPaddingTop*/ 0 + bottom - top - mTotalLength;
+			   childTop = paddingTop + bottom - top - mTotalLength;
 			   break;
 			   // mTotalLength contains the padding already
 		   case Gravity.CENTER_VERTICAL:
-			   childTop = /*mPaddingTop*/ 0 + (bottom - top - mTotalLength) / 2;
+			   childTop = paddingTop + (bottom - top - mTotalLength) / 2;
 			   break;
 		   case Gravity.TOP:
 		   default:
-			   childTop = /*mPaddingTop*/ 0;
+			   childTop = paddingTop;
 			   break;
 		}
 		for (int i = 0; i < count; i++) {
@@ -1491,14 +1490,13 @@ public class LinearLayout extends ViewGroup {
 	 */
 	void layoutHorizontal(int left, int top, int right, int bottom) {
 		final boolean isLayoutRtl = /*isLayoutRtl()*/ false;
-		final int paddingTop = /*mPaddingTop*/ 0;
 		int childTop;
 		int childLeft;
 		// Where bottom of child should go
 		final int height = bottom - top;
-		int childBottom = height - /*mPaddingBottom*/ 0;
+		int childBottom = height - paddingBottom;
 		// Space available for child
-		int childSpace = height - paddingTop - /*mPaddingBottom*/ 0;
+		int childSpace = height - paddingTop - paddingBottom;
 		final int count = getVirtualChildCount();
 		final int majorGravity = mGravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK;
 		final int minorGravity = mGravity & Gravity.VERTICAL_GRAVITY_MASK;
@@ -1509,15 +1507,15 @@ public class LinearLayout extends ViewGroup {
 		switch (Gravity.getAbsoluteGravity(majorGravity, layoutDirection)) {
 			case Gravity.RIGHT:
 				// mTotalLength contains the padding already
-				childLeft = /*mPaddingLeft*/ 0 + right - left - mTotalLength;
+				childLeft = paddingLeft + right - left - mTotalLength;
 				break;
 			case Gravity.CENTER_HORIZONTAL:
 				// mTotalLength contains the padding already
-				childLeft = /*mPaddingLeft*/ 0 + (right - left - mTotalLength) / 2;
+				childLeft = paddingLeft + (right - left - mTotalLength) / 2;
 				break;
 			case Gravity.LEFT:
 			default:
-				childLeft = /*mPaddingLeft*/ 0;
+				childLeft = paddingLeft;
 				break;
 		}
 		int start = 0;

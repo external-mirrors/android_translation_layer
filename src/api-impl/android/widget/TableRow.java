@@ -216,7 +216,7 @@ public class TableRow extends LinearLayout {
 			int childWidthMeasureSpec = MeasureSpec.makeMeasureSpec(
 			    Math.max(0, columnWidth - lp.leftMargin - lp.rightMargin), measureMode);
 			int childHeightMeasureSpec = getChildMeasureSpec(heightMeasureSpec,
-									 /*mPaddingTop + mPaddingBottom*/ + lp.topMargin +
+									paddingTop +paddingBottom + lp.topMargin +
 									     lp.bottomMargin + totalHeight,
 									 lp.height);
 

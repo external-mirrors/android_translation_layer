@@ -315,6 +315,32 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setLayoutParams(JNIEnv *en
 	wrapper_widget_set_layout_params(WRAPPER_WIDGET(widget), width, height);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+JNIEXPORT void JNICALL Java_android_view_View_native_1setPadding(JNIEnv *env, jobject this, jlong widget_ptr, jint left, jint top, jint right, jint bottom) {
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	if (ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(widget))) {
+		return;
+	}
+
+	GtkStyleContext *style_context = gtk_widget_get_style_context(widget);
+	GtkCssProvider *old_provider = g_object_get_data(G_OBJECT(widget), "padding_style_provider");
+	if(old_provider)
+		gtk_style_context_remove_provider(style_context, GTK_STYLE_PROVIDER(old_provider));
+	GtkCssProvider *css_provider = gtk_css_provider_new();
+
+	char *css_string = g_markup_printf_escaped("*{ padding-left: %dpx; padding-top: %dpx; padding-right: %dpx; padding-bottom: %dpx; }", left, top, right, bottom);
+#if GTK_CHECK_VERSION(4, 12, 0)
+	gtk_css_provider_load_from_string(css_provider, css_string);
+#else
+	gtk_css_provider_load_from_data(css_provider, css_string, strlen(css_string));
+#endif
+	g_free(css_string);
+
+	gtk_style_context_add_provider(style_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	g_object_set_data(G_OBJECT(widget), "padding_style_provider", css_provider);
+}
+
 JNIEXPORT void JNICALL Java_android_view_View_native_1setVisibility(JNIEnv *env, jobject this, jlong widget_ptr, jint visibility, jfloat alpha) {
 	GtkWidget *widget = gtk_widget_get_parent(GTK_WIDGET(_PTR(widget_ptr)));
 

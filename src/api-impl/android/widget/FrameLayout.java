@@ -90,25 +90,25 @@ public class FrameLayout extends ViewGroup {
 	int getPaddingLeftWithForeground() {
 		// return isForegroundInsidePadding() ? Math.max(mPaddingLeft, mForegroundPaddingLeft) :
 		// 	mPaddingLeft + mForegroundPaddingLeft;
-		return 0;
+		return paddingLeft;
 	}
 
 	int getPaddingRightWithForeground() {
 		// return isForegroundInsidePadding() ? Math.max(mPaddingRight, mForegroundPaddingRight) :
 		// 	mPaddingRight + mForegroundPaddingRight;
-		return 0;
+		return paddingRight;
 	}
 
 	private int getPaddingTopWithForeground() {
 		// return isForegroundInsidePadding() ? Math.max(mPaddingTop, mForegroundPaddingTop) :
 		// 	mPaddingTop + mForegroundPaddingTop;
-		return 0;
+		return paddingTop;
 	}
 
 	private int getPaddingBottomWithForeground() {
 		// return isForegroundInsidePadding() ? Math.max(mPaddingBottom, mForegroundPaddingBottom) :
 		// 	mPaddingBottom + mForegroundPaddingBottom;
-		return 0;
+		return paddingBottom;
 	}
 
 	@Override
