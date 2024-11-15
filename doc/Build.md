@@ -73,9 +73,9 @@ If you distro ships wolfSSL with JNI enabled already, you can just install the p
 ```sh
 git clone https://github.com/wolfSSL/wolfssl.git
 cd wolfssl
-git checkout v5.7.0-stable
+git checkout v5.7.4-stable
 autoreconf -i
-./configure --enable-shared --disable-opensslall --disable-opensslextra --enable-aescbc-length-checks --enable-curve25519 --enable-ed25519 --enable-ed25519-stream --enable-oldtls --enable-base64encode --enable-tlsx --enable-scrypt --disable-examples --enable-crl --with-rsa --enable-certs --enable-session-certs --enable-encrypted-keys --enable-cert-gen --enable-cert-ext --enable-clr-monitor --enable-jni
+./configure --enable-shared --disable-opensslall --disable-opensslextra --enable-aescbc-length-checks --enable-curve25519 --enable-ed25519 --enable-ed25519-stream --enable-oldtls --enable-base64encode --enable-tlsx --enable-scrypt --disable-examples --enable-crl --enable-jni
 make
 sudo make install
 ```
