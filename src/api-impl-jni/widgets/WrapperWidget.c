@@ -10,6 +10,87 @@
 
 G_DEFINE_TYPE(WrapperWidget, wrapper_widget, GTK_TYPE_WIDGET)
 
+typedef enum { ATL_ID = 1, ATL_ID_NAME, ATL_CLASS_NAME, ATL_SUPER_CLASS_NAMES, N_PROPERTIES } WrapperWidgetProperty;
+static GParamSpec *wrapper_widget_properties[N_PROPERTIES] = { NULL, };
+
+static void wrapper_widget_set_property (GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+{
+	switch ((WrapperWidgetProperty) property_id)
+	{
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
+	}
+}
+
+static void wrapper_widget_get_property (GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+{
+	WrapperWidget *self = WRAPPER_WIDGET(object);
+
+	JNIEnv *env = get_jni_env();
+
+	jobject jobj = self->jobj;
+	jclass class = _CLASS(jobj);
+
+	switch ((WrapperWidgetProperty) property_id)
+	{
+		case ATL_ID: 
+		{
+			jint id_jint = (*env)->CallIntMethod(env, jobj, handle_cache.view.getId);
+			if((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+
+			const char *id = g_markup_printf_escaped("0x%08x", id_jint);
+			g_value_set_string(value, id);
+			break;
+		}
+
+		case ATL_ID_NAME:
+		{
+			jstring id_name_jstring = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getIdName);
+			if((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+
+			const char *id_name = (*env)->GetStringUTFChars(env, id_name_jstring, NULL);
+			g_value_set_string(value, id_name);
+
+			(*env)->ReleaseStringUTFChars(env, id_name_jstring, id_name);
+			break;
+		}
+
+		case ATL_CLASS_NAME:
+		{
+			jstring class_name_jstring = (*env)->CallObjectMethod(env, class, _METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
+			if((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+
+			const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstring, NULL);
+			g_value_set_string(value, class_name);
+
+			(*env)->ReleaseStringUTFChars(env, class_name_jstring, class_name);
+			break;
+		}
+
+		case ATL_SUPER_CLASS_NAMES:
+		{
+			jstring super_classes_names_obj = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getAllSuperClasses);
+			if((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+
+			const char *super_classes_names = (*env)->GetStringUTFChars(env, super_classes_names_obj, NULL);
+			g_value_set_string(value, super_classes_names);
+
+			(*env)->ReleaseStringUTFChars(env, super_classes_names_obj, super_classes_names);
+			break;
+		}
+		
+
+		default:
+			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			break;
+	}
+}
+
 static void wrapper_widget_init (WrapperWidget *wrapper_widget)
 {
 
@@ -136,6 +217,17 @@ static void wrapper_widget_class_init(WrapperWidgetClass *class)
 	widget_class->measure = wrapper_widget_measure;
 	widget_class->size_allocate = wrapper_widget_allocate;
 	widget_class->snapshot = wrapper_widget_snapshot;
+
+	object_class->set_property = wrapper_widget_set_property;
+	object_class->get_property = wrapper_widget_get_property;
+	
+	// According to testing, these properties are not evaluated till we open the GtkInspector
+	wrapper_widget_properties[ATL_ID] = g_param_spec_string("ATL-id", "ATL: ID", "ID of the component", "", G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_ID_NAME] = g_param_spec_string("ATL-id-name", "ATL: ID name", "Name of the ID of the component", "", G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_CLASS_NAME] = g_param_spec_string("ATL-class-name", "ATL: Class name", "Name of the class of the component", "", G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_SUPER_CLASS_NAMES] = g_param_spec_string("ATL-superclasses-names", "ATL: Super classes names", "Names of all the superclasses of the component class", "", G_PARAM_READABLE);
+	
+	g_object_class_install_properties (object_class, N_PROPERTIES, wrapper_widget_properties);
 }
 
 GtkWidget * wrapper_widget_new(void)

@@ -1445,6 +1445,30 @@ public class View implements Drawable.Callback {
 	public void setOverScrollMode(int mode) {}
 
 	public int getId() {return id;}
+	public String getIdName() {
+		if(this.id == View.NO_ID) {
+			return "NO_ID";
+		}
+
+		try {
+			return getResources().getResourceName(this.id);
+		} catch (Resources.NotFoundException e) {
+			return "NOT_FOUND";
+		}
+
+	}
+	public String getAllSuperClasses() {
+		StringBuilder sb = new StringBuilder();
+		Class<?> currentClass = getClass();
+
+		sb.append(currentClass.getCanonicalName());
+		currentClass = currentClass.getSuperclass();
+		while (currentClass != null) {
+			sb.append(" << ").append(currentClass.getCanonicalName());
+			currentClass = currentClass.getSuperclass();
+		}
+		return sb.toString();
+	}
 
 	public boolean postDelayed(Runnable action, long delayMillis) {
 		new Handler(Looper.getMainLooper()).postDelayed(action, delayMillis);

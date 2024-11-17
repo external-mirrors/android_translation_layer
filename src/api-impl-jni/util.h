@@ -83,6 +83,9 @@ struct handle_cache {
 		jmethodID layoutInternal;
 		jmethodID measure;
 		jmethodID performLongClick;
+		jmethodID getId;
+		jmethodID getIdName;
+		jmethodID getAllSuperClasses;
 	} view;
 	struct {
 		jclass class;
