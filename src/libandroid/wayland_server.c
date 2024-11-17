@@ -7,13 +7,15 @@
 #include <gdk/wayland/gdkwayland.h>
 
 #include "../api-impl-jni/defines.h"
+#include "../api-impl-jni/widgets/android_view_SurfaceView.h"
 
 static EGLDisplay egl_display_gtk = NULL;
 static GdkGLContext *gl_context_gtk = NULL;
 static struct wl_event_loop *event_loop = NULL;
-static GMutex mutex;
 static PFNEGLQUERYWAYLANDBUFFERWL eglQueryWaylandBufferWL = NULL;
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = NULL;
+static GMutex mutex;  // synchronize access to wl_display_server
+static struct wl_display *wl_display_server;
 
 /* runs on main thread */
 static gboolean delete_texture(void *data) {
@@ -26,7 +28,7 @@ static gboolean delete_texture(void *data) {
 struct _BufferData {
 	GObject parent;
 	gboolean destroyed;
-	GtkPicture *picture;
+	SurfaceViewWidget *surface_view_widget;
 	struct wl_resource *wl_buffer;
 	GdkGLTextureBuilder *texture_builder;
 };
@@ -39,7 +41,7 @@ static void buffer_data_dispose(GObject *g_object)
 		g_idle_add(delete_texture, _PTR(texture_id));
 		g_object_unref(buffer->texture_builder);
 	}
-	g_object_unref(buffer->picture);
+	g_object_unref(buffer->surface_view_widget);
 }
 static void buffer_data_class_init(BufferDataClass *cls)
 {
@@ -50,13 +52,15 @@ G_DEFINE_TYPE(BufferData, buffer_data, G_TYPE_OBJECT)
 
 struct surface {
 	struct wl_resource *wl_surface;
-	GtkPicture *picture;
+	SurfaceViewWidget *surface_view_widget;
 	struct wl_resource *frame_callback;
+	struct wl_event_source *frame_timer;
 	BufferData *buffers[3];
 };
 
 /* runs on main thread */
-static void destroy_texture(void *data) {
+static void destroy_texture(void *data)
+{
 	BufferData *buffer = ATL_BUFFER_DATA(data);
 	g_mutex_lock(&mutex);
 	if (!buffer->destroyed) {
@@ -67,7 +71,23 @@ static void destroy_texture(void *data) {
 }
 
 /* runs on main thread */
-static gboolean render_texture(void *data) {
+static void draw_callback(SurfaceViewWidget *surface_view_widget)
+{
+	g_mutex_lock(&mutex);
+	struct surface *surface = surface_view_widget->frame_callback_data;
+	if (surface && surface->frame_callback) {
+		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time()/1000);
+		wl_resource_destroy(surface->frame_callback);
+		surface->frame_callback = NULL;
+		wl_event_source_timer_update(surface->frame_timer, 0);
+		wl_display_flush_clients(wl_display_server);
+	}
+	g_mutex_unlock(&mutex);
+}
+
+/* runs on main thread */
+static gboolean render_texture(void *data)
+{
 	BufferData *buffer = ATL_BUFFER_DATA(data);
 	if (!buffer->texture_builder) {
 		g_mutex_lock(&mutex);
@@ -98,8 +118,7 @@ static gboolean render_texture(void *data) {
 
 	GdkTexture *texture = gdk_gl_texture_builder_build(buffer->texture_builder, destroy_texture, buffer);
 
-	gtk_picture_set_paintable(buffer->picture, GDK_PAINTABLE(texture));
-	g_object_unref(texture);
+	surface_view_widget_set_texture(buffer->surface_view_widget, texture);
 
 	return G_SOURCE_REMOVE;
 }
@@ -126,14 +145,20 @@ static void surface_attach(struct wl_client *client, struct wl_resource *resourc
 		g_object_unref(buffer);
 	buffer = g_object_new(buffer_data_get_type(), NULL);
 	buffer->wl_buffer = wl_buffer;
-	buffer->picture = g_object_ref(surface->picture);
+	buffer->surface_view_widget = g_object_ref(surface->surface_view_widget);
 	surface->buffers[0] = buffer;
 }
 
 static void surface_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
+	if (surface->frame_callback)
+		wl_resource_destroy(surface->frame_callback);
 	surface->frame_callback = wl_resource_create(client, &wl_callback_interface, 1, callback);
+	surface->surface_view_widget->frame_callback = draw_callback;
+	surface->surface_view_widget->frame_callback_data = surface;
+	// this timer is required in case the main thread and the wayland server thread deadlock each other waiting for the next frame_callback
+	wl_event_source_timer_update(surface->frame_timer, 1000/20);
 }
 
 static void surface_damage(struct wl_client *client, struct wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -142,9 +167,12 @@ static void surface_damage(struct wl_client *client, struct wl_resource *resourc
 
 static int frame_timer(void *data)
 {
-	struct wl_resource *frame_callback = data;
-	wl_callback_send_done(frame_callback, g_get_monotonic_time()/1000);
-	wl_resource_destroy(frame_callback);
+	struct surface *surface = data;
+	if (surface->frame_callback) {
+		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time()/1000);
+		wl_resource_destroy(surface->frame_callback);
+		surface->frame_callback = NULL;
+	}
 	return 0;
 }
 
@@ -152,8 +180,6 @@ static void surface_commit(struct wl_client *client, struct wl_resource *resourc
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
 	g_idle_add(render_texture, g_object_ref(surface->buffers[0]));
-	struct wl_event_source *timer = wl_event_loop_add_timer(event_loop, frame_timer, surface->frame_callback);
-	wl_event_source_timer_update(timer, 1000/60);
 }
 
 static void surface_destroy(struct wl_client *client, struct wl_resource *resource) {
@@ -162,8 +188,14 @@ static void surface_destroy(struct wl_client *client, struct wl_resource *resour
 		surface->buffers[i]->destroyed = TRUE;
 		g_object_unref(surface->buffers[i]);
 	}
-	g_object_unref(surface->picture);
+	surface->surface_view_widget->frame_callback = NULL;
+	surface->surface_view_widget->frame_callback_data = NULL;
+	g_object_unref(surface->surface_view_widget);
 	wl_resource_destroy(surface->wl_surface);
+	wl_event_source_timer_update(surface->frame_timer, 0);
+	if (surface->frame_callback)
+		wl_resource_destroy(surface->frame_callback);
+	surface->frame_callback = NULL;
 	g_free(surface);
 }
 
@@ -171,14 +203,14 @@ static void surface_destroy(struct wl_client *client, struct wl_resource *resour
 static void surface_set_buffer_scale(struct wl_client *client, struct wl_resource *resource, int32_t scale)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	surface->picture = _PTR((((uint64_t)(uintptr_t)surface->picture) & 0xffffffff00000000L) | ((uintptr_t)(uint32_t)scale));
+	surface->surface_view_widget = _PTR((((uint64_t)(uintptr_t)surface->surface_view_widget) & 0xffffffff00000000L) | ((uintptr_t)(uint32_t)scale));
 }
 
 /* we abuse this method to set higher 32 bits of the GtkPicture pointer */
 static void surface_set_buffer_transform(struct wl_client *client, struct wl_resource *resource, int32_t transform)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	surface->picture = _PTR((((uint64_t)(uintptr_t)surface->picture) & 0x00000000ffffffffL) | ((uintptr_t)(uint32_t)transform)<<32);
+	surface->surface_view_widget = _PTR((((uint64_t)(uintptr_t)surface->surface_view_widget) & 0x00000000ffffffffL) | ((uintptr_t)(uint32_t)transform)<<32);
 }
 
 static struct wl_surface_interface surface_implementation = {
@@ -197,6 +229,7 @@ static void compositor_create_surface(struct wl_client *client, struct wl_resour
 	struct surface *surface = g_new0(struct surface, 1);
 	wl_resource_set_implementation(wl_surface, &surface_implementation, surface, NULL);
 	surface->wl_surface = wl_surface;
+	surface->frame_timer = wl_event_loop_add_timer(event_loop, frame_timer, surface);
 }
 
 static struct wl_compositor_interface compositor_implementation = {
@@ -222,7 +255,7 @@ static gpointer wayland_server_thread(gpointer user_data)
 		wl_display_flush_clients(wl_display_server);
 		g_mutex_unlock(&mutex);
 	}
-	return 0;	
+	return 0;
 }
 
 extern GtkWindow *window;
@@ -234,7 +267,7 @@ struct wl_display *wayland_server_start()
 	egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display_gtk, NULL);
 	gl_context_gtk = gdk_surface_create_gl_context(gtk_native_get_surface(GTK_NATIVE(window)), NULL);
 
-	struct wl_display *wl_display_server = wl_display_create();
+	wl_display_server = wl_display_create();
 	char tmpname[] = "/tmp/tmpdir.XXXXXX\0socket";
 	int tmplen = strlen(tmpname);
 	mkdtemp(tmpname);

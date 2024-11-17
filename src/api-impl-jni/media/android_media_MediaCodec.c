@@ -33,6 +33,7 @@
 #include "../util.h"
 #include "../defines.h"
 #include "../../libandroid/native_window.h"
+#include "../widgets/android_view_SurfaceView.h"
 
 struct ATL_codec_context {
 	AVCodecContext *codec;
@@ -42,7 +43,7 @@ struct ATL_codec_context {
 		} audio;
 		struct {
 			struct SwsContext *sws;  // for software decoding
-			GtkPicture *gtk_picture;
+			SurfaceViewWidget *surface_view_widget;
 #if !GTK_CHECK_VERSION(4, 14, 0)
 			struct zwp_linux_dmabuf_v1 *zwp_linux_dmabuf_v1;
 			struct wp_viewporter *wp_viewporter;
@@ -147,7 +148,7 @@ static enum AVPixelFormat get_hw_format(AVCodecContext *ctx,
 struct render_frame_data {
 	AVFrame *frame;
 	GdkTexture *texture;  // for software decoding
-	GtkPicture *gtk_picture;
+	SurfaceViewWidget *surface_view_widget;
 #if !GTK_CHECK_VERSION(4, 14, 0)
 	struct zwp_linux_dmabuf_v1 *zwp_linux_dmabuf_v1;
 	struct ANativeWindow *native_window;
@@ -351,21 +352,9 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JN
 		i++;
 	}
 
-	GtkWidget *surface_view_widget = _PTR(_GET_LONG_FIELD(surface_obj, "widget"));
-#if GTK_CHECK_VERSION(4, 14, 0)
-	GtkWidget *graphics_offload = gtk_widget_get_first_child(surface_view_widget);
-	if (!GTK_IS_GRAPHICS_OFFLOAD(graphics_offload)) {
-		graphics_offload = gtk_graphics_offload_new(gtk_picture_new());
-		gtk_widget_insert_after(graphics_offload, surface_view_widget, NULL);
-	}
-	ctx->video.gtk_picture = GTK_PICTURE(gtk_graphics_offload_get_child(GTK_GRAPHICS_OFFLOAD(graphics_offload)));
-#else
-	GtkWidget *gtk_picture = gtk_widget_get_first_child(surface_view_widget);
-	if (!GTK_IS_PICTURE(gtk_picture)) {
-		gtk_picture = gtk_picture_new();
-		gtk_widget_insert_after(gtk_picture, surface_view_widget, NULL);
-	}
-	ctx->video.gtk_picture = GTK_PICTURE(gtk_picture);
+	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(gtk_widget_get_first_child(_PTR(_GET_LONG_FIELD(surface_obj, "widget"))));
+	ctx->video.surface_view_widget = surface_view_widget;
+#if !GTK_CHECK_VERSION(4, 14, 0)
 	struct ANativeWindow *native_window = ANativeWindow_fromSurface(env, surface_obj);
 	ctx->video.native_window = native_window;
 	ctx->video.surface_width = gtk_widget_get_width(native_window->surface_view_widget);
@@ -528,8 +517,7 @@ static gboolean render_frame(void *data)
 
 #if GTK_CHECK_VERSION(4, 14, 0)
 	GdkTexture *texture = import_drm_frame_desc_as_texture(drm_frame_desc, drm_frame->width, drm_frame->height, drm_frame);
-	gtk_picture_set_paintable(d->gtk_picture, GDK_PAINTABLE(texture));
-	g_object_unref(texture);
+	surface_view_widget_set_texture(d->surface_view_widget, texture);
 #else
 	struct wl_buffer *wl_buffer = import_drm_frame_desc(d->zwp_linux_dmabuf_v1,
 		drm_frame_desc, drm_frame->width, drm_frame->height);
@@ -553,8 +541,7 @@ static gboolean render_frame(void *data)
 static gboolean render_texture(void *data) {
 	struct render_frame_data *d = (struct render_frame_data *)data;
 
-	gtk_picture_set_paintable(d->gtk_picture, GDK_PAINTABLE(d->texture));
-	g_object_unref(d->texture);
+	surface_view_widget_set_texture(d->surface_view_widget, d->texture);
 
 	free(d);
 	return G_SOURCE_REMOVE;
@@ -608,7 +595,7 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 			GdkTexture *texture = gdk_memory_texture_new(frame->width, frame->height, gdk_mem_fmt, bytes, stride);
 			struct render_frame_data *data = malloc(sizeof(struct render_frame_data));
 			data->texture = texture;
-			data->gtk_picture = ctx->video.gtk_picture;
+			data->surface_view_widget = ctx->video.surface_view_widget;
 			g_idle_add(render_texture, data);
 			g_bytes_unref (bytes);
 			av_frame_free(&frame);
@@ -618,7 +605,7 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 		struct render_frame_data *data = malloc(sizeof(struct render_frame_data));
 		data->frame = frame;
 #if GTK_CHECK_VERSION(4, 14, 0)
-		data->gtk_picture = ctx->video.gtk_picture;
+		data->surface_view_widget = ctx->video.surface_view_widget;
 #else
 		data->native_window = ctx->video.native_window;
 		data->zwp_linux_dmabuf_v1 = ctx->video.zwp_linux_dmabuf_v1;

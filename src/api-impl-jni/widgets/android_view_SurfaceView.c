@@ -7,20 +7,7 @@
 #include "marshal.h"
 
 #include "../generated_headers/android_view_SurfaceView.h"
-
-// TODO: currently this widget class doesn't do anything special, will we ever need it to?
-G_DECLARE_FINAL_TYPE (SurfaceViewWidget, surface_view_widget, SURFACE_VIEW, WIDGET, GtkWidget)
-
-struct _SurfaceViewWidget
-{
-	GtkWidget parent_instance;
-};
-
-struct _SurfaceViewWidgetClass
-{
-	GtkWidgetClass parent_class;
-};
-
+#include "android_view_SurfaceView.h"
 
 G_DEFINE_TYPE(SurfaceViewWidget, surface_view_widget, GTK_TYPE_WIDGET)
 
@@ -45,12 +32,36 @@ static void surface_view_widget_size_allocate(GtkWidget *widget, int width, int 
 	}
 }
 
+static void surface_view_widget_snapshot(GtkWidget *widget, GdkSnapshot *snapshot)
+{
+	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(widget);
+	if (surface_view_widget->texture) {
+		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, gtk_widget_get_width(widget), gtk_widget_get_height(widget));
+		gtk_snapshot_append_texture(snapshot, surface_view_widget->texture, &bounds);
+	}
+	if (surface_view_widget->frame_callback) {
+		surface_view_widget->frame_callback(surface_view_widget);
+		surface_view_widget->frame_callback = NULL;
+	}
+}
+
+static void surface_view_widget_dispose(GObject *object) {
+	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(object);
+	if (surface_view_widget->texture) {
+		g_object_unref(surface_view_widget->texture);
+		surface_view_widget->texture = NULL;
+	}
+	G_OBJECT_CLASS(surface_view_widget_parent_class)->dispose(object);
+}
+
 static void surface_view_widget_class_init(SurfaceViewWidgetClass *class)
 {
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 
 	// resize signal copied from GtkDrawingArea
 	widget_class->size_allocate = surface_view_widget_size_allocate;
+	widget_class->snapshot = surface_view_widget_snapshot;
+	G_OBJECT_CLASS(class)->dispose = surface_view_widget_dispose;
 
 	signals[RESIZE] =
 		g_signal_new("resize",
@@ -68,6 +79,14 @@ static void surface_view_widget_class_init(SurfaceViewWidgetClass *class)
 GtkWidget * surface_view_widget_new(void)
 {
 	return g_object_new (surface_view_widget_get_type(), NULL);
+}
+
+void surface_view_widget_set_texture(SurfaceViewWidget *surface_view_widget, GdkTexture *texture)
+{
+	if (surface_view_widget->texture)
+		g_object_unref(surface_view_widget->texture);
+	surface_view_widget->texture = texture;
+	gtk_widget_queue_draw(GTK_WIDGET(surface_view_widget));
 }
 
 // ---
@@ -98,16 +117,20 @@ JNIEXPORT jlong JNICALL Java_android_view_SurfaceView_native_1constructor(JNIEnv
 	GtkWidget *wrapper = g_object_ref(wrapper_widget_new());
 	GtkWidget *dummy = surface_view_widget_new();
 	gtk_widget_set_name(dummy, "dummy widget for SurfaceView");
-	wrapper_widget_set_child(WRAPPER_WIDGET(wrapper), dummy);
+#if GTK_CHECK_VERSION(4, 14, 0)
+	GtkWidget *graphics_offload = gtk_graphics_offload_new(dummy);
+#else
+	// use a dummy GtkBox, so that the SurfaceViewWidget also becomes a grand child of the WrapperWidget
+	GtkWidget *graphics_offload = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_widget_set_vexpand(dummy, TRUE);
+	gtk_widget_set_hexpand(dummy, TRUE);
+	gtk_widget_insert_before(dummy, graphics_offload, NULL);
+#endif
+	wrapper_widget_set_child(WRAPPER_WIDGET(wrapper), graphics_offload);
 	wrapper_widget_set_jobject(WRAPPER_WIDGET(wrapper), env, this);
 	// TODO: is this correct for all usecases? how do we know when it's not?
 	gtk_widget_set_hexpand(wrapper, true);
 	gtk_widget_set_vexpand(wrapper, true);
-#if GTK_CHECK_VERSION(4, 14, 0)
-	gtk_widget_insert_after(gtk_graphics_offload_new(gtk_picture_new()), dummy, NULL);
-#else
-	gtk_widget_insert_after(gtk_picture_new(), dummy, NULL);
-#endif
 
 	JavaVM *jvm;
 	(*env)->GetJavaVM(env, &jvm);
@@ -120,7 +143,7 @@ JNIEXPORT jlong JNICALL Java_android_view_SurfaceView_native_1constructor(JNIEnv
 	g_signal_connect(dummy, "resize", G_CALLBACK(on_resize), callback_data);
 	g_signal_connect(dummy, "realize", G_CALLBACK(on_realize), callback_data);
 
-	return _INTPTR(dummy);
+	return _INTPTR(graphics_offload);
 }
 
 JNIEXPORT jlong JNICALL Java_android_view_SurfaceView_native_1createSnapshot(JNIEnv *env, jclass class)
@@ -133,19 +156,14 @@ extern GtkWindow *window;
 JNIEXPORT void JNICALL Java_android_view_SurfaceView_native_1postSnapshot(JNIEnv *env, jclass class, jlong surface_view, jlong snapshot_ptr)
 {
 	GtkWidget *view = GTK_WIDGET(_PTR(surface_view));
-#if GTK_CHECK_VERSION(4, 14, 0)
-	GtkPicture *picture = GTK_PICTURE(gtk_widget_get_first_child(gtk_widget_get_first_child(view)));
-#else
-	GtkPicture *picture = GTK_PICTURE(gtk_widget_get_first_child(view));
-#endif
+	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(gtk_widget_get_first_child(view));
 	GtkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
 	GskRenderer *renderer = gsk_renderer_new_for_surface(gtk_native_get_surface(GTK_NATIVE(window)));
 	GskRenderNode *node = gtk_snapshot_free_to_node(snapshot);
-	GdkTexture *paintable = gsk_renderer_render_texture(renderer, node, NULL);
+	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, NULL);
 	gsk_render_node_unref(node);
 	gsk_renderer_unrealize(renderer);
 	g_object_unref(renderer);
 
-	gtk_picture_set_paintable(picture, GDK_PAINTABLE(paintable));
-	g_object_unref(paintable);
+	surface_view_widget_set_texture(surface_view_widget, texture);
 }

@@ -283,7 +283,7 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 		.global_remove = wl_registry_global_remove_handler
 	};
 
-	GtkWidget *surface_view_widget = _PTR(_GET_LONG_FIELD(surface, "widget"));
+	GtkWidget *surface_view_widget = gtk_widget_get_first_child(_PTR(_GET_LONG_FIELD(surface, "widget")));
 	GtkWidget *window = GTK_WIDGET(gtk_widget_get_native(surface_view_widget));
 	while( (width = gtk_widget_get_width(surface_view_widget)) == 0 ) {
 		// FIXME: UGLY: this loop waits until the SurfaceView widget gets mapped
@@ -312,13 +312,6 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 	GdkDisplay *display = gtk_root_get_display(GTK_ROOT(window));
 
 	if (!getenv("ATL_DIRECT_EGL")) {
-		GtkWidget *graphics_offload = gtk_widget_get_first_child(surface_view_widget);
-		if (!GTK_IS_GRAPHICS_OFFLOAD(graphics_offload)) {
-			graphics_offload = gtk_graphics_offload_new(gtk_picture_new());
-			gtk_widget_insert_after(graphics_offload, surface_view_widget, NULL);
-		}
-		GtkPicture *gtk_picture = GTK_PICTURE(gtk_graphics_offload_get_child(GTK_GRAPHICS_OFFLOAD(graphics_offload)));
-
 		if (!wl_compositor) {
 			if (!wl_display_client)
 				wl_display_client = wayland_server_start();
@@ -328,10 +321,10 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 			printf("XXX: wl_compositor: %p\n", wl_compositor);
 		}
 		struct wl_surface *wayland_surface = wl_compositor_create_surface(wl_compositor);
-		// transfer the GtkPicture pointer to the wayland server abusing the set_buffer_scale and set_buffer_transform methods
-		g_object_ref(gtk_picture);
-		wl_surface_set_buffer_scale(wayland_surface, _INTPTR(gtk_picture));
-		wl_surface_set_buffer_transform(wayland_surface, _INTPTR(gtk_picture)>>32);
+		// transfer the SurfaceViewWidget pointer to the wayland server abusing the set_buffer_scale and set_buffer_transform methods
+		g_object_ref(surface_view_widget);
+		wl_surface_set_buffer_scale(wayland_surface, _INTPTR(surface_view_widget));
+		wl_surface_set_buffer_transform(wayland_surface, _INTPTR(surface_view_widget)>>32);
 		struct wl_egl_window *egl_window = wl_egl_window_create(wayland_surface, width, height);
 		native_window->egl_window = (EGLNativeWindowType)egl_window;
 		native_window->wayland_display = wl_display_client;
