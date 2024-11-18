@@ -297,6 +297,38 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1queueAllocate
 
 /*
  * Class:     android_view_View
+ * Method:    native_addClass
+ * Signature: (JLjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1addClass
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     android_view_View
+ * Method:    native_removeClass
+ * Signature: (JLjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1removeClass
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     android_view_View
+ * Method:    native_addClasses
+ * Signature: (J[Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1addClasses
+  (JNIEnv *, jobject, jlong, jobjectArray);
+
+/*
+ * Class:     android_view_View
+ * Method:    native_removeClasses
+ * Signature: (J[Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1removeClasses
+  (JNIEnv *, jobject, jlong, jobjectArray);
+
+/*
+ * Class:     android_view_View
  * Method:    native_drawBackground
  * Signature: (JJ)V
  */

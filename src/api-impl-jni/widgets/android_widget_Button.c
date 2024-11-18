@@ -16,6 +16,7 @@ JNIEXPORT jlong JNICALL Java_android_widget_Button_native_1constructor(JNIEnv *e
 	wrapper_widget_set_child(WRAPPER_WIDGET(wrapper), label);
 	wrapper_widget_consume_touch_events(WRAPPER_WIDGET(wrapper));  // Android button consumes touch events
 	wrapper_widget_set_jobject(WRAPPER_WIDGET(wrapper), env, this);
+
 	return _INTPTR(label);
 }
 

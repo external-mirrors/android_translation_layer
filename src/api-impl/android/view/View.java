@@ -946,6 +946,11 @@ public class View implements Drawable.Callback {
 			if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
 				tag = a.getText(com.android.internal.R.styleable.View_tag);
 			}
+			if(a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
+				int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
+				setTextAlignment(textAlignment);
+			}
+			
 			a.recycle();
 		}
 		onCreateDrawableState(0);
@@ -1063,6 +1068,12 @@ public class View implements Drawable.Callback {
 	protected native void native_requestLayout(long widget);
 	protected native void native_setBackgroundDrawable(long widget, long paintable);
 	protected native void native_queueAllocate(long widget);
+	
+	protected native void native_addClass(long widget, String className);
+	protected native void native_removeClass(long widget, String className);
+
+	protected native void native_addClasses(long widget, String[] classNames);
+	protected native void native_removeClasses(long widget, String[] classNames);
 
 	protected native void native_drawBackground(long widget, long snapshot);
 	protected native void native_drawContent(long widget, long snapshot);
@@ -1855,7 +1866,24 @@ public class View implements Drawable.Callback {
 
 	public boolean hasOnClickListeners() {return false;}
 
-	public void setTextAlignment(int textAlignment) {}
+	public void setTextAlignment(int textAlignment) {
+		String[] classesToRemove = {"ATL-text-align-left", "ATL-text-align-center", "ATL-text-align-right"};
+		native_removeClasses(widget, classesToRemove);
+
+		switch(textAlignment) {
+			case TEXT_ALIGNMENT_CENTER:
+				native_addClass(widget, "ATL-text-align-center");
+				break;
+			case TEXT_ALIGNMENT_TEXT_START:
+			case TEXT_ALIGNMENT_VIEW_START:
+				native_addClass(widget, "ATL-text-align-left");
+				break;
+			case TEXT_ALIGNMENT_TEXT_END:
+			case TEXT_ALIGNMENT_VIEW_END:
+				native_addClass(widget, "ATL-text-align-right");
+				break;
+		}
+	}
 
 	public void setHapticFeedbackEnabled(boolean hapticFeedbackEnabled) {}
 

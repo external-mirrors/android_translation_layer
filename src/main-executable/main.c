@@ -417,6 +417,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	if (getenv("ATL_FORCE_FULLSCREEN"))
 		gtk_window_fullscreen(GTK_WINDOW(window));
 
+	// Load default css stylesheet
+	GtkCssProvider * cssProvider = gtk_css_provider_new();
+	gtk_css_provider_load_from_resource(cssProvider, "/com/gitlab/android-translation-layer/android-translation-layer/default-stylesheet.css");
+	gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
 	prepare_main_looper(env);
 
 	// construct Application

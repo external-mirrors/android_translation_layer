@@ -61,7 +61,18 @@ public class TextView extends View {
 			if (a.hasValue(com.android.internal.R.styleable.TextView_textSize)) {
 				setTextSize(a.getDimensionPixelSize(com.android.internal.R.styleable.TextView_textSize, 10));
 			}
+
+			if(a.hasValue(com.android.internal.R.styleable.TextView_textStyle)) {
+				int textStyle = a.getInt(com.android.internal.R.styleable.TextView_textStyle, 0);
+				setTypeface(getTypeface(), textStyle);
+			}
+
+			if(a.hasValue(com.android.internal.R.styleable.TextView_textAllCaps)) {
+				boolean allCaps = a.getBoolean(com.android.internal.R.styleable.TextView_textAllCaps, false);
+				setAllCaps(allCaps);
+			}
 		} catch(java.lang.Exception e) { System.out.println("exception while inflating TextView:"); e.printStackTrace(); }
+
 		a.recycle();
 		haveCustomMeasure = false;
 	}
@@ -103,7 +114,25 @@ public class TextView extends View {
 			setTextColor(colors.getDefaultColor()); // TODO: do this properly
 		}
 	}
-	public void setTypeface(Typeface tf, int style) {}
+	public void setTypeface(Typeface tf, int style) {
+		String[] classesToRemove = {"ATL-font-bold", "ATL-font-italic"};
+		native_removeClasses(widget, classesToRemove);
+
+		switch(style) {
+			case Typeface.BOLD:
+				native_addClass(widget, "ATL-font-bold");
+				break;
+			case Typeface.ITALIC:
+				native_addClass(widget, "ATL-font-italic");
+				break;
+			case Typeface.BOLD_ITALIC:
+				native_addClass(widget, "ATL-font-bold");
+				native_addClass(widget, "ATL-font-italic");
+				break;
+			default:
+				break;
+		}
+	}
 	public void setTypeface(Typeface tf) {}
 	public void setLineSpacing(float add, float mult) {}
 	public final void setLinksClickable(boolean whether) {}
@@ -188,7 +217,14 @@ public class TextView extends View {
 		drawableBottom = bottom;
 	}
 
-	public void setAllCaps(boolean allCaps) {}
+	public void setAllCaps(boolean allCaps) {
+		String[] classesToRemove = {"ATL-text-uppercase"};
+		native_removeClasses(widget, classesToRemove);
+		
+		if(allCaps){
+			native_addClass(widget, "ATL-text-uppercase");
+		}
+	}
 
 	public void setSaveEnabled(boolean enabled) {}
 

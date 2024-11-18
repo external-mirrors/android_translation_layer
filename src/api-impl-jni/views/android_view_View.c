@@ -617,3 +617,52 @@ JNIEXPORT void JNICALL Java_android_view_View_nativeSetFullscreen(JNIEnv *env, j
 		gtk_window_unfullscreen(window);
 	}
 }
+
+
+JNIEXPORT void JNICALL Java_android_view_View_native_1addClass(JNIEnv *env, jobject this, jlong widget_ptr, jstring class_name_jstr){
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+
+	const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstr, NULL);
+	gtk_widget_add_css_class(widget, class_name);
+
+	(*env)->ReleaseStringUTFChars(env, class_name_jstr, class_name);
+}
+
+JNIEXPORT void JNICALL Java_android_view_View_native_1removeClass(JNIEnv *env, jobject this, jlong widget_ptr, jstring class_name_jstr){
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+
+	const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstr, NULL);
+	gtk_widget_remove_css_class(widget, class_name);
+
+	(*env)->ReleaseStringUTFChars(env, class_name_jstr, class_name);
+}
+
+JNIEXPORT void JNICALL Java_android_view_View_native_1addClasses(JNIEnv *env, jobject this, jlong widget_ptr, jobjectArray class_names_jarray){
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+
+	int length = (*env)->GetArrayLength(env, class_names_jarray);
+
+	for(int i = 0; i < length; i++){
+		jstring class_name_jstr = (jstring) ((*env)->GetObjectArrayElement(env, class_names_jarray, i));
+
+		const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstr, NULL);
+		gtk_widget_add_css_class(widget, class_name);
+
+		(*env)->ReleaseStringUTFChars(env, class_name_jstr, class_name);
+	}
+}
+
+JNIEXPORT void JNICALL Java_android_view_View_native_1removeClasses(JNIEnv *env, jobject this, jlong widget_ptr, jobjectArray class_names_jarray){
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+
+	int length = (*env)->GetArrayLength(env, class_names_jarray);
+
+	for(int i = 0; i < length; i++){
+		jstring class_name_jstr = (jstring) ((*env)->GetObjectArrayElement(env, class_names_jarray, i));
+
+		const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstr, NULL);
+		gtk_widget_remove_css_class(widget, class_name);
+
+		(*env)->ReleaseStringUTFChars(env, class_name_jstr, class_name);
+	}
+}

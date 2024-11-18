@@ -167,10 +167,14 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'-D_LARGEFILE64_SOURCE',
                                                                   ])
 
+# atl.gresources.xml
+resources = gnome.compile_resources('com.gitlab.android_translation_layer.android_translation_layer', files('src/main-executable/atl.gresource.xml'))
+
 executable('android-translation-layer', [
                                         	'src/main-executable/main.c',
                                         	'src/main-executable/r_debug.c',
-                                        	'src/main-executable/back_button.c'
+                                        	'src/main-executable/back_button.c',
+                                        	resources
                                         ],
                                         install: true,
                                         dependencies: [

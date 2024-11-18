@@ -51,4 +51,6 @@ JNIEXPORT void JNICALL Java_android_widget_ImageButton_native_1setDrawable(JNIEn
 	GtkPicture *picture = GTK_PICTURE(gtk_button_get_child(GTK_BUTTON(button)));
 	GdkPaintable *paintable = _PTR(paintable_ptr);
 	gtk_picture_set_paintable(picture, paintable);
+
+	gtk_widget_add_css_class(GTK_WIDGET(button), "ATL-no-border");
 }

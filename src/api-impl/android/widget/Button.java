@@ -18,6 +18,10 @@ public class Button extends TextView {
 		if (a.hasValue(com.android.internal.R.styleable.TextView_text)) {
 			setText(a.getText(com.android.internal.R.styleable.TextView_text));
 		}
+
+		if(getBackground() != null){
+			native_addClass(widget, "ATL-no-border");
+		}
 		a.recycle();
 	}
 
