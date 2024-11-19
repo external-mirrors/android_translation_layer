@@ -52,4 +52,8 @@ public class AudioManager {
 	public void setStreamVolume(int streamType, int index, int flags) {
 		System.out.println("AudioManager.setStreamVolume: >" + streamType + "< >" + index + "< >" + flags + "<");
 	}
+
+	public boolean isStreamMute(int streamType) {
+		return false;
+	}
 }

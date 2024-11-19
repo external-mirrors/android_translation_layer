@@ -1947,4 +1947,6 @@ public class View implements Drawable.Callback {
 	public int getImportantForAutofill() {return 0;}
 
 	public void setImportantForAutofill(int flag) {}
+
+	public void setDefaultFocusHighlightEnabled(boolean enabled) {}
 }

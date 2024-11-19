@@ -206,6 +206,7 @@ hax_jar = jar('hax', [
               	'android/graphics/drawable/ColorDrawable.java',
               	'android/graphics/drawable/Drawable.java',
               	'android/graphics/drawable/DrawableContainer.java',
+              	'android/graphics/drawable/DrawableWrapper.java',
               	'android/graphics/drawable/GradientDrawable.java',
               	'android/graphics/drawable/InsetDrawable.java',
               	'android/graphics/drawable/LayerDrawable.java',

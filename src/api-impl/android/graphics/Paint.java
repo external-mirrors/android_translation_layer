@@ -282,6 +282,8 @@ public class Paint {
 		return new FontMetricsInt();
 	}
 
+	public void set(Paint paint) {}
+
 	private native long native_constructor();
 	private native void native_set_antialias(long skia_paint, boolean aa);
 	private native void native_set_color(long skia_paint, int color);

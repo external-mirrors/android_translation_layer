@@ -1,25 +1,17 @@
 package android.graphics.drawable;
 
 import android.graphics.Rect;
+import android.graphics.drawable.DrawableWrapper;
 
-public class InsetDrawable extends Drawable {
-
-	private Drawable drawable;
+public class InsetDrawable extends DrawableWrapper {
 
 	public InsetDrawable(Drawable drawable, int insetLeft, int insetTop, int insetRight, int insetBottom) {
-		super();
-		this.drawable = drawable;
+		super(drawable);
 	}
 
 	public InsetDrawable(Drawable drawable, int inset) {
-		super();
-		this.drawable = drawable;
+		super(drawable);
 	}
 
 	public boolean getPadding(Rect padding) { return false; }
-
-	public Drawable getDrawable() {
-		return drawable;
-	}
-
 }

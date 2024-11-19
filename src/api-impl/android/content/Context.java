@@ -217,7 +217,7 @@ public class Context extends Object {
 			case "accessibility":
 				return new AccessibilityManager();
 			case "layout_inflater":
-				return new LayoutInflater(getApplicationContext());
+				return new LayoutInflater(this);
 			case "wifi":
 				return new WifiManager();
 			case "bluetooth":
