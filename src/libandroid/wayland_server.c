@@ -31,6 +31,7 @@ struct _BufferData {
 	gboolean destroyed;
 	SurfaceViewWidget *surface_view_widget;
 	struct wl_resource *wl_buffer;
+	struct wl_listener buffer_destroy_listener;
 	GdkGLTextureBuilder *texture_builder;
 };
 G_DECLARE_FINAL_TYPE(BufferData, buffer_data, ATL, BUFFER_DATA, GObject);
@@ -56,7 +57,7 @@ struct surface {
 	SurfaceViewWidget *surface_view_widget;
 	struct wl_resource *frame_callback;
 	struct wl_event_source *frame_timer;
-	BufferData *buffers[3];
+	BufferData *attached_buffer;
 };
 
 /* runs on main thread */
@@ -124,30 +125,30 @@ static gboolean render_texture(void *data)
 	return G_SOURCE_REMOVE;
 }
 
+static void buffer_destroy_listener(struct wl_listener *listener, void *data) {
+	BufferData *buffer = wl_container_of(listener, buffer, buffer_destroy_listener);
+	buffer->destroyed = TRUE;
+	g_object_unref(buffer);
+}
+
 static void surface_attach(struct wl_client *client, struct wl_resource *resource, struct wl_resource *wl_buffer, int32_t x, int32_t y)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	// Order buffer cache by least recently used.
-	BufferData *buffer = surface->buffers[0];
-	if (buffer && buffer->wl_buffer == wl_buffer)
-		return;
-	buffer = surface->buffers[1];
-	surface->buffers[1] = surface->buffers[0];
-	surface->buffers[0] = buffer;
-	if (buffer && buffer->wl_buffer == wl_buffer)
-		return;
-	buffer = surface->buffers[2];
-	surface->buffers[2] = surface->buffers[0];
-	surface->buffers[0] = buffer;
-	if (buffer && buffer->wl_buffer == wl_buffer)
-		return;
-	// If the buffer is not in the cache, create it and drop the oldest one.
-	if (buffer)
-		g_object_unref(buffer);
-	buffer = g_object_new(buffer_data_get_type(), NULL);
-	buffer->wl_buffer = wl_buffer;
-	buffer->surface_view_widget = g_object_ref(surface->surface_view_widget);
-	surface->buffers[0] = buffer;
+	if (surface->attached_buffer)
+		g_object_unref(surface->attached_buffer);
+	// check if we already have this buffer
+	struct wl_listener *listener = wl_resource_get_destroy_listener(wl_buffer, buffer_destroy_listener);
+	BufferData *buffer;
+	if (listener) {
+		buffer = wl_container_of(listener, buffer, buffer_destroy_listener);
+	} else {
+		buffer = g_object_new(buffer_data_get_type(), NULL);
+		buffer->wl_buffer = wl_buffer;
+		buffer->surface_view_widget = g_object_ref(surface->surface_view_widget);
+		buffer->buffer_destroy_listener.notify = buffer_destroy_listener;
+		wl_resource_add_destroy_listener(wl_buffer, &buffer->buffer_destroy_listener);
+	}
+	surface->attached_buffer = g_object_ref(buffer);
 }
 
 static void surface_frame(struct wl_client *client, struct wl_resource *resource, uint32_t callback)
@@ -180,14 +181,14 @@ static int frame_timer(void *data)
 static void surface_commit(struct wl_client *client, struct wl_resource *resource)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	g_idle_add(render_texture, g_object_ref(surface->buffers[0]));
+	g_idle_add(render_texture, g_object_ref(surface->attached_buffer));
 }
 
-static void surface_destroy(struct wl_client *client, struct wl_resource *resource) {
+static void surface_destroy(struct wl_client *client, struct wl_resource *resource)
+{
 	struct surface *surface = wl_resource_get_user_data(resource);
-	for (int i = 0; i < 3; i++) if (surface->buffers[i]) {
-		surface->buffers[i]->destroyed = TRUE;
-		g_object_unref(surface->buffers[i]);
+	if (surface->attached_buffer) {
+		g_object_unref(surface->attached_buffer);
 	}
 	surface->surface_view_widget->frame_callback = NULL;
 	surface->surface_view_widget->frame_callback_data = NULL;
