@@ -5,6 +5,7 @@
 #include <EGL/eglext.h>
 #include <gtk/gtk.h>
 #include <gdk/wayland/gdkwayland.h>
+#include <gdk/x11/gdkx.h>
 
 #include "../api-impl-jni/defines.h"
 #include "../api-impl-jni/widgets/android_view_SurfaceView.h"
@@ -263,8 +264,13 @@ extern GtkWindow *window;
 struct wl_display *wayland_server_start()
 {
 	GdkDisplay *gdk_display = gtk_root_get_display(GTK_ROOT(window));
-	struct wl_display *wl_display_gtk = gdk_wayland_display_get_wl_display(gdk_display);
-	egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display_gtk, NULL);
+	if (GDK_IS_WAYLAND_DISPLAY(gdk_display)) {
+		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(gdk_display);
+		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display, NULL);
+	} else if (GDK_IS_X11_DISPLAY(gdk_display)) {
+		Display *x11_display = gdk_x11_display_get_xdisplay(gdk_display);
+		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, x11_display, NULL);
+	}
 	gl_context_gtk = gdk_surface_create_gl_context(gtk_native_get_surface(GTK_NATIVE(window)), NULL);
 
 	wl_display_server = wl_display_create();

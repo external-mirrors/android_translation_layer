@@ -123,13 +123,11 @@ void ANativeWindow_release(struct ANativeWindow *native_window)
 {
 	native_window->refcount--;
 	if(native_window->refcount == 0) {
-		GdkDisplay *display = gtk_widget_get_display(native_window->surface_view_widget);
-
 		g_clear_signal_handler(&native_window->resize_handler, native_window->surface_view_widget);
-		if (GDK_IS_WAYLAND_DISPLAY (display)) {
+		if (native_window->wayland_display) {
 			wl_egl_window_destroy((struct wl_egl_window *)native_window->egl_window);
 			wl_surface_destroy(native_window->wayland_surface);
-		} else if (GDK_IS_X11_DISPLAY (display)) {
+		} else if (native_window->x11_display) {
 			XDestroyWindow(native_window->x11_display, native_window->egl_window);
 		}
 		free(native_window);
@@ -247,14 +245,12 @@ void wl_registry_global_remove_handler(void *data, struct wl_registry *registry,
 	printf("removed: %u\n", name);
 }
 
-static void on_resize(GtkWidget* self, gint width, gint height, EGLNativeWindowType *egl_window)
+static void on_resize(GtkWidget* self, gint width, gint height, ANativeWindow *native_window)
 {
-	GdkDisplay *display = gtk_widget_get_display(self);
-	if (GDK_IS_WAYLAND_DISPLAY (display)) {
-		wl_egl_window_resize((struct wl_egl_window *)egl_window, width, height, 0, 0);
-	} else if (GDK_IS_X11_DISPLAY(display)) {
-		Display *x11_display = gdk_x11_display_get_xdisplay(display);
-		XResizeWindow(x11_display, (Window)egl_window, width, height);
+	if (native_window->wayland_display) {
+		wl_egl_window_resize((struct wl_egl_window *)native_window->egl_window, width, height, 0, 0);
+	} else if (native_window->x11_display) {
+		XResizeWindow(native_window->x11_display, (Window)native_window->egl_window, width, height);
 	}
 }
 
@@ -406,7 +402,7 @@ ANativeWindow * ANativeWindow_fromSurface(JNIEnv* env, jobject surface)
 		native_window->egl_window = (EGLNativeWindowType)x11_window;
 	}
 
-	native_window->resize_handler = g_signal_connect(surface_view_widget, "resize", G_CALLBACK(on_resize), (void *)native_window->egl_window);
+	native_window->resize_handler = g_signal_connect(surface_view_widget, "resize", G_CALLBACK(on_resize), native_window);
 
 	return native_window;
 }
