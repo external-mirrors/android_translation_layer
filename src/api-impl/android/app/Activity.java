@@ -378,6 +378,10 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		dialog.show();
 	}
 
+	public boolean showDialog(int id, Bundle args) {
+		return false;
+	}
+
 	public void removeDialog(int id) {
 		Dialog dialog = dialogs.remove(id);
 		if (dialog != null)
@@ -388,9 +392,9 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
-				if (window != null) {
+				if (window != null && window.native_window != 0) {
 					nativeFinish(getWindow().native_window);
-					window = null;
+					window.native_window = 0;
 				}
 			}
 		});
@@ -575,4 +579,5 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public Uri getReferrer() { return null; }
 	public void setDefaultKeyMode(int flag) {}
 	public void registerForContextMenu(View view) {}
+	public boolean isInMultiWindowMode() { return true; }
 }

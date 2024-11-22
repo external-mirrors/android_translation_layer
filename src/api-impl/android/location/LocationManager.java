@@ -2,7 +2,9 @@ package android.location;
 
 import android.os.Bundle;
 
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class LocationManager {
@@ -35,5 +37,9 @@ public class LocationManager {
 	}
 
 	public void removeUpdates(LocationListener listener) {
+	}
+
+	public List<String> getAllProviders() {
+		return Collections.emptyList();
 	}
 }

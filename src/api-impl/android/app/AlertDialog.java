@@ -35,6 +35,10 @@ public class AlertDialog extends Dialog implements DialogInterface {
 			dialog = new AlertDialog(context);
 		}
 
+		public Builder(Context context, int themeResId) {
+			dialog = new AlertDialog(context, themeResId);
+		}
+
 		public AlertDialog.Builder setPositiveButton(int textId, DialogInterface.OnClickListener listener) {
 			return setPositiveButton(dialog.getContext().getText(textId), listener);
 		}
@@ -90,6 +94,10 @@ public class AlertDialog extends Dialog implements DialogInterface {
 			}
 			dialog.nativeSetItems(dialog.nativePtr, stringItems, listener);
 			return this;
+		}
+
+		public AlertDialog.Builder setItems(int itemsId, final DialogInterface.OnClickListener listener) {
+			return setItems(dialog.getContext().getResources().getTextArray(itemsId), listener);
 		}
 
 		public Builder setOnCancelListener(OnCancelListener onCancelListener) {

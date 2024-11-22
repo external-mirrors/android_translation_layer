@@ -307,4 +307,12 @@ public class TextView extends View {
 	public void setLines(int lines) {}
 
 	public void setMinLines(int lines) {}
+
+	public void setSelectAllOnFocus(boolean selectAllOnFocus) {}
+
+	public int getCompoundDrawablePadding() {return 0;}
+
+	public int getPaintFlags() {return 0;}
+
+	public void setPaintFlags(int flags) {}
 }

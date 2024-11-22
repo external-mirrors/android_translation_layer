@@ -515,6 +515,30 @@ public class PopupMenu {
 
 		@Override
 		public MenuItem setShortcut(char numeric, char alpha) { return this; }
+
+		@Override
+		public int getOrder() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'getOrder'");
+		}
+
+		@Override
+		public boolean isEnabled() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'isEnabled'");
+		}
+
+		@Override
+		public CharSequence getTitleCondensed() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'getTitleCondensed'");
+		}
+
+		@Override
+		public CharSequence getTitle() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'getTitle'");
+		}
 	}
 
 }

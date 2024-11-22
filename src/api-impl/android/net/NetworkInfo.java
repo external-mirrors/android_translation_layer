@@ -10,6 +10,8 @@ public class NetworkInfo {
 		UNKNOWN
 	}
 
+	public enum DetailedState {}
+
 	private State state = State.DISCONNECTED;
 
 	public NetworkInfo(boolean available) {
@@ -50,5 +52,17 @@ public class NetworkInfo {
 
 	public boolean isAvailable () {
 		return false;
+	}
+
+	public DetailedState getDetailedState() {
+		return null;
+	}
+
+	public String getExtraInfo() {
+		return null;
+	}
+
+	public String getReason() {
+		return null;
 	}
 }

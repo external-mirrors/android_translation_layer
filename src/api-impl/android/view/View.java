@@ -942,6 +942,11 @@ public class View implements Drawable.Callback {
 			}
 
 			native_setPadding(widget, paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+			if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
+				tag = a.getText(com.android.internal.R.styleable.View_tag);
+			}
+			a.recycle();
 		}
 		onCreateDrawableState(0);
 	}
@@ -1436,7 +1441,7 @@ public class View implements Drawable.Callback {
 
 	public void requestLayout() {
 		layoutRequested = true;
-		if (parent != null) {
+		if (parent != null && !parent.isLayoutRequested()) {
 			parent.requestLayout();
 		}
 		native_requestLayout(widget);
@@ -1949,4 +1954,6 @@ public class View implements Drawable.Callback {
 	public void setImportantForAutofill(int flag) {}
 
 	public void setDefaultFocusHighlightEnabled(boolean enabled) {}
+
+	public void setHorizontalFadingEdgeEnabled(boolean horizontalFadingEdgeEnabled) {}
 }

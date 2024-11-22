@@ -69,4 +69,12 @@ public class ContentResolver {
 		else
 			return null;
 	}
+
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
+		if (provider != null)
+			return provider.update(uri, values, selection, selectionArgs);
+		else
+			return 0;
+	}
 }

@@ -17,6 +17,11 @@ public abstract class AbsSpinner extends AdapterView {
 		haveCustomMeasure = false;
 	}
 
+	public AbsSpinner(Context context, AttributeSet attributeSet, int defStyle) {
+		super(context, attributeSet, defStyle);
+		haveCustomMeasure = false;
+	}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	protected native void native_setAdapter(long widget, SpinnerAdapter adapter);

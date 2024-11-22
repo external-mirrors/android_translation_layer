@@ -13,4 +13,8 @@ public class ProgressDialog extends AlertDialog {
 	}
 
 	public void setIndeterminate(boolean indeterminate) {}
+
+	public static ProgressDialog show(Context context, CharSequence title, CharSequence message, boolean indeterminate, boolean cancelable, OnCancelListener cancelListener) {
+		return new ProgressDialog(context);
+	}
 }

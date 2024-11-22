@@ -147,6 +147,8 @@ public class Build {
 		 * @hide
 		 */
 		public static final int RESOURCES_SDK_INT = SDK_INT + ("REL".equals(CODENAME) ? 0 : 1);
+
+		public static final String SECURITY_PATCH = getString("ro.build.version.security_patch");
 	}
 
 	/**

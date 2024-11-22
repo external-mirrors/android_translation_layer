@@ -84,4 +84,8 @@ public class DrawableContainer extends Drawable {
 		state.drawables[curIndex].setBounds(left, top, right, bottom);
 	}
 
+	public void setEnterFadeDuration(int duration) {}
+
+	public void setExitFadeDuration(int duration) {}
+
 }

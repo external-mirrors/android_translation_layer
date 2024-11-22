@@ -59,11 +59,11 @@ public class DumpHeapProvider extends ContentProvider {
 		return 0;
 	}
 	
-/*     @Override
+	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		return 0;
-	} 
-*/
+	}
+
 	@Override
 	public ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException {
 		synchronized (sLock) {

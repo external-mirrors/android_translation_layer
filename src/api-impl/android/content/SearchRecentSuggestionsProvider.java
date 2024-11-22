@@ -18,6 +18,11 @@ public class SearchRecentSuggestionsProvider extends ContentProvider {
 	}
 
 	@Override
+	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+		throw new UnsupportedOperationException("Unimplemented method 'update'");
+	}
+
+	@Override
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		throw new UnsupportedOperationException("Unimplemented method 'delete'");
 	}

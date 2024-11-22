@@ -78,4 +78,6 @@ public class ActivityManager {
 		throws SecurityException {
 			return new ArrayList<>();
 	}
+
+	public int getLargeMemoryClass() {return getMemoryClass();}
 }

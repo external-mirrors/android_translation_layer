@@ -12,6 +12,7 @@ import java.util.Objects;
 public class ViewGroup extends View implements ViewParent, ViewManager {
 	public ArrayList<View> children;
 	private OnHierarchyChangeListener onHierarchyChangeListener;
+	private LayoutTransition transition;
 
 	public ViewGroup(Context context) {
 		this(context, null);
@@ -191,7 +192,9 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		return true;
 	}
 
-	public LayoutTransition getLayoutTransition() { return null; }
+	public LayoutTransition getLayoutTransition() {
+		return transition;
+	}
 
 	public static int getChildMeasureSpec(int spec, int padding, int childDimension) {
 		int specMode = MeasureSpec.getMode(spec);
@@ -376,6 +379,10 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 				return result;
 		}
 		return null;
+	}
+
+	public void setLayoutTransition(LayoutTransition transition) {
+		this.transition = transition;
 	}
 
 	public static class LayoutParams {

@@ -402,11 +402,19 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return The value of the field as a <code>long</code>.
 	 */
 	public long getLong(int row, int column) {
-		Long field = (Long)rows.get(row - startPos)[column];
-		if (field == null) {
-			return 0L;
-		}
-		return field.longValue();
+		long result = 0L;
+		Object object = rows.get(row - startPos)[column];
+		if (object instanceof Long)
+			result = (Long)object;
+		else if (object instanceof String)
+			result = Long.parseLong((String) object);
+		else if (object instanceof Double)
+			result = ((Double) object).longValue();
+		else if (object == null)
+			result = 0L;
+		else
+			throw new SQLiteException("Unexpected object type for getLong: " + object.getClass().getName());
+		return result;
 	}
 
 	/**
