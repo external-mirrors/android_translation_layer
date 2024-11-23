@@ -6,7 +6,7 @@
 #include "WrapperWidget.h"
 #include "AdapterView.h"
 
-#include "../generated_headers/android_widget_AbsSpinner.h"
+#include "../generated_headers/android_widget_Spinner.h"
 
 static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item)
 {
@@ -27,7 +27,7 @@ static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item
 	gtk_list_item_set_child(list_item, child);
 }
 
-JNIEXPORT jlong JNICALL Java_android_widget_AbsSpinner_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
+JNIEXPORT jlong JNICALL Java_android_widget_Spinner_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
 	GtkWidget *wrapper = g_object_ref(wrapper_widget_new());
 	GtkListItemFactory *factory = gtk_signal_list_item_factory_new();
@@ -42,7 +42,7 @@ JNIEXPORT jlong JNICALL Java_android_widget_AbsSpinner_native_1constructor(JNIEn
 	return _INTPTR(dropdown);
 }
 
-JNIEXPORT void JNICALL Java_android_widget_AbsSpinner_native_1setAdapter(JNIEnv *env, jobject this, jlong widget_ptr, jobject adapter)
+JNIEXPORT void JNICALL Java_android_widget_Spinner_native_1setAdapter(JNIEnv *env, jobject this, jlong widget_ptr, jobject adapter)
 {
 	GtkDropDown *dropdown = GTK_DROP_DOWN(_PTR(widget_ptr));
 	RangeListModel *model = RANGE_LIST_MODEL(gtk_drop_down_get_model(dropdown));
@@ -64,7 +64,7 @@ static void on_selected_changed(GtkDropDown *dropdown, GParamSpec *pspec, jobjec
 	(*env)->CallVoidMethod(env, listener, onItemSelected, model->jobject, NULL, index, (long)0);
 }
 
-JNIEXPORT void JNICALL Java_android_widget_AbsSpinner_setOnItemSelectedListener(JNIEnv *env, jobject this, jobject listener)
+JNIEXPORT void JNICALL Java_android_widget_Spinner_setOnItemSelectedListener(JNIEnv *env, jobject this, jobject listener)
 {
 	GtkDropDown *dropdown = GTK_DROP_DOWN(_PTR(_GET_LONG_FIELD(this, "widget")));
 	g_signal_connect(dropdown, "notify::selected", G_CALLBACK(on_selected_changed), _REF(listener));

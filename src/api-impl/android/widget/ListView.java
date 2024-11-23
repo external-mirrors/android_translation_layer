@@ -104,4 +104,15 @@ public class ListView extends AbsListView {
 	public void setSelection(int position, boolean animate) {
 		super.setSelection(position + getHeaderViewsCount(), animate);
 	}
+
+	@Override
+	public View getSelectedView() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getSelectedView'");
+	}
+
+	@Override
+	public void setSelection(int position) {
+		setSelection(position, false);
+	}
 }

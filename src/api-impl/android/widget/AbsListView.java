@@ -5,10 +5,11 @@ import android.database.DataSetObserver;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-public abstract class AbsListView extends AdapterView {
+public abstract class AbsListView extends AdapterView<ListAdapter> {
 
 	public boolean mIsChildViewEnabled = false;  // this field gets directly accessed by androidx DropDownListView
 	protected Observer observer = new Observer();
+	private ListAdapter adapter;
 
 	public AbsListView(Context context) {
 		super(context);
@@ -35,7 +36,7 @@ public abstract class AbsListView extends AdapterView {
 		ListAdapter oldAdapter = getAdapter();
 		if (oldAdapter != null)
 			oldAdapter.unregisterDataSetObserver(observer);
-		super.setAdapter(adapter);
+		this.adapter = adapter;
 		if (adapter != null)
 			adapter.registerDataSetObserver(observer);
 		native_setAdapter(this.widget, adapter);
@@ -55,7 +56,7 @@ public abstract class AbsListView extends AdapterView {
 	public int getListPaddingBottom() {return paddingBottom;}
 
 	public ListAdapter getAdapter() {
-		return (ListAdapter) super.getAdapter();
+		return adapter;
 	}
 
 	public int pointToPosition(int x, int y) {
@@ -79,9 +80,7 @@ public abstract class AbsListView extends AdapterView {
 	}
 
 	private int pendingSelection = -1;
-	@Override
 	public void setSelection(int position, boolean animate) {
-		super.setSelection(position, animate);
 		native_scrollTo(this.widget, position);
 		if (getWidth() > 0 && getHeight() > 0)
 			native_scrollTo(AbsListView.this.widget, position);

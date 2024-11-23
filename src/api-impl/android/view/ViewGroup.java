@@ -127,7 +127,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void detachViewFromParent(int index) {
-		removeViewAt(index);
+		removeViewInternal(children.get(index));
 	}
 
 	public void attachViewToParent(View view, int index, LayoutParams params) {
@@ -367,7 +367,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void setClipChildren(boolean clipChildren) {}
 
-	public void dispatchSetPressed(boolean pressed) {}
+	protected void dispatchSetPressed(boolean pressed) {}
 
 	@Override
 	public View findViewWithTag(Object tag) {

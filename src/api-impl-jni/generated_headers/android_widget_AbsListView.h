@@ -199,6 +199,20 @@ extern "C" {
 #define android_widget_AbsListView_TEXT_DIRECTION_LTR 3L
 #undef android_widget_AbsListView_TEXT_DIRECTION_RTL
 #define android_widget_AbsListView_TEXT_DIRECTION_RTL 4L
+#undef android_widget_AbsListView_ITEM_VIEW_TYPE_IGNORE
+#define android_widget_AbsListView_ITEM_VIEW_TYPE_IGNORE -1L
+#undef android_widget_AbsListView_ITEM_VIEW_TYPE_HEADER_OR_FOOTER
+#define android_widget_AbsListView_ITEM_VIEW_TYPE_HEADER_OR_FOOTER -2L
+#undef android_widget_AbsListView_SYNC_SELECTED_POSITION
+#define android_widget_AbsListView_SYNC_SELECTED_POSITION 0L
+#undef android_widget_AbsListView_SYNC_FIRST_POSITION
+#define android_widget_AbsListView_SYNC_FIRST_POSITION 1L
+#undef android_widget_AbsListView_SYNC_MAX_DURATION_MILLIS
+#define android_widget_AbsListView_SYNC_MAX_DURATION_MILLIS 100L
+#undef android_widget_AbsListView_INVALID_POSITION
+#define android_widget_AbsListView_INVALID_POSITION -1L
+#undef android_widget_AbsListView_INVALID_ROW_ID
+#define android_widget_AbsListView_INVALID_ROW_ID -9223372036854775808LL
 /*
  * Class:     android_widget_AbsListView
  * Method:    native_constructor
