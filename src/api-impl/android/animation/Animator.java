@@ -1,5 +1,8 @@
 package android.animation;
 
+import android.os.Handler;
+import android.os.Looper;
+
 public class Animator {
 
 	public interface AnimatorListener {
@@ -11,8 +14,14 @@ public class Animator {
 	public void setTarget(Object target) {}
 
 	public void start() {
-		if (listener != null)
-			listener.onAnimationEnd(this);
+		if (listener == null)
+			return;
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			public void run() {
+				if (listener != null)
+					listener.onAnimationEnd(Animator.this);
+			}
+		});
 	}
 
 	public void addListener(AnimatorListener listener) {
@@ -32,5 +41,7 @@ public class Animator {
 	public void setStartDelay(long startDelay) {}
 
 	public boolean isStarted() { return false; }
+
+	public void end() {}
 
 }
