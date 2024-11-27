@@ -14,6 +14,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -624,7 +625,8 @@ public class View implements Drawable.Callback {
 	}
 
 	public interface OnAttachStateChangeListener {
-		// TODO
+		public void onViewAttachedToWindow(View v);
+		public void onViewDetachedFromWindow(View v);
 	}
 
 	public interface OnGenericMotionListener {
@@ -1061,10 +1063,12 @@ public class View implements Drawable.Callback {
 
 	private OnTouchListener on_touch_listener = null;
 	public boolean onTouchEvent(MotionEvent event) {
+		boolean handled = false;
 		if (on_touch_listener != null)
-			return on_touch_listener.onTouch(this, event);
-		else
-			return false;
+			handled = on_touch_listener.onTouch(this, event);
+		if (!handled)
+			handled = dispatchTouchEvent(event);
+		return handled;
 	}
 
 	public void setOnTouchListener(OnTouchListener l) {
@@ -1172,6 +1176,8 @@ public class View implements Drawable.Callback {
 	public void unscheduleDrawable(Drawable drawable, Runnable runnable) {
 		/* TODO */
 	}
+
+	public void unscheduleDrawable(Drawable drawable) {}
 
 	public void invalidate(Rect dirty) {
 		nativeInvalidate(widget);
@@ -1290,14 +1296,16 @@ public class View implements Drawable.Callback {
 	public void setOnGenericMotionListener(View.OnGenericMotionListener l) {}
 
 	public IBinder getWindowToken() {
-		return new IBinder();
+		return new Binder();
 	}
 
 	public void getLocationInWindow(int[] location) {
 		getLocationOnScreen(location);
 	}
 
-	public void addOnAttachStateChangeListener(OnAttachStateChangeListener l) {}
+	public void addOnAttachStateChangeListener(OnAttachStateChangeListener l) {
+		onAttachStateChangeListener = l;
+	}
 
 	public Context getContext() {
 		return this.context;
@@ -1843,9 +1851,15 @@ public class View implements Drawable.Callback {
 
 	protected void onAttachedToWindow () {
 		attachedToWindow = true;
+		if (onAttachStateChangeListener != null) {
+			onAttachStateChangeListener.onViewAttachedToWindow(this);
+		}
 	}
 	protected void onDetachedFromWindow() {
 		attachedToWindow = false;
+		if (onAttachStateChangeListener != null) {
+			onAttachStateChangeListener.onViewDetachedFromWindow(this);
+		}
 	}
 	public void attachToWindowInternal() {
 		onAttachedToWindow();
@@ -1892,7 +1906,12 @@ public class View implements Drawable.Callback {
 		});
 	}
 
-	public void removeOnAttachStateChangeListener(OnAttachStateChangeListener listener) {}
+	private OnAttachStateChangeListener onAttachStateChangeListener;
+	public void removeOnAttachStateChangeListener(OnAttachStateChangeListener listener) {
+		if (onAttachStateChangeListener == listener) {
+			onAttachStateChangeListener = null;
+		}
+	}
 
 	public boolean onInterceptTouchEvent(MotionEvent event) {return false;}
 
@@ -2028,4 +2047,38 @@ public class View implements Drawable.Callback {
 	public void setDefaultFocusHighlightEnabled(boolean enabled) {}
 
 	public void setHorizontalFadingEdgeEnabled(boolean horizontalFadingEdgeEnabled) {}
+
+	public Handler getHandler() {
+		return new Handler(Looper.getMainLooper());
+	}
+
+	public boolean isHardwareAccelerated() {
+		return false;
+	}
+
+	public void setClipBounds(Rect clipBounds) {}
+
+	public boolean getClipToOutline() {return false;}
+
+	public void setLeft(int left) {
+		layout(left, top, right, bottom);
+	}
+
+	public void setTop(int top) {
+		layout(left, top, right, bottom);
+	}
+
+	public void setRight(int right) {
+		layout(left, top, right, bottom);
+	}
+
+	public void setBottom(int bottom) {
+		layout(left, top, right, bottom);
+	}
+
+	public void setCameraDistance(float distance) {}
+
+	public boolean requestRectangleOnScreen(Rect rectangle, boolean immediate) {return false;}
+
+	public boolean requestRectangleOnScreen(Rect rectangle) {return false;}
 }

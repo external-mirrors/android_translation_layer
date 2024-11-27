@@ -65,6 +65,7 @@ public class Settings {
 	}
 
 	public static final class Global {
+		public static final Uri CONTENT_URI = Uri.parse("content://settings/global");
 
 		public static int getInt(ContentResolver cr, String key, int def) {
 			switch (key) {
@@ -88,6 +89,10 @@ public class Settings {
 					java.lang.System.out.println("!!!! Settings$Global.getString: unknown key: >" + key + "<");
 					return "STRING_FROM_SETTINGS_GLOBAL_WITH_KEY_" + key;
 			}
+		}
+
+		public static Uri getUriFor(String name) {
+			return Uri.withAppendedPath(CONTENT_URI, name);
 		}
 	}
 

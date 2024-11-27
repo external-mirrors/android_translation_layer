@@ -284,6 +284,12 @@ public class Paint {
 
 	public void set(Paint paint) {}
 
+	public boolean isFilterBitmap() { return false; }
+
+	public Cap getStrokeCap() { return Cap.BUTT; }
+
+	public Join getStrokeJoin() { return Join.MITER; }
+
 	private native long native_constructor();
 	private native void native_set_antialias(long skia_paint, boolean aa);
 	private native void native_set_color(long skia_paint, int color);

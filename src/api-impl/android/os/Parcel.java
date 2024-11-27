@@ -43,4 +43,16 @@ public class Parcel {
 	public void writeParcelable(Parcelable p, int flags) {
 		System.out.println("Parcel.writeParcelable(" + p + ", " + flags + ")");
 	}
+
+	public void writeInterfaceToken(String s) {
+		System.out.println("Parcel.writeInterfaceToken(" + s + ")");
+	}
+
+	public void writeStrongInterface(IInterface i) {
+		System.out.println("Parcel.writeStrongInterface(" + i + ")");
+	}
+
+	public int dataSize() {
+		return 0;
+	}
 }

@@ -1,4 +1,6 @@
 package android.text;
 
-public class TextDirectionHeuristic {
+public interface TextDirectionHeuristic {
+
+	public boolean isRtl(CharSequence text, int start, int end);
 }

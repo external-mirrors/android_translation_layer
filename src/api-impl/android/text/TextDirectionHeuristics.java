@@ -2,7 +2,17 @@ package android.text;
 
 public class TextDirectionHeuristics {
 
-	public static final TextDirectionHeuristic LTR = new TextDirectionHeuristic();
+	public static final TextDirectionHeuristic LTR = new TextDirectionHeuristic() {
+		@Override
+		public boolean isRtl(CharSequence text, int start, int end) {
+			return false;
+		}
+	};
 
-	public static final TextDirectionHeuristic RTL = new TextDirectionHeuristic();
+	public static final TextDirectionHeuristic RTL = new TextDirectionHeuristic() {
+		@Override
+		public boolean isRtl(CharSequence text, int start, int end) {
+			return true;
+		}
+	};
 }

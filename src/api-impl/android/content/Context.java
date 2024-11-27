@@ -478,6 +478,8 @@ public class Context extends Object {
 
 	public void registerComponentCallbacks(ComponentCallbacks callbacks) {}
 
+	public void unregisterComponentCallbacks(ComponentCallbacks callbacks) {}
+
 	public boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int dummy3) {
 		if (intent.getComponent() == null) {
 			Slog.w(TAG, "Context.bindService: intent.getComponent() is null");

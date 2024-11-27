@@ -65,6 +65,7 @@ struct handle_cache {
 		jclass class;
 		jmethodID setLayoutParams;
 		jmethodID onDraw;
+		jmethodID dispatchDraw;
 		jmethodID draw;
 		jmethodID onMeasure;
 		jmethodID onLayout;
@@ -79,6 +80,7 @@ struct handle_cache {
 		jmethodID getScrollY;
 		jmethodID performClick;
 		jmethodID onTouchEvent;
+		jmethodID dispatchTouchEvent;
 		jmethodID onInterceptTouchEvent;
 		jmethodID layoutInternal;
 		jmethodID measure;

@@ -6,4 +6,8 @@ public interface Parcelable {
 	}
 
 	public static interface ClassLoaderCreator<T> extends Creator<T> {}
+
+	public default void writeToParcel(Parcel dest, int flags) {
+		System.out.println("Parcelable.writeToParcel(" + this + ", " + dest + ", " + flags + ")");
+	}
 }

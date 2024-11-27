@@ -16,6 +16,14 @@ public class AudioAttributes {
 			return this;
 		}
 
+		public Builder setFlags(int flags) {
+			return this;
+		}
+
+		public Builder setLegacyStreamType(int legacy_stream_type) {
+			return this;
+		}
+
 		public AudioAttributes build() {
 			return new AudioAttributes();
 		}

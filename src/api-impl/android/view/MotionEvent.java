@@ -2213,7 +2213,8 @@ public final class MotionEvent extends InputEvent {
 	 * @see KeyEvent#getMetaState()
 	 */
 	public final int getMetaState() {
-		return nativeGetMetaState(mNativePtr);
+		// return nativeGetMetaState(mNativePtr);
+		return 0;
 	}
 
 	/**
@@ -2228,7 +2229,8 @@ public final class MotionEvent extends InputEvent {
 	 * @see #BUTTON_BACK
 	 */
 	public final int getButtonState() {
-		return nativeGetButtonState(mNativePtr);
+		// return nativeGetButtonState(mNativePtr);
+		return BUTTON_PRIMARY;
 	}
 
 	/**

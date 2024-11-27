@@ -4,6 +4,7 @@ import android.R;
 import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -80,6 +81,11 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params) {
+		addViewInternal(child, index, params);
+		return true;
+	}
+
+	protected boolean addViewInLayout(View child, int index, LayoutParams params, boolean preventRequestLayout) {
 		addViewInternal(child, index, params);
 		return true;
 	}
@@ -384,6 +390,14 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void setLayoutTransition(LayoutTransition transition) {
 		this.transition = transition;
 	}
+
+	public boolean drawChild(Canvas canvas, View child, long drawingTime) {
+		return false;
+	}
+
+	protected void cleanupLayoutState(View child) {}
+
+	public boolean shouldDelayChildPressedState() { return false; }
 
 	public static class LayoutParams {
 		public static final int FILL_PARENT = -1;

@@ -59,4 +59,8 @@ public class Typeface {
 	public int getStyle() {
 		return 0;
 	}
+
+	public static Typeface defaultFromStyle(int style) {
+		return create((String)null, style);
+	}
 }

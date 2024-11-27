@@ -1,6 +1,6 @@
 package android.os;
 
-public class Binder extends IBinder {
+public class Binder implements IBinder {
 
 	public void attachInterface(IInterface owner, String descriptor) {}
 
@@ -9,4 +9,10 @@ public class Binder extends IBinder {
 	public static long clearCallingIdentity() { return 0; }
 
 	public static void restoreCallingIdentity(long identityToken) {}
+
+	@Override
+	public IInterface queryLocalInterface(String descriptor) { return null; }
+
+	@Override
+	public boolean transact(int code, Parcel data, Parcel reply, int flags) { return false; }
 }

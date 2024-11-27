@@ -470,6 +470,27 @@ public class Canvas {
 		return false;
 	}
 
+	public boolean clipRect(float left, float top, float right, float bottom) {
+		return false;
+	}
+
+	public boolean isHardwareAccelerated() {
+		return false;
+	}
+
+	public boolean clipRect(float left, float top, float right, float bottom, Region.Op op) {
+		return false;
+	}
+
+	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {}
+
+	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {}
+
+	public boolean getClipBounds(Rect outRect) {
+		outRect.set(0, 0, 100, 100);
+		return false;
+	}
+
 	private static native long native_canvas_from_bitmap(long pixbuf);
 
 	private static native void native_save(long skia_canvas, long widget);

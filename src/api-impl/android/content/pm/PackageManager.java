@@ -16,6 +16,12 @@
 
 package android.content.pm;
 
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+
 import android.annotation.SdkConstant;
 import android.annotation.SdkConstant.SdkConstantType;
 import android.content.ComponentName;
@@ -23,6 +29,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
+import android.content.pm.PackageParser.Service;
+import android.content.pm.PackageParser.ServiceIntentInfo;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.graphics.drawable.Drawable;
@@ -32,11 +40,6 @@ import android.os.UserHandle;
 import android.util.AndroidException;
 import android.util.DisplayMetrics;
 import android.util.Slog;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
 
 class IPackageInstallObserver {}
 class VerificationParams {}
@@ -2321,7 +2324,17 @@ public class PackageManager {
 	 */
 	public List<ResolveInfo> queryIntentServices(Intent intent,
 						     int flags) {
-		return new ArrayList<ResolveInfo>();
+		List<ResolveInfo> list = new ArrayList<ResolveInfo>(1);
+		for (Service s: Context.pkg.services) {
+			for (ServiceIntentInfo intentinfo: s.intents) {
+				if (s.getComponentName().equals(intent.getComponent()) || intentinfo.matchAction(intent.getAction())) {
+					ResolveInfo ri = new ResolveInfo();
+					ri.serviceInfo = s.info;
+					list.add(ri);
+				}
+			}
+		}
+		return list;
 	}
 
 	/**

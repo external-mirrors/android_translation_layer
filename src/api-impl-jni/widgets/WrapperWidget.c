@@ -279,8 +279,9 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	wrapper->jvm = jvm;
 	wrapper->jobj = _WEAK_REF(jobj);
 	jmethodID on_draw_method = _METHOD(_CLASS(jobj), "onDraw", "(Landroid/graphics/Canvas;)V");
+	jmethodID dispatch_draw_method = _METHOD(_CLASS(jobj), "dispatchDraw", "(Landroid/graphics/Canvas;)V");
 	jmethodID draw_method = _METHOD(_CLASS(jobj), "draw", "(Landroid/graphics/Canvas;)V");
-	if (on_draw_method != handle_cache.view.onDraw || draw_method != handle_cache.view.draw) {
+	if (on_draw_method != handle_cache.view.onDraw || draw_method != handle_cache.view.draw || dispatch_draw_method != handle_cache.view.dispatchDraw) {
 		wrapper->draw_method = draw_method;
 		jclass canvas_class = (*env)->FindClass(env, "android/graphics/GskCanvas");
 		jmethodID canvas_constructor = _METHOD(canvas_class, "<init>", "(J)V");
@@ -289,7 +290,8 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	}
 
 	jmethodID ontouchevent_method = _METHOD(_CLASS(jobj), "onTouchEvent", "(Landroid/view/MotionEvent;)Z");
-	if (ontouchevent_method != handle_cache.view.onTouchEvent) {
+	jmethodID dispatchtouchevent_method = _METHOD(_CLASS(jobj), "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
+	if (ontouchevent_method != handle_cache.view.onTouchEvent || dispatchtouchevent_method != handle_cache.view.dispatchTouchEvent) {
 		_setOnTouchListener(env, jobj, GTK_WIDGET(wrapper));
 	}
 

@@ -10,4 +10,8 @@ public class MediaController {
 	public MediaMetadata getMetadata() {
 		return new MediaMetadata();
 	}
+
+	public CharSequence getQueueTitle() {
+		return null;
+	}
 }

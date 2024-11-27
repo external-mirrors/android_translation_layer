@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.app.PendingIntent;
 import android.content.Context;
+import android.media.AudioAttributes;
 import android.media.MediaDescription;
 import android.media.MediaMetadata;
 import android.os.Handler;
@@ -54,7 +55,7 @@ public class MediaSession {
 			if (item.id == state.activeQueueItemId) {
 				title = item.description.title.toString();
 				subTitle = item.description.subtitle.toString();
-				artUrl = item.description.iconUri.toString();
+				artUrl = item.description.iconUri == null ? null : item.description.iconUri.toString();
 				break;
 			}
 		}
@@ -68,6 +69,8 @@ public class MediaSession {
 	}
 
 	public void release() {}
+
+	public void setPlaybackToLocal(AudioAttributes audioAttributes) {}
 
 	protected native void nativeSetState(int state, long actions, long position, long updateTime, String title, String subTitle, String artUrl);
 	protected native void nativeSetCallback(Callback callback);

@@ -85,6 +85,9 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1restore(JNIEnv *e
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat x0, jfloat y0, jfloat x1, jfloat y1, jlong paint_ptr)
 {
+	if (isnan(x0) || isnan(y0) || isnan(x1) || isnan(y1)) {
+		return;
+	}
 	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
 	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
 	GdkRGBA gdk_color;

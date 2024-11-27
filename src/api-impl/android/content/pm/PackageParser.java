@@ -3031,7 +3031,20 @@ public class PackageParser {
 				continue;
 			}
 
-			if (parser.getName().equals("meta-data")) {
+			if (parser.getName().equals("intent-filter")) {
+				ServiceIntentInfo intent = new ServiceIntentInfo(s);
+				if (!parseIntent(res, parser, attrs, true /*allowGlobs*/, true /*allowAutoVerify*/,
+				                 intent, outError)) {
+					return null;
+				}
+				if (intent.countActions() == 0) {
+					Slog.w(TAG, "No actions in intent filter at "
+							+ mArchiveSourcePath + " "
+							+ parser.getPositionDescription());
+				} else {
+					s.intents.add(intent);
+				}
+			} else if (parser.getName().equals("meta-data")) {
 				if ((s.metaData = parseMetaData(res, parser, attrs, s.metaData,
 								outError)) == null) {
 					return null;
