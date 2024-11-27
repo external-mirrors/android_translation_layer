@@ -3,6 +3,7 @@ package android.view;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.view.SurfaceHolder;
+import android.widget.FrameLayout;
 
 public class Window {
 	public static final int FEATURE_OPTIONS_PANEL = 0;
@@ -26,6 +27,7 @@ public class Window {
 
 	public long native_window;
 	public View contentView;
+	private ViewGroup decorView;
 
 	private Window.Callback callback;
 	private Context context;
@@ -33,8 +35,8 @@ public class Window {
 	public Window(Context context, Window.Callback callback) {
 		this.callback = callback;
 		this.context = context;
-		contentView = new ViewGroup(Context.this_application);
-		contentView.setId(android.R.id.content);
+		decorView = new FrameLayout(context);
+		decorView.setId(android.R.id.content);
 	}
 
 	public void addFlags(int flags) {}
@@ -49,22 +51,20 @@ public class Window {
 	}
 
 	public void setContentView(View view) {
-		if (contentView != view) {
-			if (contentView != null)
-				contentView.onDetachedFromWindow();
-			if (view != null)
-				view.onAttachedToWindow();
-		}
-		contentView = view;
+		decorView.removeAllViews();
+		decorView.addView(view);
 		if (view != null) {
-			set_widget_as_root(native_window, view.widget);
+			set_widget_as_root(native_window, decorView.widget);
 		}
 	}
 
+	public void attached() {
+		if (decorView != null)
+			decorView.onAttachedToWindow();
+	}
+
 	public View getDecorView() {
-		if (contentView != null)
-			return contentView;
-		return new View(Context.this_application); // FIXME: this can probably backfire
+		return decorView;
 	}
 
 	private native void set_widget_as_root(long native_window, long widget);
@@ -81,10 +81,7 @@ public class Window {
 	}
 
 	public View findViewById(int id) {
-		if (contentView != null)
-			return contentView.findViewById(id);
-		else
-			return null;
+		return decorView.findViewById(id);
 	}
 
 	public View peekDecorView() {

@@ -157,7 +157,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 
 	protected void onCreate(Bundle savedInstanceState) {
 		Slog.i(TAG, "- onCreate - yay!");
-		new ViewGroup(this).setId(R.id.content);
 
 		for (Fragment fragment : fragments) {
 			fragment.onCreate(savedInstanceState);
@@ -176,6 +175,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		if (window.contentView != null)
 			window.setContentView(window.contentView);
 		window.setTitle(title);
+		window.attached();
 
 		for (Fragment fragment : fragments) {
 			fragment.onStart();
