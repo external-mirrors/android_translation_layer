@@ -15,10 +15,26 @@ JNIEXPORT jlong JNICALL Java_android_content_res_XmlBlock_nativeCreateParseState
 JNIEXPORT jint JNICALL Java_android_content_res_XmlBlock_nativeNext(JNIEnv *env, jobject this, jlong parser_ptr)
 {
 	struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
-	enum event_code_t ret = ResXMLParser_next(parser);
-	if (ret > 0x100)
-		return ret - 0x100;
-	return ret;
+	while (1) {
+		enum event_code_t code = ResXMLParser_next(parser);
+		switch (code) {
+			case START_TAG:
+			case END_TAG:
+			case TEXT:
+				return code - 0x100;
+
+			case START_DOCUMENT:
+			case END_DOCUMENT:
+				return code;
+
+			case BAD_DOCUMENT:
+				(*env)->ThrowNew(env, (*env)->FindClass(env, "org/xmlpull/v1/XmlPullParserException"), "ResXMLParser_next returned BAD_DOCUMENT");
+				return code;
+			default:
+				continue;
+
+		}
+	}
 }
 
 JNIEXPORT jstring JNICALL Java_android_content_res_XmlBlock_nativeGetPooledString(JNIEnv *env, jobject this, jlong parser_ptr, jint index)
