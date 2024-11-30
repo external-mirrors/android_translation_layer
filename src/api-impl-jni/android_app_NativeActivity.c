@@ -264,14 +264,35 @@ jlong Java_android_app_NativeActivity_loadNativeCode(JNIEnv* env, jobject clazz,
 	const char* pathStr = (*env)->GetStringUTFChars(env, path, NULL);
 	struct NativeCode* code = NULL;
 
-	void* handle = bionic_dlopen(pathStr, RTLD_LAZY);
+	static void *libnb_handle = NULL;
+	bool (*NativeBridgeIsSupported)(const char*);
+	void* (*NativeBridgeLoadLibrary)(const char*, int);
+	void* (*NativeBridgeGetTrampoline)(void*, const char*, const char*, uint32_t);
+	if(!libnb_handle) {
+		libnb_handle = dlopen("libnativebridge.so", RTLD_LAZY);
+		NativeBridgeIsSupported = dlsym(libnb_handle, "NativeBridgeIsSupported");
+		NativeBridgeLoadLibrary = dlsym(libnb_handle, "NativeBridgeLoadLibrary");
+		NativeBridgeGetTrampoline = dlsym(libnb_handle, "NativeBridgeGetTrampoline");
+	}
+
+	bool use_native_bridge = NativeBridgeIsSupported(pathStr);
+
+	void* handle;
+	if(use_native_bridge)
+		handle = NativeBridgeLoadLibrary(pathStr, RTLD_LAZY);
+	else
+		handle = bionic_dlopen(pathStr, RTLD_LAZY);
 
 	(*env)->ReleaseStringUTFChars(env, path, pathStr);
 
 	if (handle != NULL) {
 		const char* funcStr = (*env)->GetStringUTFChars(env, funcName, NULL);
-		code = NativeCode_new(handle, (ANativeActivity_createFunc*)
-				bionic_dlsym(handle, funcStr));
+		ANativeActivity_createFunc* create_func;
+		if(use_native_bridge)
+			create_func = NativeBridgeGetTrampoline(handle, funcStr, NULL, 0);
+		else
+			create_func = bionic_dlsym(handle, funcStr);
+		code = NativeCode_new(handle, (ANativeActivity_createFunc*)create_func);
 		(*env)->ReleaseStringUTFChars(env, funcName, funcStr);
 
 		if (code->createActivityFunc == NULL) {

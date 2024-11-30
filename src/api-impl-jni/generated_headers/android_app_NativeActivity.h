@@ -9,6 +9,10 @@ extern "C" {
 #endif
 #undef android_app_NativeActivity_MODE_PRIVATE
 #define android_app_NativeActivity_MODE_PRIVATE 0L
+#undef android_app_NativeActivity_RESULT_CANCELED
+#define android_app_NativeActivity_RESULT_CANCELED 0L
+#undef android_app_NativeActivity_RESULT_OK
+#define android_app_NativeActivity_RESULT_OK -1L
 /*
  * Class:     android_app_NativeActivity
  * Method:    loadNativeCode
