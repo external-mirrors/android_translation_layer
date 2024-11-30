@@ -80,7 +80,17 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1width(JN
 	sk_paint_set_stroke_width(_PTR(skia_paint), width);
 }
 
+JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1stroke_1width(JNIEnv *env, jclass this, jlong skia_paint)
+{
+	return sk_paint_get_stroke_width(_PTR(skia_paint));
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style(JNIEnv *env, jclass this, jlong skia_paint, jint style)
 {
 	sk_paint_set_style(_PTR(skia_paint), (sk_paint_style_t)style);
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1blendmode(JNIEnv *env, jclass this, jlong skia_paint, jint blendmode)
+{
+	sk_paint_set_blendmode(_PTR(skia_paint), (sk_blendmode_t)blendmode);
 }

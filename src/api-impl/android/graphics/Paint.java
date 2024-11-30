@@ -1,5 +1,7 @@
 package android.graphics;
 
+import java.util.Locale;
+
 public class Paint {
 	public static final int ANTI_ALIAS_FLAG           = (1 << 0);
 	public static final int FILTER_BITMAP_FLAG        = (1 << 1);
@@ -185,7 +187,9 @@ public class Paint {
 
 	public /*native*/ int getAlpha() { return 0; }
 	public /*native*/ void setAlpha(int a) {}
-	public /*native*/ float getStrokeWidth() { return 0; }
+	public float getStrokeWidth() {
+		return native_get_stroke_width(skia_paint);
+	}
 
 	public /*native*/ float getStrokeMiter() { return 0; }
 	public /*native*/ void setStrokeMiter(float miter) {}
@@ -202,7 +206,12 @@ public class Paint {
 
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
-	public Xfermode setXfermode(Xfermode xfermode) { return xfermode; }
+	public Xfermode setXfermode(Xfermode xfermode) {
+		if (xfermode instanceof PorterDuffXfermode) {
+			native_set_blendmode(skia_paint, ((PorterDuffXfermode)xfermode).mode.nativeInt);
+		}
+		return xfermode;
+	}
 
 	public void setLetterSpacing(float spacing) {}
 
@@ -290,6 +299,10 @@ public class Paint {
 
 	public Join getStrokeJoin() { return Join.MITER; }
 
+	public Locale getTextLocale() { return Locale.getDefault(); }
+
+	public float getLetterSpacing() { return 1.0f; }
+
 	private native long native_constructor();
 	private native void native_set_antialias(long skia_paint, boolean aa);
 	private native void native_set_color(long skia_paint, int color);
@@ -300,5 +313,7 @@ public class Paint {
 	private static native void native_set_text_size(long skia_font, float size);
 	private static native float native_measure_text(long skia_font, CharSequence text, int start, int end, long skia_paint);
 	private static native void native_set_stroke_width(long skia_font, float width);
+	private static native float native_get_stroke_width(long skia_font);
 	private static native void native_set_style(long skia_paint, int style);
+	private static native void native_set_blendmode(long skia_paint, int mode);
 }

@@ -223,6 +223,14 @@ JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1removeView
 JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChildren
   (JNIEnv *, jobject, jlong, jlong);
 
+/*
+ * Class:     android_view_ViewGroup
+ * Method:    native_drawChild
+ * Signature: (JJJ)V
+ */
+JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChild
+  (JNIEnv *, jobject, jlong, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

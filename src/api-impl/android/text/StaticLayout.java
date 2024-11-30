@@ -1,10 +1,6 @@
 package android.text;
 
-import android.graphics.Canvas;
-
 public class StaticLayout extends Layout {
-
-	private CharSequence text;
 
 	public StaticLayout(CharSequence source, int bufstart, int bufend,
 						TextPaint paint, int outerwidth,
@@ -12,11 +8,7 @@ public class StaticLayout extends Layout {
 						float spacingmult, float spacingadd,
 						boolean includepad,
 						TextUtils.TruncateAt ellipsize, int ellipsizedWidth, int maxLines) {
-		this.text = source;
-	}
-
-	public CharSequence getText() {
-		return text;
+		super(source, paint, outerwidth, align, spacingmult, spacingadd);
 	}
 
 	public int getWidth() {
@@ -29,5 +21,4 @@ public class StaticLayout extends Layout {
 
 	public float getLineLeft(int line) {return 0;}
 
-	public void draw(Canvas canvas) {}
 }

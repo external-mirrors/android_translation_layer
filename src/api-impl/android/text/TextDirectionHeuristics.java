@@ -15,4 +15,11 @@ public class TextDirectionHeuristics {
 			return true;
 		}
 	};
+
+	public static final TextDirectionHeuristic FIRSTSTRONG_LTR = new TextDirectionHeuristic() {
+		@Override
+		public boolean isRtl(CharSequence text, int start, int end) {
+			return false;
+		}
+	};
 }

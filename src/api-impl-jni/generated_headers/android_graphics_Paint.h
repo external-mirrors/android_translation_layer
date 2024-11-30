@@ -115,10 +115,26 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1width
 
 /*
  * Class:     android_graphics_Paint
+ * Method:    native_get_stroke_width
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1stroke_1width
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
  * Method:    native_set_style
  * Signature: (JI)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_set_blendmode
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1blendmode
   (JNIEnv *, jclass, jlong, jint);
 
 #ifdef __cplusplus

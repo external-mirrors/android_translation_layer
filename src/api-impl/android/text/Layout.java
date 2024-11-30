@@ -12,6 +12,14 @@ public class Layout {
 		ALIGN_RIGHT,
 	}
 
+	private CharSequence text;
+	private TextPaint paint;
+
+	protected Layout(CharSequence text, TextPaint paint, int width, Layout.Alignment align, float spacingMult, float spacingAdd) {
+		this.text = text;
+		this.paint = paint;
+	}
+
 	public int getLineCount() {return 1;}
 
 	public float getLineWidth(int line) {return 10;}
@@ -20,18 +28,20 @@ public class Layout {
 
 	public int getEllipsisCount(int line) {return 0;}
 
-	public CharSequence getText() {return "FIXME Layout.getText";}
+	public CharSequence getText() {return text;}
 
 	public int getWidth() {return 10;}
 
 	public int getHeight() {return 10;}
 
-	public void draw(Canvas canvas) {}
+	public void draw(Canvas canvas) {
+		canvas.drawText(text.toString(), 0, 0, paint);
+	}
 
 	public int getParagraphDirection(int line) {return 0;}
 
 	public static float getDesiredWidth(CharSequence source, int start, int end, TextPaint paint) {
-		return 10;
+		return 400;
 	}
 
 	public int getLineEnd(int line) {return 100;}
@@ -59,4 +69,10 @@ public class Layout {
 	public int getLineForVertical(int y) {return 0;}
 
 	public int getOffsetForHorizontal(int line, float x) {return 0;}
+
+	public float getPrimaryHorizontal(int line) {return 0;}
+
+	public int getLineForOffset(int offset) {return 0;}
+
+	public int getLineTop(int line) {return 0;}
 }

@@ -246,3 +246,10 @@ JNIEXPORT jboolean JNICALL Java_android_graphics_Matrix_native_1preRotate__JFFF(
 	graphene_matrix_translate(matrix, &GRAPHENE_POINT3D_INIT(px, py, 0));
 	return true;
 }
+
+JNIEXPORT jboolean JNICALL Java_android_graphics_Matrix_native_1equals(JNIEnv *env, jclass class, jlong matrix1_ptr, jlong matrix2_ptr)
+{
+	graphene_matrix_t *matrix1 = (graphene_matrix_t *)_PTR(matrix1_ptr);
+	graphene_matrix_t *matrix2 = (graphene_matrix_t *)_PTR(matrix2_ptr);
+	return graphene_matrix_equal(matrix1, matrix2);
+}

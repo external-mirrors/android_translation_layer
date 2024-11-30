@@ -119,3 +119,21 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *
 	gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(-x, -y));
 	g_object_unref(layout);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloat rx, jfloat ry, jint color, jfloat width)
+{
+	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
+	GdkRGBA gdk_color[4];
+	for (int i = 0; i < 4; i++) {
+		gdk_color[i].red = (float)((color >> 16) & 0xff) / 0xff;
+		gdk_color[i].green = (float)((color >> 8)  & 0xff) / 0xff;
+		gdk_color[i].blue = (float)((color >> 0)  & 0xff) / 0xff;
+		gdk_color[i].alpha = (float)((color >> 24) & 0xff) / 0xff;
+	}
+	GskRoundedRect round_rect = {
+		.bounds = GRAPHENE_RECT_INIT(left, top, right - left, bottom - top),
+		.corner = {{rx, ry}, {rx, ry}, {rx, ry}, {rx, ry}},
+	};
+	const float widths[4] = {width, width, width, width};
+	gtk_snapshot_append_border(snapshot, &round_rect, widths, gdk_color);
+}

@@ -81,6 +81,14 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText
   (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jlong);
 
+/*
+ * Class:     android_graphics_GskCanvas
+ * Method:    native_drawRoundRect
+ * Signature: (JFFFFFFIF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jint, jfloat);
+
 #ifdef __cplusplus
 }
 #endif

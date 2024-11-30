@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Layout;
@@ -281,7 +282,7 @@ public class TextView extends View {
 	}
 
 	public Layout getLayout() {
-		return new Layout();
+		return new BoringLayout(getText(), getPaint(), getWidth(), Layout.Alignment.ALIGN_NORMAL, 1, 0, new BoringLayout.Metrics(), false);
 	}
 
 	public int getCurrentTextColor() {return 0;}

@@ -5,6 +5,7 @@ import android.animation.LayoutTransition;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.GskCanvas;
 import android.util.AttributeSet;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -147,6 +148,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	protected native void native_removeView(long widget, long child);
 	@Override
 	protected native void native_drawChildren(long widget, long snapshot);
+	protected native void native_drawChild(long widget, long child, long snapshot);
 	@Override
 	protected void native_drawContent(long widget, long snapshot) {}
 
@@ -392,6 +394,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public boolean drawChild(Canvas canvas, View child, long drawingTime) {
+		if (canvas instanceof GskCanvas)
+			native_drawChild(widget, child.widget, ((GskCanvas)canvas).snapshot);
 		return false;
 	}
 

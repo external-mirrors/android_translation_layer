@@ -488,7 +488,7 @@ public class Canvas {
 
 	public boolean getClipBounds(Rect outRect) {
 		outRect.set(0, 0, 100, 100);
-		return false;
+		return true;
 	}
 
 	private static native long native_canvas_from_bitmap(long pixbuf);
