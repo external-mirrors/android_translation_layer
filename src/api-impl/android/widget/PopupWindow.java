@@ -58,6 +58,7 @@ public class PopupWindow {
 
 	public void setContentView(View view) {
 		contentView = view;
+		contentView.attachToWindowInternal();
 		native_setContentView(popover, view.widget);
 	}
 

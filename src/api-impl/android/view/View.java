@@ -997,12 +997,16 @@ public class View implements Drawable.Callback {
 		if (canvas instanceof GskCanvas)
 			native_drawContent(widget, ((GskCanvas)canvas).snapshot);
 	}
+
+	protected void dispatchDraw(Canvas canvas) {
+		if (canvas instanceof GskCanvas)
+			native_drawChildren(widget, ((GskCanvas)canvas).snapshot);
+	}
 	public void draw(Canvas canvas) {
 		if (canvas instanceof GskCanvas)
 			native_drawBackground(widget, ((GskCanvas)canvas).snapshot);
 		onDraw(canvas);
-		if (canvas instanceof GskCanvas)
-			native_drawChildren(widget, ((GskCanvas)canvas).snapshot);
+		dispatchDraw(canvas);
 	}
 
 	public View(Context context) {
@@ -1429,6 +1433,8 @@ public class View implements Drawable.Callback {
 		boolean changed = oldWidth != width || oldHeight != height;
 		if (changed)
 			onSizeChanged(width, height, oldWidth, oldHeight);
+		bottom = top + height;
+		right = left + width;
 		onLayout(changed, 0, 0, width, height);
 		oldWidth = width;
 		oldHeight = height;
@@ -1840,6 +1846,9 @@ public class View implements Drawable.Callback {
 	}
 	protected void onDetachedFromWindow() {
 		attachedToWindow = false;
+	}
+	public void attachToWindowInternal() {
+		onAttachedToWindow();
 	}
 
 	public void setLayerType(int layerType, Paint paint) {}

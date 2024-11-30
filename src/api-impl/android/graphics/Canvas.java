@@ -466,6 +466,10 @@ public class Canvas {
 
 	public void drawColor(int color, PorterDuff.Mode mode) {}
 
+	public boolean clipRect(Rect rect) {
+		return false;
+	}
+
 	private static native long native_canvas_from_bitmap(long pixbuf);
 
 	private static native void native_save(long skia_canvas, long widget);

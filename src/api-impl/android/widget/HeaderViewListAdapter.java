@@ -228,4 +228,40 @@ public class HeaderViewListAdapter implements ListAdapter, Filterable {
 	public ListAdapter getWrappedAdapter() {
 		return mAdapter;
 	}
+
+	public Filter getFilter() {
+		if (mAdapter instanceof Filterable) {
+			return ((Filterable) mAdapter).getFilter();
+		}
+		return null;
+	}
+
+	public boolean isEnabled(int position) {
+		// Header (negative positions will throw an IndexOutOfBoundsException)
+		int numHeaders = getHeadersCount();
+		if (position < numHeaders) {
+			return mHeaderViewInfos.get(position).isSelectable;
+		}
+
+		// Adapter
+		final int adjPosition = position - numHeaders;
+		int adapterCount = 0;
+		if (mAdapter != null) {
+			adapterCount = mAdapter.getCount();
+			if (adjPosition < adapterCount) {
+				return mAdapter.isEnabled(adjPosition);
+			}
+		}
+
+		// Footer (off-limits positions will throw an IndexOutOfBoundsException)
+		return mFooterViewInfos.get(adjPosition - adapterCount).isSelectable;
+	}
+
+    public boolean areAllItemsEnabled() {
+        if (mAdapter != null) {
+            return mAreAllFixedViewsSelectable && mAdapter.areAllItemsEnabled();
+        } else {
+            return true;
+        }
+    }
 }

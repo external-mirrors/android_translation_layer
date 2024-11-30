@@ -8,6 +8,37 @@
 
 #include "../generated_headers/android_widget_Spinner.h"
 
+static void range_list_model_init(RangeListModel *list_model) {}
+static void range_list_model_class_init(RangeListModelClass *class) {}
+
+static guint range_list_model_get_n_items(GListModel *list_model)
+{
+	return (RANGE_LIST_MODEL(list_model))->n_items;
+}
+
+static gpointer range_list_model_get_item(GListModel *list_model, guint index)
+{
+	if (index >= RANGE_LIST_MODEL(list_model)->n_items)
+		return NULL;
+	RangeListItem *item = g_object_new(range_list_item_get_type(), NULL);
+	item->model = RANGE_LIST_MODEL(list_model);
+	return item;
+}
+
+static void range_list_model_model_init(GListModelInterface *iface)
+{
+	iface->get_n_items = range_list_model_get_n_items;
+	iface->get_item_type = (GType (*)(GListModel *))range_list_item_get_type;
+	iface->get_item = range_list_model_get_item;
+}
+
+G_DEFINE_TYPE_WITH_CODE(RangeListModel, range_list_model, G_TYPE_OBJECT,
+		G_IMPLEMENT_INTERFACE(G_TYPE_LIST_MODEL, range_list_model_model_init))
+
+static void range_list_item_class_init(RangeListItemClass *cls){}
+static void range_list_item_init(RangeListItem *self){}
+G_DEFINE_TYPE(RangeListItem, range_list_item, G_TYPE_OBJECT)
+
 static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item)
 {
 	JNIEnv *env = get_jni_env();
