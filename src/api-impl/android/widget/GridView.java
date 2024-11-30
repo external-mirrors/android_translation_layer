@@ -1,10 +1,7 @@
 package android.widget;
 
-import java.util.ArrayList;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.view.View;
 
 public class GridView extends AbsListView {
 	public GridView(Context context) {
@@ -20,13 +17,32 @@ public class GridView extends AbsListView {
 	}
 
 	@Override
-	public View getSelectedView() {
+	void fillGap(boolean down) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'getSelectedView'");
+		throw new UnsupportedOperationException("Unimplemented method 'fillGap'");
+	}
+
+	@Override
+	int findMotionRow(int y) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'findMotionRow'");
+	}
+
+	@Override
+	void setSelectionInt(int position) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'setSelectionInt'");
+	}
+
+	@Override
+	public ListAdapter getAdapter() {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'getAdapter'");
 	}
 
 	@Override
 	public void setSelection(int position) {
-		setSelection(position, false);
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'setSelection'");
 	}
 }
