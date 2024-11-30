@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TelephonyManager {
+	public static TelephonyManager getDefault() {
+		return new TelephonyManager();
+	}
+
 	// FIXME: can we return null instead of ""?
 	public String getNetworkOperator() {
 		return "";
@@ -14,6 +18,10 @@ public class TelephonyManager {
 	}
 
 	public String getSimOperator() {
+		return "";
+	}
+
+	public String getSubscriberId() {
 		return "";
 	}
 

@@ -2,11 +2,10 @@ package android.os;
 public final class Debug {
 	public static class MemoryInfo {
 	}
-	/**
-	 * Wait until a debugger attaches.  As soon as the debugger attaches,
-	 * this returns, so you will need to place a breakpoint after the
-	 * waitForDebugger() call if you want to start tracing immediately.
-	 */
+
+	public static void waitForDebugger() {
+	}
+
 	public static class InstructionCount {
 		public InstructionCount() {
 		}

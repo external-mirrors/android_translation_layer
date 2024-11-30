@@ -18,6 +18,8 @@ package android.view;
 
 import android.graphics.Rect;
 import android.graphics.Region;
+import android.os.Handler;
+import android.os.Looper;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -494,9 +496,16 @@ public final class ViewTreeObserver {
 		}
 
 		mOnGlobalLayoutListeners.add(listener);
+
 		// hack: many Applications wait for the global layout before doing anything
 		// so we dispatch the event immediately
-		listener.onGlobalLayout();
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
+			@Override
+			public void run() {
+				listener.onGlobalLayout();
+			}
+		});
+
 	}
 
 	/**

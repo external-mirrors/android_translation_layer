@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Slog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,11 @@ import java.util.List;
 import java.util.Map;
 
 public class Activity extends ContextThemeWrapper implements Window.Callback {
+	private final static String TAG = "Activity";
+
+	public static final int RESULT_CANCELED = 0;
+	public static final int RESULT_OK = -1;
+
 	LayoutInflater layout_inflater;
 	Window window = new Window(this, this);
 	int requested_orientation = -1 /*ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED*/; // dummy
@@ -57,6 +63,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		if (className == null) {
 			for (PackageParser.Activity activity: pkg.activities) {
 				for (PackageParser.IntentInfo intent: activity.intents) {
+					Slog.i(TAG, intent.toString());
 					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER")) ||
 						(uri != null && intent.hasDataScheme(uri.getScheme()))) {
 						className = activity.className;
@@ -149,7 +156,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public final void setVolumeControlStream(int streamType) {}
 
 	protected void onCreate(Bundle savedInstanceState) {
-		System.out.println("- onCreate - yay!");
+		Slog.i(TAG, "- onCreate - yay!");
 		new ViewGroup(this).setId(R.id.content);
 
 		for (Fragment fragment : fragments) {
@@ -160,12 +167,12 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected void onPostCreate(Bundle savedInstanceState) {
-		System.out.println("- onPostCreate - yay!");
+		Slog.i(TAG, "- onPostCreate - yay!");
 		return;
 	}
 
 	protected void onStart() {
-		System.out.println("- onStart - yay!");
+		Slog.i(TAG, "- onStart - yay!");
 		if (window.contentView != null)
 			window.setContentView(window.contentView);
 		window.setTitle(title);
@@ -184,13 +191,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected void onRestart() {
-		System.out.println("- onRestart - yay!");
+		Slog.i(TAG, "- onRestart - yay!");
 
 		return;
 	}
 
 	protected void onResume() {
-		System.out.println("- onResume - yay!");
+		Slog.i(TAG, "- onResume - yay!");
 
 		for (Fragment fragment : fragments) {
 			fragment.onResume();
@@ -201,12 +208,12 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected void onPostResume() {
-		System.out.println("- onPostResume - yay!");
+		Slog.i(TAG, "- onPostResume - yay!");
 		return;
 	}
 
 	protected void onPause() {
-		System.out.println("- onPause - yay!");
+		Slog.i(TAG, "- onPause - yay!");
 
 		for (Fragment fragment : fragments) {
 			fragment.onPause();
@@ -217,7 +224,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected void onStop() {
-		System.out.println("- onStop - yay!");
+		Slog.i(TAG, "- onStop - yay!");
 
 		for (Fragment fragment : fragments) {
 			fragment.onStop();
@@ -227,7 +234,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected void onDestroy() {
-		System.out.println("- onDestroy - yay!");
+		Slog.i(TAG, "- onDestroy - yay!");
 
 		for (Fragment fragment : fragments) {
 			fragment.onDestroy();
@@ -238,7 +245,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	public void onWindowFocusChanged(boolean hasFocus) {
-		System.out.println("- onWindowFocusChanged - yay! (hasFocus: " + hasFocus + ")");
+		Slog.i(TAG, "- onWindowFocusChanged - yay! (hasFocus: " + hasFocus + ")");
 
 		return;
 	}
@@ -255,12 +262,12 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	/* --- */
 
 	public void setContentView(int layoutResID) throws Exception {
-		System.out.println("- setContentView - yay!");
+		Slog.i(TAG, "- setContentView - yay!");
 
 		root_view = layout_inflater.inflate(layoutResID, null, false);
 
 		System.out.println("~~~~~~~~~~~");
-		System.out.println(root_view);
+		System.out.println(root_view.toString());
 		System.out.printf("%x\n", root_view.id);
 		System.out.println("~~~~~~~~~~~");
 
@@ -277,17 +284,17 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	public <T extends android.view.View> T findViewById(int id) {
-		System.out.printf("- findViewById - asked for view with id: %x\n", id);
+		System.out.printf(TAG, "- findViewById - asked for view with id: %x\n", id);
 		View view = null;
 		if (window.contentView != null)
 			view = window.contentView.findViewById(id);
-		System.out.println("- findViewById - found this: " + view);
+		Slog.i(TAG, "- findViewById - found this: " + view);
 
 		return (T)view;
 	}
 
 	public void invalidateOptionsMenu() {
-		System.out.println("invalidateOptionsMenu() called, should we do something?");
+		Slog.i(TAG, "invalidateOptionsMenu() called, should we do something?");
 	}
 
 	public Window getWindow() {
@@ -317,7 +324,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	public void startActivityForResult(Intent intent, int requestCode, Bundle options) {
-		System.out.println("startActivityForResult(" + intent + ", " + requestCode + ") called");
+		Slog.i(TAG, "startActivityForResult(" + intent + ", " + requestCode + "," + options + ") called");
 		if (intent.getComponent() != null) {
 			try {
 				Class<? extends Activity> cls = Class.forName(intent.getComponent().getClassName()).asSubclass(Activity.class);
@@ -338,9 +345,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 			}
 		} else if (FILE_CHOOSER_ACTIONS.contains(intent.getAction())) {
 			nativeFileChooser(FILE_CHOOSER_ACTIONS.indexOf(intent.getAction()), intent.getType(), intent.getStringExtra("android.intent.extra.TITLE"), requestCode);
-		}
-		else {
-			System.out.println("startActivityForResult: intent was not handled. Calling onActivityResult(RESULT_CANCELED).");
+		} else {
+			Slog.i(TAG, "startActivityForResult: intent was not handled. Calling onActivityResult(RESULT_CANCELED).");
 			onActivityResult(requestCode, 0 /*RESULT_CANCELED*/, new Intent());
 		}
 	}
@@ -359,18 +365,18 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	protected Dialog onCreateDialog(int id) {
-		System.out.println("Activity.onCreateDialog(" + id + ") called");
+		Slog.i(TAG, "Activity.onCreateDialog(" + id + ") called");
 		return null;
 	}
 
 	protected void onPrepareDialog(int id, Dialog dialog) {
-		System.out.println("Activity.onPrepareDialog(" + id + ") called");
+		Slog.i(TAG, "Activity.onPrepareDialog(" + id + ") called");
 	}
 
 	private Map<Integer, Dialog> dialogs = new HashMap<Integer, Dialog>();
 
 	public final void showDialog(int id) {
-		System.out.println("Activity.showDialog(" + id + ") called");
+		Slog.i(TAG, "Activity.showDialog(" + id + ") called");
 		Dialog dialog = dialogs.get(id);
 		if (dialog == null)
 			dialogs.put(id, dialog = onCreateDialog(id));
@@ -416,7 +422,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 
 	@Override
 	public void onContentChanged() {
-		System.out.println("- onContentChanged - yay!");
+		Slog.i(TAG, "- onContentChanged - yay!");
 	}
 
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -502,7 +508,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 
 	@Override
 	public boolean onMenuOpened(int featureId, Menu menu) {
-		System.out.println("onMenuOpened(" + featureId + ", " + menu + ") called");
+		Slog.i(TAG, "onMenuOpened(" + featureId + ", " + menu + ") called");
 		return false;
 	}
 
@@ -513,11 +519,11 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 			Constructor<? extends Activity> constructor = cls.getConstructor();
 			Activity activity = constructor.newInstance();
 			activity.getWindow().native_window = getWindow().native_window;
-			System.out.println("activity.getWindow().native_window >"+activity.getWindow().native_window+"<");
+			Slog.i(TAG, "activity.getWindow().native_window >"+activity.getWindow().native_window+"<");
 			nativeFinish(0);
 			nativeStartActivity(activity);
 		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.out.println("exception in Activity.recreate, this is kinda sus");
+			Slog.i(TAG, "exception in Activity.recreate, this is kinda sus");
 			e.printStackTrace();
 		}
 	}

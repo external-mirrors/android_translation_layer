@@ -21,6 +21,7 @@ import android.os.Parcelable;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.util.AttributeSet;
+import android.util.FloatProperty;
 import android.util.LayoutDirection;
 import android.util.Property;
 import android.util.Slog;
@@ -580,6 +581,28 @@ public class View implements Drawable.Callback {
 
 	public static final int TEXT_DIRECTION_RTL = 4; // 0x4
 
+	public static final Property<View, Float> SCALE_X = new FloatProperty<View>("scaleX") {
+		@Override
+		public void setValue(View object, float value) {
+			object.setScaleX(value);
+		}
+		@Override
+		public Float get(View object) {
+			return object.getScaleX();
+		}
+	};
+
+	public static final Property<View, Float> SCALE_Y = new FloatProperty<View>("scaleY") {
+		@Override
+		public void setValue(View object, float value) {
+			object.setScaleY(value);
+		}
+		@Override
+		public Float get(View object) {
+			return object.getScaleY();
+		}
+	};
+
 	// --- end of constants from android source
 
 	// --- interfaces from android source
@@ -613,8 +636,7 @@ public class View implements Drawable.Callback {
 	}
 
 	public static interface OnKeyListener {
-		// TODO
-		//		boolean onKey(View v, int keyCode, KeyEvent event);
+		boolean onKey(View v, int keyCode, KeyEvent event);
 	}
 
 	public interface OnLongClickListener {
@@ -1580,6 +1602,16 @@ public class View implements Drawable.Callback {
 			native_queueAllocate(widget);
 	}
 
+	public void setX(float x) {
+		setTranslationX(x - left);
+	}
+
+
+	public void setY(float y) {
+		setTranslationY(y - top);
+	}
+
+
 	public void setAlpha(float alpha) {
 		native_setVisibility(widget, visibility, alpha);
 		this.alpha = alpha;
@@ -1720,6 +1752,9 @@ public class View implements Drawable.Callback {
 	}
 
 	public void setHorizontalScrollBarEnabled(boolean enabled) {}
+
+	public void setVerticalScrollBarEnabled(boolean enabled) {}
+
 
 	public void postInvalidateOnAnimation() {
 		postInvalidate();

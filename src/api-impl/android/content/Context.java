@@ -358,6 +358,10 @@ public class Context extends Object {
 		return getCacheDir();
 	}
 
+	public File[] getExternalCacheDirs() {
+		return new File[] {getCacheDir()};
+	}
+
 	public File getNoBackupFilesDir() {
 		if (nobackup_dir == null) {
 			nobackup_dir = new File(getDataDirFile(), "no_backup/" + getPackageName());

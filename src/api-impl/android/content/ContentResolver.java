@@ -3,13 +3,17 @@ package android.content;
 import java.io.File;
 import java.io.FileNotFoundException;
 
+import android.accounts.Account;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
 
 public class ContentResolver {
+	public static final String SYNC_EXTRAS_IGNORE_SETTINGS = "ignore_settings";
+
 	public final void registerContentObserver(Uri uri, boolean notifyForDescendants, ContentObserver observer) {
 	}
 	public final void unregisterContentObserver(ContentObserver observer) {
@@ -76,5 +80,18 @@ public class ContentResolver {
 			return provider.update(uri, values, selection, selectionArgs);
 		else
 			return 0;
+	}
+
+	public static void requestSync(Account account, String authority, Bundle extras) {
+	}
+
+	public static void cancelSync(Account account, String authority) {
+	}
+
+	public static void setMasterSyncAutomatically(boolean sync) {
+	}
+
+	public static boolean isSyncActive(Account account, String authority) {
+		return false;
 	}
 }

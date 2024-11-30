@@ -159,7 +159,6 @@ void activity_start(JNIEnv *env, jobject activity_object)
 	activity_backlog = g_list_prepend(activity_backlog, _REF(activity_object));
 
 	activity_update_current(env);
-
 }
 
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeFinish(JNIEnv *env, jobject this, jlong window)

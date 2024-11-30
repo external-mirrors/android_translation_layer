@@ -9,6 +9,10 @@ extern "C" {
 #endif
 #undef android_app_Activity_MODE_PRIVATE
 #define android_app_Activity_MODE_PRIVATE 0L
+#undef android_app_Activity_RESULT_CANCELED
+#define android_app_Activity_RESULT_CANCELED 0L
+#undef android_app_Activity_RESULT_OK
+#define android_app_Activity_RESULT_OK -1L
 /*
  * Class:     android_app_Activity
  * Method:    nativeFinish

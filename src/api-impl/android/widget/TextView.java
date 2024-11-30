@@ -220,7 +220,7 @@ public class TextView extends View {
 	public void setAllCaps(boolean allCaps) {
 		String[] classesToRemove = {"ATL-text-uppercase"};
 		native_removeClasses(widget, classesToRemove);
-		
+
 		if(allCaps){
 			native_addClass(widget, "ATL-text-uppercase");
 		}
@@ -351,4 +351,8 @@ public class TextView extends View {
 	public int getPaintFlags() {return 0;}
 
 	public void setPaintFlags(int flags) {}
+
+	public int getLineHeight() {
+		return 10; // FIXME
+	}
 }

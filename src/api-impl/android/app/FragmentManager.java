@@ -7,7 +7,7 @@ public class FragmentManager {
 	public FragmentManager(Activity activity) {
 		this.activity = activity;
 	}
-	
+
 	public Fragment findFragmentByTag(String tag) {
 		return null;
 	}

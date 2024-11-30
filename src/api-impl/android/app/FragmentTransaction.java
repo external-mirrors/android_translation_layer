@@ -7,7 +7,7 @@ public class FragmentTransaction {
 	public FragmentTransaction(Activity activity) {
 		this.activity = activity;
 	}
-	
+
 	public FragmentTransaction add(Fragment fragment, String string) {
 		fragment.activity = activity;
 		activity.fragments.add(fragment);

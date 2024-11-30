@@ -400,6 +400,7 @@ hax_jar = jar('hax', [
               	'android/util/DecompiledXmlResourceParser.java',
               	'android/util/DisplayMetrics.java',
               	'android/util/FloatMath.java',
+              	'android/util/FloatProperty.java',
               	'android/util/JsonReader.java',
               	'android/util/JsonScope.java',
               	'android/util/JsonToken.java',
@@ -516,6 +517,7 @@ hax_jar = jar('hax', [
               	'android/widget/FilterQueryProvider.java',
               	'android/widget/FrameLayout.java',
               	'android/widget/Gallery.java',
+              	'android/widget/GridView.java',
               	'android/widget/HeaderViewListAdapter.java',
               	'android/widget/HorizontalScrollView.java',
               	'android/widget/ImageButton.java',
@@ -588,5 +590,6 @@ hax_jar = jar('hax', [
               	'-bootclasspath', bootclasspath,
               	'-source', '1.8', '-target', '1.8',
               	'-encoding', 'UTF-8',
+              	'-Xlint:-deprecation', # we implement deprecated APIs
               	'-h', join_paths(dir_base, 'src/api-impl-jni/generated_headers')
               ])
