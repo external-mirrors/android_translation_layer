@@ -2086,4 +2086,6 @@ public class View implements Drawable.Callback {
 	public boolean requestRectangleOnScreen(Rect rectangle, boolean immediate) {return false;}
 
 	public boolean requestRectangleOnScreen(Rect rectangle) {return false;}
+
+	public boolean dispatchKeyEvent(KeyEvent event) {return false;}
 }

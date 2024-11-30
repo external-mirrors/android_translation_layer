@@ -142,6 +142,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.view.getId = _METHOD(handle_cache.view.class, "getId", "()I");
 	handle_cache.view.getIdName = _METHOD(handle_cache.view.class, "getIdName", "()Ljava/lang/String;");
 	handle_cache.view.getAllSuperClasses = _METHOD(handle_cache.view.class, "getAllSuperClasses", "()Ljava/lang/String;");
+	handle_cache.view.dispatchKeyEvent = _METHOD(handle_cache.view.class, "dispatchKeyEvent", "(Landroid/view/KeyEvent;)Z");
 
 	handle_cache.asset_manager.class = _REF((*env)->FindClass(env, "android/content/res/AssetManager"));
 	handle_cache.asset_manager.extractFromAPK = _STATIC_METHOD(handle_cache.asset_manager.class, "extractFromAPK", "(Ljava/lang/String;Ljava/lang/String;)V");

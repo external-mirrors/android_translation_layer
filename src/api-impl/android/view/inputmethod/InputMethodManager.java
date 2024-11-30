@@ -20,4 +20,8 @@ public class InputMethodManager {
 		return Collections.emptyList();
 	}
 
+	public void restartInput(View view) {}
+
+	public void updateSelection(View view, int selStart, int selEnd, int candidatesStart, int candidatesEnd) {}
+
 }

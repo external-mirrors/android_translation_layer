@@ -1737,6 +1737,8 @@ public class KeyEvent extends InputEvent {
 	private long mEventTime;
 	private String mCharacters;
 
+	int unicodeValue;  // set from native code using gdk_keyval_to_unicode
+
 	public interface Callback {
 		/**
 		 * Called when a key down event has occurred.  If you return true,
@@ -2984,7 +2986,8 @@ public class KeyEvent extends InputEvent {
 	 * @return The associated character or combining accent, or 0 if none.
 	 */
 	public int getUnicodeChar(int metaState) {
-		return getKeyCharacterMap().get(mKeyCode, metaState);
+		// return getKeyCharacterMap().get(mKeyCode, metaState);
+		return unicodeValue;
 	}
 
 	/**
