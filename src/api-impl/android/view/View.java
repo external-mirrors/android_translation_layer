@@ -1128,8 +1128,10 @@ public class View implements Drawable.Callback {
 		return requestFocus(direction, null);
 	}
 	public boolean requestFocus(int direction, Rect previouslyFocusedRect) {
+		nativeRequestFocus(widget, direction);
 		return true;
 	}
+	private native void nativeRequestFocus(long widget, int direction);
 
 	private native void nativeSetFullscreen(long widget, boolean fullscreen);
 
@@ -1596,7 +1598,10 @@ public class View implements Drawable.Callback {
 	public boolean isLayoutRequested() {return layoutRequested;}
 	public int getBaseline() {return -1;}
 	public boolean hasFocusable() {return false;}
-	public boolean isFocused() {return false;}
+	private static native boolean nativeIsFocused(long widget);
+	public boolean isFocused() {
+		return nativeIsFocused(widget);
+	}
 
 	public void clearAnimation() {}
 

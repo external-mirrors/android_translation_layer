@@ -666,3 +666,18 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1removeClasses(JNIEnv *env,
 		(*env)->ReleaseStringUTFChars(env, class_name_jstr, class_name);
 	}
 }
+
+JNIEXPORT void JNICALL Java_android_view_View_nativeRequestFocus(JNIEnv *env, jobject this, jlong widget_ptr, jint direction) {
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	GtkWidget *wrapper = gtk_widget_get_parent(widget);
+	if (gtk_widget_get_focusable(widget))
+		gtk_widget_grab_focus(widget);
+	else
+		gtk_widget_grab_focus(wrapper);
+}
+
+JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsFocused(JNIEnv *env, jobject this, jlong widget_ptr) {
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	GtkWidget *wrapper = gtk_widget_get_parent(widget);
+	return gtk_widget_has_focus(widget) || gtk_widget_has_focus(wrapper);
+}

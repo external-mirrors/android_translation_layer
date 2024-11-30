@@ -345,6 +345,14 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1drawContent
 
 /*
  * Class:     android_view_View
+ * Method:    nativeRequestFocus
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_nativeRequestFocus
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     android_view_View
  * Method:    nativeSetFullscreen
  * Signature: (JZ)V
  */
@@ -390,6 +398,14 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setPadding
  */
 JNIEXPORT void JNICALL Java_android_view_View_nativeSetOnLongClickListener
   (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_view_View
+ * Method:    nativeIsFocused
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsFocused
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     android_view_View
