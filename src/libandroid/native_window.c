@@ -489,7 +489,7 @@ void (* bionic_eglGetProcAddress(char const *procname))(void)
 	return eglGetProcAddress(procname);
 }
 
-EGLDisplay bionic_eglGetDisplay(NativeDisplayType native_display)
+EGLDisplay bionic_eglGetDisplay(EGLNativeDisplayType native_display)
 {
 	/*
 	 * On android, at least SDL passes 0 (EGL_DISPLAY_DEFAULT) to eglGetDisplay and uses the resulting display.
@@ -524,14 +524,31 @@ EGLBoolean bionic_eglChooseConfig(EGLDisplay display, EGLint *attrib_list, EGLCo
 		/* X11 supports pbuffers just fine */
 		return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
 	} else {
+		bool has_pbuffer_bit = false;
+		int attrib_list_size = 0;
 		for(EGLint *attr = attrib_list; *attr != EGL_NONE; attr+=2) {
-			if(*attr == EGL_SURFACE_TYPE && *(attr + 1) != EGL_DONT_CARE) {
-				*(attr + 1) &= ~EGL_PBUFFER_BIT;
-				*(attr + 1) |= EGL_WINDOW_BIT;
+			if(*attr == EGL_SURFACE_TYPE && (*(attr + 1) & EGL_PBUFFER_BIT) && *(attr + 1) != EGL_DONT_CARE) {
+				has_pbuffer_bit = true;
 			}
+			attrib_list_size += 2;
 		}
-
-		return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
+		attrib_list_size += 1; // for EGL_NONE
+		if(has_pbuffer_bit) {
+			/* copy the list in case it's mapped read-only */
+			EGLint *new_attrib_list = malloc(sizeof(EGLint) * attrib_list_size);
+			memcpy(new_attrib_list, attrib_list, sizeof(EGLint) * attrib_list_size);
+			for(EGLint *attr = new_attrib_list; *attr != EGL_NONE; attr+=2) {
+				if(*attr == EGL_SURFACE_TYPE && *(attr + 1) != EGL_DONT_CARE) {
+					*(attr + 1) &= ~EGL_PBUFFER_BIT;
+					*(attr + 1) |= EGL_WINDOW_BIT;
+				}
+			}
+			EGLBoolean ret = eglChooseConfig(display, new_attrib_list, configs, config_size, num_config);
+			free(new_attrib_list);
+			return ret;
+		} else {
+			return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
+		}
 	}
 }
 
