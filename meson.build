@@ -24,14 +24,16 @@ libandroidfw_dep = [
 	cc.find_library('androidfw', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ]),
 ]
 if fs.is_file('/usr' / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath = '/usr' / get_option('libdir') / 'java/core-all_classes.jar'
+  bootclasspath_dir = '/usr' / get_option('libdir') / 'java'
 elif fs.is_file('/usr/local' / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath = '/usr/local' / get_option('libdir') / 'java/core-all_classes.jar'
+  bootclasspath_dir = '/usr/local' / get_option('libdir') / 'java'
 elif fs.is_file(get_option('prefix') / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath = get_option('prefix') / get_option('libdir') / 'java/core-all_classes.jar'
+  bootclasspath_dir = get_option('prefix') / get_option('libdir') / 'java'
 else
   error('bootclasspath "core-all_classes.jar" not found')
 endif
+
+bootclasspath = bootclasspath_dir / 'core-all_classes.jar' + ':' + bootclasspath_dir / 'core-junit_classes.jar' + ':' + bootclasspath_dir / 'junit-runner_classes.jar'
 
 marshal_files = gnome.genmarshal('marshal',
 	sources: 'src/api-impl-jni/widgets/marshal.list',
@@ -193,6 +195,14 @@ custom_target('api-impl.jar', build_by_default: true, input: [hax_jar], output: 
               install: true,
               install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
               command: ['dx', '--dex', '--output='+join_paths(builddir_base, 'api-impl.jar'), hax_jar.full_path()])
+
+# test-runner.jar
+subdir('src/test-runner')
+
+custom_target('test_runner.jar', build_by_default: true, input: [test_runner_jar], output: ['test_runner.jar'],
+              install: true,
+              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
+              command: ['dx', '--dex', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
 
 #framework-res.apk
 subdir('res')

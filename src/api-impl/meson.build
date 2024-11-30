@@ -35,6 +35,7 @@ hax_jar = jar('hax', [
               	'android/app/Fragment.java',
               	'android/app/FragmentManager.java',
               	'android/app/FragmentTransaction.java',
+              	'android/app/Instrumentation.java',
               	'android/app/IntentService.java',
               	'android/app/KeyguardManager.java',
               	'android/app/ListActivity.java',

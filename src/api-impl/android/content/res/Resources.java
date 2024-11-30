@@ -25,7 +25,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.Drawable.ConstantState;
 import android.os.Build;
 import android.os.Bundle;
-// import android.os.IBinder;
+import android.os.IBinder;
 import android.os.Trace;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -47,8 +47,6 @@ import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 class Movie {}
-
-class IBinder {}
 
 /**
  * Class for accessing an application's resources.  This sits on top of the
@@ -701,7 +699,10 @@ public class Resources {
 			}
 			getValue(id, value, true);
 		}
-		Drawable res = loadDrawable(value, id);
+		Drawable res = null;
+		try {
+			res = loadDrawable(value, id);
+		} catch (NotFoundException e) { e.printStackTrace(); }
 		synchronized (mAccessLock) {
 			if (mTmpValue == null) {
 				mTmpValue = value;

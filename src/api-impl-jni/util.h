@@ -115,6 +115,7 @@ struct handle_cache {
 	} drawable;
 	struct {
 		jclass class;
+		jmethodID constructor;
 		jmethodID putExtraCharSequence;
 	} intent;
 	struct {
@@ -122,6 +123,11 @@ struct handle_cache {
 		jmethodID internalGetAssetManager;
 		jmethodID internalLoadChanged;
 	} webview;
+	struct {
+		jclass class;
+		jmethodID onCreate;
+		jmethodID start;
+	} instrumentation;
 };
 
 extern struct handle_cache handle_cache;
