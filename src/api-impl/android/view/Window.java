@@ -37,6 +37,7 @@ public class Window {
 		this.context = context;
 		decorView = new FrameLayout(context);
 		decorView.setId(android.R.id.content);
+		decorView.onAttachedToWindow();
 	}
 
 	public void addFlags(int flags) {}
@@ -56,11 +57,6 @@ public class Window {
 		if (view != null) {
 			set_widget_as_root(native_window, decorView.widget);
 		}
-	}
-
-	public void attached() {
-		if (decorView != null)
-			decorView.onAttachedToWindow();
 	}
 
 	public View getDecorView() {

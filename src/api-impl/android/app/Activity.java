@@ -175,7 +175,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		if (window.contentView != null)
 			window.setContentView(window.contentView);
 		window.setTitle(title);
-		window.attached();
 
 		for (Fragment fragment : fragments) {
 			fragment.onStart();
