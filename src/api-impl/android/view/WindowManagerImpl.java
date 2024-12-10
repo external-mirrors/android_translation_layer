@@ -12,8 +12,7 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 
 	@Override
 	public void updateViewLayout(View view, android.view.ViewGroup.LayoutParams params) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'updateViewLayout'");
+		System.out.println("WindowManagerImpl.updateViewLayout(" + view + ", " + params + ") called");
 	}
 
 	@Override

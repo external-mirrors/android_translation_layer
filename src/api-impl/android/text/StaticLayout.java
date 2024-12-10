@@ -11,14 +11,38 @@ public class StaticLayout extends Layout {
 		super(source, paint, outerwidth, align, spacingmult, spacingadd);
 	}
 
-	public int getWidth() {
-		return 200;  // arbitrary value for stub method
-	}
+	public static class Builder {
+		private StaticLayout layout;
 
-	public int getHeight() {
-		return 50;  // arbitrary value for stub method
-	}
+		public static Builder obtain(CharSequence source, int bufstart, int bufend, TextPaint paint, int outerwidth) {
+			Builder builder = new Builder();
+			builder.layout = new StaticLayout(source, bufstart, bufend, paint, outerwidth, null, null, 0, 0, false, null, 0, 0);
+			return builder;
+		}
 
-	public float getLineLeft(int line) {return 0;}
+		public Builder setTextDirection(TextDirectionHeuristic textDir) {return this;}
+
+		public Builder setAlignment(Alignment align) {return this;}
+
+		public Builder setMaxLines(int maxLines) {return this;}
+
+		public Builder setEllipsize(TextUtils.TruncateAt ellipsize) {return this;}
+
+		public Builder setEllipsizedWidth(int ellipsizedWidth) {return this;}
+
+		public Builder setLineSpacing(float add, float mult) {return this;}
+
+		public Builder setIncludePad(boolean includepad) {return this;}
+
+		public Builder setBreakStrategy(int strategy) {return this;}
+
+		public Builder setHyphenationFrequency(int hyphenationFrequency) {return this;}
+
+		public Builder setIndents(int[] indents, int[] widths) {return this;}
+
+		public Builder setJustificationMode(int mode) {return this;}
+
+		public StaticLayout build() {return layout;}
+	}
 
 }

@@ -201,3 +201,10 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addPath__JJ(JNIEnv *en
 	sk_path_t *src = (sk_path_t *)_PTR(src_ptr);
 	sk_path_add_path(path, src, APPEND_SK_PATH_ADD_MODE);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addPath__JJFF(JNIEnv *env, jclass class, jlong path_ptr, jlong src_ptr, jfloat dx, jfloat dy)
+{
+	sk_path_t *path = (sk_path_t *)_PTR(path_ptr);
+	sk_path_t *src = (sk_path_t *)_PTR(src_ptr);
+	sk_path_add_path_offset(path, src, dx, dy, APPEND_SK_PATH_ADD_MODE);
+}

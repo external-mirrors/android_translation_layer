@@ -489,7 +489,11 @@ public final class Bitmap {
 		 * This configuration is very flexible and offers the best
 		 * quality. It should be used whenever possible.
 		 */
-		ARGB_8888(5);
+		ARGB_8888(5),
+
+		RGBA_F16(6),
+	
+		HARDWARE(7);
 
 		final int nativeInt;
 
@@ -602,9 +606,9 @@ public final class Bitmap {
 	 */
 	public Bitmap copy(Config config, boolean isMutable) {
 		checkRecycled("Can't copy a recycled bitmap");
-		Bitmap b = nativeCopy(mNativeBitmap, config.nativeInt, isMutable);
+		Bitmap b = new Bitmap(native_copy(pixbuf));
 		if (b != null) {
-			b.setAlphaAndPremultiplied(hasAlpha(), mIsPremultiplied);
+			// b.setAlphaAndPremultiplied(hasAlpha(), mIsPremultiplied);
 			b.mDensity = mDensity;
 		}
 		return b;
@@ -977,6 +981,10 @@ public final class Bitmap {
 	public static Bitmap createBitmap(DisplayMetrics display, int colors[],
 					  int width, int height, Config config) {
 		return createBitmap(display, colors, 0, width, width, height, config);
+	}
+
+	public static Bitmap createBitmap(DisplayMetrics display, int width, int height, Config config, boolean hasAlpha, ColorSpace colorSpace) {
+		return createBitmap(display, width, height, config, hasAlpha);
 	}
 
 	/**

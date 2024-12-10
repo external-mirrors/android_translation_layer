@@ -98,6 +98,8 @@ public class NotificationManager {
 		}
 	}
 
+	public void createNotificationChannel(NotificationChannel channel) {}
+
 	protected native long nativeInitBuilder();
 	protected native void nativeAddAction(long builder, String title, int intentType, String action, String className);
 	protected native void nativeShowNotification(long builder, int id, String title, String text, String iconPath, boolean ongoing, int intentType, String action, String className);

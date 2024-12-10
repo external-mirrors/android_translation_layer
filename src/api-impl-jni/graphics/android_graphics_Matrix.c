@@ -253,3 +253,17 @@ JNIEXPORT jboolean JNICALL Java_android_graphics_Matrix_native_1equals(JNIEnv *e
 	graphene_matrix_t *matrix2 = (graphene_matrix_t *)_PTR(matrix2_ptr);
 	return graphene_matrix_equal(matrix1, matrix2);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1setValues(JNIEnv *env, jclass class, jlong matrix_ptr, jfloatArray values_ref)
+{
+	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
+	jfloat *values = (*env)->GetFloatArrayElements(env, values_ref, NULL);
+	float values4x4[4][4] = {
+		{values[android_graphics_Matrix_MSCALE_X], values[android_graphics_Matrix_MSKEW_X], 0, values[android_graphics_Matrix_MTRANS_X]},
+		{values[android_graphics_Matrix_MSKEW_Y], values[android_graphics_Matrix_MSCALE_Y], 0, values[android_graphics_Matrix_MTRANS_Y]},
+		{0, 0, 1, 0},
+		{values[android_graphics_Matrix_MPERSP_0], values[android_graphics_Matrix_MPERSP_1], 0, values[android_graphics_Matrix_MPERSP_2]},
+	};
+	graphene_matrix_init_from_float(matrix, *values4x4);
+	(*env)->ReleaseFloatArrayElements(env, values_ref, values, 0);
+}

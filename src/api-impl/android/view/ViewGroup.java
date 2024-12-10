@@ -403,6 +403,12 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public boolean shouldDelayChildPressedState() { return false; }
 
+	public void removeAllViewsInLayout() {
+		for (int i = getChildCount() - 1; i >= 0; i--) {
+			removeViewInLayout(getChildAt(i));
+		}
+	}
+
 	public static class LayoutParams {
 		public static final int FILL_PARENT = -1;
 		public static final int MATCH_PARENT = -1;

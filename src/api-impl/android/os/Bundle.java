@@ -1048,27 +1048,6 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	 * value is explicitly associated with the key.
 	 *
 	 * @param key a String, or null
-	 * @return an int[] value, or null
-	 */
-	public int[] getIntArray(String key) {
-		Object o = mMap.get(key);
-		if (o == null) {
-			return null;
-		}
-		try {
-			return (int[])o;
-		} catch (ClassCastException e) {
-			typeWarning(key, o, "int[]", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Returns the value associated with the given key, or null if
-	 * no mapping of the desired type exists for the given key or a null
-	 * value is explicitly associated with the key.
-	 *
-	 * @param key a String, or null
 	 * @return a long[] value, or null
 	 */
 	public long[] getLongArray(String key) {

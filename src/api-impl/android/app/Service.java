@@ -29,6 +29,10 @@ public abstract class Service extends Context {
 		System.out.println("stopForeground(" + remove + ") called");
 	}
 
+	public void stopForeground(int remove) {
+		System.out.println("stopForeground(" + remove + ") called");
+	}
+
 	public Application getApplication() {
 		return this_application;
 	}

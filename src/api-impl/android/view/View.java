@@ -1120,6 +1120,7 @@ public class View implements Drawable.Callback {
 	public void setOnKeyListener(OnKeyListener l) {}
 
 	public void setFocusable(boolean focusable) {}
+	public void setFocusable(int focusable) {}
 	public void setFocusableInTouchMode(boolean focusableInTouchMode) {}
 	public final boolean requestFocus() {
 		return requestFocus(View.FOCUS_DOWN);
@@ -2088,4 +2089,12 @@ public class View implements Drawable.Callback {
 	public boolean requestRectangleOnScreen(Rect rectangle) {return false;}
 
 	public boolean dispatchKeyEvent(KeyEvent event) {return false;}
+
+	public WindowInsets getRootWindowInsets() {return null;}
+
+	public PointerIcon getPointerIcon() {return null;}
+
+	public void setPointerIcon(PointerIcon pointerIcon) {}
+
+	public IBinder getApplicationWindowToken() {return null;}
 }

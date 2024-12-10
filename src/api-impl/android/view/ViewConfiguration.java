@@ -62,4 +62,12 @@ public class ViewConfiguration {
 	public float getScaledVerticalScrollFactor() {
 		return 1;
 	}
+
+	public static int getScrollBarFadeDuration() {
+		return 100;
+	}
+
+	public static int getScrollDefaultDelay() {
+		return 16;
+	}
 }

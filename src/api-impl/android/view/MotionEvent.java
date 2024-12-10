@@ -2727,7 +2727,8 @@ public final class MotionEvent extends InputEvent {
 	 * Sets this event's action.
 	 */
 	public final void setAction(int action) {
-		nativeSetAction(mNativePtr, action);
+		// nativeSetAction(mNativePtr, action);
+		this.action = action;
 	}
 
 	/**

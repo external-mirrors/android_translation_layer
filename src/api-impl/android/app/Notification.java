@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.media.AudioAttributes;
 import android.media.session.MediaSession;
 import android.net.Uri;
@@ -65,6 +66,10 @@ public class Notification implements Parcelable {
 
 		public Builder(Context context) {
 			notification = new Notification();
+		}
+
+		public Builder(Context context, String tag) {
+			this(context);
 		}
 
 		public Builder setWhen(long when) {return this;}
@@ -161,6 +166,22 @@ public class Notification implements Parcelable {
 
 		public Builder setExtras(Bundle extras) {return this;}
 
+		public Builder setLargeIcon(Icon icon) {return this;}
+
+		public Builder setRemoteInputHistory(CharSequence[] history) {return this;}
+
+		public Builder setBadgeIconType(int iconType) {return this;}
+
+		public Builder setSettingsText(CharSequence settingsText) {return this;}
+
+		public Builder setShortcutId(String shortcutId) {return this;}
+
+		public Builder setTimeoutAfter(long timeout) {return this;}
+
+		public Builder setGroupAlertBehavior(int groupAlertBehavior) {return this;}
+
+		public Builder setSound(Uri sound) {return this;}
+
 		public Notification build() {
 			return notification;
 		}
@@ -186,9 +207,15 @@ public class Notification implements Parcelable {
 				action.intent = intent;
 			}
 
+			public Builder(Icon icon, CharSequence title, PendingIntent intent) {
+				this(0, title, intent);
+			}
+
 			public Builder addExtras(Bundle extras) {return this;}
 
 			public Builder addRemoteInput(RemoteInput remoteInput) {return this;}
+
+			public Builder setAllowGeneratedReplies(boolean allowGeneratedReplies) {return this;}
 
 			public Action build() {
 				return action;

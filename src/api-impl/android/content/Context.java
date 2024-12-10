@@ -231,8 +231,8 @@ public class Context extends Object {
 		}
 	}
 
-	public final <T> T getSystemService(Class<T> serviceClass) {
-		return null;
+	public final Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		return serviceClass.getConstructors()[0].newInstance();
 	}
 
 	public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {

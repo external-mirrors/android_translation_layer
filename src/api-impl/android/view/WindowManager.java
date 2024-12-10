@@ -1,5 +1,7 @@
 package android.view;
 
+import android.os.IBinder;
+
 public interface WindowManager {
 	public android.view.Display getDefaultDisplay();
 
@@ -15,11 +17,16 @@ public interface WindowManager {
 		public int windowAnimations;
 		public int flags;
 		public float alpha;
+		public int type;
+		public IBinder token;
+		public int format;
 
 		public LayoutParams(int w, int h, int type, int flags, int format) {
 			super(w, h);
 		}
 
 		public LayoutParams() {}
+
+		public void setTitle(CharSequence title) {}
 	}
 }

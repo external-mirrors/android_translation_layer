@@ -670,6 +670,10 @@ public class Path {
 	final long ni() {
 		return mNativePath;
 	}
+
+	public boolean isConvex() {
+		return false;
+	}
 	private static native long init1();
 	private static native long init2(long nPath);
 	private static native void native_reset(long nPath);
