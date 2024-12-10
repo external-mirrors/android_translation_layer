@@ -46,3 +46,10 @@ JNIEXPORT void JNICALL Java_android_view_Window_take_1input_1queue(JNIEnv *env, 
 	g_object_set_data(G_OBJECT(window), "input_queue_callback", (gpointer)_REF(callback));
 	g_object_set_data(G_OBJECT(window), "input_queue", (gpointer)_REF(queue));
 }
+
+JNIEXPORT void JNICALL Java_android_view_Window_set_1layout(JNIEnv *env, jobject this, jlong window, jint width, jint height)
+{
+	GtkWindow *gtk_window = GTK_WINDOW(_PTR(window));
+	if (width > 0 && height > 0)
+		gtk_window_set_default_size(gtk_window, width, height);
+}

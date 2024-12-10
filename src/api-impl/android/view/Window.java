@@ -66,6 +66,7 @@ public class Window {
 	private native void set_title(long native_window, String title);
 
 	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);
+	public native void set_layout(long native_window, int width, int height);
 
 	public void takeInputQueue(InputQueue.Callback callback) {
 		take_input_queue(native_window, callback, new InputQueue());
@@ -91,7 +92,9 @@ public class Window {
 		decorView.setBackgroundDrawable(drawable);
 	}
 
-	public void setAttributes(WindowManager.LayoutParams params) {}
+	public void setAttributes(WindowManager.LayoutParams params) {
+		set_layout(native_window, params.width, params.height);
+	}
 
 	public void takeSurface(SurfaceHolder.Callback2 callback) {}
 
@@ -101,7 +104,9 @@ public class Window {
 
 	public void setFormat(int format) {}
 
-	public void setLayout(int dummy, int dummy2) {}
+	public void setLayout(int width, int height) {
+		set_layout(native_window, width, height);
+	}
 
 	public WindowManager getWindowManager() {
 		return new WindowManagerImpl();
