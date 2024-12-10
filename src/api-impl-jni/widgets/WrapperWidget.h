@@ -23,6 +23,7 @@ struct _WrapperWidget
 	int real_height;
 	gboolean needs_allocation;
 	gboolean intercepting_touch;
+	gboolean custom_dispatch_touch;
 };
 
 struct _WrapperWidgetClass

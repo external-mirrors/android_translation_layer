@@ -27,7 +27,9 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, double x, 
 	gdk_event_get_position(event, &raw_x, &raw_y);
 	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, (float)x, (float)y, (long)timestamp, (float)raw_x, (float)raw_y);
 
-	if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
+	if (wrapper->custom_dispatch_touch) {
+		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
+	} else if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
 		wrapper->intercepting_touch = (*env)->CallBooleanMethod(env, this, handle_cache.view.onInterceptTouchEvent, motion_event);
 		if (wrapper->intercepting_touch) {
 			// store the event that was canceled and let it propagate to the child widgets
@@ -158,8 +160,9 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 	gtk_widget_add_controller(widget, controller);
 	g_object_set_data(G_OBJECT(widget), "on_touch_listener", controller);
 
+	WrapperWidget *wrapper = WRAPPER_WIDGET(widget);
 	jmethodID onintercepttouchevent_method = _METHOD(_CLASS(this), "onInterceptTouchEvent", "(Landroid/view/MotionEvent;)Z");
-	if (onintercepttouchevent_method != handle_cache.view.onInterceptTouchEvent) {
+	if (onintercepttouchevent_method != handle_cache.view.onInterceptTouchEvent || wrapper->custom_dispatch_touch) {
 		GtkEventController *old_controller = g_object_get_data(G_OBJECT(widget), "on_intercept_touch_listener");
 		if(old_controller)
 			gtk_widget_remove_controller(widget, old_controller);
@@ -171,7 +174,6 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 		gtk_widget_add_controller(widget, controller);
 		g_object_set_data(G_OBJECT(widget), "on_intercept_touch_listener", controller);
 	}
-	WrapperWidget *wrapper = WRAPPER_WIDGET(widget);
 	if (!wrapper->needs_allocation && (wrapper->layout_width || wrapper->layout_height))
 		gtk_widget_size_allocate(GTK_WIDGET(wrapper), &(GtkAllocation){.x = 0, .y = 0, .width = wrapper->layout_width, .height = wrapper->layout_height}, 0);
 	wrapper->needs_allocation = true;

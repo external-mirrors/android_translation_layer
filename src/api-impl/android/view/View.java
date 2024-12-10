@@ -1066,8 +1066,6 @@ public class View implements Drawable.Callback {
 		boolean handled = false;
 		if (on_touch_listener != null)
 			handled = on_touch_listener.onTouch(this, event);
-		if (!handled)
-			handled = dispatchTouchEvent(event);
 		return handled;
 	}
 
