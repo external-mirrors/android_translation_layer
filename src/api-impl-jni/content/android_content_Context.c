@@ -59,6 +59,13 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv 
 		g_variant_unref(color_sheme);
 	}
 #endif
+	GdkDisplay *display = gdk_display_get_default();
+	GdkMonitor *monitor = g_list_model_get_item(gdk_display_get_monitors(display), 0);
+	GdkRectangle geometry;
+	gdk_monitor_get_geometry(monitor, &geometry);
+
+	_SET_INT_FIELD(config, "screenWidthDp", geometry.width);
+	_SET_INT_FIELD(config, "screenHeightDp", geometry.height);
 }
 
 JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile(JNIEnv *env, jclass class, jint fd)
