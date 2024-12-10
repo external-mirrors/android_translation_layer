@@ -92,13 +92,17 @@ public class Paint {
 	}
 
 	public float measureText(char[] text, int index, int count) { return 10; }
-	public float measureText(String text, int start, int end) { return 10; }
-	public float measureText(String text) {
+	public float measureText(String text, int start, int end) {
 		if (skia_font == 0)
 			skia_font = native_create_font();
-		return native_measure_text(skia_font, text, 0, text.length(), skia_paint);
+		return native_measure_text(skia_font, text, start, end, skia_paint);
 	}
-	public float measureText(CharSequence text, int start, int end) { return 10; }
+	public float measureText(String text) {
+		return measureText(text, 0, text.length());
+	}
+	public float measureText(CharSequence text, int start, int end) {
+		return measureText(text.toString(), start, end);
+	}
 
 	public ColorFilter setColorFilter(ColorFilter colorFilter) {
 		this.colorFilter = colorFilter;

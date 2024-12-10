@@ -32,7 +32,9 @@ public class Layout {
 
 	public int getWidth() {return 10;}
 
-	public int getHeight() {return 10;}
+	public int getHeight() {
+		return (int)(paint.measureText("_") * 3);
+	}
 
 	public void draw(Canvas canvas) {
 		canvas.drawText(text.toString(), 0, 0, paint);
@@ -41,7 +43,7 @@ public class Layout {
 	public int getParagraphDirection(int line) {return 0;}
 
 	public static float getDesiredWidth(CharSequence source, int start, int end, TextPaint paint) {
-		return 400;
+		return paint.measureText(source, start, end);
 	}
 
 	public int getLineEnd(int line) {return 100;}

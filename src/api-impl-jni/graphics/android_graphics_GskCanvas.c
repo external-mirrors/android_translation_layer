@@ -2,6 +2,7 @@
 #include <graphene.h>
 #include <pango/pango.h>
 
+#include "include/c/sk_font.h"
 #include "include/c/sk_paint.h"
 #include "include/c/sk_path.h"
 
@@ -104,13 +105,17 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine(JNIEnv *
 
 extern GtkWidget *window;
 
-JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jstring text, jfloat x, jfloat y, jlong paint_ptr)
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jstring text, jfloat x, jfloat y, jlong paint_ptr, jlong font_ptr)
 {
 	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
 	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
+	sk_font_t *font = (sk_font_t *)_PTR(font_ptr);
 	GdkRGBA gdk_color;
 	sk_paint_get_color4f(paint, (sk_color4f_t *)&gdk_color);
 	PangoLayout *layout = pango_layout_new(gtk_widget_get_pango_context(window));
+	PangoFontDescription *description = pango_font_description_new();
+	pango_font_description_set_size(description, sk_font_get_size(font) * .8f * PANGO_SCALE);
+	pango_layout_set_font_description(layout, description);
 	const char *str = (*env)->GetStringUTFChars(env, text, NULL);
 	pango_layout_set_text(layout, str, -1);
 	(*env)->ReleaseStringUTFChars(env, text, str);
@@ -118,6 +123,7 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *
 	gtk_snapshot_append_layout(snapshot, layout, &gdk_color);
 	gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(-x, -y));
 	g_object_unref(layout);
+	g_object_unref(description);
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloat rx, jfloat ry, jint color, jfloat width)

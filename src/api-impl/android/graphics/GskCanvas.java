@@ -69,7 +69,7 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawText(String text, float x, float y, Paint paint) {
-		native_drawText(snapshot, text, x, y, paint.skia_paint);
+		native_drawText(snapshot, text, x, y, paint.skia_paint, paint.skia_font);
 	}
 
 	@Override
@@ -102,6 +102,6 @@ public class GskCanvas extends Canvas {
 	protected native void native_save(long snapshot);
 	protected native void native_restore(long snapshot);
 	protected native void native_drawLine(long snapshot, float startX, float startY, float stopX, float stopY, long paint);
-	protected native void native_drawText(long snapshot, String text, float x, float y, long paint);
+	protected native void native_drawText(long snapshot, String text, float x, float y, long paint, long font);
 	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, int color, float strokeWidth);
 }

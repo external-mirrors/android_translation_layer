@@ -76,10 +76,10 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawText
- * Signature: (JLjava/lang/String;FFJ)V
+ * Signature: (JLjava/lang/String;FFJJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText
-  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jlong);
+  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jlong, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
