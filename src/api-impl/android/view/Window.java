@@ -26,7 +26,6 @@ public class Window {
 	}
 
 	public long native_window;
-	public View contentView;
 	private ViewGroup decorView;
 
 	private Window.Callback callback;
@@ -63,7 +62,7 @@ public class Window {
 		return decorView;
 	}
 
-	private native void set_widget_as_root(long native_window, long widget);
+	public native void set_widget_as_root(long native_window, long widget);
 	private native void set_title(long native_window, String title);
 
 	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);
@@ -89,9 +88,7 @@ public class Window {
 	}
 
 	public void setBackgroundDrawable(Drawable drawable) {
-		/* TODO: should this be *under* the contentView background? */
-		if (contentView != null)
-			contentView.setBackgroundDrawable(drawable);
+		decorView.setBackgroundDrawable(drawable);
 	}
 
 	public void setAttributes(WindowManager.LayoutParams params) {}

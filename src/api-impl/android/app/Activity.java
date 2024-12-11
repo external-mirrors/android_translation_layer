@@ -172,8 +172,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 
 	protected void onStart() {
 		Slog.i(TAG, "- onStart - yay!");
-		if (window.contentView != null)
-			window.setContentView(window.contentView);
+		window.set_widget_as_root(window.native_window, window.getDecorView().widget);
 		window.setTitle(title);
 
 		for (Fragment fragment : fragments) {
@@ -284,9 +283,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 
 	public <T extends android.view.View> T findViewById(int id) {
 		System.out.printf(TAG, "- findViewById - asked for view with id: %x\n", id);
-		View view = null;
-		if (window.contentView != null)
-			view = window.contentView.findViewById(id);
+		View view = window.findViewById(id);
 		Slog.i(TAG, "- findViewById - found this: " + view);
 
 		return (T)view;
