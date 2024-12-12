@@ -57,6 +57,7 @@ test_runner_jar = jar('test_runner', [
                      	'dalvik/annotation/BrokenTest.java',
                      	'dalvik/annotation/SideEffect.java',
                      ],
+                     build_by_default: false,
                      link_with: [hax_jar],
                      java_args: [
                      	'-bootclasspath', bootclasspath,
