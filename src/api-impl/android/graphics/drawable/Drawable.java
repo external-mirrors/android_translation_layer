@@ -163,15 +163,17 @@ public class Drawable {
 		setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom);
 	}
 
-	public void setColorFilter(int color, PorterDuff.Mode mode) {}
+	public void setColorFilter(int color, PorterDuff.Mode mode) {
+		setColorFilter(new PorterDuffColorFilter(color, mode));
+	}
 	public void setColorFilter(ColorFilter filter) {}
 
 	public Drawable mutate() {
 		return this;
 	}
 
-	public int getIntrinsicWidth() {return 24;}
-	public int getIntrinsicHeight() {return 24;}
+	public int getIntrinsicWidth() {return -1;}
+	public int getIntrinsicHeight() {return -1;}
 
 	public void setTintList(ColorStateList tint) {}
 

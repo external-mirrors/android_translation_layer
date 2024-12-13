@@ -48,7 +48,8 @@ static int java_paintable_get_intrinsic_width(GdkPaintable *gdk_paintable)
 	JNIEnv *env = get_jni_env();
 	JavaPaintable *paintable = JAVA_PAINTABLE(gdk_paintable);
 	jmethodID getIntrinsicWidth = _METHOD(handle_cache.drawable.class, "getIntrinsicWidth", "()I");
-	return (*env)->CallIntMethod(env, paintable->drawable, getIntrinsicWidth);
+	int width = (*env)->CallIntMethod(env, paintable->drawable, getIntrinsicWidth);
+	return width > 0 ? width : 0;
 }
 
 static int java_paintable_get_intrinsic_height(GdkPaintable *gdk_paintable)
@@ -56,12 +57,8 @@ static int java_paintable_get_intrinsic_height(GdkPaintable *gdk_paintable)
 	JNIEnv *env = get_jni_env();
 	JavaPaintable *paintable = JAVA_PAINTABLE(gdk_paintable);
 	jmethodID getIntrinsicHeight = _METHOD(handle_cache.drawable.class, "getIntrinsicHeight", "()I");
-	return (*env)->CallIntMethod(env, paintable->drawable, getIntrinsicHeight);
-}
-
-static double java_paintable_get_intrinsic_aspect_ratio(GdkPaintable *gdk_paintable)
-{
-	return 0;
+	int height = (*env)->CallIntMethod(env, paintable->drawable, getIntrinsicHeight);
+	return height > 0 ? height : 0;
 }
 
 static void java_paintable_init(JavaPaintable *java_paintable)
@@ -73,7 +70,6 @@ static void java_paintable_paintable_init(GdkPaintableInterface *iface)
 	iface->snapshot = java_paintable_snapshot;
 	iface->get_intrinsic_height = java_paintable_get_intrinsic_height;
 	iface->get_intrinsic_width = java_paintable_get_intrinsic_width;
-	iface->get_intrinsic_aspect_ratio = java_paintable_get_intrinsic_aspect_ratio;
 }
 
 static void java_paintable_class_init(JavaPaintableClass *class)

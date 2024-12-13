@@ -12,12 +12,18 @@ import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.ColorFilter;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
 
 public class VectorDrawable extends Drawable {
 
-	private Bitmap bitmap;  // prevent garbage collection
+	private Bitmap bitmap;
+	private Paint paint = new Paint();
 
 	public VectorDrawable() {
 		super();
@@ -27,7 +33,10 @@ public class VectorDrawable extends Drawable {
 		final int innerDepth = parser.getDepth() + 1;
 		int type;
 		TypedArray a = r.obtainAttributes(attrs, R.styleable.VectorDrawable);
-		int tint = a.getColor(R.styleable.VectorDrawable_tint, 0);
+		if (a.hasValue(R.styleable.VectorDrawable_tint)) {
+			setColorFilter(a.getColor(R.styleable.VectorDrawable_tint, 0),
+			               PorterDuff.Mode.values()[a.getInt(R.styleable.VectorDrawable_tintMode, DEFAULT_TINT_MODE.nativeInt)]);
+		}
 		float viewportWidth = a.getFloat(R.styleable.VectorDrawable_viewportWidth, 24);
 		float viewportHeight = a.getFloat(R.styleable.VectorDrawable_viewportHeight, 24);
 		float width = a.getDimension(R.styleable.VectorDrawable_width, 24);
@@ -43,8 +52,8 @@ public class VectorDrawable extends Drawable {
 			if (type == XmlPullParser.START_TAG && parser.getName().equals("path")) {
 				a = r.obtainAttributes(attrs, R.styleable.VectorDrawablePath);
 				String pathData = a.getString(R.styleable.VectorDrawablePath_pathData);
-				int fillColor = tint != 0 ? tint : a.getColor(R.styleable.VectorDrawablePath_fillColor, 0);
-				int strokeColor = tint != 0 ? tint : a.getColor(R.styleable.VectorDrawablePath_strokeColor, 0);
+				int fillColor = a.getColor(R.styleable.VectorDrawablePath_fillColor, 0);
+				int strokeColor = a.getColor(R.styleable.VectorDrawablePath_strokeColor, 0);
 				float strokeWidth = a.getFloat(R.styleable.VectorDrawablePath_strokeWidth, 0);
 				a.recycle();
 				sb.append(String.format(Locale.ENGLISH, "<path fill=\"#%06x%02x\" stroke=\"#%06x%02x\" stroke-width=\"%f\" d=\"%s\"/>",
@@ -55,16 +64,25 @@ public class VectorDrawable extends Drawable {
 		String svg = sb.toString();
 		byte[] bytes = svg.getBytes();
 		bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-		this.paintable = bitmap.getTexture();
 	}
 
 	@Override
 	public int getIntrinsicWidth() {
-		return 24; // FIXME
+		return bitmap.getWidth();
 	}
 
 	@Override
 	public int getIntrinsicHeight() {
-		return 24; // FIXME
+		return bitmap.getHeight();
+	}
+
+	@Override
+	public void setColorFilter(ColorFilter filter) {
+		paint.setColorFilter(filter);
+	}
+
+	@Override
+	public void draw(Canvas canvas) {
+		canvas.drawBitmap(bitmap, new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight()), getBounds(), paint);
 	}
 }

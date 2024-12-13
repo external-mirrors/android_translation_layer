@@ -5,8 +5,10 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ColorFilter;
 import android.graphics.Matrix;
 import android.graphics.PorterDuff;
+import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -16,6 +18,7 @@ public class ImageView extends View {
 	private Bitmap bitmap = null;
 	private ScaleType scaleType = ScaleType.FIT_CENTER;
 	private Drawable drawable = null;
+	private ColorFilter colorFilter = null;
 
 	public ImageView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
@@ -30,6 +33,9 @@ public class ImageView extends View {
 
 		haveCustomMeasure = false;
 		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.ImageView, defStyleAttr, 0);
+		if (a.hasValue(com.android.internal.R.styleable.ImageView_tint))
+			colorFilter = new PorterDuffColorFilter(a.getColor(com.android.internal.R.styleable.ImageView_tint, 0),
+					PorterDuff.Mode.values()[a.getInt(com.android.internal.R.styleable.ImageView_tintMode, PorterDuff.Mode.SRC_IN.nativeInt)]);
 		setImageDrawable(a.getDrawable(com.android.internal.R.styleable.ImageView_src));
 		setScaleType(scaletype_from_int[a.getInt(com.android.internal.R.styleable.ImageView_scaleType, 3 /*CENTER*/)]);
 		a.recycle();
@@ -59,6 +65,10 @@ public class ImageView extends View {
 	}
 
 	public void setImageDrawable(Drawable drawable) {
+		if (colorFilter != null) {
+			drawable = drawable.mutate();
+			drawable.setColorFilter(colorFilter);
+		}
 		this.drawable = drawable;
 		if (drawable != null) {
 			drawable.setCallback(this);
