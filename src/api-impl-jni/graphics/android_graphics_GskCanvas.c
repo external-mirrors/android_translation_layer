@@ -11,6 +11,10 @@
 
 #include "../generated_headers/android_graphics_GskCanvas.h"
 
+#define STYLE_FILL 0
+#define STYLE_STROKE 1
+#define STYLE_FILL_AND_STROKE 2
+
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawBitmap(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong texture_ptr, jint x, jint y, jint width, jint height, jint color)
 {
 	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
@@ -126,7 +130,7 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *
 	g_object_unref(description);
 }
 
-JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloat rx, jfloat ry, jint color, jfloat width)
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloat rx, jfloat ry, jint color, jfloat width, int style)
 {
 	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
 	GdkRGBA gdk_color[4];
@@ -141,5 +145,12 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNI
 		.corner = {{rx, ry}, {rx, ry}, {rx, ry}, {rx, ry}},
 	};
 	const float widths[4] = {width, width, width, width};
-	gtk_snapshot_append_border(snapshot, &round_rect, widths, gdk_color);
+	if (style == STYLE_FILL || style == STYLE_FILL_AND_STROKE) {
+		gtk_snapshot_push_rounded_clip(snapshot, &round_rect);
+		gtk_snapshot_append_color(snapshot, gdk_color, &round_rect.bounds);
+		gtk_snapshot_pop(snapshot);
+	}
+	if (style == STYLE_STROKE || style == STYLE_FILL_AND_STROKE) {
+		gtk_snapshot_append_border(snapshot, &round_rect, widths, gdk_color);
+	}
 }

@@ -94,3 +94,8 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1blendmode(JNIEnv
 {
 	sk_paint_set_blendmode(_PTR(skia_paint), (sk_blendmode_t)blendmode);
 }
+
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1style(JNIEnv *env, jclass this, jlong skia_paint)
+{
+	return sk_paint_get_style(_PTR(skia_paint));
+}

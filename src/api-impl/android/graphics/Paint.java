@@ -307,6 +307,10 @@ public class Paint {
 
 	public float getLetterSpacing() { return 1.0f; }
 
+	public Style getStyle() {
+		return Style.values()[native_get_style(skia_paint)];
+	}
+
 	private native long native_constructor();
 	private native void native_set_antialias(long skia_paint, boolean aa);
 	private native void native_set_color(long skia_paint, int color);
@@ -320,4 +324,5 @@ public class Paint {
 	private static native float native_get_stroke_width(long skia_font);
 	private static native void native_set_style(long skia_paint, int style);
 	private static native void native_set_blendmode(long skia_paint, int mode);
+	private static native int native_get_style(long skia_paint);
 }

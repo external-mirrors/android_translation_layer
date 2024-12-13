@@ -137,6 +137,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1blendmode
   (JNIEnv *, jclass, jlong, jint);
 
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_get_style
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1style
+  (JNIEnv *, jclass, jlong);
+
 #ifdef __cplusplus
 }
 #endif
