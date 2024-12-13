@@ -193,7 +193,7 @@ subdir('src/api-impl')
 custom_target('api-impl.jar', build_by_default: true, input: [hax_jar], output: ['api-impl.jar'],
               install: true,
               install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
-              command: ['dx', '--dex', '--output='+join_paths(builddir_base, 'api-impl.jar'), hax_jar.full_path()])
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'api-impl.jar'), hax_jar.full_path()])
 
 # test-runner.jar
 subdir('src/test-runner')
@@ -201,7 +201,7 @@ subdir('src/test-runner')
 custom_target('test_runner.jar', build_by_default: false, input: [test_runner_jar], output: ['test_runner.jar'],
               install: true,
               install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
-              command: ['dx', '--dex', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
 
 #framework-res.apk
 subdir('res')
