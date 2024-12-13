@@ -1,5 +1,6 @@
 package android.animation;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class AnimatorSet extends Animator {
@@ -28,5 +29,9 @@ public class AnimatorSet extends Animator {
 	public AnimatorSet setDuration(long duration) { return this; }
 
 	public void playTogether(Animator[] animators) {}
+
+	public ArrayList<Animator> getChildAnimations() {
+		return new ArrayList<Animator>(0);
+	}
 
 }

@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Set;
 
 public class Intent implements Parcelable {
 	public static final String ACTION_MAIN = "android.intent.action.MAIN";
@@ -349,5 +351,17 @@ public class Intent implements Parcelable {
 	public void setExtrasClassLoader(ClassLoader loader) {}
 	public Intent setClassName(Context packageContext, String className) {
 		return this;
+	}
+
+	public String resolveTypeIfNeeded(ContentResolver resolver) {
+		return type;
+	}
+
+	public Set<String> getCategories() {
+		return Collections.emptySet();
+	}
+
+	public byte[] getByteArrayExtra(String name) {
+		return extras.getByteArray(name);
 	}
 }

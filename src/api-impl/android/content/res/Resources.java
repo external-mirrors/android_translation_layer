@@ -1466,6 +1466,10 @@ public class Resources {
 			theme = mAssets.createTheme();
 		}
 
+		public Resources getResources() {
+			return Resources.this;
+		}
+
 		private final AssetManager mAssets;
 	}
 

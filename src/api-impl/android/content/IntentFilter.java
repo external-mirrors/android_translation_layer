@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import android.net.Uri;
+
 import java.util.Iterator;
 
 public class IntentFilter {
@@ -63,5 +66,13 @@ public class IntentFilter {
 
 	public final Iterator<String> actionsIterator() {
 		return actions.iterator();
+	}
+
+	public boolean hasAction(String action) {
+		return actions.contains(action);
+	}
+
+	public int match(String action, String type, String scheme, Uri data, Set<String> categories, String logTag) {
+		return -1/*NO_MATCH_TYPE*/;
 	}
 }

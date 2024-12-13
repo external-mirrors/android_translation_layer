@@ -11,4 +11,6 @@ public class ViewAnimator extends ViewGroup {
 	}
 
 	public void setDisplayedChild(int index) {}
+
+	public int getDisplayedChild() { return 0; }
 }

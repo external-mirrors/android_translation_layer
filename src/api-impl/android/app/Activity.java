@@ -40,7 +40,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public static final int RESULT_CANCELED = 0;
 	public static final int RESULT_OK = -1;
 
-	LayoutInflater layout_inflater;
 	Window window = new Window(this, this);
 	int requested_orientation = -1 /*ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED*/; // dummy
 	public Intent intent;
@@ -50,6 +49,33 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	private CharSequence title = null;
 	List<Fragment> fragments = new ArrayList<>();
 	boolean destroyed = false;
+
+	public static Activity internalCreateActivity(String className, long native_window, Intent intent) throws ReflectiveOperationException {
+		int themeResId = 0;
+		CharSequence label = null;
+		CharSequence app_label = null;
+		for (PackageParser.Activity activity: pkg.activities) {
+			if (className.equals(activity.className)) {
+				label = r.getText(activity.info.labelRes);
+				themeResId = activity.info.getThemeResource();
+				break;
+			}
+		}
+		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
+		Constructor<? extends Activity> constructor = cls.getConstructor();
+		Activity activity = constructor.newInstance();
+		activity.window.native_window = native_window;
+		activity.intent = intent;
+		activity.attachBaseContext(new Context());
+		activity.setTheme(themeResId);
+		app_label = r.getText(pkg.applicationInfo.labelRes);
+		if (label != null) {
+			activity.setTitle(label);
+		} else if (app_label != null) {
+			activity.setTitle(app_label);
+		}
+		return activity;
+	}
 
 	/**
 	 * Helper function to be called from native code to construct main activity
@@ -80,39 +106,11 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 			System.err.println("Failed to find Activity to launch URI: " + uri);
 			System.exit(1);
 		}
-		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
-		Constructor<? extends Activity> constructor = cls.getConstructor();
-		Activity activity = constructor.newInstance();
-		activity.window.native_window = native_window;
-		if (uri != null)
-			activity.setIntent(new Intent("android.intent.action.VIEW", uri));
-		return activity;
+		return internalCreateActivity(className, native_window, uri != null ? new Intent("android.intent.action.VIEW", uri) : new Intent());
 	}
 
 	public Activity() {
 		super(null);
-		layout_inflater = new LayoutInflater(this);
-		intent = new Intent();
-
-		CharSequence label = null;
-		CharSequence app_label = null;
-		int themeResId = 0;
-		for (PackageParser.Activity activity: pkg.activities) {
-			if (getClass().getName().equals(activity.className)) {
-				label = r.getText(activity.info.labelRes);
-				themeResId = activity.info.getThemeResource();
-				break;
-			}
-		}
-
-		app_label = r.getText(pkg.applicationInfo.labelRes);
-		if (label != null) {
-			setTitle(label);
-		} else if (app_label != null) {
-			setTitle(app_label);
-		}
-		attachBaseContext(new Context());
-		setTheme(themeResId);
 	}
 
 	public View root_view;
@@ -262,7 +260,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public void setContentView(int layoutResID) throws Exception {
 		Slog.i(TAG, "- setContentView - yay!");
 
-		root_view = layout_inflater.inflate(layoutResID, null, false);
+		root_view = getLayoutInflater().inflate(layoutResID, null, false);
 
 		System.out.println("~~~~~~~~~~~");
 		System.out.println(root_view.toString());
@@ -411,7 +409,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	}
 
 	public LayoutInflater getLayoutInflater() {
-		return layout_inflater;
+		return new LayoutInflater(this);
 	}
 
 	public boolean isChangingConfigurations() {return false;}
@@ -511,14 +509,10 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public void recreate() {
 		try {
 			/* TODO: check if this is a toplevel activity */
-			Class<? extends Activity> cls = this.getClass();
-			Constructor<? extends Activity> constructor = cls.getConstructor();
-			Activity activity = constructor.newInstance();
-			activity.getWindow().native_window = getWindow().native_window;
-			Slog.i(TAG, "activity.getWindow().native_window >"+activity.getWindow().native_window+"<");
+			Activity activity = internalCreateActivity(this.getClass().getName(), getWindow().native_window, intent);
 			nativeFinish(0);
 			nativeStartActivity(activity);
-		} catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+		} catch (ReflectiveOperationException e) {
 			Slog.i(TAG, "exception in Activity.recreate, this is kinda sus");
 			e.printStackTrace();
 		}

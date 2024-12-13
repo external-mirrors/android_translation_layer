@@ -1814,10 +1814,10 @@ public class PackageManager {
 			// TODO: we shouldn't just automatically grant these once we have bubblewrap set up
 			// for now, the app can access anything it wants, so no point telling it otherwise
 			case "android.permission.WRITE_EXTERNAL_STORAGE":
-				return PERMISSION_GRANTED;
 			case "android.permission.READ_EXTERNAL_STORAGE":
-				return PERMISSION_GRANTED;
 			case "com.google.android.c2dm.permission.SEND":
+			case "com.fsck.k9.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
+			case "net.thunderbird.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
 				return PERMISSION_GRANTED;
 			default:
 				System.out.println("PackageManager.checkPermission: >" + permName + "< not handled\n");

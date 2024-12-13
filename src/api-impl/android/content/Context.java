@@ -538,11 +538,7 @@ public class Context extends Object {
 			@Override
 			public void run() {
 				try {
-					Class<? extends Activity> cls = Class.forName(intent_.getComponent().getClassName()).asSubclass(Activity.class);
-					Constructor<? extends Activity> constructor = cls.getConstructor();
-					Activity activity = constructor.newInstance();
-					activity.intent = intent_;
-					activity.getWindow().native_window = this_application.native_window;
+					Activity activity = Activity.internalCreateActivity(intent_.getComponent().getClassName(), this_application.native_window, intent_);
 					Activity.nativeStartActivity(activity);
 				} catch (Exception e) {
 					e.printStackTrace();
