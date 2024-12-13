@@ -154,3 +154,9 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect(JNI
 		gtk_snapshot_append_border(snapshot, &round_rect, widths, gdk_color);
 	}
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1scale(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat x, jfloat y)
+{
+	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	gtk_snapshot_scale(snapshot, x, y);
+}

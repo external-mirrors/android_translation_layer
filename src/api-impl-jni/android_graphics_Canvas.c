@@ -121,3 +121,9 @@ JNIEXPORT void JNICALL Java_android_graphics_Canvas_native_1destroy_1canvas(JNIE
 	sk_canvas_t *canvas = (sk_canvas_t *)_PTR(skia_canvas);
 	sk_canvas_destroy(canvas);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_Canvas_native_1scale(JNIEnv *env, jclass class, jlong skia_canvas, jfloat sx, jfloat sy)
+{
+	sk_canvas_t *canvas = (sk_canvas_t *)_PTR(skia_canvas);
+	sk_canvas_scale(canvas, sx, sy);
+}

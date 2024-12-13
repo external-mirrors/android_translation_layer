@@ -97,6 +97,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Canvas_native_1drawPath
 JNIEXPORT void JNICALL Java_android_graphics_Canvas_native_1destroy_1canvas
   (JNIEnv *, jclass, jlong);
 
+/*
+ * Class:     android_graphics_Canvas
+ * Method:    native_scale
+ * Signature: (JFF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Canvas_native_1scale
+  (JNIEnv *, jclass, jlong, jfloat, jfloat);
+
 #ifdef __cplusplus
 }
 #endif

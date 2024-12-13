@@ -94,6 +94,11 @@ public class GskCanvas extends Canvas {
 		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint.getColor(), paint.getStrokeWidth(), paint.getStyle().nativeInt);
 	}
 
+	@Override
+	public void scale(float sx, float sy) {
+		native_scale(snapshot, sx, sy);
+	}
+
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, int color);
 	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, int color);
 	protected native void native_drawPath(long snapshot, long path, long paint);
@@ -104,4 +109,5 @@ public class GskCanvas extends Canvas {
 	protected native void native_drawLine(long snapshot, float startX, float startY, float stopX, float stopY, long paint);
 	protected native void native_drawText(long snapshot, String text, float x, float y, long paint, long font);
 	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, int color, float strokeWidth, int style);
+	protected native void native_scale(long snapshot, float sx, float sy);
 }

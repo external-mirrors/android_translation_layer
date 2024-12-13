@@ -201,7 +201,9 @@ public class Canvas {
 	 * @param sx The amount to scale in X
 	 * @param sy The amount to scale in Y
 	 */
-	public /*native*/ void scale(float sx, float sy) {/*used by gd*/}
+	public /*native*/ void scale(float sx, float sy) {
+		native_scale(skia_canvas, sx, sy);
+	}
 
 	/**
 	 * Preconcat the current matrix with the specified scale.
@@ -213,9 +215,9 @@ public class Canvas {
 	 */
 	public final void scale(float sx, float sy, float px, float py) {
 		System.out.println("XXXXXXX scale(sx, sy, px, py)");
-		/*translate(px, py);
+		translate(px, py);
 		scale(sx, sy);
-		translate(-px, -py);*/
+		translate(-px, -py);
 	}
 	// ---
 	/**
@@ -504,4 +506,5 @@ public class Canvas {
 	private static native void native_rotate_and_translate(long skia_canvas, long widget, float angle, float tx, float ty);
 	private static native void native_drawPath(long skia_canvas, long path, long skia_paint);
 	private static native void native_destroy_canvas(long skia_canvas);
+	private static native void native_scale(long skia_canvas, float sx, float sy);
 }
