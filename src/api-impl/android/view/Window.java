@@ -93,7 +93,7 @@ public class Window {
 	}
 
 	public void setAttributes(WindowManager.LayoutParams params) {
-		set_layout(native_window, params.width, params.height);
+		setLayout(params.width, params.height);
 	}
 
 	public void takeSurface(SurfaceHolder.Callback2 callback) {}
@@ -105,6 +105,8 @@ public class Window {
 	public void setFormat(int format) {}
 
 	public void setLayout(int width, int height) {
+		if (height == 0)  // FIXME: remove this hack once measurement error with composeUI dialogs is fixed
+			height = 500;
 		set_layout(native_window, width, height);
 	}
 
