@@ -24,6 +24,11 @@ public class VectorDrawable extends Drawable {
 
 	private Bitmap bitmap;
 	private Paint paint = new Paint();
+	private float viewportWidth;
+	private float viewportHeight;
+	private float width;
+	private float height;
+	private String svg;
 
 	public VectorDrawable() {
 		super();
@@ -37,14 +42,12 @@ public class VectorDrawable extends Drawable {
 			setColorFilter(a.getColor(R.styleable.VectorDrawable_tint, 0),
 			               PorterDuff.Mode.values()[a.getInt(R.styleable.VectorDrawable_tintMode, DEFAULT_TINT_MODE.nativeInt)]);
 		}
-		float viewportWidth = a.getFloat(R.styleable.VectorDrawable_viewportWidth, 24);
-		float viewportHeight = a.getFloat(R.styleable.VectorDrawable_viewportHeight, 24);
-		float width = a.getDimension(R.styleable.VectorDrawable_width, 24);
-		float height = a.getDimension(R.styleable.VectorDrawable_height, 24);
+		viewportWidth = a.getFloat(R.styleable.VectorDrawable_viewportWidth, 24);
+		viewportHeight = a.getFloat(R.styleable.VectorDrawable_viewportHeight, 24);
+		width = a.getDimension(R.styleable.VectorDrawable_width, 24);
+		height = a.getDimension(R.styleable.VectorDrawable_height, 24);
 		a.recycle();
 		StringBuilder sb = new StringBuilder();
-		sb.append(String.format(Locale.ENGLISH, "<svg id=\"vector\" xmlns=\"http://www.w3.org/2000/svg\" width=\"%f\" height=\"%f\" viewBox=\"0 0 %f %f\">",
-				width, height, viewportWidth, viewportHeight));
 		while ((type = parser.next()) != XmlPullParser.END_DOCUMENT
 				&& (parser.getDepth() >= innerDepth
 				|| type != XmlPullParser.END_TAG)) {
@@ -60,20 +63,31 @@ public class VectorDrawable extends Drawable {
 						fillColor & 0xFFFFFF, (fillColor >> 24) & 0xFF, strokeColor & 0xFFFFFF, (strokeColor >> 24) & 0xFF, strokeWidth, pathData));
 			}
 		}
-		sb.append("</svg>");
-		String svg = sb.toString();
-		byte[] bytes = svg.getBytes();
-		bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		svg = sb.toString();
+		setBounds(0, 0, (int)width, (int)height);
+	}
+
+	@Override
+	public void setBounds(int left, int top, int right, int bottom) {
+		super.setBounds(left, top, right, bottom);
+		if (bitmap == null || bitmap.getWidth() != right - left || bitmap.getHeight() != bottom - top) {
+			if (bitmap != null)
+				bitmap.recycle();
+			String s = String.format(Locale.ENGLISH, "<svg id=\"vector\" xmlns=\"http://www.w3.org/2000/svg\" width=\"%f\" height=\"%f\" viewBox=\"0 0 %f %f\">%s</svg>",
+					(float)(right - left), (float)(bottom - top), viewportWidth, viewportHeight, svg);
+			byte[] bytes = s.getBytes();
+			bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+		}
 	}
 
 	@Override
 	public int getIntrinsicWidth() {
-		return bitmap.getWidth();
+		return (int)width;
 	}
 
 	@Override
 	public int getIntrinsicHeight() {
-		return bitmap.getHeight();
+		return (int)height;
 	}
 
 	@Override
