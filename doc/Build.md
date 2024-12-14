@@ -49,7 +49,7 @@ You can now skip the Additional Dependencies section and continue with the build
 
 ## Additional Dependencies
 ### Skia
-If you distro ships this already (e.g. `skia-sharp` on Alpine), you can just install the package and skip this step.
+If your distro ships this already (e.g. `skia-sharp` on Alpine), you can just install the package and skip this step.
 
 Install `gn` via your system's package manager.
 ```sh
@@ -69,7 +69,7 @@ Note:
 - On alpine: add `-fpermissive` to `--args`.
 
 ### wolfSSL
-If you distro ships wolfSSL with JNI enabled already, you can just install the package and skip this step.
+If your distro ships wolfSSL with JNI enabled already, you can just install the package and skip this step.
 ```sh
 git clone https://github.com/wolfSSL/wolfssl.git
 cd wolfssl
@@ -81,7 +81,7 @@ sudo make install
 ```
 
 ### bionic_translation
-If you distro ships this already (e.g. `bionic_translation` on Alpine), you can just install the package and skip this step.
+If your distro ships this already (e.g. `bionic_translation` on Alpine), you can just install the package and skip this step.
 ```sh
 git clone https://gitlab.com/android_translation_layer/bionic_translation.git
 cd bionic_translation
@@ -92,7 +92,7 @@ sudo meson install
 ```
 
 ### art_standalone
-If you distro ships this already (e.g. `art_standalone` on Alpine), you can just install the package and skip this step.
+If your distro ships this already (e.g. `art_standalone` on Alpine), you can just install the package and skip this step.
 ```sh
 git clone https://gitlab.com/android_translation_layer/art_standalone.git
 cd art_standalone
@@ -104,7 +104,7 @@ Note: adjust `____LIBDIR` depending on your distro (e.g some distros use `lib32`
 ### libOpenSLES
 Optional (not required for Android Translation Layer itself but some apps depend on it).
 
-If you distro ships this already (e.g. `libopensles-standalone` on Alpine), you can just install the package and skip this step.
+If your distro ships this already (e.g. `libopensles-standalone` on Alpine), you can just install the package and skip this step.
 ```sh
 git clone https://gitlab.com/android_translation_layer/libopensles-standalone.git
 cd libopensles-standalone
