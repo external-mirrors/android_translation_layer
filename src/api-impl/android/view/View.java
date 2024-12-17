@@ -820,7 +820,7 @@ public class View implements Drawable.Callback {
 
 	public int id = NO_ID;
 	private int system_ui_visibility = 0;
-	public ViewGroup parent;
+	public ViewParent parent;
 	public AttributeSet attrs;
 	protected ViewGroup.LayoutParams layout_params;
 	private Context context;
@@ -1025,8 +1025,8 @@ public class View implements Drawable.Callback {
 		}
 
 		int gravity = params.gravity;
-		if (gravity == -1 && parent != null)
-			gravity = parent.gravity;
+		if (gravity == -1 && parent instanceof View)
+			gravity = ((View)parent).gravity;
 
 		int leftMargin = 0;
 		int topMargin = 0;
@@ -1489,8 +1489,8 @@ public class View implements Drawable.Callback {
 
 	public void requestLayout() {
 		layoutRequested = true;
-		if (parent != null && !parent.isLayoutRequested()) {
-			parent.requestLayout();
+		if (parent instanceof View && !parent.isLayoutRequested()) {
+			((View)parent).requestLayout();
 		}
 		native_requestLayout(widget);
 	};
@@ -1786,8 +1786,8 @@ public class View implements Drawable.Callback {
 
 	public View getRootView() {
 		View view = this;
-		while (view.parent != null) {
-			view = view.parent;
+		while (view.parent instanceof View) {
+			view = (View)view.parent;
 		}
 		return view;
 	}
