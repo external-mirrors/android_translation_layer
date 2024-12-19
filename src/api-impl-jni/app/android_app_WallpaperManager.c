@@ -1,4 +1,4 @@
-#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk/gdk.h>
 #include <libportal/portal.h>
 
 #include "../defines.h"
@@ -12,14 +12,14 @@ static void wallpaper_ready_cb(GObject *source, GAsyncResult *res, gpointer user
 	g_object_unref(file);
 }
 
-JNIEXPORT void JNICALL Java_android_app_WallpaperManager_set_1bitmap(JNIEnv *env, jclass clazz, jlong pixbuf_ptr)
+JNIEXPORT void JNICALL Java_android_app_WallpaperManager_set_1bitmap(JNIEnv *env, jclass clazz, jlong texture_ptr)
 {
-	GdkPixbuf *pixbuf = _PTR(pixbuf_ptr);
+	GdkTexture *texture = _PTR(texture_ptr);
 	GFileIOStream *stream;
 	GFile *file = g_file_new_tmp("XXXXXX.png", &stream, NULL);
 	g_io_stream_close(G_IO_STREAM(stream), NULL, NULL);
 	g_object_unref(stream);
-	gdk_pixbuf_save(pixbuf, g_file_get_path(file), "png", NULL, NULL);
+	gdk_texture_save_to_png(texture, g_file_get_path(file));
 	XdpPortal *portal = xdp_portal_new();
 	xdp_portal_set_wallpaper(portal, NULL, g_file_get_uri(file), XDP_WALLPAPER_FLAG_NONE, NULL, wallpaper_ready_cb, file);
 	g_object_unref(portal);

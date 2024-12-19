@@ -16,8 +16,8 @@
 
 package android.graphics;
 
-import android.content.res.AssetManager;
 import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.os.Trace;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -442,10 +442,8 @@ public class BitmapFactory {
 	 *         decoded, or, if opts is non-null, if opts requested only the
 	 *         size be returned (in opts.outWidth and opts.outHeight)
 	 */
-	public static Bitmap decodeResource(Resources res, int id, Options opts) {
-		String path = res.getString(id);
-
-		return new Bitmap(path);
+	public static Bitmap decodeResource(Resources res, int id, Options opts) throws NotFoundException {
+		return decodeStreamInternal(res.openRawResource(id), null, opts);
 	}
 
 	/**
@@ -456,7 +454,7 @@ public class BitmapFactory {
 	 * @param id The resource id of the image data
 	 * @return The decoded bitmap, or null if the image could not be decode.
 	 */
-	public static Bitmap decodeResource(Resources res, int id) {
+	public static Bitmap decodeResource(Resources res, int id) throws NotFoundException {
 		return decodeResource(res, id, null);
 	}
 

@@ -3,43 +3,23 @@ package android.graphics;
 public class Canvas {
 	public static final int HAS_ALPHA_LAYER_SAVE_FLAG = (1 << 2);
 
-	public long skia_canvas;
-	public long widget;
+	private Bitmap bitmap;
+	private GskCanvas gsk_canvas;
 
 	public Canvas() {}
 
 	public Canvas(Bitmap bmp) {
-		bmp.destroyTexture();  // invalidate cached texture
-		this.skia_canvas = native_canvas_from_bitmap(bmp.pixbuf);
-		this.widget = 0;
+		this.bitmap = bmp;
+		gsk_canvas = new GskCanvas(bmp.getSnapshot());
 	}
-
-	public Canvas(long skia_canvas, long widget) {
-		this.skia_canvas = skia_canvas;
-		this.widget = widget;
-	}
-
-	@Override
-	@SuppressWarnings("deprecation")
-	protected void finalize() throws Throwable {
-		try {
-			super.finalize();
-		} finally {
-			if (skia_canvas != 0) {
-				native_destroy_canvas(skia_canvas);
-				skia_canvas = 0;
-			}
-		}
-	}
-
-	// FIXME: are these _needed_ ?
 
 	public int save() {
-		native_save(skia_canvas, widget);
-		return -1; // FIXME: wtf should we return
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		return gsk_canvas.save();
 	}
 	public void restore() {
-		native_restore(skia_canvas, widget);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.restore();
 	}
 
 	// ---
@@ -77,7 +57,8 @@ public class Canvas {
 	 * @param paint  The paint used to draw the rect
 	 */
 	public void drawRect(float left, float top, float right, float bottom, Paint paint) {
-		native_drawRect(skia_canvas, left, top, right, bottom, paint.skia_paint);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawRect(left, top, right, bottom, paint);
 	}
 
 	// ---
@@ -87,7 +68,8 @@ public class Canvas {
 	 * @param degrees The amount to rotate, in degrees
 	 */
 	public void rotate(float degrees) {
-		native_rotate(skia_canvas, widget, degrees);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.rotate(degrees);
 	}
 
 	/**
@@ -98,7 +80,8 @@ public class Canvas {
 	 * @param py The y-coord for the pivot point (unchanged by the rotation)
 	 */
 	public void rotate(float degrees, float px, float py) {
-		native_rotate_and_translate(skia_canvas, widget, degrees, px, py);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.rotate(degrees, px, py);
 	}
 	// ---
 	/**
@@ -111,7 +94,8 @@ public class Canvas {
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
 	public void drawText(String text, float x, float y, Paint paint) {
-		native_drawText(skia_canvas, text, 0, text.length(), x, y, paint.skia_font, paint.skia_paint);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawText(text, x, y, paint);
 	}
 
 	/**
@@ -202,7 +186,8 @@ public class Canvas {
 	 * @param sy The amount to scale in Y
 	 */
 	public /*native*/ void scale(float sx, float sy) {
-		native_scale(skia_canvas, sx, sy);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.scale(sx, sy);
 	}
 
 	/**
@@ -240,13 +225,8 @@ public class Canvas {
 	 * @param paint  The paint used to draw the bitmap (may be null)
 	 */
 	public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
-		if(skia_canvas == 0) {
-			System.out.println(this + " doesn't have a skia canvas");
-			return;
-		}
-		native_drawBitmap(skia_canvas, widget, bitmap.pixbuf, 0, 0, bitmap.getWidth(), bitmap.getHeight(),
-		                                                      left, top, left + bitmap.getWidth(), top + bitmap.getHeight(),
-		                                                      (paint != null) ? paint.skia_paint : 0);
+		gsk_canvas.snapshot = this.bitmap.getSnapshot();
+		gsk_canvas.drawBitmap(bitmap, left, top, paint);
 	}
 
 	/**
@@ -272,15 +252,8 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint) {
-		if (dst == null) {
-			throw new NullPointerException();
-		}
-		if(src == null) {
-			src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-		}
-		native_drawBitmap(skia_canvas, widget, bitmap.pixbuf, src.left, src.top, src.right, src.bottom,
-		                                                      dst.left, dst.top, dst.right, dst.bottom,
-		                                                      (paint != null) ? paint.skia_paint : 0);
+		gsk_canvas.snapshot = this.bitmap.getSnapshot();
+		gsk_canvas.drawBitmap(bitmap, src, dst, paint);
 	}
 
 	/**
@@ -398,20 +371,18 @@ public class Canvas {
 	 * @param paint  The paint used to draw the line
 	 */
 	public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
-		native_drawLine(skia_canvas, widget, startX, startY, stopX, stopY, paint.skia_paint);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawLine(startX, startY, stopX, stopY, paint);
 	}
 
 	public void setBitmap(Bitmap bitmap) {
-		if (skia_canvas != 0) {
-			native_destroy_canvas(skia_canvas);
-		}
-		bitmap.destroyTexture();  // invalidate cached texture
-		this.skia_canvas = native_canvas_from_bitmap(bitmap.pixbuf);
-		this.widget = 0;
+		this.bitmap = bitmap;
+		gsk_canvas.snapshot = bitmap.getSnapshot();
 	}
 
 	public void drawPath(Path path, Paint paint) {
-		native_drawPath(skia_canvas, path.mNativePath, paint.skia_paint);
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawPath(path, paint);
 	}
 
 	public boolean clipPath(Path path) {
@@ -492,19 +463,4 @@ public class Canvas {
 		outRect.set(0, 0, 100, 100);
 		return true;
 	}
-
-	private static native long native_canvas_from_bitmap(long pixbuf);
-
-	private static native void native_save(long skia_canvas, long widget);
-	private static native void native_restore(long skia_canvas, long widget);
-
-	private static native void native_drawText(long skia_canvas, CharSequence text, int start, int end, float x, float y, long skia_font, long skia_paint);
-	private static native void native_drawRect(long skia_canvas, float left, float top, float right, float bottom, long skia_paint);
-	private static native void native_drawLine(long skia_canvas, long widget, float startX, float startY, float stopX, float stopY, long skia_paint);
-	private static native void native_drawBitmap(long skia_canvas, long widget, long pixbuf, float src_left, float src_top, float src_right, float src_bottom, float dest_left, float dest_top, float dest_right, float dest_bottm, long skia_paint);
-	private static native void native_rotate(long skia_canvas, long widget, float angle);
-	private static native void native_rotate_and_translate(long skia_canvas, long widget, float angle, float tx, float ty);
-	private static native void native_drawPath(long skia_canvas, long path, long skia_paint);
-	private static native void native_destroy_canvas(long skia_canvas);
-	private static native void native_scale(long skia_canvas, float sx, float sy);
 }

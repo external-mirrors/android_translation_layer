@@ -10,9 +10,9 @@ public class WallpaperManager {
 	}
 
 	public void setBitmap(Bitmap bitmap) {
-		set_bitmap(bitmap.pixbuf);
+		set_bitmap(bitmap.getTexture());
 	}
 
-	private static native void set_bitmap(long pixbuf);
+	private static native void set_bitmap(long texture);
 	
 }

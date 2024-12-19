@@ -4,10 +4,8 @@
 
 #include "include/c/sk_font.h"
 #include "include/c/sk_paint.h"
-#include "include/c/sk_path.h"
 
 #include "../defines.h"
-#include "../util.h"
 
 #include "../generated_headers/android_graphics_GskCanvas.h"
 
@@ -51,17 +49,18 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRect(JNIEnv *
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawPath(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong path_ptr, jlong paint_ptr)
 {
-	sk_path_t *path = (sk_path_t *)_PTR(path_ptr);
-	sk_path_iterator_t *iterator = sk_path_create_iter(path, 0);
-	sk_path_verb_t verb;
-	sk_point_t line[4];
-	while ((verb = sk_path_iter_next(iterator, line)) != DONE_SK_PATH_VERB) {
-		// TODO: use GskPath to support other verbs
-		if (verb == LINE_SK_PATH_VERB) {
-			Java_android_graphics_GskCanvas_native_1drawLine(env, this_class, snapshot_ptr, line[0].x, line[0].y, line[1].x, line[1].y, paint_ptr);
-		}
+	GtkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	GskPath *path = _PTR(path_ptr);
+	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
+	GdkRGBA gdk_color;
+	sk_paint_get_color4f(paint, (sk_color4f_t *)&gdk_color);
+	sk_paint_style_t style = sk_paint_get_style(paint);
+	if (style == STROKE_SK_PAINT_STYLE || style == STROKE_AND_FILL_SK_PAINT_STYLE) {
+		gtk_snapshot_append_stroke(snapshot, path, gsk_stroke_new(2), &gdk_color);
 	}
-	sk_path_iter_destroy(iterator);
+	if (style == FILL_SK_PAINT_STYLE || style == STROKE_AND_FILL_SK_PAINT_STYLE) {
+		gtk_snapshot_append_fill(snapshot, path, GSK_FILL_RULE_WINDING, &gdk_color);
+	}
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1translate(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat dx, jfloat dy)

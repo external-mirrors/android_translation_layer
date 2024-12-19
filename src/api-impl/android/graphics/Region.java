@@ -99,7 +99,7 @@ public class Region {
 	 * (with no antialiasing).
 	 */
 	public boolean setPath(Path path, Region clip) {
-		return nativeSetPath(mNativeRegion, path.ni(), clip.mNativeRegion);
+		return nativeSetPath(mNativeRegion, path.getGskPath(), clip.mNativeRegion);
 	}
 	/**
 	 * Return true if this region is empty
@@ -141,7 +141,7 @@ public class Region {
 	 */
 	public Path getBoundaryPath() {
 		Path path = new Path();
-		nativeGetBoundaryPath(mNativeRegion, path.ni());
+		nativeGetBoundaryPath(mNativeRegion, path.getGskPath());
 		return path;
 	}
 	/**
@@ -149,7 +149,7 @@ public class Region {
 	 * path will also be empty.
 	 */
 	public boolean getBoundaryPath(Path path) {
-		return nativeGetBoundaryPath(mNativeRegion, path.ni());
+		return nativeGetBoundaryPath(mNativeRegion, path.getGskPath());
 	}
 
 	/**

@@ -46,10 +46,6 @@ struct handle_cache {
 	} sensor_event;
 	struct {
 		jclass class;
-		jmethodID constructor;
-	} canvas;
-	struct {
-		jclass class;
 		jmethodID onPeriodicNotification;
 	} audio_track_periodic_listener;
 	struct {

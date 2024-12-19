@@ -99,9 +99,6 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.sensor_event.class = _REF((*env)->FindClass(env, "android/hardware/SensorEvent"));
 	handle_cache.sensor_event.constructor = _METHOD(handle_cache.sensor_event.class, "<init>", "([FLandroid/hardware/Sensor;)V");
 
-	handle_cache.canvas.class = _REF((*env)->FindClass(env, "android/graphics/Canvas"));
-	handle_cache.canvas.constructor = _METHOD(handle_cache.canvas.class, "<init>", "(JJ)V");
-
 	handle_cache.audio_track_periodic_listener.class = _REF((*env)->FindClass(env, "android/media/AudioTrack$OnPlaybackPositionUpdateListener"));
 	handle_cache.audio_track_periodic_listener.onPeriodicNotification = _METHOD(handle_cache.audio_track_periodic_listener.class, "onPeriodicNotification", "(Landroid/media/AudioTrack;)V");
 

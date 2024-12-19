@@ -84,8 +84,6 @@ libandroid_so = shared_library('android', [
 libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/android_app_NativeActivity.c',
                                                                   	'src/api-impl-jni/android_content_res_AssetManager.c',
-                                                                  	'src/api-impl-jni/android_graphics_Bitmap.c',
-                                                                  	'src/api-impl-jni/android_graphics_Canvas.c',
                                                                   	'src/api-impl-jni/android_graphics_Paint.c',
                                                                   	'src/api-impl-jni/android_opengl_GLES20.c',
                                                                   	'src/api-impl-jni/android_os_Environment.c',
@@ -111,6 +109,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/egl/com_google_android_gles_jni_EGLImpl.c',
                                                                   	'src/api-impl-jni/graphics/NinePatchPaintable.c',
                                                                   	'src/api-impl-jni/graphics/NinePatchPaintable.c',
+                                                                  	'src/api-impl-jni/graphics/android_graphics_Bitmap.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_BitmapFactory.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_GskCanvas.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Matrix.c',
@@ -157,7 +156,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   install_dir : get_option('libdir') / 'java/dex/android_translation_layer/natives',
                                                                   install_rpath: '$ORIGIN/:' + get_option('prefix') / get_option('libdir') / 'art',
                                                                   dependencies: [
-                                                                  	dependency('gtk4', version: '>=4.8'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
+                                                                  	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
                                                                   	dependency('libportal'), dependency('sqlite3'), libskia_dep, dependency('libavcodec', version: '>=59'), dependency('libdrm'),
                                                                   	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
                                                                   	libandroidfw_dep

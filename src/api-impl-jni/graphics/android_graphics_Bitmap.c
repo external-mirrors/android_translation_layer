@@ -1,0 +1,75 @@
+#include <gtk/gtk.h>
+
+#include "../defines.h"
+
+#include "../generated_headers/android_graphics_Bitmap.h"
+
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JNIEnv *env, jclass class, jlong texture_ptr)
+{
+	GtkSnapshot *snapshot = gtk_snapshot_new();
+	if (texture_ptr) {
+		GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
+		gtk_snapshot_append_texture(snapshot, texture, &GRAPHENE_RECT_INIT(0, 0, gdk_texture_get_width(texture), gdk_texture_get_height(texture)));
+		g_object_unref(texture);
+	}
+	return _INTPTR(snapshot);
+}
+
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height)
+{
+	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
+	static GType renderer_type = 0;
+	if (!renderer_type) {
+		// Use same renderer type as for onscreen rendering.
+		GdkSurface *surface = gdk_surface_new_toplevel(gdk_display_get_default());
+		GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
+		renderer_type = G_OBJECT_TYPE(renderer);
+		gsk_renderer_unrealize(renderer);
+		g_object_unref(renderer);
+		gdk_surface_destroy(surface);
+	}
+	GskRenderer *renderer = g_object_new(renderer_type, NULL);
+	gsk_renderer_realize(renderer, NULL, NULL);
+	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
+	graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
+	if (!node)
+		node = gsk_color_node_new(&(GdkRGBA){.alpha = 0}, &bounds);
+	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, &bounds);
+	gsk_render_node_unref(node);
+	gsk_renderer_unrealize(renderer);
+	g_object_unref(renderer);
+
+	return _INTPTR(texture);
+}
+
+JNIEXPORT jint JNICALL Java_android_graphics_Bitmap_native_1get_1width(JNIEnv *env, jclass class, jlong texture_ptr)
+{
+	return gdk_texture_get_width(GDK_TEXTURE(_PTR(texture_ptr)));
+}
+
+JNIEXPORT jint JNICALL Java_android_graphics_Bitmap_native_1get_1height(JNIEnv *env, jclass class, jlong texture_ptr)
+{
+	return gdk_texture_get_height(GDK_TEXTURE(_PTR(texture_ptr)));
+}
+
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1erase_1color(JNIEnv *env, jclass class, jint color, jint width, jint height)
+{
+	GdkRGBA rgba = {
+		.red = ((color >> 16) & 0xFF) / 255.f,
+		.green = ((color >> 8) & 0xFF) / 255.f,
+		.blue = ((color >> 0) & 0xFF) / 255.f,
+		.alpha = ((color >> 24) & 0xFF) / 255.f,
+	};
+	graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
+	GtkSnapshot *snapshot = gtk_snapshot_new();
+	gtk_snapshot_append_color(snapshot, &rgba, &bounds);
+	return _INTPTR(snapshot);
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1recycle(JNIEnv *env, jclass class, jlong texture_ptr, jlong snapshot_ptr)
+{
+	if (texture_ptr)
+		g_object_unref(GDK_TEXTURE(_PTR(texture_ptr)));
+	if (snapshot_ptr)
+		g_object_unref(GTK_SNAPSHOT(_PTR(snapshot_ptr)));
+}
