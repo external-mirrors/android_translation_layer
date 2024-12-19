@@ -9,6 +9,7 @@ public class Animator {
 		public abstract void onAnimationEnd (Animator animation);
 	}
 
+	private long duration = 50;
 	private AnimatorListener listener;
 
 	public void setTarget(Object target) {}
@@ -16,12 +17,12 @@ public class Animator {
 	public void start() {
 		if (listener == null)
 			return;
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
+		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
 			public void run() {
 				if (listener != null)
 					listener.onAnimationEnd(Animator.this);
 			}
-		});
+		}, duration);
 	}
 
 	public void addListener(AnimatorListener listener) {
@@ -32,9 +33,12 @@ public class Animator {
 
 	public long getStartDelay() { return 0; }
 
-	public long getDuration() { return 0; }
+	public long getDuration() { return duration; }
 
-	public Animator setDuration(long duration) { return this; }
+	public Animator setDuration(long duration) {
+		this.duration = duration;
+		return this;
+	}
 
 	public void setInterpolator(TimeInterpolator i) {}
 
