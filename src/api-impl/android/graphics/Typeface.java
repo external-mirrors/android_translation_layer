@@ -47,7 +47,7 @@ public class Typeface {
 	}
 
 	public static Typeface create(Typeface typeface, int style) {
-		return typeface;
+		return typeface != null ? typeface : DEFAULT;
 	}
 
 	public static Typeface createFromFile(String path) {

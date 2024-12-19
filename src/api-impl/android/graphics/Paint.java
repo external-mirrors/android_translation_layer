@@ -275,6 +275,10 @@ public class Paint {
 		return new Shader();
 	}
 
+	public PathEffect getPathEffect() {
+		return new PathEffect();
+	}
+
 	public PathEffect setPathEffect(PathEffect effect) {
 		return effect;
 	}

@@ -896,12 +896,16 @@ public class View implements Drawable.Callback {
 	}
 
 	public View(Context context, AttributeSet attrs, int defStyle) {
+		this(context, attrs, defStyle, 0);
+	}
+
+	public View(Context context, AttributeSet attrs, int defStyle, int defStyleRes) {
 		this.context = context;
 
 		widget = native_constructor(context, attrs);
 
 		if (attrs != null) {
-			TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.View, defStyle, 0);
+			TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.View, defStyle, defStyleRes);
 			this.id = a.getResourceId(com.android.internal.R.styleable.View_id, View.NO_ID);
 			if (a.hasValue(com.android.internal.R.styleable.View_background)) {
 				try {
@@ -927,7 +931,7 @@ public class View implements Drawable.Callback {
 			}
 
 			int padding = a.getDimensionPixelSize(com.android.internal.R.styleable.View_padding, -1);
-			
+
 			int paddingVertical = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingVertical, -1);
 			int paddingHorizontal = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingHorizontal, -1);
 
@@ -974,7 +978,7 @@ public class View implements Drawable.Callback {
 				int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
 				setTextAlignment(textAlignment);
 			}
-			
+
 			a.recycle();
 		}
 		onCreateDrawableState(0);
@@ -2095,4 +2099,7 @@ public class View implements Drawable.Callback {
 	public void setPointerIcon(PointerIcon pointerIcon) {}
 
 	public IBinder getApplicationWindowToken() {return null;}
+
+	public int getVerticalFadingEdgeLength() {return 0;}
+	public int getVerticalScrollbarWidth() {return 0;}
 }

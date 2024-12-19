@@ -6,7 +6,9 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.GskCanvas;
+import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Slog;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
@@ -357,8 +359,11 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void setClipToPadding(boolean clipToPadding) {}
 
 	public View findViewById(int id) {
-		if (this.id == id)
+		Slog.v(TAG, "findViewById: looking for id: " + String.format("%x", id) + "(" + getResources().getResourceName(id) + ")" + " | checking: " + this + ",id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
+		if (this.id == id) {
+			Slog.v(TAG, "findViewById: found: "+this+" | id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
 			return this;
+		}
 		for (View child: children) {
 			View result = child.findViewById(id);
 			if (result != null)
@@ -407,6 +412,14 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		for (int i = getChildCount() - 1; i >= 0; i--) {
 			removeViewInLayout(getChildAt(i));
 		}
+	}
+
+	public void offsetChildrenTopAndBottom(int offset) {
+		// FIXME
+	}
+
+	public final void offsetDescendantRectToMyCoords(View descendant, Rect rect) {
+		// FIXME
 	}
 
 	public static class LayoutParams {
@@ -525,7 +538,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 					}
 				}
 			}
-			
+
 			a.recycle();
 		}
 

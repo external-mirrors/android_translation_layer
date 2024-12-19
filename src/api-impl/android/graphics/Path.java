@@ -534,6 +534,19 @@ public class Path {
 		isSimplePath = false;
 		native_addArc(mNativePath, oval, startAngle, sweepAngle);
 	}
+
+	/**
+	* Add a closed round-rectangle contour to the path
+	*
+	* @param rx   The x-radius of the rounded corners on the round-rectangle
+	* @param ry   The y-radius of the rounded corners on the round-rectangle
+	* @param dir  The direction to wind the round-rectangle's contour
+	*
+	*/
+	public void addRoundRect(float left, float top, float right, float bottom, float rx, float ry, Direction dir) {
+		native_addRoundRect(mNativePath, left, top, right, bottom, rx, ry, dir.nativeInt);
+	}
+
 	/**
 	 * Add a closed round-rectangle contour to the path
 	 *
@@ -547,7 +560,7 @@ public class Path {
 			throw new NullPointerException("need rect parameter");
 		}
 		isSimplePath = false;
-		native_addRoundRect(mNativePath, rect, rx, ry, dir.nativeInt);
+		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, rx, ry, dir);
 	}
 
 	/**
@@ -707,7 +720,7 @@ public class Path {
 	private static native void native_addCircle(long nPath, float x, float y, float radius, int dir);
 	private static native void native_addArc(long nPath, RectF oval,
 						 float startAngle, float sweepAngle);
-	private static native void native_addRoundRect(long nPath, RectF rect,
+	private static native void native_addRoundRect(long nPath, float left, float top, float right, float bottom,
 						       float rx, float ry, int dir);
 	private static native void native_addRoundRect(long nPath, RectF r, float[] radii, int dir);
 	private static native void native_addPath(long nPath, long src, float dx, float dy);

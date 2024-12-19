@@ -167,6 +167,12 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rMoveTo(JNIEnv *env, j
 	sk_path_rmove_to(path, dx, dy);
 }
 
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addRoundRect__JFFFFFFI(JNIEnv *env, jclass class, jlong path_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloat rx, jfloat ry, jint dir)
+{
+	sk_path_t *path = (sk_path_t *)_PTR(path_ptr);
+	sk_path_add_rounded_rect(path, &(sk_rect_t){left, top, right, bottom}, rx, ry, (sk_path_direction_t)dir);
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addRoundRect__JLandroid_graphics_RectF_2_3FI(JNIEnv *env, jclass class, jlong path_ptr, jobject rect, jfloatArray radii, jint dir)
 {
 	sk_path_t *path = (sk_path_t *)_PTR(path_ptr);

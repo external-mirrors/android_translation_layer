@@ -29,7 +29,11 @@ public class ImageView extends View {
 	}
 
 	public ImageView(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
+		this(context, attrs, defStyleAttr, 0);
+	}
+
+	public ImageView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
 
 		haveCustomMeasure = false;
 		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.ImageView, defStyleAttr, 0);
@@ -65,7 +69,7 @@ public class ImageView extends View {
 	}
 
 	public void setImageDrawable(Drawable drawable) {
-		if (colorFilter != null) {
+		if (drawable != null  && colorFilter != null) {
 			drawable = drawable.mutate();
 			drawable.setColorFilter(colorFilter);
 		}

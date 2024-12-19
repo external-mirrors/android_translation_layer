@@ -218,10 +218,10 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addArc
 /*
  * Class:     android_graphics_Path
  * Method:    native_addRoundRect
- * Signature: (JLandroid/graphics/RectF;FFI)V
+ * Signature: (JFFFFFFI)V
  */
-JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addRoundRect__JLandroid_graphics_RectF_2FFI
-  (JNIEnv *, jclass, jlong, jobject, jfloat, jfloat, jint);
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1addRoundRect__JFFFFFFI
+  (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jint);
 
 /*
  * Class:     android_graphics_Path
