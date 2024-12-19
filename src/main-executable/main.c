@@ -647,7 +647,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	else
 		_SET_INT_FIELD(configuration, "screenLayout", /*SCREENLAYOUT_SIZE_NORMAL*/ 0x02);
 
-	if (app_icon_path) {
+	if (!d->apk_instrumentation_class && app_icon_path) {
 		char *app_icon_path_full = malloc(strlen(app_data_dir) + 1 + strlen(app_icon_path) + 1); // +1 for /, +1 for NULL
 		sprintf(app_icon_path_full, "%s/%s", app_data_dir, app_icon_path);
 
