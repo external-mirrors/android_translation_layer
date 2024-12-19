@@ -31,6 +31,12 @@ import org.xmlpull.v1.XmlPullParserFactory;
 public class LayoutInflater {
 	private static final String TAG = "LayoutInflater";
 
+	/* pretty print for debugging */
+	private int indent = 1;
+	private String tabs(int indent) {
+		return indent > 0 ? String.format("%"+indent+"s", "").replace(" ", "\t") : "";
+	}
+
 	public interface Factory {
 	}
 
@@ -63,7 +69,7 @@ public class LayoutInflater {
 	}
 
 	public final View createView(String name, String prefix, AttributeSet attrs) throws Exception {
-		Slog.v(TAG, ">>>>>>>>>>>>>>>>>>>>>>>>> createView(" + name + ", " + prefix + ", " + attrs + ");");
+		Slog.v(TAG, tabs(indent) + "createView(" + name + ", " + prefix + ", " + attrs + ");");
 
 		String view_class_name = prefix!=null ? prefix + name : name;
 		Class view_class = Class.forName(view_class_name);
@@ -109,7 +115,7 @@ public class LayoutInflater {
 			name = attrs.getAttributeValue(null, "class");
 		}
 
-		Slog.v(TAG, "******** Creating view: " + name);
+		Slog.v(TAG, tabs(indent) + "createViewFromTag called: parent: " + parent + ", name: " + name);
 
 		View view;
 
@@ -119,7 +125,7 @@ public class LayoutInflater {
 			view = createView(name, null, attrs);
 		}
 
-		Slog.v(TAG, "Created view is: " + view);
+		Slog.v(TAG, tabs(indent) + "createViewFromTag: Created view is: " + view + " | id: " + String.format("%x", view.getId()) + ", id_str: " + view.getIdName());
 		return view;
 	}
 
@@ -129,7 +135,7 @@ public class LayoutInflater {
 
 	public View inflate(int layoutResID, ViewGroup root, boolean attachToRoot) {
 
-		Slog.v(TAG, "inflating view from id: " + String.format("%x", layoutResID));
+		Slog.v(TAG, "inflating view from layout id: " + String.format("%x", layoutResID) + ", id_str: " + Context.this_application.getResources().getResourceName(layoutResID));
 		XmlResourceParser xpp = context.getResources().getLayout(layoutResID);
 
 		try {
@@ -158,9 +164,9 @@ public class LayoutInflater {
 
 		final String name = parser.getName();
 
-		Slog.v(TAG, "**************************");
-		Slog.v(TAG, "Creating root view: " + name);
-		Slog.v(TAG, "**************************");
+		Slog.v(TAG, tabs(indent) + "**************************");
+		Slog.v(TAG, tabs(indent) + "Creating root view: " + name);
+		Slog.v(TAG, tabs(indent) + "**************************");
 
 		if (name.equals("merge")) {
 			if (root == null || !attachToRoot) {
@@ -181,7 +187,7 @@ public class LayoutInflater {
 			ViewGroup.LayoutParams params = null;
 
 			if (root != null) {
-				Slog.v(TAG, "Creating params from root: " + root);
+				Slog.v(TAG, tabs(indent) + "Creating params from root: " + root);
 
 				// Create layout params that match root, if supplied
 				try {
@@ -197,12 +203,12 @@ public class LayoutInflater {
 				}
 			}
 
-			Slog.v(TAG, "-----> start inflating children");
+			Slog.v(TAG, tabs(indent) + "-----> start inflating children");
 
 			// Inflate all children under temp
 			rInflate(parser, temp, attrs, true);
 
-			Slog.v(TAG, "-----> done inflating children");
+			Slog.v(TAG, tabs(indent) + "-----> done inflating children");
 
 			// We are supposed to attach all the views we found (int temp)
 			// to root. Do that now.
@@ -221,12 +227,12 @@ public class LayoutInflater {
 	}
 
 	void rInflate(XmlPullParser parser, View parent, final AttributeSet attrs, boolean finishInflate) throws Exception {
-
 		final int depth = parser.getDepth();
 		int type;
 
+		indent++; // prettyprint for debugging
 		while (((type = parser.next()) != XmlPullParser.END_TAG ||
-			parser.getDepth() > depth) &&
+		       parser.getDepth() > depth) &&
 		       type != XmlPullParser.END_DOCUMENT) {
 
 			if (type != XmlPullParser.START_TAG) {
@@ -266,6 +272,7 @@ public class LayoutInflater {
 				viewGroup.addView(view, params);
 			}
 		}
+		indent--; // prettyprint for debugging
 
 		if (finishInflate)
 			parent.onFinishInflate();
