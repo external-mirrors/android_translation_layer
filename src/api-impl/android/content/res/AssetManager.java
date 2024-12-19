@@ -110,7 +110,7 @@ public final class AssetManager {
 				Log.v(TAG, "New asset manager: " + this);
 			//            ensureSystemAssets()
 			try {
-				Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("resources.arsc");
+				Enumeration<URL> resources = ClassLoader.getSystemClassLoader().getResources("AndroidManifest.xml");
 				ArrayList<String> paths = new ArrayList<String>();
 				paths.add(null);  // reserve first slot for framework-res.apk
 				while (resources.hasMoreElements()) {
@@ -123,7 +123,7 @@ public final class AssetManager {
 				}
 				for (String path : paths) {
 					if (path != null) {
-						path = path.substring(path.indexOf("file:") + 5, path.indexOf("!/resources.arsc"));
+						path = path.substring(path.indexOf("file:") + 5, path.indexOf("!/AndroidManifest.xml"));
 						addAssetPath(path);
 					}
 				}
