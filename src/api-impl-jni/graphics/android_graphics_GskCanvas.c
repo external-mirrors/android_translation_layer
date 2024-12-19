@@ -2,9 +2,6 @@
 #include <graphene.h>
 #include <pango/pango.h>
 
-#include "include/c/sk_font.h"
-#include "include/c/sk_paint.h"
-
 #include "../defines.h"
 
 #include "../generated_headers/android_graphics_GskCanvas.h"
@@ -12,6 +9,12 @@
 #define STYLE_FILL 0
 #define STYLE_STROKE 1
 #define STYLE_FILL_AND_STROKE 2
+
+#define GDK_RGBA_INIT(color) ((GdkRGBA){ \
+	.red = ((color >> 16) & 0xFF) / 255.f, \
+	.green = ((color >> 8) & 0xFF) / 255.f, \
+	.blue = ((color >> 0) & 0xFF) / 255.f, \
+	.alpha = ((color >> 24) & 0xFF) / 255.f})
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawBitmap(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong texture_ptr, jint x, jint y, jint width, jint height, jint color)
 {
@@ -37,28 +40,20 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawBitmap(JNIEnv
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jint color)
 {
 	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
-	GdkRGBA gdk_color = {
-		(float)((color >> 16) & 0xff) / 0xff,
-		(float)((color >> 8)  & 0xff) / 0xff,
-		(float)((color >> 0)  & 0xff) / 0xff,
-		(float)((color >> 24) & 0xff) / 0xff,
-	};
+	GdkRGBA gdk_color = GDK_RGBA_INIT(color);
 	graphene_rect_t bounds = GRAPHENE_RECT_INIT(left, top, right - left, bottom - top);
 	gtk_snapshot_append_color(snapshot, &gdk_color, &bounds);
 }
 
-JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawPath(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong path_ptr, jlong paint_ptr)
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawPath(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong path_ptr, jint color, jint style)
 {
 	GtkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
 	GskPath *path = _PTR(path_ptr);
-	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
-	GdkRGBA gdk_color;
-	sk_paint_get_color4f(paint, (sk_color4f_t *)&gdk_color);
-	sk_paint_style_t style = sk_paint_get_style(paint);
-	if (style == STROKE_SK_PAINT_STYLE || style == STROKE_AND_FILL_SK_PAINT_STYLE) {
+	GdkRGBA gdk_color = GDK_RGBA_INIT(color);
+	if (style == STYLE_STROKE || style == STYLE_FILL_AND_STROKE) {
 		gtk_snapshot_append_stroke(snapshot, path, gsk_stroke_new(2), &gdk_color);
 	}
-	if (style == FILL_SK_PAINT_STYLE || style == STROKE_AND_FILL_SK_PAINT_STYLE) {
+	if (style == STYLE_FILL || style == STYLE_FILL_AND_STROKE) {
 		gtk_snapshot_append_fill(snapshot, path, GSK_FILL_RULE_WINDING, &gdk_color);
 	}
 }
@@ -87,37 +82,31 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1restore(JNIEnv *e
 	gtk_snapshot_restore(snapshot);
 }
 
-JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat x0, jfloat y0, jfloat x1, jfloat y1, jlong paint_ptr)
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat x0, jfloat y0, jfloat x1, jfloat y1, jint color, jfloat stroke_width)
 {
 	if (isnan(x0) || isnan(y0) || isnan(x1) || isnan(y1)) {
 		return;
 	}
 	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
-	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
-	GdkRGBA gdk_color;
-	sk_paint_get_color4f(paint, (sk_color4f_t *)&gdk_color);
-	float width = sk_paint_get_stroke_width(paint);
+	GdkRGBA gdk_color = GDK_RGBA_INIT(color);
 	gtk_snapshot_save(snapshot);
 	gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(x0, y0));
 	float rotation = atan2(y1 - y0, x1 - x0);
 	gtk_snapshot_rotate(snapshot, rotation * 180 / M_PI);
 	float length = sqrt((x1 - x0) * (x1 - x0) + (y1 - y0) * (y1 - y0));
-	gtk_snapshot_append_color(snapshot, &gdk_color, &GRAPHENE_RECT_INIT(0, -width / 2, length, width));
+	gtk_snapshot_append_color(snapshot, &gdk_color, &GRAPHENE_RECT_INIT(0, -stroke_width / 2, length, stroke_width));
 	gtk_snapshot_restore(snapshot);
 }
 
 extern GtkWidget *window;
 
-JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jstring text, jfloat x, jfloat y, jlong paint_ptr, jlong font_ptr)
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jstring text, jfloat x, jfloat y, jint color, jfloat text_size)
 {
 	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
-	sk_paint_t *paint = (sk_paint_t *)_PTR(paint_ptr);
-	sk_font_t *font = (sk_font_t *)_PTR(font_ptr);
-	GdkRGBA gdk_color;
-	sk_paint_get_color4f(paint, (sk_color4f_t *)&gdk_color);
+	GdkRGBA gdk_color = GDK_RGBA_INIT(color);
 	PangoLayout *layout = pango_layout_new(gtk_widget_get_pango_context(window));
 	PangoFontDescription *description = pango_font_description_new();
-	pango_font_description_set_size(description, sk_font_get_size(font) * .8f * PANGO_SCALE);
+	pango_font_description_set_size(description, text_size * .8f * PANGO_SCALE);
 	pango_layout_set_font_description(layout, description);
 	const char *str = (*env)->GetStringUTFChars(env, text, NULL);
 	pango_layout_set_text(layout, str, -1);

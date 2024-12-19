@@ -28,10 +28,10 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRect
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawPath
- * Signature: (JJJ)V
+ * Signature: (JJII)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawPath
-  (JNIEnv *, jobject, jlong, jlong, jlong);
+  (JNIEnv *, jobject, jlong, jlong, jint, jint);
 
 /*
  * Class:     android_graphics_GskCanvas
@@ -68,18 +68,18 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1restore
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawLine
- * Signature: (JFFFFJ)V
+ * Signature: (JFFFFIF)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine
-  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jlong);
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jint, jfloat);
 
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawText
- * Signature: (JLjava/lang/String;FFJJ)V
+ * Signature: (JLjava/lang/String;FFIF)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText
-  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jlong, jlong);
+  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jint, jfloat);
 
 /*
  * Class:     android_graphics_GskCanvas

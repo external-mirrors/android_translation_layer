@@ -42,32 +42,12 @@ If you want to build ATL from source, you can take advantage of the packages for
 sudo apk add build-base meson java-common openjdk8-jdk \
     pc:alsa pc:glib-2.0 pc:gtk4 pc:gudev-1.0 pc:libportal \
     pc:openxr pc:vulkan pc:webkitgtk-6.0 ffmpeg-dev \
-    bionic_translation-dev art_standalone-dev skia-sharp-dev
+    bionic_translation-dev art_standalone-dev
 ```
 
 You can now skip the Additional Dependencies section and continue with the build steps from below.
 
 ## Additional Dependencies
-### Skia
-If your distro ships this already (e.g. `skia-sharp` on Alpine), you can just install the package and skip this step.
-
-Install `gn` via your system's package manager.
-```sh
-git clone https://github.com/Mis012/skia.git -b with-patches-applied
-cd skia
-cp build/linux-self-hosted/DEPS DEPS
-python3 tools/git-sync-deps
-export arch=x64
-gn gen "out/linux/$arch" --args='is_official_build=true skia_enable_tools=false target_os="linux" target_cpu="$arch" skia_use_icu=false skia_use_sfntly=false skia_use_piex=true skia_use_system_harfbuzz=true skia_use_system_expat=true skia_use_system_freetype2=true skia_use_system_libjpeg_turbo=true skia_use_system_libpng=true skia_use_system_libwebp=true skia_use_system_zlib=true skia_enable_gpu=true extra_cflags=[ "-DSKIA_C_DLL" ] linux_soname_version="99.9"'
-ninja -C "out/linux/$arch" SkiaSharp
-sudo cp out/linux/$arch/libSkiaSharp.so.99.9 /usr/local/lib64/
-sudo ln -s /usr/local/lib64/libSkiaSharp.so.99.9 /usr/local/lib64/libSkiaSharp.so
-```
-Note:
-- You can also use [this nuget package](https://www.nuget.org/api/v2/package/SkiaSharp.NativeAssets.Linux/2.88.5) if it's compatible with your distro. It's an older upstream version before the ABI break which is fixed in our skia repository.
-- For `x86` or `aarch64`: set `arch` accordingly.
-- On alpine: add `-fpermissive` to `--args`.
-
 ### wolfSSL
 If your distro ships wolfSSL with JNI enabled already, you can just install the package and skip this step.
 ```sh

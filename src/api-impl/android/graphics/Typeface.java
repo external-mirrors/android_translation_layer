@@ -33,7 +33,6 @@ public class Typeface {
 	public static final int ITALIC = 2;
 	public static final int BOLD_ITALIC = 3;
 
-	public long skia_typeface = 0;
 	public long native_instance = 0;  // directly accessed by androidx
 
 	public static Typeface createFromAsset(AssetManager mgr, String path) {
@@ -42,7 +41,6 @@ public class Typeface {
 
 	public static Typeface create(String family_name, int style) {
 		Typeface ret = new Typeface();
-		ret.skia_typeface = native_create(family_name, style);
 		return ret;
 	}
 
@@ -53,8 +51,6 @@ public class Typeface {
 	public static Typeface createFromFile(String path) {
 		return DEFAULT;
 	}
-
-	private static native long native_create(CharSequence family_name, int style);
 
 	public int getStyle() {
 		return 0;

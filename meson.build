@@ -17,9 +17,6 @@ libart_dep = [
 libdl_bio_dep = [
 	cc.find_library('dl_bio')
 ]
-libskia_dep = [
-	cc.find_library('SkiaSharp')
-]
 libandroidfw_dep = [
 	cc.find_library('androidfw', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ]),
 ]
@@ -84,7 +81,6 @@ libandroid_so = shared_library('android', [
 libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/android_app_NativeActivity.c',
                                                                   	'src/api-impl-jni/android_content_res_AssetManager.c',
-                                                                  	'src/api-impl-jni/android_graphics_Paint.c',
                                                                   	'src/api-impl-jni/android_opengl_GLES20.c',
                                                                   	'src/api-impl-jni/android_os_Environment.c',
                                                                   	'src/api-impl-jni/android_os_MessageQueue.c',
@@ -114,8 +110,6 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/graphics/android_graphics_GskCanvas.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Matrix.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Path.c',
-                                                                  	'src/api-impl-jni/graphics/android_graphics_Typeface.c',
-                                                                  	'src/api-impl-jni/graphics/android_graphics_Typeface.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_drawable_Drawable.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_drawable_DrawableContainer.c',
                                                                   	'src/api-impl-jni/location/android_location_LocationManager.c',
@@ -145,19 +139,17 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_Spinner.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_SeekBar.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_TextView.c',
-                                                                  	'src/sk_area/sk_area.c',
                                                                   	linux_dmabuf,
                                                                   	viewporter,
                                                                   	mpris,
                                                                   	portal_openuri,
                                                                   ] + marshal_files,
-                                                                  include_directories: ['src/sk_area/'],
                                                                   install: true,
                                                                   install_dir : get_option('libdir') / 'java/dex/android_translation_layer/natives',
                                                                   install_rpath: '$ORIGIN/:' + get_option('prefix') / get_option('libdir') / 'art',
                                                                   dependencies: [
                                                                   	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
-                                                                  	dependency('libportal'), dependency('sqlite3'), libskia_dep, dependency('libavcodec', version: '>=59'), dependency('libdrm'),
+                                                                  	dependency('libportal'), dependency('sqlite3'), dependency('libavcodec', version: '>=59'), dependency('libdrm'),
                                                                   	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
                                                                   	libandroidfw_dep
                                                                   ],

@@ -17,13 +17,14 @@ public class Paint {
 	public static final int AUTO_HINTING_TEXT_FLAG    = (1 << 11);
 	public static final int VERTICAL_TEXT_FLAG        = (1 << 12);
 
-	public long skia_paint = 0;
 	private Typeface typeface = null;
-	public long skia_font = 0;
 	ColorFilter colorFilter = null;
+	private int color = 0;
+	private float strokeWidth = 0;
+	private float textSize = 7;
+	private Style style = Style.FILL;
 
 	public Paint() {
-		skia_paint = native_constructor();
 	}
 
 	public Paint (int flags) {
@@ -38,34 +39,25 @@ public class Paint {
 	}
 
 	public void setColor(int color) {
-		native_set_color(skia_paint, color);
+		this.color = color;
 	}
 
 	public int getColor() {
-		return native_get_color(skia_paint);
+		return color;
 	}
 
 	public void setAntiAlias(boolean aa) {
-		native_set_antialias(skia_paint, aa);
 	}
 
 	public void setStrokeWidth(float width) {
-		native_set_stroke_width(skia_paint, width);
+		this.strokeWidth = width;
 	}
 	public void setTextSize(float size) {
-		if(skia_font == 0)
-			skia_font = native_create_font();
-
-		native_set_text_size(skia_font, size);
+		this.textSize = size;
 	}
 
 	public Typeface setTypeface(Typeface typeface) {
 		this.typeface = typeface;
-		if(skia_font == 0)
-			skia_font = native_create_font();
-
-		if (typeface != null)
-			native_set_typeface(skia_font, typeface.skia_typeface);
 		return this.typeface;
 	}
 	public void getTextBounds(String text, int start, int end, Rect bounds) {}
@@ -82,20 +74,16 @@ public class Paint {
 	}
 
 	public void setStyle(Style style) {
-		native_set_style(skia_paint, style.nativeInt);
+		this.style = style;
 	}
 
 	public float ascent() {
-		if(skia_font == 0)
-			return 0;
-		return native_ascent(skia_font);
+		return 10;
 	}
 
 	public float measureText(char[] text, int index, int count) { return 10; }
 	public float measureText(String text, int start, int end) {
-		if (skia_font == 0)
-			skia_font = native_create_font();
-		return native_measure_text(skia_font, text, start, end, skia_paint);
+		return (end-start)*textSize;
 	}
 	public float measureText(String text) {
 		return measureText(text, 0, text.length());
@@ -192,7 +180,7 @@ public class Paint {
 	public /*native*/ int getAlpha() { return 0; }
 	public /*native*/ void setAlpha(int a) {}
 	public float getStrokeWidth() {
-		return native_get_stroke_width(skia_paint);
+		return strokeWidth;
 	}
 
 	public /*native*/ float getStrokeMiter() { return 0; }
@@ -211,9 +199,6 @@ public class Paint {
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
 	public Xfermode setXfermode(Xfermode xfermode) {
-		if (xfermode instanceof PorterDuffXfermode) {
-			native_set_blendmode(skia_paint, ((PorterDuffXfermode)xfermode).mode.nativeInt);
-		}
 		return xfermode;
 	}
 
@@ -312,21 +297,6 @@ public class Paint {
 	public float getLetterSpacing() { return 1.0f; }
 
 	public Style getStyle() {
-		return Style.values()[native_get_style(skia_paint)];
+		return style;
 	}
-
-	private native long native_constructor();
-	private native void native_set_antialias(long skia_paint, boolean aa);
-	private native void native_set_color(long skia_paint, int color);
-	private native int native_get_color(long skia_paint);
-	private static native long native_create_font();
-	private static native float native_ascent(long skia_font);
-	private static native void native_set_typeface(long skia_font, long skia_typeface);
-	private static native void native_set_text_size(long skia_font, float size);
-	private static native float native_measure_text(long skia_font, CharSequence text, int start, int end, long skia_paint);
-	private static native void native_set_stroke_width(long skia_font, float width);
-	private static native float native_get_stroke_width(long skia_font);
-	private static native void native_set_style(long skia_paint, int style);
-	private static native void native_set_blendmode(long skia_paint, int mode);
-	private static native int native_get_style(long skia_paint);
 }
