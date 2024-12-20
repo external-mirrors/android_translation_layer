@@ -45,6 +45,14 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeOpenURI
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeFileChooser
   (JNIEnv *, jobject, jint, jstring, jstring, jint);
 
+/*
+ * Class:     android_app_Activity
+ * Method:    isInMultiWindowMode
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_app_Activity_isInMultiWindowMode
+  (JNIEnv *, jobject);
+
 #ifdef __cplusplus
 }
 #endif

@@ -575,5 +575,5 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 	public Uri getReferrer() { return null; }
 	public void setDefaultKeyMode(int flag) {}
 	public void registerForContextMenu(View view) {}
-	public boolean isInMultiWindowMode() { return true; }
+	public native boolean isInMultiWindowMode();
 }
