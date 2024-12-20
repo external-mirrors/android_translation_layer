@@ -6,11 +6,11 @@ import android.util.AttributeSet;
 public class ImageButton extends ImageView {
 
 	public ImageButton(Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	public ImageButton(Context context, AttributeSet attributeSet) {
-		super(context, attributeSet);
+		super(context, attributeSet, com.android.internal.R.attr.imageButtonStyle);
 	}
 
 	public ImageButton(Context context, AttributeSet attributeSet, int defStyleAttr) {

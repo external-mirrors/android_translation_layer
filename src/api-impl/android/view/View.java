@@ -904,83 +904,81 @@ public class View implements Drawable.Callback {
 
 		widget = native_constructor(context, attrs);
 
-		if (attrs != null) {
-			TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.View, defStyle, defStyleRes);
-			this.id = a.getResourceId(com.android.internal.R.styleable.View_id, View.NO_ID);
-			if (a.hasValue(com.android.internal.R.styleable.View_background)) {
-				try {
-					Drawable background = a.getDrawable(com.android.internal.R.styleable.View_background);
+		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.View, defStyle, defStyleRes);
+		this.id = a.getResourceId(com.android.internal.R.styleable.View_id, View.NO_ID);
+		if (a.hasValue(com.android.internal.R.styleable.View_background)) {
+			try {
+				Drawable background = a.getDrawable(com.android.internal.R.styleable.View_background);
 
-					if(background != null) {
-						if(background instanceof ColorDrawable) {
-							setBackgroundColor(((ColorDrawable)background).getColor());
-						} else {
-							setBackgroundDrawable(background);
-						}
-					}
-				} catch (Exception e) { e.printStackTrace(); }
-			}
-			if (a.hasValue(com.android.internal.R.styleable.View_visibility)) {
-				setVisibility(VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)]);
-			}
-			if (a.hasValue(com.android.internal.R.styleable.View_minWidth)) {
-				minWidth = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minWidth, 0);
-			}
-			if (a.hasValue(com.android.internal.R.styleable.View_minHeight)) {
-				minHeight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minHeight, 0);
-			}
-
-			int padding = a.getDimensionPixelSize(com.android.internal.R.styleable.View_padding, -1);
-
-			int paddingVertical = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingVertical, -1);
-			int paddingHorizontal = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingHorizontal, -1);
-
-			int paddingStart = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingStart, -1);
-			int paddingEnd = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingEnd, -1);
-
-			if(padding >= 0) {
-				paddingLeft = padding;
-				paddingTop = padding;
-				paddingRight = padding;
-				paddingBottom = padding;
-			} else {
-				if(paddingVertical >= 0) {
-					paddingTop = paddingVertical;
-					paddingBottom = paddingVertical;
-				} else {
-					paddingTop = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingTop, 0);
-					paddingBottom = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingBottom, 0);
-				}
-
-				if(paddingHorizontal >= 0) {
-					paddingLeft = paddingHorizontal;
-					paddingRight = paddingHorizontal;
-				} else {
-					paddingLeft = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingLeft, 0);
-					paddingRight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingRight, 0);
-
-					if(paddingStart >= 0) {
-						paddingLeft = paddingStart;
-					}
-
-					if(paddingEnd >= 0) {
-						paddingRight = paddingEnd;
+				if(background != null) {
+					if(background instanceof ColorDrawable) {
+						setBackgroundColor(((ColorDrawable)background).getColor());
+					} else {
+						setBackgroundDrawable(background);
 					}
 				}
-			}
-
-			native_setPadding(widget, paddingLeft, paddingTop, paddingRight, paddingBottom);
-
-			if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
-				tag = a.getText(com.android.internal.R.styleable.View_tag);
-			}
-			if(a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
-				int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
-				setTextAlignment(textAlignment);
-			}
-
-			a.recycle();
+			} catch (Exception e) { e.printStackTrace(); }
 		}
+		if (a.hasValue(com.android.internal.R.styleable.View_visibility)) {
+			setVisibility(VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)]);
+		}
+		if (a.hasValue(com.android.internal.R.styleable.View_minWidth)) {
+			minWidth = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minWidth, 0);
+		}
+		if (a.hasValue(com.android.internal.R.styleable.View_minHeight)) {
+			minHeight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minHeight, 0);
+		}
+
+		int padding = a.getDimensionPixelSize(com.android.internal.R.styleable.View_padding, -1);
+
+		int paddingVertical = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingVertical, -1);
+		int paddingHorizontal = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingHorizontal, -1);
+
+		int paddingStart = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingStart, -1);
+		int paddingEnd = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingEnd, -1);
+
+		if(padding >= 0) {
+			paddingLeft = padding;
+			paddingTop = padding;
+			paddingRight = padding;
+			paddingBottom = padding;
+		} else {
+			if(paddingVertical >= 0) {
+				paddingTop = paddingVertical;
+				paddingBottom = paddingVertical;
+			} else {
+				paddingTop = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingTop, 0);
+				paddingBottom = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingBottom, 0);
+			}
+
+			if(paddingHorizontal >= 0) {
+				paddingLeft = paddingHorizontal;
+				paddingRight = paddingHorizontal;
+			} else {
+				paddingLeft = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingLeft, 0);
+				paddingRight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingRight, 0);
+
+				if(paddingStart >= 0) {
+					paddingLeft = paddingStart;
+				}
+
+				if(paddingEnd >= 0) {
+					paddingRight = paddingEnd;
+				}
+			}
+		}
+
+		native_setPadding(widget, paddingLeft, paddingTop, paddingRight, paddingBottom);
+
+		if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
+			tag = a.getText(com.android.internal.R.styleable.View_tag);
+		}
+		if(a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
+			int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
+			setTextAlignment(textAlignment);
+		}
+
+		a.recycle();
 		onCreateDrawableState(0);
 	}
 
