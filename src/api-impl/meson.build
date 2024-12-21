@@ -15,6 +15,8 @@ srcs = [
 	'android/animation/TimeInterpolator.java',
 	'android/animation/TypeEvaluator.java',
 	'android/animation/ValueAnimator.java',
+	'android/annotation/NonNull.java',
+	'android/annotation/Nullable.java',
 	'android/annotation/PrivateApi.java',
 	'android/annotation/SdkConstant.java',
 	'android/annotation/SuppressLint.java',
