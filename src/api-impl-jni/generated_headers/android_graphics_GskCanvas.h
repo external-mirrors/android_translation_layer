@@ -12,26 +12,26 @@ extern "C" {
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawBitmap
- * Signature: (JJIIIII)V
+ * Signature: (JJIIIIJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawBitmap
-  (JNIEnv *, jobject, jlong, jlong, jint, jint, jint, jint, jint);
+  (JNIEnv *, jobject, jlong, jlong, jint, jint, jint, jint, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawRect
- * Signature: (JFFFFI)V
+ * Signature: (JFFFFJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRect
-  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jint);
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawPath
- * Signature: (JJII)V
+ * Signature: (JJJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawPath
-  (JNIEnv *, jobject, jlong, jlong, jint, jint);
+  (JNIEnv *, jobject, jlong, jlong, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
@@ -68,26 +68,26 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1restore
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawLine
- * Signature: (JFFFFIF)V
+ * Signature: (JFFFFJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine
-  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jint, jfloat);
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawText
- * Signature: (JLjava/lang/String;FFIF)V
+ * Signature: (JLjava/lang/String;FFJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText
-  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jint, jfloat);
+  (JNIEnv *, jobject, jlong, jstring, jfloat, jfloat, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas
  * Method:    native_drawRoundRect
- * Signature: (JFFFFFFIFI)V
+ * Signature: (JFFFFFFJ)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawRoundRect
-  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jint, jfloat, jint);
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jlong);
 
 /*
  * Class:     android_graphics_GskCanvas

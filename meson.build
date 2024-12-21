@@ -109,6 +109,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/graphics/android_graphics_BitmapFactory.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_GskCanvas.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Matrix.c',
+                                                                  	'src/api-impl-jni/graphics/android_graphics_Paint.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Path.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_drawable_Drawable.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_drawable_DrawableContainer.c',

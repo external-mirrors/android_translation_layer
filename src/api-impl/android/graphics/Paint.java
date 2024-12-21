@@ -17,14 +17,11 @@ public class Paint {
 	public static final int AUTO_HINTING_TEXT_FLAG    = (1 << 11);
 	public static final int VERTICAL_TEXT_FLAG        = (1 << 12);
 
-	private Typeface typeface = null;
-	ColorFilter colorFilter = null;
-	private int color = 0;
-	private float strokeWidth = 0;
-	private float textSize = 7;
-	private Style style = Style.FILL;
+	long paint;   // native paint
+	private Xfermode xfermode;
 
 	public Paint() {
+		paint = native_create();
 	}
 
 	public Paint (int flags) {
@@ -33,32 +30,29 @@ public class Paint {
 	}
 
 	public Paint(Paint paint) {
-		/* TODO: use sk_paint_clone */
-		this();
-		setColor(paint.getColor());
+		this.paint = native_clone(paint.paint);
 	}
 
 	public void setColor(int color) {
-		this.color = color;
+		native_set_color(paint, color);
 	}
 
 	public int getColor() {
-		return color;
+		return native_get_color(paint);
 	}
 
 	public void setAntiAlias(boolean aa) {
 	}
 
 	public void setStrokeWidth(float width) {
-		this.strokeWidth = width;
+		native_set_stroke_width(paint, width);
 	}
 	public void setTextSize(float size) {
-		this.textSize = size;
+		native_set_text_size(paint, size);
 	}
 
 	public Typeface setTypeface(Typeface typeface) {
-		this.typeface = typeface;
-		return this.typeface;
+		return typeface;
 	}
 	public void getTextBounds(String text, int start, int end, Rect bounds) {}
 	public void getTextBounds(char[] text, int index, int count, Rect bounds) {}
@@ -74,7 +68,7 @@ public class Paint {
 	}
 
 	public void setStyle(Style style) {
-		this.style = style;
+		native_set_style(paint, style.ordinal());
 	}
 
 	public float ascent() {
@@ -83,7 +77,7 @@ public class Paint {
 
 	public float measureText(char[] text, int index, int count) { return 10; }
 	public float measureText(String text, int start, int end) {
-		return (end-start)*textSize;
+		return (end-start)*getTextSize()*.6f;
 	}
 	public float measureText(String text) {
 		return measureText(text, 0, text.length());
@@ -93,7 +87,12 @@ public class Paint {
 	}
 
 	public ColorFilter setColorFilter(ColorFilter colorFilter) {
-		this.colorFilter = colorFilter;
+		if (colorFilter instanceof PorterDuffColorFilter) {
+			PorterDuffColorFilter porterDuff = (PorterDuffColorFilter)colorFilter;
+			native_set_color_filter(paint, porterDuff.getMode().ordinal(), porterDuff.getColor());
+		} else {
+			native_set_color_filter(paint, -1, 0);
+		}
 		return colorFilter;
 	}
 
@@ -104,12 +103,12 @@ public class Paint {
 		 * Geometry and text drawn with this style will be filled, ignoring all
 		 * stroke-related settings in the paint.
 		 */
-		FILL(0),
+		FILL,
 		/**
 		 * Geometry and text drawn with this style will be stroked, respecting
 		 * the stroke-related fields on the paint.
 		 */
-		STROKE(1),
+		STROKE,
 		/**
 		 * Geometry and text drawn with this style will be both filled and
 		 * stroked at the same time, respecting the stroke-related fields on
@@ -117,12 +116,9 @@ public class Paint {
 		 * is oriented counter-clockwise. This restriction does not apply to
 		 * either FILL or STROKE.
 		 */
-		FILL_AND_STROKE(2);
+		FILL_AND_STROKE;
 
-		Style(int nativeInt) {
-			this.nativeInt = nativeInt;
-		}
-		final int nativeInt;
+		public static final Style values[] = Style.values();
 	}
 
 	public static class FontMetrics {
@@ -180,12 +176,14 @@ public class Paint {
 	public /*native*/ int getAlpha() { return 0; }
 	public /*native*/ void setAlpha(int a) {}
 	public float getStrokeWidth() {
-		return strokeWidth;
+		return native_get_stroke_width(paint);
 	}
 
 	public /*native*/ float getStrokeMiter() { return 0; }
 	public /*native*/ void setStrokeMiter(float miter) {}
-	public /*native*/ float getTextSize() { return 0; }
+	public /*native*/ float getTextSize() {
+		return native_get_text_size(paint);
+	}
 
 	public /*native*/ float getTextScaleX() { return 0; }
 	public /*native*/ void setTextScaleX(float scaleX) {}
@@ -199,6 +197,11 @@ public class Paint {
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
 	public Xfermode setXfermode(Xfermode xfermode) {
+		this.xfermode = xfermode;
+		return xfermode;
+	}
+
+	public Xfermode getXfermode() {
 		return xfermode;
 	}
 
@@ -208,36 +211,36 @@ public class Paint {
 		/**
 		 * The stroke ends with the path, and does not project beyond it.
 		 */
-		BUTT(0),
+		BUTT,
 		/**
 		 * The stroke projects out as a semicircle, with the center at the
 		 * end of the path.
 		 */
-		ROUND(1),
+		ROUND,
 		/**
 		 * The stroke projects out as a square, with the center at the end
 		 * of the path.
 		 */
-		SQUARE(2);
+		SQUARE;
 
-		private Cap(int nativeInt) {}
+		public static final Cap values[] = Cap.values();
 	}
 
 	public enum Join {
 		/**
 		 * The outer edges of a join meet at a sharp angle
 		 */
-		MITER(0),
+		MITER,
 		/**
 		 * The outer edges of a join meet in a circular arc.
 		 */
-		ROUND(1),
+		ROUND,
 		/**
 		 * The outer edges of a join meet with a straight line
 		 */
-		BEVEL(2);
+		BEVEL;
 
-		private Join(int nativeInt) {}
+		public static final Join values[] = Join.values();
 	}
 
 	public enum Align {
@@ -246,9 +249,13 @@ public class Paint {
 		RIGHT,
 	}
 
-	public void setStrokeCap(Cap cap) {}
+	public void setStrokeCap(Cap cap) {
+		native_set_stroke_cap(paint, cap.ordinal());
+	}
 
-	public void setStrokeJoin(Join join) {}
+	public void setStrokeJoin(Join join) {
+		native_set_stroke_join(paint, join.ordinal());
+	}
 
 	public Typeface getTypeface() {
 		return new Typeface();
@@ -284,19 +291,43 @@ public class Paint {
 		return new FontMetricsInt();
 	}
 
-	public void set(Paint paint) {}
+	public void set(Paint paint) {
+		native_recycle(this.paint);
+		this.paint = native_clone(paint.paint);
+	}
 
 	public boolean isFilterBitmap() { return false; }
 
-	public Cap getStrokeCap() { return Cap.BUTT; }
+	public Cap getStrokeCap() {
+		return Cap.values[native_get_stroke_cap(paint)];
+	}
 
-	public Join getStrokeJoin() { return Join.MITER; }
+	public Join getStrokeJoin() {
+		return Join.values[native_get_stroke_join(paint)];
+	}
 
 	public Locale getTextLocale() { return Locale.getDefault(); }
 
 	public float getLetterSpacing() { return 1.0f; }
 
 	public Style getStyle() {
-		return style;
+		return Style.values[native_get_style(paint)];
 	}
+
+	private static native long native_create();
+	private static native long native_clone(long paint);
+	private static native void native_recycle(long paint);
+	private static native void native_set_color(long paint, int color);
+	private static native int native_get_color(long paint);
+	private static native void native_set_style(long paint, int style);
+	private static native int native_get_style(long paint);
+	private static native void native_set_stroke_width(long paint, float width);
+	private static native float native_get_stroke_width(long paint);
+	private static native void native_set_stroke_cap(long paint, int cap);
+	private static native int native_get_stroke_cap(long paint);
+	private static native void native_set_stroke_join(long paint, int join);
+	private static native int native_get_stroke_join(long paint);
+	private static native void native_set_text_size(long paint, float size);
+	private static native float native_get_text_size(long paint);
+	private static native void native_set_color_filter(long paint, int mode, int color);
 }

@@ -35,19 +35,27 @@ extern "C" {
 #define android_graphics_Paint_VERTICAL_TEXT_FLAG 4096L
 /*
  * Class:     android_graphics_Paint
- * Method:    native_constructor
+ * Method:    native_create
  * Signature: ()J
  */
-JNIEXPORT jlong JNICALL Java_android_graphics_Paint_native_1constructor
-  (JNIEnv *, jobject);
+JNIEXPORT jlong JNICALL Java_android_graphics_Paint_native_1create
+  (JNIEnv *, jclass);
 
 /*
  * Class:     android_graphics_Paint
- * Method:    native_set_antialias
- * Signature: (JZ)V
+ * Method:    native_clone
+ * Signature: (J)J
  */
-JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1antialias
-  (JNIEnv *, jobject, jlong, jboolean);
+JNIEXPORT jlong JNICALL Java_android_graphics_Paint_native_1clone
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_recycle
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1recycle
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     android_graphics_Paint
@@ -55,7 +63,7 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1antialias
  * Signature: (JI)V
  */
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color
-  (JNIEnv *, jobject, jlong, jint);
+  (JNIEnv *, jclass, jlong, jint);
 
 /*
  * Class:     android_graphics_Paint
@@ -63,47 +71,23 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color
  * Signature: (J)I
  */
 JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1color
-  (JNIEnv *, jobject, jlong);
-
-/*
- * Class:     android_graphics_Paint
- * Method:    native_create_font
- * Signature: ()J
- */
-JNIEXPORT jlong JNICALL Java_android_graphics_Paint_native_1create_1font
-  (JNIEnv *, jclass);
-
-/*
- * Class:     android_graphics_Paint
- * Method:    native_ascent
- * Signature: (J)F
- */
-JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1ascent
   (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     android_graphics_Paint
- * Method:    native_set_typeface
- * Signature: (JJ)V
+ * Method:    native_set_style
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1typeface
-  (JNIEnv *, jclass, jlong, jlong);
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style
+  (JNIEnv *, jclass, jlong, jint);
 
 /*
  * Class:     android_graphics_Paint
- * Method:    native_set_text_size
- * Signature: (JF)V
+ * Method:    native_get_style
+ * Signature: (J)I
  */
-JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1size
-  (JNIEnv *, jclass, jlong, jfloat);
-
-/*
- * Class:     android_graphics_Paint
- * Method:    native_measure_text
- * Signature: (JLjava/lang/CharSequence;IIJ)F
- */
-JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1measure_1text
-  (JNIEnv *, jclass, jlong, jobject, jint, jint, jlong);
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1style
+  (JNIEnv *, jclass, jlong);
 
 /*
  * Class:     android_graphics_Paint
@@ -123,27 +107,59 @@ JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1stroke_1width
 
 /*
  * Class:     android_graphics_Paint
- * Method:    native_set_style
+ * Method:    native_set_stroke_cap
  * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1cap
   (JNIEnv *, jclass, jlong, jint);
 
 /*
  * Class:     android_graphics_Paint
- * Method:    native_set_blendmode
- * Signature: (JI)V
- */
-JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1blendmode
-  (JNIEnv *, jclass, jlong, jint);
-
-/*
- * Class:     android_graphics_Paint
- * Method:    native_get_style
+ * Method:    native_get_stroke_cap
  * Signature: (J)I
  */
-JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1style
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1stroke_1cap
   (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_set_stroke_join
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1join
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_get_stroke_join
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1stroke_1join
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_set_text_size
+ * Signature: (JF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1size
+  (JNIEnv *, jclass, jlong, jfloat);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_get_text_size
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1text_1size
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_set_color_filter
+ * Signature: (JII)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter
+  (JNIEnv *, jclass, jlong, jint, jint);
 
 #ifdef __cplusplus
 }

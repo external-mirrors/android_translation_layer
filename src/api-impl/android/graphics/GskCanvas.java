@@ -8,6 +8,8 @@ public class GskCanvas extends Canvas {
 	public long snapshot;
 	private int save_count = 0;
 
+	private static Paint default_paint = new Paint();
+
 	public GskCanvas(long snapshot) {
 		this.snapshot = snapshot;
 	}
@@ -43,21 +45,17 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawBitmap(Bitmap bitmap, Rect src, Rect dst, Paint paint) {
-		int color = 0;
-		if (paint != null && paint.colorFilter instanceof PorterDuffColorFilter) {
-			color = ((PorterDuffColorFilter) paint.colorFilter).getColor();
-		}
-		native_drawBitmap(snapshot, bitmap.getTexture(), dst.left, dst.top, dst.width(), dst.height(), color);
+		native_drawBitmap(snapshot, bitmap.getTexture(), dst.left, dst.top, dst.width(), dst.height(), paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
 	public void drawPath(Path path, Paint paint) {
-		native_drawPath(snapshot, path.getGskPath(), paint.getColor(), paint.getStyle().nativeInt);
+		native_drawPath(snapshot, path.getGskPath(), paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
 	public void drawRect(float left, float top, float right, float bottom, Paint paint) {
-		native_drawRect(snapshot, left, top, right, bottom, paint.getColor());
+		native_drawRect(snapshot, left, top, right, bottom, paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
@@ -69,12 +67,12 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawText(String text, float x, float y, Paint paint) {
-		native_drawText(snapshot, text, x, y, paint.getColor(), paint.getTextSize());
+		native_drawText(snapshot, text, x, y, paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
 	public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
-		native_drawLine(snapshot, startX, startY, stopX, stopY, paint.getColor(), paint.getStrokeWidth());
+		native_drawLine(snapshot, startX, startY, stopX, stopY, paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
@@ -91,7 +89,7 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
-		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint.getColor(), paint.getStrokeWidth(), paint.getStyle().nativeInt);
+		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
@@ -99,15 +97,15 @@ public class GskCanvas extends Canvas {
 		native_scale(snapshot, sx, sy);
 	}
 
-	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, int color);
-	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, int color);
-	protected native void native_drawPath(long snapshot, long path, int color, int style);
+	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
+	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, long paint);
+	protected native void native_drawPath(long snapshot, long path, long paint);
 	protected native void native_translate(long snapshot, float dx, float dy);
 	protected native void native_rotate(long snapshot, float degrees);
 	protected native void native_save(long snapshot);
 	protected native void native_restore(long snapshot);
-	protected native void native_drawLine(long snapshot, float startX, float startY, float stopX, float stopY, int color, float strokeWidth);
-	protected native void native_drawText(long snapshot, String text, float x, float y, int color, float textSize);
-	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, int color, float strokeWidth, int style);
+	protected native void native_drawLine(long snapshot, float startX, float startY, float stopX, float stopY, long paint);
+	protected native void native_drawText(long snapshot, String text, float x, float y, long paint);
+	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, long paint);
 	protected native void native_scale(long snapshot, float sx, float sy);
 }
