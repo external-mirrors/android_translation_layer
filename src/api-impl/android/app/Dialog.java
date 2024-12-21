@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -171,4 +172,6 @@ public class Dialog implements Window.Callback, DialogInterface {
 	public void setOnShowListener(OnShowListener onShowListener) {
 		this.onShowListener = onShowListener;
 	}
+
+	public void setCancelMessage(Message msg) {}
 }

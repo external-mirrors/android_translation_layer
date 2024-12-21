@@ -586,6 +586,7 @@ srcs = [
 	'com/google/android/vending/licensing/Policy.java',
 	'com/android/server/am/DumpHeapProvider.java',
 	'com/htc/util/htcresutil/resutil.java',
+	'com/htc/widget/HtcAlertDialog.java',
 	'javax/microedition/khronos/egl/EGL.java',
 	'javax/microedition/khronos/egl/EGL10.java',
 	'javax/microedition/khronos/egl/EGL11.java',
