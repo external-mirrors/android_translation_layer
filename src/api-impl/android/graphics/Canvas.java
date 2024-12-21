@@ -279,13 +279,8 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(Bitmap bitmap, Rect src, Rect dst, Paint paint) {
-		System.out.println("XXXXXXX bitmap(bitmap, src, dst, paint)");
-	 /*
-		     if (dst == null) {
-			     throw new NullPointerException();
-		     }
-		     native_drawBitmap(mNativeCanvas, bitmap.ni(), src, dst, paint != null ? paint.mNativePaint : 0, mScreenDensity, bitmap.mDensity);
-	     */
+		gsk_canvas.snapshot = this.bitmap.getSnapshot();
+		gsk_canvas.drawBitmap(bitmap, src, dst, paint);
 	}
 
 	/**

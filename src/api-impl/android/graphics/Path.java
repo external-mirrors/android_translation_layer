@@ -9,6 +9,8 @@ public class Path {
 	public enum FillType {
 		WINDING,
 		EVEN_ODD,
+		INVERSE_WINDING,
+		INVERSE_EVEN_ODD,
 	}
 
 	public enum Direction {
@@ -17,12 +19,16 @@ public class Path {
 	}
 
 	public enum Op {
+		DIFFERENCE,
 		INTERSECT,
 		UNION,
+		XOR,
+		REVERSE_DIFFERENCE,
 	}
 
 	private long builder;
 	private long path;
+	private FillType fillType = FillType.WINDING;
 
 	public Path() {}
 
@@ -60,7 +66,13 @@ public class Path {
 		native_close(getBuilder());
 	}
 
-	public void setFillType(FillType fillType) {}
+	public void setFillType(FillType fillType) {
+		this.fillType = fillType;
+	}
+
+	public FillType getFillType() {
+		return fillType;
+	}
 
 	public void moveTo(float x, float y) {
 		native_move_to(getBuilder(), x, y);
@@ -92,8 +104,18 @@ public class Path {
 		native_rel_cubic_to(getBuilder(), x1, y1, x2, y2, x3, y3);
 	}
 
+	public void rQuadTo(float x1, float y1, float x2, float y2) {
+		native_rel_quad_to(getBuilder(), x1, y1, x2, y2);
+	}
+
 	public void addPath(Path path, Matrix matrix) {
 		native_add_path(getBuilder(), path.getGskPath(), matrix.ni());
+	}
+
+	public void addPath(Path path, float deltaX, float deltaY) {
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(deltaX, deltaY);
+		addPath(path, matrix);
 	}
 
 	public void addRect(RectF rect, Direction direction) {
@@ -104,7 +126,10 @@ public class Path {
 
 	public void addOval(RectF rect, Direction direction) {}
 
-	public void transform(Matrix matrix) {}
+	public void transform(Matrix matrix) {
+		builder = native_transform(getGskPath(), matrix.ni());
+		path = 0;
+	}
 
 	public void computeBounds(RectF bounds, boolean exact) {
 		native_get_bounds(getGskPath(), bounds);
@@ -114,8 +139,18 @@ public class Path {
 		return false;
 	}
 
+	public boolean op(Path path, Path dst, Op op) {
+		return false;
+	}
+
 	public boolean isEmpty() {
 		return path == 0 && builder == 0;
+	}
+
+	public void incReserve(int additionalPoints) {}
+
+	public boolean isConvex() {
+		return false;
 	}
 
 	@SuppressWarnings("deprecation")
@@ -140,7 +175,9 @@ public class Path {
 	private static native void native_rel_move_to(long builder, float x, float y);
 	private static native void native_rel_line_to(long builder, float x, float y);
 	private static native void native_rel_cubic_to(long builder, float x1, float y1, float x2, float y2, float x3, float y3);
+	private static native void native_rel_quad_to(long builder, float x1, float y1, float x2, float y2);
 	private static native void native_add_path(long builder, long path, long matrix);
 	private static native void native_add_rect(long builder, float left, float top, float right, float bottom);
 	private static native void native_get_bounds(long path, RectF rect);
+	private static native long native_transform(long path, long matrix);
 }

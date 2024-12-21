@@ -76,6 +76,11 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1cubic_1to(JNIEnv 
 	gsk_path_builder_rel_cubic_to(_PTR(builder_ptr), x1, y1, x2, y2, x3, y3);
 }
 
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1quad_1to(JNIEnv *env, jclass this, jlong builder_ptr, jfloat x1, jfloat y1, jfloat x2, jfloat y2)
+{
+	gsk_path_builder_rel_quad_to(_PTR(builder_ptr), x1, y1, x2, y2);
+}
+
 struct path_foreach_data {
 	GskPathBuilder *builder;
 	graphene_matrix_t *matrix;
@@ -124,6 +129,19 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1path(JNIEnv *env,
 		};
 		gsk_path_foreach(path, GSK_PATH_FOREACH_ALLOW_QUAD | GSK_PATH_FOREACH_ALLOW_CUBIC | GSK_PATH_FOREACH_ALLOW_CONIC, path_foreach_transform, &data);
 	}
+}
+
+JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1transform(JNIEnv *env, jclass this, jlong path_ptr, jlong matrix_ptr)
+{
+	GskPath *path = _PTR(path_ptr);
+	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
+	struct path_foreach_data data = {
+		.builder = gsk_path_builder_new(),
+		.matrix = matrix,
+	};
+	gsk_path_foreach(path, GSK_PATH_FOREACH_ALLOW_QUAD | GSK_PATH_FOREACH_ALLOW_CUBIC | GSK_PATH_FOREACH_ALLOW_CONIC, path_foreach_transform, &data);
+	gsk_path_unref(path);
+	return _INTPTR(data.builder);
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1rect(JNIEnv *env, jclass this, jlong builder_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom)

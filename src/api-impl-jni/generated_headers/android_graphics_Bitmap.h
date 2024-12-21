@@ -55,6 +55,22 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1erase_1color
 JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1recycle
   (JNIEnv *, jclass, jlong, jlong);
 
+/*
+ * Class:     android_graphics_Bitmap
+ * Method:    native_ref_texture
+ * Signature: (J)J
+ */
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1ref_1texture
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Bitmap
+ * Method:    native_get_pixels
+ * Signature: (J[IIIIIII)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1get_1pixels
+  (JNIEnv *, jclass, jlong, jintArray, jint, jint, jint, jint, jint, jint);
+
 #ifdef __cplusplus
 }
 #endif

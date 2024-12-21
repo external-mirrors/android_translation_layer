@@ -105,6 +105,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1cubic_1to
 
 /*
  * Class:     android_graphics_Path
+ * Method:    native_rel_quad_to
+ * Signature: (JFFFF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1quad_1to
+  (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     android_graphics_Path
  * Method:    native_add_path
  * Signature: (JJJ)V
  */
@@ -126,6 +134,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1rect
  */
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1get_1bounds
   (JNIEnv *, jclass, jlong, jobject);
+
+/*
+ * Class:     android_graphics_Path
+ * Method:    native_transform
+ * Signature: (JJ)J
+ */
+JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1transform
+  (JNIEnv *, jclass, jlong, jlong);
 
 #ifdef __cplusplus
 }

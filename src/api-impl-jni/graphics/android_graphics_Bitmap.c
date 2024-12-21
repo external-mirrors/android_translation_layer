@@ -73,3 +73,20 @@ JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1recycle(JNIEnv *env,
 	if (snapshot_ptr)
 		g_object_unref(GTK_SNAPSHOT(_PTR(snapshot_ptr)));
 }
+
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1ref_1texture(JNIEnv *env, jclass class, jlong texture_ptr)
+{
+	return _INTPTR(g_object_ref(GDK_TEXTURE(_PTR(texture_ptr))));
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1get_1pixels(JNIEnv *env, jclass class, jlong texture_ptr, jintArray pixels, jint offset, jint stride, jint x, jint y, jint width, jint height)
+{
+	GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
+	if (x != 0 || y != 0 || width != gdk_texture_get_width(texture) || height != gdk_texture_get_height(texture)) {
+		printf("Bitmap.readPixels: partial read not supported\n");
+		exit(1);
+	}
+	jint *array = (*env)->GetIntArrayElements(env, pixels, NULL);
+	gdk_texture_download(texture, (guchar *)(array + offset), stride*4);
+	(*env)->ReleaseIntArrayElements(env, pixels, array, 0);
+}
