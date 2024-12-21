@@ -46,4 +46,14 @@ public class BitmapDrawable extends Drawable {
 		}
 		a.recycle();
 	}
+
+	@Override
+	public int getIntrinsicWidth() {
+		return bitmap.getWidth();
+	}
+
+	@Override
+	public int getIntrinsicHeight() {
+		return bitmap.getHeight();
+	}
 }
