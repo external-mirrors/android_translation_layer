@@ -117,15 +117,7 @@ JNIEXPORT jlong JNICALL Java_android_view_SurfaceView_native_1constructor(JNIEnv
 	GtkWidget *wrapper = g_object_ref(wrapper_widget_new());
 	GtkWidget *dummy = surface_view_widget_new();
 	gtk_widget_set_name(dummy, "dummy widget for SurfaceView");
-#if GTK_CHECK_VERSION(4, 14, 0)
 	GtkWidget *graphics_offload = gtk_graphics_offload_new(dummy);
-#else
-	// use a dummy GtkBox, so that the SurfaceViewWidget also becomes a grand child of the WrapperWidget
-	GtkWidget *graphics_offload = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	gtk_widget_set_vexpand(dummy, TRUE);
-	gtk_widget_set_hexpand(dummy, TRUE);
-	gtk_widget_insert_before(dummy, graphics_offload, NULL);
-#endif
 	wrapper_widget_set_child(WRAPPER_WIDGET(wrapper), graphics_offload);
 	wrapper_widget_set_jobject(WRAPPER_WIDGET(wrapper), env, this);
 	// TODO: is this correct for all usecases? how do we know when it's not?

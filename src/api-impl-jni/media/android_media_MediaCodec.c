@@ -8,11 +8,9 @@
 #include <libavutil/hwcontext.h>
 #include <libavutil/pixfmt.h>
 #include <stdio.h>
-#include <EGL/eglplatform.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
-#include <gdk/wayland/gdkwayland.h>
 
 #include <libavcodec/avcodec.h>
 #include <libavutil/hwcontext_drm.h>
@@ -22,11 +20,6 @@
 #include <libswscale/swscale.h>
 
 #include <stdlib.h>
-#if !GTK_CHECK_VERSION(4, 14, 0)
-#include <wayland-client.h>
-#include "linux-dmabuf-unstable-v1-client-protocol.h"
-#include "viewporter-client-protocol.h"
-#endif
 
 #include "jni.h"
 #include "../generated_headers/android_media_MediaCodec.h"
@@ -44,14 +37,6 @@ struct ATL_codec_context {
 		struct {
 			struct SwsContext *sws;  // for software decoding
 			SurfaceViewWidget *surface_view_widget;
-#if !GTK_CHECK_VERSION(4, 14, 0)
-			struct zwp_linux_dmabuf_v1 *zwp_linux_dmabuf_v1;
-			struct wp_viewporter *wp_viewporter;
-			struct wp_viewport *viewport;
-			struct ANativeWindow *native_window;
-			int surface_width;
-			int surface_height;
-#endif
 		} video;
 	};
 };
@@ -149,13 +134,8 @@ struct render_frame_data {
 	AVFrame *frame;
 	GdkTexture *texture;  // for software decoding
 	SurfaceViewWidget *surface_view_widget;
-#if !GTK_CHECK_VERSION(4, 14, 0)
-	struct zwp_linux_dmabuf_v1 *zwp_linux_dmabuf_v1;
-	struct ANativeWindow *native_window;
-#endif
 };
 
-#if GTK_CHECK_VERSION(4, 14, 0)
 static void handle_dmabuftexture_destroy(void *data)
 {
 	AVFrame *drm_frame = data;
@@ -202,89 +182,6 @@ static GdkTexture *import_drm_frame_desc_as_texture(const AVDRMFrameDescriptor *
 	g_object_unref(builder);
 	return texture;
 }
-
-#else // GTK_CHECK_VERSION(4, 14, 0)
-
-static void handle_global(void *data, struct wl_registry *registry,
-		uint32_t name, const char *interface, uint32_t version)
-{
-	struct ATL_codec_context *ctx = data;
-	if (strcmp(interface, zwp_linux_dmabuf_v1_interface.name) == 0) {
-		ctx->video.zwp_linux_dmabuf_v1 =
-			wl_registry_bind(registry, name, &zwp_linux_dmabuf_v1_interface, 2);
-	} else if (strcmp(interface, wp_viewporter_interface.name) == 0) {
-		ctx->video.wp_viewporter =
-			wl_registry_bind(registry, name, &wp_viewporter_interface, 1);
-	}
-}
-
-static void handle_global_remove(void *data, struct wl_registry *registry,
-		uint32_t name)
-{
-	// This space is intentionally left blank
-}
-
-static const struct wl_registry_listener registry_listener = {
-	.global = handle_global,
-	.global_remove = handle_global_remove,
-};
-
-static struct wl_buffer *import_drm_frame_desc(struct zwp_linux_dmabuf_v1 *zwp_linux_dmabuf_v1,
-		const AVDRMFrameDescriptor *drm_frame_desc, int width, int height)
-{
-	// VA-API drivers may use separate layers with one plane each, or a single
-	// layer with multiple planes. We need to handle both.
-	uint32_t drm_format = get_drm_frame_format(drm_frame_desc);
-	if (drm_format == DRM_FORMAT_INVALID) {
-		fprintf(stderr, "Failed to get DRM frame format\n");
-		return NULL;
-	}
-	// fprintf(stderr, "DRM format: 0x%X\n", drm_format);
-
-	struct zwp_linux_buffer_params_v1 *dmabuf_params =
-		zwp_linux_dmabuf_v1_create_params(zwp_linux_dmabuf_v1);
-	int k = 0;
-	for (int i = 0; i < drm_frame_desc->nb_layers; i++) {
-		const AVDRMLayerDescriptor *drm_layer = &drm_frame_desc->layers[i];
-
-		for (int j = 0; j < drm_layer->nb_planes; j++) {
-			const AVDRMPlaneDescriptor *drm_plane = &drm_layer->planes[j];
-			const AVDRMObjectDescriptor *drm_object =
-				&drm_frame_desc->objects[drm_plane->object_index];
-
-			uint32_t modifier_hi = drm_object->format_modifier >> 32;
-			uint32_t modifier_lo = drm_object->format_modifier & 0xFFFFFFFF;
-
-			zwp_linux_buffer_params_v1_add(dmabuf_params, drm_object->fd, k,
-				drm_plane->offset, drm_plane->pitch, modifier_hi, modifier_lo);
-			k++;
-		}
-	}
-
-	return zwp_linux_buffer_params_v1_create_immed(dmabuf_params,
-		width, height, drm_format, 0);
-}
-
-static void handle_buffer_release(void *data, struct wl_buffer *buffer)
-{
-	AVFrame *frame = data;
-	av_frame_free(&frame);
-
-	wl_buffer_destroy(buffer);
-}
-
-static const struct wl_buffer_listener buffer_listener = {
-	.release = handle_buffer_release,
-};
-
-static void on_resize(GtkWidget* widget, gint width, gint height, struct ATL_codec_context *ctx)
-{
-	ctx->video.surface_width = gtk_widget_get_width(widget);
-	ctx->video.surface_height = gtk_widget_get_height(widget);
-	wp_viewport_set_destination(ctx->video.viewport, ctx->video.surface_width, ctx->video.surface_height);
-}
-
-#endif // GTK_CHECK_VERSION(4, 14, 0)
 
 JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JNIEnv *env, jobject this, jlong codec, jobject csd0, jobject csd1, jobject surface_obj)
 {
@@ -354,12 +251,6 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JN
 
 	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(gtk_widget_get_first_child(_PTR(_GET_LONG_FIELD(surface_obj, "widget"))));
 	ctx->video.surface_view_widget = surface_view_widget;
-#if !GTK_CHECK_VERSION(4, 14, 0)
-	struct ANativeWindow *native_window = ANativeWindow_fromSurface(env, surface_obj);
-	ctx->video.native_window = native_window;
-	ctx->video.surface_width = gtk_widget_get_width(native_window->surface_view_widget);
-	ctx->video.surface_height = gtk_widget_get_height(native_window->surface_view_widget);
-#endif
 }
 
 JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1start(JNIEnv *env, jobject this, jlong codec)
@@ -389,24 +280,6 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1start(JNIEnv *env, 
 			fprintf(stderr, "FFmpegDecoder error: Swresampler alloc fail\n");
 		}
 		swr_init(ctx->audio.swr);
-	} else if (codec_ctx->codec_type == AVMEDIA_TYPE_VIDEO) {
-
-#if !GTK_CHECK_VERSION(4, 14, 0)
-		struct ANativeWindow *native_window = ctx->video.native_window;
-		struct wl_registry *registry = wl_display_get_registry(native_window->wayland_display);
-		wl_registry_add_listener(registry, &registry_listener, ctx);
-		wl_display_roundtrip(native_window->wayland_display);
-		wl_registry_destroy(registry);
-
-		if (ctx->video.zwp_linux_dmabuf_v1 == NULL || ctx->video.wp_viewporter == NULL) {
-			fprintf(stderr, "Missing zwp_linux_dmabuf_v1 or wp_viewporter support\n");
-			exit(1);
-		}
-
-		ctx->video.viewport = wp_viewporter_get_viewport(ctx->video.wp_viewporter, native_window->wayland_surface);
-		wp_viewport_set_destination(ctx->video.viewport, ctx->video.surface_width, ctx->video.surface_height);
-		g_signal_connect(native_window->surface_view_widget, "resize", G_CALLBACK(on_resize), ctx);
-#endif
 	}
 }
 
@@ -515,24 +388,8 @@ static gboolean render_frame(void *data)
 
 	AVDRMFrameDescriptor *drm_frame_desc = (void *)drm_frame->data[0];
 
-#if GTK_CHECK_VERSION(4, 14, 0)
 	GdkTexture *texture = import_drm_frame_desc_as_texture(drm_frame_desc, drm_frame->width, drm_frame->height, drm_frame);
 	surface_view_widget_set_texture(d->surface_view_widget, texture);
-#else
-	struct wl_buffer *wl_buffer = import_drm_frame_desc(d->zwp_linux_dmabuf_v1,
-		drm_frame_desc, drm_frame->width, drm_frame->height);
-	if (!wl_buffer) {
-		exit(1);
-	}
-	wl_buffer_add_listener(wl_buffer, &buffer_listener, drm_frame);
-
-	struct ANativeWindow *native_window = d->native_window;
-
-	wl_surface_damage(native_window->wayland_surface, 0, 0, INT32_MAX, INT32_MAX);
-	wl_surface_attach(native_window->wayland_surface, wl_buffer, 0, 0);
-	wl_surface_commit(native_window->wayland_surface);
-
-#endif
 	free(d);
 
 	return G_SOURCE_REMOVE;
@@ -604,12 +461,7 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 
 		struct render_frame_data *data = malloc(sizeof(struct render_frame_data));
 		data->frame = frame;
-#if GTK_CHECK_VERSION(4, 14, 0)
 		data->surface_view_widget = ctx->video.surface_view_widget;
-#else
-		data->native_window = ctx->video.native_window;
-		data->zwp_linux_dmabuf_v1 = ctx->video.zwp_linux_dmabuf_v1;
-#endif
 		g_idle_add(render_frame, data);
 	}
 }
@@ -617,12 +469,6 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1release(JNIEnv *env, jobject this, jlong codec)
 {
 	struct ATL_codec_context *ctx = _PTR(codec);
-#if !GTK_CHECK_VERSION(4, 14, 0)
-	if (ctx->codec->codec_type == AVMEDIA_TYPE_VIDEO) {
-		struct ANativeWindow *native_window = ctx->video.native_window;
-		g_signal_handlers_disconnect_by_data(native_window->surface_view_widget, ctx);
-	}
-#endif
 	if (ctx->codec->codec_type == AVMEDIA_TYPE_VIDEO && ctx->video.sws) {
 		sws_freeContext(ctx->video.sws);
 	}

@@ -38,14 +38,6 @@ marshal_files = gnome.genmarshal('marshal',
 	internal: true,
 )
 
-wl_mod = import('unstable-wayland')
-
-xml = wl_mod.find_protocol('linux-dmabuf', state: 'unstable', version: 1)
-linux_dmabuf = wl_mod.scan_xml(xml)
-
-xml = wl_mod.find_protocol('viewporter')
-viewporter = wl_mod.scan_xml(xml)
-
 mpris = gnome.gdbus_codegen('mpris-dbus',
                             'src/api-impl-jni/media/org.mpris.MediaPlayer2.xml',
                             interface_prefix: 'org.mpris')
@@ -140,8 +132,6 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_Spinner.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_SeekBar.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_TextView.c',
-                                                                  	linux_dmabuf,
-                                                                  	viewporter,
                                                                   	mpris,
                                                                   	portal_openuri,
                                                                   ] + marshal_files,

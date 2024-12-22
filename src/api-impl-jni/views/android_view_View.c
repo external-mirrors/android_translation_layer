@@ -332,11 +332,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setPadding(JNIEnv *env, jo
 	GtkCssProvider *css_provider = gtk_css_provider_new();
 
 	char *css_string = g_markup_printf_escaped("*{ padding-left: %dpx; padding-top: %dpx; padding-right: %dpx; padding-bottom: %dpx; }", left, top, right, bottom);
-#if GTK_CHECK_VERSION(4, 12, 0)
 	gtk_css_provider_load_from_string(css_provider, css_string);
-#else
-	gtk_css_provider_load_from_data(css_provider, css_string, strlen(css_string));
-#endif
 	g_free(css_string);
 
 	gtk_style_context_add_provider(style_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
@@ -499,11 +495,7 @@ JNIEXPORT void JNICALL Java_android_view_View_setBackgroundColor(JNIEnv *env, jo
 	GtkCssProvider *css_provider = gtk_css_provider_new();
 
 	char *css_string = g_markup_printf_escaped("* { background-image: none; background-color: #%06x%02x; }", color & 0xFFFFFF, (color >> 24) & 0xFF);
-#if GTK_CHECK_VERSION(4, 12, 0)
 	gtk_css_provider_load_from_string(css_provider, css_string);
-#else
-	gtk_css_provider_load_from_data(css_provider, css_string, strlen(css_string));
-#endif
 	g_free(css_string);
 
 	gtk_style_context_add_provider(style_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);

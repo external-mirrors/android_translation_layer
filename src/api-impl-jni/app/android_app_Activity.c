@@ -207,7 +207,6 @@ struct filechooser_callback_data { jobject activity; jint request_code; jint act
 #define RESULT_OK -1
 #define RESULT_CANCELED 0
 
-#if GTK_CHECK_VERSION(4, 10, 0)
 static void file_dialog_callback(GObject* source_object, GAsyncResult* res, gpointer data) {
 	struct filechooser_callback_data *d = data;
 	GtkFileDialog *dialog = GTK_FILE_DIALOG(source_object);
@@ -235,63 +234,24 @@ static void file_dialog_callback(GObject* source_object, GAsyncResult* res, gpoi
 	}
 	free(d);
 }
-#else
-static void on_filechooser_response(GtkNativeDialog *native, int response, struct filechooser_callback_data *data)
-{
-	JNIEnv *env = get_jni_env();
-	jmethodID fileChooserResultCallback = _METHOD(handle_cache.activity.class, "fileChooserResultCallback", "(IIILjava/lang/String;)V");
-
-	GtkFileChooser *chooser = GTK_FILE_CHOOSER(native);
-	GtkFileChooserAction action = gtk_file_chooser_get_action(chooser);
-	if (response == GTK_RESPONSE_ACCEPT) {
-		GFile *file = gtk_file_chooser_get_file(chooser);
-		char *uri = g_file_get_uri(file);
-		
-		(*env)->CallVoidMethod(env, data->activity, fileChooserResultCallback, data->request_code, RESULT_OK, action, _JSTRING(uri));
-		if ((*env)->ExceptionCheck(env))
-			(*env)->ExceptionDescribe(env);
-
-		g_free(uri);
-		g_object_unref(file);
-	} else {
-		(*env)->CallVoidMethod(env, data->activity, fileChooserResultCallback, data->request_code, RESULT_CANCELED, action, NULL);
-	}
-
-	g_object_unref(native);
-	_UNREF(data->activity);
-	free(data);
-}
-#endif
 
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeFileChooser(JNIEnv *env, jobject this, jint action, jstring type_jstring, jstring filename_jstring, jint request_code)
 {
 	const char *chooser_title = ((char *[]){"Open File", "Save File", "Select Folder"})[action];
-#if GTK_CHECK_VERSION(4, 10, 0)
 	GtkFileDialog *dialog = gtk_file_dialog_new();
 	gtk_file_dialog_set_title(GTK_FILE_DIALOG(dialog), chooser_title);
-#else
-	GtkFileChooserNative *native = gtk_file_chooser_native_new(chooser_title, window, action, NULL, NULL);
-#endif
 
 	const char *type = type_jstring ? (*env)->GetStringUTFChars(env, type_jstring, NULL) : NULL;
 	if (type && !strchr(type, '*')) {
 		GtkFileFilter *filter = gtk_file_filter_new();
 		gtk_file_filter_add_mime_type(filter, type);
 		gtk_file_filter_set_name(filter, type);
-#if GTK_CHECK_VERSION(4, 10, 0)
 		gtk_file_dialog_set_default_filter(GTK_FILE_DIALOG(dialog), filter);
-#else
-		gtk_file_chooser_set_filter(GTK_FILE_CHOOSER(native), filter);
-#endif
 		(*env)->ReleaseStringUTFChars(env, type_jstring, type);
 	}
 	const char *filename = filename_jstring ? (*env)->GetStringUTFChars(env, filename_jstring, NULL) : NULL;
 	if (filename) {
-#if GTK_CHECK_VERSION(4, 10, 0)
 		gtk_file_dialog_set_initial_name(GTK_FILE_DIALOG(dialog), filename);
-#else
-		gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(native), filename);
-#endif
 		(*env)->ReleaseStringUTFChars(env, filename_jstring, filename);
 	}
 
@@ -299,17 +259,12 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeFileChooser(JNIEnv *env, 
 	callback_data->activity = _REF(this);
 	callback_data->request_code = request_code;
 	callback_data->action = action;
-#if GTK_CHECK_VERSION(4, 10, 0)
 	void (* const file_dialog_functions[])(GtkFileDialog *, GtkWindow *, GCancellable *, GAsyncReadyCallback, gpointer) = {
 		gtk_file_dialog_open,
 		gtk_file_dialog_save,
 		gtk_file_dialog_select_folder,
 	};
 	file_dialog_functions[action](dialog, window, NULL, file_dialog_callback, callback_data);
-#else
-	g_signal_connect (native, "response", G_CALLBACK(on_filechooser_response), callback_data);
-	gtk_native_dialog_show (GTK_NATIVE_DIALOG (native));
-#endif
 }
 
 JNIEXPORT jboolean JNICALL Java_android_app_Activity_isInMultiWindowMode(JNIEnv *env, jobject this)
