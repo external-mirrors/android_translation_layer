@@ -33,4 +33,8 @@ public class DateUtils {
 			return String.format("%d:%02d", minutes, seconds);
 		}
 	}
+
+	public static String formatDateTime(Context context, long millis, int flags) {
+		return new Date(millis).toString();
+	}
 }
