@@ -158,7 +158,18 @@ JNIEXPORT void JNICALL Java_android_view_SurfaceView_native_1postSnapshot(JNIEnv
 	GtkWidget *view = GTK_WIDGET(_PTR(surface_view));
 	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(gtk_widget_get_first_child(view));
 	GtkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
-	GskRenderer *renderer = gsk_renderer_new_for_surface(gtk_native_get_surface(GTK_NATIVE(window)));
+	static GType renderer_type = 0;
+	if (!renderer_type) {
+		// Use same renderer type as for onscreen rendering.
+		GdkSurface *surface = gdk_surface_new_toplevel(gdk_display_get_default());
+		GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
+		renderer_type = G_OBJECT_TYPE(renderer);
+		gsk_renderer_unrealize(renderer);
+		g_object_unref(renderer);
+		gdk_surface_destroy(surface);
+	}
+	GskRenderer *renderer = g_object_new(renderer_type, NULL);
+	gsk_renderer_realize(renderer, NULL, NULL);
 	GskRenderNode *node = gtk_snapshot_free_to_node(snapshot);
 	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, NULL);
 	gsk_render_node_unref(node);
