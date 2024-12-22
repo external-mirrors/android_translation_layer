@@ -101,7 +101,7 @@ public final class Bitmap {
 
 	public synchronized long getTexture() {
 		if (texture == 0) {
-			texture = native_create_texture(snapshot, width, height);
+			texture = native_create_texture(snapshot, width, height, stride, config.gdk_memory_format);
 			snapshot = 0;
 		}
 		return texture;
@@ -191,7 +191,7 @@ public final class Bitmap {
 	}
 
 	private static native long native_create_snapshot(long texture);
-	private static native long native_create_texture(long snapshot, int width, int height);
+	private static native long native_create_texture(long snapshot, int width, int height, int stride, int format);
 	private static native int native_get_width(long texture);
 	private static native int native_get_height(long texture);
 	private static native long native_erase_color(int color, int width, int height);

@@ -16,29 +16,38 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JN
 	return _INTPTR(snapshot);
 }
 
-JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height)
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height, jint stride, jint format)
 {
-	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
 	static GType renderer_type = 0;
-	if (!renderer_type) {
-		// Use same renderer type as for onscreen rendering.
-		GdkSurface *surface = gdk_surface_new_toplevel(gdk_display_get_default());
-		GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
-		renderer_type = G_OBJECT_TYPE(renderer);
+	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
+	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
+	GdkTexture *texture = NULL;
+	if (node) {
+		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
+		if (!renderer_type) {
+			// Use same renderer type as for onscreen rendering.
+			GdkSurface *surface = gdk_surface_new_toplevel(gdk_display_get_default());
+			GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
+			renderer_type = G_OBJECT_TYPE(renderer);
+			gsk_renderer_unrealize(renderer);
+			g_object_unref(renderer);
+			gdk_surface_destroy(surface);
+		}
+		GskRenderer *renderer = g_object_new(renderer_type, NULL);
+		gsk_renderer_realize(renderer, NULL, NULL);
+		texture = gsk_renderer_render_texture(renderer, node, &bounds);
+		gsk_render_node_unref(node);
 		gsk_renderer_unrealize(renderer);
 		g_object_unref(renderer);
-		gdk_surface_destroy(surface);
+	} else {
+		if (format == -1) {
+			format = GDK_MEMORY_R8G8B8A8;
+			stride = width * 4;
+		}
+		GBytes *bytes = g_bytes_new_take(g_malloc0(height * stride), height * stride);
+		texture = gdk_memory_texture_new(width, height, format, bytes, stride);
+		g_bytes_unref(bytes);
 	}
-	GskRenderer *renderer = g_object_new(renderer_type, NULL);
-	gsk_renderer_realize(renderer, NULL, NULL);
-	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
-	graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
-	if (!node)
-		node = gsk_color_node_new(&(GdkRGBA){.alpha = 0}, &bounds);
-	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, &bounds);
-	gsk_render_node_unref(node);
-	gsk_renderer_unrealize(renderer);
-	g_object_unref(renderer);
 
 	return _INTPTR(texture);
 }
