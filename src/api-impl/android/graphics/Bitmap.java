@@ -1,5 +1,7 @@
 package android.graphics;
 
+import java.nio.Buffer;
+
 import android.util.DisplayMetrics;
 
 /*
@@ -9,28 +11,42 @@ import android.util.DisplayMetrics;
 public final class Bitmap {
 
 	public enum Config {
-		RGB_565,
-		ARGB_8888,
-		ARGB_4444,
-		ALPHA_8,
+		RGB_565(2, -1, /*ANDROID_BITMAP_FORMAT_RGB_565*/4),
+		ARGB_8888(4, /*GDK_MEMORY_R8G8B8A8*/5, /**ANDROID_BITMAP_FORMAT_RGBA_8888*/1),
+		ARGB_4444(2, -1, /*ANDROID_BITMAP_FORMAT_RGBA_4444*/7),
+		ALPHA_8(1, /*GDK_MEMORY_A8*/ 24, /*ANDROID_BITMAP_FORMAT_A_8*/8);
+
+		private int bytes_per_pixel;
+		private int gdk_memory_format;
+		int android_memory_format;  // used by native function AndroidBitmap_getInfo()
+
+		private Config(int bytes_per_pixel, int gdk_memory_format, int android_memory_format) {
+			this.bytes_per_pixel = bytes_per_pixel;
+			this.gdk_memory_format = gdk_memory_format;
+			this.android_memory_format = android_memory_format;
+		}
 	}
 
 	private int width;
 	private int height;
+	private int stride;
 	private long texture;
 	private long snapshot;
 	private Config config = Config.ARGB_8888;
+	private boolean hasAlpha = true;
+	long bytes = 0;  // used by native function AndroidBitmap_lockPixels()
 
 	Bitmap(long texture) {
+		this(native_get_width(texture), native_get_height(texture), Config.ARGB_8888);
 		this.texture = texture;
-		this.width = native_get_width(texture);
-		this.height = native_get_height(texture);
 	}
 
 	private Bitmap(int width, int height, Config config) {
 		this.config = config;
 		this.width = width;
 		this.height = height;
+		int stride = width * config.bytes_per_pixel;
+		this.stride = (stride + 3) & ~3;  // 4-byte alignment
 	}
 
 	public static Bitmap createBitmap(int width, int height, Config config) {
@@ -42,7 +58,9 @@ public final class Bitmap {
 	}
 
 	public static Bitmap createBitmap(DisplayMetrics metrics, int width, int height, Config config, boolean hasAlpha, ColorSpace colorSpace) {
-		return new Bitmap(width, height, config);
+		Bitmap bitmap = new Bitmap(width, height, config);
+		bitmap.hasAlpha = hasAlpha;
+		return bitmap;
 	}
 
 	public static Bitmap createBitmap(Bitmap src, int x, int y, int width, int height) {
@@ -109,8 +127,12 @@ public final class Bitmap {
 		snapshot = 0;
 	}
 
+	public int getRowBytes() {
+		return stride;
+	}
+
 	public int getAllocationByteCount() {
-		return width * height * 4;
+		return height * getRowBytes();
 	}
 
 	public void prepareToDraw() {
@@ -131,9 +153,15 @@ public final class Bitmap {
 		return texture == 0 && snapshot == 0;
 	}
 
-	public void setHasAlpha(boolean hasAlpha) {}
+	public void setHasAlpha(boolean hasAlpha) {
+		this.hasAlpha = hasAlpha;
+	}
 
-	public Bitmap copy(Bitmap.Config config, boolean hasAlpha) {
+	public boolean hasAlpha() {
+		return hasAlpha;
+	}
+
+	public Bitmap copy(Bitmap.Config config, boolean isMutable) {
 		Bitmap bitmap = new Bitmap(width, height, config);
 		bitmap.texture = native_ref_texture(getTexture());
 		return bitmap;
@@ -141,6 +169,15 @@ public final class Bitmap {
 
 	public void getPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
 		native_get_pixels(getTexture(), pixels, offset, stride, x, y, width, height);
+	}
+
+	public void copyPixelsToBuffer(Buffer buffer) {
+		if (config.gdk_memory_format == -1) {
+			System.out.println("copyPixelsToBuffer: format " + config.name() + " not implemented");
+			System.exit(1);
+		}
+		native_copy_to_buffer(getTexture(), buffer, config.gdk_memory_format, getRowBytes());
+		buffer.position(buffer.position() + getAllocationByteCount());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -161,4 +198,5 @@ public final class Bitmap {
 	private static native void native_recycle(long texture, long snapshot);
 	private static native long native_ref_texture(long texture);
 	private static native void native_get_pixels(long texture, int[] pixels, int offset, int stride, int x, int y, int width, int height);
+	private static native void native_copy_to_buffer(long texture, Buffer buffer, int memory_format, int stride);
 }

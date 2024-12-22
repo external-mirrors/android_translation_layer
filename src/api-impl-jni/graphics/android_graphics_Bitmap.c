@@ -1,6 +1,7 @@
 #include <gtk/gtk.h>
 
 #include "../defines.h"
+#include "../util.h"
 
 #include "../generated_headers/android_graphics_Bitmap.h"
 
@@ -89,4 +90,17 @@ JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1get_1pixels(JNIEnv *
 	jint *array = (*env)->GetIntArrayElements(env, pixels, NULL);
 	gdk_texture_download(texture, (guchar *)(array + offset), stride*4);
 	(*env)->ReleaseIntArrayElements(env, pixels, array, 0);
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1copy_1to_1buffer(JNIEnv *env, jclass class, jlong texture_ptr, jobject buffer, jint memory_format, jint stride)
+{
+	GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
+	GdkTextureDownloader *downloader = gdk_texture_downloader_new(texture);
+	gdk_texture_downloader_set_format(downloader, memory_format);
+	jarray array_ref;
+	jbyte *array;
+	guchar *data = get_nio_buffer(env, buffer, &array_ref, &array);
+	gdk_texture_downloader_download_into(downloader, data, stride);
+	release_nio_buffer(env, array_ref, array);
+	gdk_texture_downloader_free(downloader);
 }
