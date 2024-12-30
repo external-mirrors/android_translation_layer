@@ -457,9 +457,13 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	if (disable_decoration_env)
 		decorated = !strcmp(disable_decoration_env, "0") || !strcmp(disable_decoration_env, "false");
 	else {     // by default only enable decorations if there are any action buttons to show in the title bar
-		const char *decoration_layout;
+		char *decoration_layout;
 		g_object_get(G_OBJECT(gtk_settings_get_default()), "gtk-decoration-layout", &decoration_layout, NULL);
-		decorated = strcmp(decoration_layout, "") && strcmp(decoration_layout, "menu");
+		GString *gstring = g_string_new_take(decoration_layout);
+		g_string_replace(gstring, "menu", "", 0);  // ignore menu button
+		g_string_replace(gstring, ":", "", 0);  // ignore leading or trailing colon
+		decorated = gstring->len > 0;
+		g_string_free(gstring, TRUE);
 	}
 	gtk_window_set_decorated(GTK_WINDOW(window), decorated);
 
