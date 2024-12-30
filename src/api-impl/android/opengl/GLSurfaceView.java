@@ -1484,6 +1484,7 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 							view.mRenderer.onSurfaceCreated(gl, mEglHelper.mEglConfig);
 						}
 						createEglContext = false;
+						mEglHelper.mEgl.eglMakeCurrent(mEglHelper.mEglDisplay, mEglHelper.mEglSurface, mEglHelper.mEglSurface, mEglHelper.mEglContext);
 					}
 
 					if (sizeChanged) {
