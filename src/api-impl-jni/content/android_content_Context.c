@@ -46,9 +46,22 @@ static XdpSettings *xdp_settings = NULL;
 
 JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv *env, jclass this, jobject config)
 {
+	GdkDisplay *display = gdk_display_get_default();
+	GdkMonitor *monitor = g_list_model_get_item(gdk_display_get_monitors(display), 0);
+	GdkRectangle geometry;
+	gdk_monitor_get_geometry(monitor, &geometry);
+
+	_SET_INT_FIELD(config, "screenWidthDp", geometry.width);
+	_SET_INT_FIELD(config, "screenHeightDp", geometry.height);
 #ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
 	if (!xdp_settings) {
-		XdpPortal *portal = xdp_portal_new();
+		GError *error = NULL;
+		XdpPortal *portal = xdp_portal_initable_new(&error);
+		if (!portal) {
+			printf("xdp_portal_initable_new failed: %s\n", error->message);
+			g_error_free(error);
+			return;
+		}
 		xdp_settings = xdp_portal_get_settings(portal);
 		g_object_unref(portal);
 		g_signal_connect(xdp_settings, "changed", G_CALLBACK(settings_changed_cb), NULL);
@@ -59,13 +72,6 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv 
 		g_variant_unref(color_sheme);
 	}
 #endif
-	GdkDisplay *display = gdk_display_get_default();
-	GdkMonitor *monitor = g_list_model_get_item(gdk_display_get_monitors(display), 0);
-	GdkRectangle geometry;
-	gdk_monitor_get_geometry(monitor, &geometry);
-
-	_SET_INT_FIELD(config, "screenWidthDp", geometry.width);
-	_SET_INT_FIELD(config, "screenHeightDp", geometry.height);
 }
 
 JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile(JNIEnv *env, jclass class, jint fd)
