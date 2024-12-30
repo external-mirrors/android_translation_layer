@@ -43,6 +43,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 
 	unsigned int channels_out;
 	unsigned int period_time;
+	unsigned int buffer_time;
 
 	int ret;
 
@@ -55,9 +56,14 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 	helper_hw_params_init(pcm_handle, params, rate, channels, SND_PCM_FORMAT_S16_LE);
 
 /*--↓*/
-	snd_pcm_uframes_t buffer_size_as_uframes_t = buffer_size;
+	snd_pcm_uframes_t buffer_size_as_uframes_t = buffer_size / channels / 2;  // 2 means PCM16
 	snd_pcm_hw_params_set_buffer_size_near (pcm_handle, params, &buffer_size_as_uframes_t);
 /*--↑*/
+
+	/* set the period time to 1/4 of the buffer time */
+	ret = snd_pcm_hw_params_get_buffer_time(params, &buffer_time, NULL);
+	period_time = buffer_time / 4;
+	ret = snd_pcm_hw_params_set_period_time_near(pcm_handle, params, &period_time, NULL);
 
 	/* Write parameters */
 	ret = snd_pcm_hw_params(pcm_handle, params);
@@ -78,7 +84,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 	snd_pcm_sw_params_malloc (&sw_params);
 	snd_pcm_sw_params_current (pcm_handle, sw_params);
 
-	snd_pcm_sw_params_set_start_threshold(pcm_handle, sw_params, buffer_size - period_size);
+	snd_pcm_sw_params_set_start_threshold(pcm_handle, sw_params, (buffer_size_as_uframes_t / period_size) * period_size);
 	snd_pcm_sw_params_set_avail_min(pcm_handle, sw_params, period_size);
 
 	snd_pcm_sw_params(pcm_handle, sw_params);
