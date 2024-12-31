@@ -77,7 +77,7 @@ JNIEXPORT jboolean JNICALL Java_android_os_MessageQueue_nativePollOnce(JNIEnv *e
 	if (message_queue->is_main_thread) {  // thread loop is managed by glib
 		if (timeout_millis) {
 			if (timeout_millis != -1)  // -1 means no more messages
-				g_source_set_ready_time(source, g_source_get_time(source) + timeout_millis*1000);
+				g_source_set_ready_time(source, g_source_get_time(source) + timeout_millis*1000L);
 			return true;  // indicate that java side should return to block in glib managed loop
 		} else {
 			return false;
