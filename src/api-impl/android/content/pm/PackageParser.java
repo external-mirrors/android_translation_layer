@@ -988,11 +988,13 @@ public class PackageParser {
 			pkg.mSharedUserLabel = sa.getResourceId(
 			    com.android.internal.R.styleable.AndroidManifest_sharedUserLabel, 0);
 		}
-		sa.recycle();
 
 		pkg.installLocation = sa.getInteger(
 		    com.android.internal.R.styleable.AndroidManifest_installLocation,
 		    PARSE_DEFAULT_INSTALL_LOCATION);
+
+		sa.recycle();
+
 		pkg.applicationInfo.installLocation = pkg.installLocation;
 
 		/* Set the global "forward lock" flag */
