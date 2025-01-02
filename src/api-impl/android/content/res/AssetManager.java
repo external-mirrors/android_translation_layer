@@ -812,8 +812,13 @@ public final class AssetManager {
 		}
 		return true;
 	}
-	/*package*/ native final boolean retrieveAttributes(
-	    int xmlParser, int[] inAttrs, int[] outValues, int[] outIndices);
+
+	/*package*/ native static final boolean resolveAttrs(long theme, int defStyleAttr,
+	                                                     int defStyleRes, int[] inValues,
+	                                                     int[] inAttrs, int[] outValues,
+	                                                     int[] outIndices);
+	/*package*/ native final boolean retrieveAttributes(int xmlParser, int[] inAttrs,
+	                                                    int[] outValues, int[] outIndices);
 	/*package*/ native final int getArraySize(int resource);
 	/*package*/ native final int retrieveArray(int resource, int[] outValues);
 	private native final int getStringBlockCount();

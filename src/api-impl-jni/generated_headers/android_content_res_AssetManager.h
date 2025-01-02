@@ -203,6 +203,14 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValu
 
 /*
  * Class:     android_content_res_AssetManager
+ * Method:    resolveAttrs
+ * Signature: (JII[I[I[I[I)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs
+  (JNIEnv *, jclass, jlong, jint, jint, jintArray, jintArray, jintArray, jintArray);
+
+/*
+ * Class:     android_content_res_AssetManager
  * Method:    retrieveAttributes
  * Signature: (I[I[I[I)Z
  */

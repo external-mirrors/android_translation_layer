@@ -15,6 +15,18 @@
 #include <glib.h>
 #include <dirent.h>
 
+#define JAVA_ENUM_CLASS android_content_res_AssetManager
+enum {
+	JAVA_ENUM(STYLE_TYPE),
+	JAVA_ENUM(STYLE_DATA),
+	JAVA_ENUM(STYLE_ASSET_COOKIE),
+	JAVA_ENUM(STYLE_RESOURCE_ID),
+	JAVA_ENUM(STYLE_CHANGING_CONFIGURATIONS),
+	JAVA_ENUM(STYLE_DENSITY),
+	JAVA_ENUM(STYLE_NUM_ENTRIES),
+};
+#undef JAVA_ENUM_CLASS
+
 #define ASSET_DIR "assets/"
 char *get_app_data_dir();
 
@@ -259,6 +271,77 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadThemeAttributeV
 	return block;
 }
 
+/* function ported from AOSP - Copyright 2006, The Android Open Source Project */
+JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JNIEnv *env, jclass this,
+                                                                              jlong theme_ptr, jint def_style_attr,
+                                                                              jint def_style_res, jintArray java_values,
+                                                                              jintArray java_attrs, jintArray out_java_values,
+                                                                              jintArray out_java_indices)
+{
+	struct Theme *theme = _PTR(theme_ptr);
+	const jsize attrs_len = (*env)->GetArrayLength(env, java_attrs);
+	const jsize out_values_len = (*env)->GetArrayLength(env, out_java_values);
+	if (out_values_len < (attrs_len * STYLE_NUM_ENTRIES)) {
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/IndexOutOfBoundsException"), "outValues too small");
+		return false;
+	}
+
+	jint *attrs = (jint *)(*env)->GetPrimitiveArrayCritical(env, java_attrs, NULL);
+	if (attrs == NULL) {
+		return true;
+	}
+
+	jint *values = NULL;
+	jsize values_len = 0;
+	if (java_values != NULL) {
+		values_len = (*env)->GetArrayLength(env, java_values);
+		values = (jint *)(*env)->GetPrimitiveArrayCritical(env, java_values, NULL);
+		if (values == NULL) {
+			(*env)->ReleasePrimitiveArrayCritical(env, java_attrs, attrs, JNI_ABORT);
+			return false;
+		}
+	}
+
+	jint *out_values = (jint *)(*env)->GetPrimitiveArrayCritical(env, out_java_values, NULL);
+	if (!out_values) {
+		(*env)->ReleasePrimitiveArrayCritical(env, java_attrs, attrs, JNI_ABORT);
+		if (values) {
+			(*env)->ReleasePrimitiveArrayCritical(env, java_values, values, JNI_ABORT);
+		}
+		return false;
+	}
+
+	jint *out_indices = NULL;
+	if (out_java_indices) {
+		jsize out_indices_len = (*env)->GetArrayLength(env, out_java_indices);
+		if (out_indices_len > attrs_len) {
+			out_indices = (jint *)(*env)->GetPrimitiveArrayCritical(env, out_java_indices, NULL);
+			if (!out_indices) {
+				(*env)->ReleasePrimitiveArrayCritical(env, java_attrs, attrs, JNI_ABORT);
+				if (values)
+					(*env)->ReleasePrimitiveArrayCritical(env, java_values, values, JNI_ABORT);
+				(*env)->ReleasePrimitiveArrayCritical(env, out_java_values, out_values, JNI_ABORT);
+				return false;
+			}
+		}
+	}
+
+	bool ret = ResolveAttrs(theme, def_style_attr, def_style_res,
+	                        (uint32_t *)values, values_len,
+	                        (uint32_t *)attrs, attrs_len,
+	                        (uint32_t *)out_values, (uint32_t *)out_indices);
+	if (out_indices)
+		(*env)->ReleasePrimitiveArrayCritical(env, out_java_indices, out_indices, 0);
+
+	(*env)->ReleasePrimitiveArrayCritical(env, out_java_values, out_values, 0);
+
+	if (values)
+		(*env)->ReleasePrimitiveArrayCritical(env, java_values, values, JNI_ABORT);
+
+	(*env)->ReleasePrimitiveArrayCritical(env, java_attrs, attrs, JNI_ABORT);
+	return ret;
+}
+
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getArraySize(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
@@ -283,10 +366,10 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_retrieveArray(JNIEn
 		uint32_t resId = 0;
 		ssize_t block = ResTable_resolveReference(res_table, &value, bag[i].stringBlock, &resId, NULL, NULL);
 
-		array[i*android_content_res_AssetManager_STYLE_NUM_ENTRIES + android_content_res_AssetManager_STYLE_TYPE] = value.dataType;
-		array[i*android_content_res_AssetManager_STYLE_NUM_ENTRIES + android_content_res_AssetManager_STYLE_DATA] = value.data;
-		array[i*android_content_res_AssetManager_STYLE_NUM_ENTRIES + android_content_res_AssetManager_STYLE_ASSET_COOKIE] = block;
-		array[i*android_content_res_AssetManager_STYLE_NUM_ENTRIES + android_content_res_AssetManager_STYLE_RESOURCE_ID] = resId;
+		array[i*STYLE_NUM_ENTRIES + STYLE_TYPE] = value.dataType;
+		array[i*STYLE_NUM_ENTRIES + STYLE_DATA] = value.data;
+		array[i*STYLE_NUM_ENTRIES + STYLE_ASSET_COOKIE] = block;
+		array[i*STYLE_NUM_ENTRIES + STYLE_RESOURCE_ID] = resId;
 
 	}
 	ResTable_unlockBag(res_table, bag);

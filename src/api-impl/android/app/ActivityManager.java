@@ -47,6 +47,7 @@ public class ActivityManager {
 	}
 
 	public int getMemoryClass() {return 20;}  // suggested heap size in MB
+	public int getLargeMemoryClass() {return 60;} // value chosen arbitrarily
 
 	public static void getMyMemoryState(RunningAppProcessInfo outInfo) {}
 
@@ -56,7 +57,7 @@ public class ActivityManager {
 	public List<ActivityManager.AppTask> getAppTasks() {
 		return new ArrayList<>();
 	}
-	
+
 	public static class RunningServiceInfo implements Parcelable {
 		public RunningServiceInfo() {
 		}
@@ -72,15 +73,13 @@ public class ActivityManager {
 		public void readFromParcel(Parcel source) {
 			return;
 		}
-	}     
+	}
 
 
 	public List<RunningServiceInfo> getRunningServices(int maxNum)
 		throws SecurityException {
 			return new ArrayList<>();
 	}
-
-	public int getLargeMemoryClass() {return getMemoryClass();}
 
 	public List<ApplicationExitInfo> getHistoricalProcessExitReasons(String pkgname, int pid, int maxNum) {
 		return Collections.emptyList();
