@@ -16,6 +16,8 @@
 
 package android.content.res;
 
+import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.icu.text.PluralRules;
@@ -33,6 +35,9 @@ import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Slog;
 import android.util.TypedValue;
+import android.util.Xml;
+import android.util.Pools.SynchronizedPool;
+import com.android.internal.util.GrowingArrayUtils;
 import com.android.internal.util.XmlUtils;
 // import android.view.DisplayAdjustments;
 import java.io.IOException;
@@ -91,7 +96,10 @@ public class Resources {
 	// single-threaded, and after that these are immutable.
 	private static final LongSparseArray<Drawable.ConstantState>[] sPreloadedDrawables;
 	private static final LongSparseArray<Drawable.ConstantState> sPreloadedColorDrawables = new LongSparseArray<Drawable.ConstantState>();
-	private static final LongSparseArray<ColorStateList> sPreloadedColorStateLists = new LongSparseArray<ColorStateList>();
+	private static final LongSparseArray<android.content.res.ConstantState<ComplexColor>> sPreloadedComplexColors = new LongSparseArray<>();
+
+	// Pool of TypedArrays targeted to this Resources object.
+	final SynchronizedPool<TypedArray> mTypedArrayPool = new SynchronizedPool<>(5);
 
 	private static boolean sPreloaded;
 	private static int sPreloadedDensity;
@@ -102,7 +110,7 @@ public class Resources {
 	/*package*/ final Configuration mTmpConfig = new Configuration();
 	/*package*/ TypedValue mTmpValue = new TypedValue();
 	/*package*/ final Map<Long,WeakReference<Drawable.ConstantState>> mDrawableCache = new HashMap<Long,WeakReference<Drawable.ConstantState>>(0);
-	/*package*/ final LongSparseArray<WeakReference<ColorStateList>> mColorStateListCache = new LongSparseArray<WeakReference<ColorStateList>>(0);
+	private final ConfigurationBoundResourceCache<ComplexColor> mComplexColorCache = new ConfigurationBoundResourceCache<>(this);
 	/*package*/ final LongSparseArray<WeakReference<Drawable.ConstantState>> mColorDrawableCache = new LongSparseArray<WeakReference<Drawable.ConstantState>>(0);
 	/*package*/ boolean mPreloading;
 
@@ -807,6 +815,10 @@ public class Resources {
 	 * @return Returns a single color value in the form 0xAARRGGBB.
 	 */
 	public int getColor(int id) throws NotFoundException {
+		return getColor(id, null);
+	}
+
+	public int getColor(int id, Theme theme) throws NotFoundException {
 		TypedValue value;
 		synchronized (mAccessLock) {
 			value = mTmpValue;
@@ -823,18 +835,13 @@ public class Resources {
 			}
 			mTmpValue = null;
 		}
-		ColorStateList csl = loadColorStateList(value, id);
+		ColorStateList csl = loadColorStateList(value, id, theme);
 		synchronized (mAccessLock) {
 			if (mTmpValue == null) {
 				mTmpValue = value;
 			}
 		}
 		return csl.getDefaultColor();
-	}
-
-	public int getColor(int id, Theme theme) throws NotFoundException {
-		// TODO fix it
-		return 0;
 	}
 
 	/**
@@ -867,7 +874,7 @@ public class Resources {
 			}
 			getValue(id, value, true);
 		}
-		ColorStateList res = loadColorStateList(value, id);
+		ColorStateList res = loadColorStateList(value, id, theme);
 		synchronized (mAccessLock) {
 			if (mTmpValue == null) {
 				mTmpValue = value;
@@ -1419,6 +1426,36 @@ public class Resources {
 		}
 
 		/**
+		 * Retrieve the values for a set of attributes in the Theme. The
+		 * contents of the typed array are ultimately filled in by
+		 * {@link Resources#getValue}.
+		 *
+		 * @param values The base set of attribute values, must be equal in
+		 *               length to {@code attrs}. All values must be of type
+		 *               {@link TypedValue#TYPE_ATTRIBUTE}.
+		 * @param attrs The desired attributes to be retrieved.
+		 * @return Returns a TypedArray holding an array of the attribute
+		 *         values. Be sure to call {@link TypedArray#recycle()}
+		 *         when done with it.
+		 * @hide
+		 */
+		@NonNull
+		public TypedArray resolveAttributes(@NonNull int[] values, @NonNull int[] attrs) {
+			final int len = attrs.length;
+			if (values == null || len != values.length) {
+				throw new IllegalArgumentException(
+				    "Base attribute values must the same length as attrs");
+			}
+
+			final TypedArray array = TypedArray.obtain(Resources.this, len);
+			AssetManager.resolveAttrs(theme, 0, 0, values, attrs, array.mData, array.mIndices);
+			array.mTheme = this;
+			array.mXml = null;
+
+			return array;
+		}
+
+		/**
 		 * Retrieve the value of an attribute in the Theme.  The contents of
 		 * <var>outValue</var> are ultimately filled in by
 		 * {@link Resources#getValue}.
@@ -1461,6 +1498,8 @@ public class Resources {
 			mAssets.releaseTheme(theme);
 		}
 
+		private final ThemeKey mKey = new ThemeKey();
+
 		/*package*/ Theme() {
 			mAssets = Resources.this.mAssets;
 			theme = mAssets.createTheme();
@@ -1470,9 +1509,91 @@ public class Resources {
 			return Resources.this;
 		}
 
+		/*package*/ ThemeKey getKey() {
+			return mKey;
+		}
+
 		private final AssetManager mAssets;
 
 		public void rebase() {}
+	}
+
+	static class ThemeKey implements Cloneable {
+		int[] mResId;
+		boolean[] mForce;
+		int mCount;
+
+		private int mHashCode = 0;
+
+		public void append(int resId, boolean force) {
+			if (mResId == null) {
+				mResId = new int[4];
+			}
+
+			if (mForce == null) {
+				mForce = new boolean[4];
+			}
+
+			mResId = GrowingArrayUtils.append(mResId, mCount, resId);
+			mForce = GrowingArrayUtils.append(mForce, mCount, force);
+			mCount++;
+
+			mHashCode = 31 * (31 * mHashCode + resId) + (force ? 1 : 0);
+		}
+
+		/**
+		 * Sets up this key as a deep copy of another key.
+		 *
+		 * @param other the key to deep copy into this key
+		 */
+		public void setTo(ThemeKey other) {
+			mResId = other.mResId == null ? null : other.mResId.clone();
+			mForce = other.mForce == null ? null : other.mForce.clone();
+			mCount = other.mCount;
+		}
+
+		@Override
+		public int hashCode() {
+			return mHashCode;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) {
+				return true;
+			}
+
+			if (o == null || getClass() != o.getClass() || hashCode() != o.hashCode()) {
+				return false;
+			}
+
+			final ThemeKey t = (ThemeKey)o;
+			if (mCount != t.mCount) {
+				return false;
+			}
+
+			final int N = mCount;
+			for (int i = 0; i < N; i++) {
+				if (mResId[i] != t.mResId[i] || mForce[i] != t.mForce[i]) {
+					return false;
+				}
+			}
+
+			return true;
+		}
+
+		/**
+		 * @return a shallow copy of this key
+		 */
+		@Override
+		public ThemeKey clone() {
+			final ThemeKey other = new ThemeKey();
+			other.mResId = mResId;
+			other.mForce = mForce;
+			other.mCount = mCount;
+			other.mHashCode = mHashCode;
+			return other;
+		}
 	}
 
 	/**
@@ -1615,7 +1736,7 @@ public class Resources {
 			//            clearDrawableCacheLocked(mDrawableCache, configChanges);
 			//            clearDrawableCacheLocked(mColorDrawableCache, configChanges);
 
-			mColorStateListCache.clear();
+			mComplexColorCache.onConfigurationChange(configChanges);
 
 			flushLayoutCache();
 		}
@@ -2023,8 +2144,11 @@ public class Resources {
 	static private final int LAYOUT_DIR_CONFIG = ActivityInfo.activityInfoConfigToNative(
 	    ActivityInfo.CONFIG_LAYOUT_DIRECTION);
 
-	/*package*/ Drawable loadDrawable(TypedValue value, int id)
-	    throws NotFoundException { /*
+	/*package*/ Drawable loadDrawable(TypedValue value, int id) throws NotFoundException {
+		return loadDrawable(value, id, null);
+	}
+
+	/*package*/ Drawable loadDrawable(TypedValue value, int id, Theme theme) throws NotFoundException { /*
 
 	 if (TRACE_FOR_PRELOAD) {
 	     // Log only framework resources
@@ -2189,7 +2313,80 @@ public class Resources {
 		return null;
 	}
 
-	/*package*/ ColorStateList loadColorStateList(TypedValue value, int id)
+	/**
+	 * Given the value and id, we can get the XML filename as in value.data, based on that, we
+	 * first try to load CSL from the cache. If not found, try to get from the constant state.
+	 * Last, parse the XML and generate the CSL.
+	 */
+	private ComplexColor loadComplexColorFromName(Theme theme, TypedValue value, int id) {
+		final long key = (((long)value.assetCookie) << 32) | value.data;
+		final ConfigurationBoundResourceCache<ComplexColor> cache = mComplexColorCache;
+		ComplexColor complexColor = cache.getInstance(key, theme);
+		if (complexColor != null) {
+			return complexColor;
+		}
+
+		final android.content.res.ConstantState<ComplexColor> factory = sPreloadedComplexColors.get(key);
+
+		if (factory != null) {
+			complexColor = factory.newInstance(this, theme);
+		}
+		if (complexColor == null) {
+			complexColor = loadComplexColorForCookie(value, id, theme);
+		}
+
+		if (complexColor != null) {
+			if (mPreloading) {
+				if (verifyPreloadConfig(value.changingConfigurations, 0, value.resourceId, "color")) {
+					sPreloadedComplexColors.put(key, complexColor.getConstantState());
+				}
+			} else {
+				cache.put(key, theme, complexColor.getConstantState());
+			}
+		}
+		return complexColor;
+	}
+
+	@Nullable
+	public ComplexColor loadComplexColor(@NonNull TypedValue value, int id, Theme theme) {
+		if (TRACE_FOR_PRELOAD) {
+			// Log only framework resources
+			if ((id >>> 24) == 0x1) {
+				final String name = getResourceName(id);
+				if (name != null)
+					android.util.Log.d("loadComplexColor", name);
+			}
+		}
+
+		final long key = (((long)value.assetCookie) << 32) | value.data;
+
+		// Handle inline color definitions.
+		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+			return getColorStateListFromInt(value, key);
+		}
+
+		final String file = value.string.toString();
+
+		ComplexColor complexColor;
+		if (file.endsWith(".xml")) {
+			try {
+				complexColor = loadComplexColorFromName(theme, value, id);
+			} catch (Exception e) {
+				final NotFoundException rnf = new NotFoundException(
+				    "File " + file + " from complex color resource ID #0x" + Integer.toHexString(id));
+				rnf.initCause(e);
+				throw rnf;
+			}
+		} else {
+			throw new NotFoundException(
+			    "File " + file + " from drawable resource ID #0x" + Integer.toHexString(id) + ": .xml extension required");
+		}
+
+		return complexColor;
+	}
+
+	@Nullable
+	ColorStateList loadColorStateList(TypedValue value, int id, Theme theme)
 	    throws NotFoundException {
 		if (TRACE_FOR_PRELOAD) {
 			// Log only framework resources
@@ -2202,99 +2399,112 @@ public class Resources {
 
 		final long key = (((long)value.assetCookie) << 32) | value.data;
 
+		// Handle inline color definitions.
+		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+			return getColorStateListFromInt(value, key);
+		}
+
+		ComplexColor complexColor = loadComplexColorFromName(theme, value, id);
+		if (complexColor != null && complexColor instanceof ColorStateList) {
+			return (ColorStateList)complexColor;
+		}
+
+		throw new NotFoundException(
+		    "Can't find ColorStateList from drawable resource ID #0x" + Integer.toHexString(id));
+	}
+
+	@NonNull
+	private ColorStateList getColorStateListFromInt(@NonNull TypedValue value, long key) {
 		ColorStateList csl;
-
-		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT &&
-		    value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
-
-			csl = sPreloadedColorStateLists.get(key);
-			if (csl != null) {
-				return csl;
-			}
-
-			csl = ColorStateList.valueOf(value.data);
-			if (mPreloading) {
-				if (verifyPreloadConfig(value.changingConfigurations, 0, value.resourceId,
-							"color")) {
-					sPreloadedColorStateLists.put(key, csl);
-				}
-			}
-
-			return csl;
+		final android.content.res.ConstantState<ComplexColor> factory =
+		    sPreloadedComplexColors.get(key);
+		if (factory != null) {
+			return (ColorStateList)factory.newInstance();
 		}
 
-		csl = getCachedColorStateList(key);
-		if (csl != null) {
-			return csl;
-		}
+		csl = ColorStateList.valueOf(value.data);
 
-		csl = sPreloadedColorStateLists.get(key);
-		if (csl != null) {
-			return csl;
-		}
-
-		if (value.string == null) {
-			throw new NotFoundException(
-			    "Resource is not a ColorStateList (color or path): " + value);
-		}
-
-		String file = value.string.toString();
-
-		if (file.endsWith(".xml")) {
-			Trace.traceBegin(Trace.TRACE_TAG_RESOURCES, file);
-			try {
-				XmlResourceParser rp = loadXmlResourceParser(
-				    file, id, value.assetCookie, "colorstatelist");
-				csl = ColorStateList.createFromXml(this, rp);
-				rp.close();
-			} catch (Exception e) {
-				Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);
-				NotFoundException rnf = new NotFoundException(
-				    "File " + file + " from color state list resource ID #0x" + Integer.toHexString(id));
-				rnf.initCause(e);
-				throw rnf;
-			}
-			Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);
-		} else {
-			throw new NotFoundException(
-			    "File " + file + " from drawable resource ID #0x" + Integer.toHexString(id) + ": .xml extension required");
-		}
-
-		if (csl != null) {
-			if (mPreloading) {
-				if (verifyPreloadConfig(value.changingConfigurations, 0, value.resourceId,
-							"color")) {
-					sPreloadedColorStateLists.put(key, csl);
-				}
-			} else {
-				synchronized (mAccessLock) {
-					// Log.i(TAG, "Saving cached color state list @ #" +
-					//         Integer.toHexString(key.intValue())
-					//         + " in " + this + ": " + csl);
-					mColorStateListCache.put(key, new WeakReference<ColorStateList>(csl));
-				}
+		if (mPreloading) {
+			if (verifyPreloadConfig(value.changingConfigurations, 0, value.resourceId,
+						"color")) {
+				sPreloadedComplexColors.put(key, csl.getConstantState());
 			}
 		}
 
 		return csl;
 	}
 
-	private ColorStateList getCachedColorStateList(long key) {
-		synchronized (mAccessLock) {
-			WeakReference<ColorStateList> wr = mColorStateListCache.get(key);
-			if (wr != null) { // we have the key
-				ColorStateList entry = wr.get();
-				if (entry != null) {
-					// Log.i(TAG, "Returning cached color state list @ #" +
-					//         Integer.toHexString(((Integer)key).intValue())
-					//         + " in " + this + ": " + entry);
-					return entry;
-				} else { // our entry has been purged
-					mColorStateListCache.delete(key);
+	/**
+	 * Load a ComplexColor based on the XML file content. The result can be a GradientColor or
+	 * ColorStateList. Note that pure color will be wrapped into a ColorStateList.
+	 *
+	 * We deferred the parser creation to this function b/c we need to differentiate b/t gradient
+	 * and selector tag.
+	 *
+	 * @return a ComplexColor (GradientColor or ColorStateList) based on the XML file content.
+	 */
+	@Nullable
+	private ComplexColor loadComplexColorForCookie(TypedValue value, int id, Theme theme) {
+		if (value.string == null) {
+			throw new UnsupportedOperationException(
+			    "Can't convert to ComplexColor: type=0x" + value.type);
+		}
+
+		final String file = value.string.toString();
+
+		if (TRACE_FOR_MISS_PRELOAD) {
+			// Log only framework resources
+			if ((id >>> 24) == 0x1) {
+				final String name = getResourceName(id);
+				if (name != null) {
+					Log.d(TAG, "Loading framework ComplexColor #" + Integer.toHexString(id) + ": " + name + " at " + file);
 				}
 			}
 		}
-		return null;
+
+		if (DEBUG_LOAD) {
+			Log.v(TAG, "Loading ComplexColor for cookie " + value.assetCookie + ": " + file);
+		}
+
+		ComplexColor complexColor = null;
+
+		Trace.traceBegin(Trace.TRACE_TAG_RESOURCES, file);
+		if (file.endsWith(".xml")) {
+			try {
+				final XmlResourceParser parser = loadXmlResourceParser(
+				    file, id, value.assetCookie, "ComplexColor");
+
+				final AttributeSet attrs = Xml.asAttributeSet(parser);
+				int type;
+				while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+					// Seek parser to start tag.
+				}
+				if (type != XmlPullParser.START_TAG) {
+					throw new XmlPullParserException("No start tag found");
+				}
+
+				final String name = parser.getName();
+				if (name.equals("gradient")) {
+					complexColor = GradientColor.createFromXmlInner(this, parser, attrs, theme);
+				} else if (name.equals("selector")) {
+					complexColor = ColorStateList.createFromXmlInner(this, parser, attrs, theme);
+				}
+				parser.close();
+			} catch (Exception e) {
+				Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);
+				final NotFoundException rnf = new NotFoundException(
+				    "File " + file + " from ComplexColor resource ID #0x" + Integer.toHexString(id));
+				rnf.initCause(e);
+				throw rnf;
+			}
+		} else {
+			Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);
+			throw new NotFoundException(
+			    "File " + file + " from drawable resource ID #0x" + Integer.toHexString(id) + ": .xml extension required");
+		}
+		Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);
+
+		return complexColor;
 	}
 
 	/*package*/ XmlResourceParser loadXmlResourceParser(int id, String type)
@@ -2321,95 +2531,111 @@ public class Resources {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-/*        if (id != 0) {
-	    try {
-		// These may be compiled...
-		synchronized (mCachedXmlBlockIds) {
-		    // First see if this block is in our cache.
-		    final int num = mCachedXmlBlockIds.length;
-		    for (int i=0; i<num; i++) {
-			if (mCachedXmlBlockIds[i] == id) {
-			    //System.out.println("**** REUSING XML BLOCK!  id="
-			    //                   + id + ", index=" + i);
-			    return mCachedXmlBlocks[i].newParser();
-			}
-		    }
+		/*if (id != 0) {
+			try {
+				// These may be compiled...
+				synchronized (mCachedXmlBlockIds) {
+					// First see if this block is in our cache.
+					final int num = mCachedXmlBlockIds.length;
+					for (int i=0; i<num; i++) {
+						if (mCachedXmlBlockIds[i] == id) {
+							//System.out.println("**** REUSING XML BLOCK!  id="
+							//                   + id + ", index=" + i);
+							return mCachedXmlBlocks[i].newParser();
+						}
+					}
 
-		    // Not in the cache, create a new block and put it at
-		    // the next slot in the cache.
-		    XmlBlock block = mAssets.openXmlBlockAsset(
-			    assetCookie, file);
-		    if (block != null) {
-			int pos = mLastCachedXmlBlockIndex+1;
-			if (pos >= num) pos = 0;
-			mLastCachedXmlBlockIndex = pos;
-			XmlBlock oldBlock = mCachedXmlBlocks[pos];
-			if (oldBlock != null) {
-			    oldBlock.close();
+					// Not in the cache, create a new block and put it at
+					// the next slot in the cache.
+					XmlBlock block = mAssets.openXmlBlockAsset(
+					assetCookie, file);
+					if (block != null) {
+						int pos = mLastCachedXmlBlockIndex+1;
+						if (pos >= num) pos = 0;
+						mLastCachedXmlBlockIndex = pos;
+						XmlBlock oldBlock = mCachedXmlBlocks[pos];
+						if (oldBlock != null) {
+						oldBlock.close();
+						}
+						mCachedXmlBlockIds[pos] = id;
+						mCachedXmlBlocks[pos] = block;
+						//System.out.println("**** CACHING NEW XML BLOCK!  id="
+						//                   + id + ", index=" + pos);
+						return block.newParser();
+					}
+				}
+			} catch (Exception e) {
+				NotFoundException rnf = new NotFoundException("File " + file +
+					                                      " from xml type " + type +
+					                                      " resource ID #0x" + Integer.toHexString(id));
+				rnf.initCause(e);
+				throw rnf;
 			}
-			mCachedXmlBlockIds[pos] = id;
-			mCachedXmlBlocks[pos] = block;
-			//System.out.println("**** CACHING NEW XML BLOCK!  id="
-			//                   + id + ", index=" + pos);
-			return block.newParser();
-		    }
 		}
-	    } catch (Exception e) {
-		NotFoundException rnf = new NotFoundException(
+
+		throw new NotFoundException(
 			"File " + file + " from xml type " + type + " resource ID #0x"
-			+ Integer.toHexString(id));
-		rnf.initCause(e);
-		throw rnf;
-	    }
+			+ Integer.toHexString(id));*/
 	}
 
-	throw new NotFoundException(
-		"File " + file + " from xml type " + type + " resource ID #0x"
-		+ Integer.toHexString(id));
-*/    }
+	private TypedArray getCachedStyledAttributes(int len) {
+		synchronized (mAccessLock) {
+			TypedArray attrs = mCachedStyledAttributes;
+			if (attrs != null) {
+				mCachedStyledAttributes = null;
+				if (DEBUG_ATTRIBUTES_CACHE) {
+					mLastRetrievedAttrs = new RuntimeException("here");
+					mLastRetrievedAttrs.fillInStackTrace();
+				}
 
-private TypedArray getCachedStyledAttributes(int len) {
-	synchronized (mAccessLock) {
-		TypedArray attrs = mCachedStyledAttributes;
-		if (attrs != null) {
-			mCachedStyledAttributes = null;
-			if (DEBUG_ATTRIBUTES_CACHE) {
-				mLastRetrievedAttrs = new RuntimeException("here");
-				mLastRetrievedAttrs.fillInStackTrace();
-			}
-
-			attrs.mLength = len;
-			int fullLen = len * AssetManager.STYLE_NUM_ENTRIES;
-			if (attrs.mData.length >= fullLen) {
+				attrs.mLength = len;
+				int fullLen = len * AssetManager.STYLE_NUM_ENTRIES;
+				if (attrs.mData.length >= fullLen) {
+					return attrs;
+				}
+				attrs.mData = new int[fullLen];
+				attrs.mIndices = new int[1 + len];
 				return attrs;
 			}
-			attrs.mData = new int[fullLen];
-			attrs.mIndices = new int[1 + len];
-			return attrs;
-		}
-		if (DEBUG_ATTRIBUTES_CACHE) {
-			RuntimeException here = new RuntimeException("here");
-			here.fillInStackTrace();
-			if (mLastRetrievedAttrs != null) {
-				Log.i(TAG, "Allocated new TypedArray of " + len + " in " + this, here);
-				Log.i(TAG, "Last retrieved attributes here", mLastRetrievedAttrs);
+			if (DEBUG_ATTRIBUTES_CACHE) {
+				RuntimeException here = new RuntimeException("here");
+				here.fillInStackTrace();
+				if (mLastRetrievedAttrs != null) {
+					Log.i(TAG, "Allocated new TypedArray of " + len + " in " + this, here);
+					Log.i(TAG, "Last retrieved attributes here", mLastRetrievedAttrs);
+				}
+				mLastRetrievedAttrs = here;
 			}
-			mLastRetrievedAttrs = here;
+			return new TypedArray(this,
+					      new int[len * AssetManager.STYLE_NUM_ENTRIES],
+					      new int[1 + len], len);
 		}
-		return new TypedArray(this,
-				      new int[len * AssetManager.STYLE_NUM_ENTRIES],
-				      new int[1 + len], len);
 	}
-}
 
-private Resources() {
-	mAssets = AssetManager.getSystem();
-	// NOTE: Intentionally leaving this uninitialized (all values set
-	// to zero), so that anyone who tries to do something that requires
-	// metrics will get a very wrong value.
-	mConfiguration.setToDefaults();
-	mMetrics.setToDefaults();
-	updateConfiguration(null, null);
-	mAssets.ensureStringBlocks();
-}
+
+	/**
+	* Obtains styled attributes from the theme, if available, or unstyled
+	* resources if the theme is null.
+	*
+	* @hide
+	*/
+	public static TypedArray obtainAttributes(
+		Resources res, Theme theme, AttributeSet set, int[] attrs) {
+		if (theme == null) {
+			return res.obtainAttributes(set, attrs);
+		}
+
+		return theme.obtainStyledAttributes(set, attrs, 0, 0);
+	}
+
+	private Resources() {
+		mAssets = AssetManager.getSystem();
+		// NOTE: Intentionally leaving this uninitialized (all values set
+		// to zero), so that anyone who tries to do something that requires
+		// metrics will get a very wrong value.
+		mConfiguration.setToDefaults();
+		mMetrics.setToDefaults();
+		updateConfiguration(null, null);
+		mAssets.ensureStringBlocks();
+	}
 }

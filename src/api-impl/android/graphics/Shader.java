@@ -8,5 +8,11 @@ public class Shader {
 		REPEAT
 	}
 
+	protected void init(long ni) {
+	}
+
 	public void setLocalMatrix(Matrix matrix) {}
+
+
+	protected void copyLocalMatrix(Shader dest) {}
 }
