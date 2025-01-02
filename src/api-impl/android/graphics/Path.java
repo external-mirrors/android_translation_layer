@@ -122,7 +122,19 @@ public class Path {
 		native_add_rect(getBuilder(), rect.left, rect.top, rect.right, rect.bottom);
 	}
 
-	public void addRoundRect(RectF rect, float[] radii, Direction direction) {}
+	public void addRoundRect(RectF rect, float[] radii, Direction direction) {
+		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, radii, direction);
+	}
+
+	public void addRoundRect(float left,  float top, float right, float bottom,
+	                         float[] radii, Direction direction) {}
+
+	public void addRoundRect(RectF rect, float rx, float ry, Direction direction) {
+		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, rx, ry, direction);
+	}
+
+	public void addRoundRect(float left,  float top, float right, float bottom,
+	                         float rx, float ry, Direction direction) {}
 
 	public void addOval(RectF rect, Direction direction) {}
 
