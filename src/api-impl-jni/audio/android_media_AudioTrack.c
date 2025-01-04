@@ -238,7 +238,9 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write(JNIEnv *env, 
 	if (ret < 0) {
 		if (ret == -EPIPE) {
 			printf("XRUN.\n");
-			snd_pcm_prepare(pcm_handle);
+			snd_pcm_recover(pcm_handle, ret, 0);
+			ret = frames_written = snd_pcm_writei(pcm_handle, buffer + offset_in_bytes, frames_to_write);
+			snd_pcm_start(pcm_handle);
 		} else {
 			printf("ERROR. Can't write to PCM device. %s\n", snd_strerror(ret));
 		}
