@@ -211,14 +211,6 @@ JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs
 
 /*
  * Class:     android_content_res_AssetManager
- * Method:    retrieveAttributes
- * Signature: (I[I[I[I)Z
- */
-JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_retrieveAttributes
-  (JNIEnv *, jobject, jint, jintArray, jintArray, jintArray);
-
-/*
- * Class:     android_content_res_AssetManager
  * Method:    getArraySize
  * Signature: (I)I
  */
