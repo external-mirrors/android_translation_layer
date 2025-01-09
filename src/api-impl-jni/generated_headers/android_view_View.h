@@ -417,6 +417,14 @@ JNIEXPORT jboolean JNICALL Java_android_view_View_native_1getMatrix
 
 /*
  * Class:     android_view_View
+ * Method:    native_keep_screen_on
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on
+  (JNIEnv *, jclass, jlong, jboolean);
+
+/*
+ * Class:     android_view_View
  * Method:    native_getGlobalVisibleRect
  * Signature: (JLandroid/graphics/Rect;)Z
  */

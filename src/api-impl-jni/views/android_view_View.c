@@ -675,3 +675,19 @@ JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsFocused(JNIEnv *env, j
 	GtkWidget *wrapper = gtk_widget_get_parent(widget);
 	return gtk_widget_has_focus(widget) || gtk_widget_has_focus(wrapper);
 }
+
+JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *env, jobject this, jlong widget_ptr, jboolean enable)
+{
+	GtkApplication *application = GTK_APPLICATION(g_application_get_default());
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	guint cookie = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(widget), "keep-screen-on-cookie"));
+	if (cookie && !enable) {
+		gtk_application_uninhibit(application, cookie);
+		g_object_set_data(G_OBJECT(widget), "keep-screen-on-cookie", NULL);
+	} else if (!cookie && enable) {
+		GtkWindow *window = GTK_WINDOW(gtk_widget_get_native(widget));
+		GtkApplicationInhibitFlags flags = GTK_APPLICATION_INHIBIT_SUSPEND | GTK_APPLICATION_INHIBIT_IDLE;
+		cookie = gtk_application_inhibit(application, window, flags, "keep-screen-on");
+		g_object_set_data(G_OBJECT(widget), "keep-screen-on-cookie", GINT_TO_POINTER(cookie));
+	}
+}

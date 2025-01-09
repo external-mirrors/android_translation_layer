@@ -1854,19 +1854,29 @@ public class View implements Drawable.Callback {
 		return System.currentTimeMillis();
 	}
 
-	public void setKeepScreenOn(boolean screenOn) {}
+	private boolean keepScreenOn = false;
+	private static native void native_keep_screen_on(long widget, boolean keepScreenOn);
+	public void setKeepScreenOn(boolean screenOn) {
+		if (attachedToWindow && keepScreenOn != screenOn)
+			native_keep_screen_on(widget, screenOn);
+		keepScreenOn = screenOn;
+	}
 
 	protected void onAttachedToWindow () {
 		attachedToWindow = true;
 		if (onAttachStateChangeListener != null) {
 			onAttachStateChangeListener.onViewAttachedToWindow(this);
 		}
+		if (keepScreenOn)
+			native_keep_screen_on(widget, true);
 	}
 	protected void onDetachedFromWindow() {
 		attachedToWindow = false;
 		if (onAttachStateChangeListener != null) {
 			onAttachStateChangeListener.onViewDetachedFromWindow(this);
 		}
+		if (keepScreenOn)
+			native_keep_screen_on(widget, false);
 	}
 	public void attachToWindowInternal() {
 		onAttachedToWindow();
