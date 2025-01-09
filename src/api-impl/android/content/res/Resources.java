@@ -1006,7 +1006,7 @@ public class Resources {
 	 *
 	 * @see android.util.AttributeSet
 	 */
-	public XmlResourceParser getXml(int id) throws /*NotFound*/ Exception {
+	public XmlResourceParser getXml(int id) throws NotFoundException {
 		return loadXmlResourceParser(id, "xml");
 	}
 
