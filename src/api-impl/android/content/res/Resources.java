@@ -1270,6 +1270,7 @@ public class Resources {
 			int len = attrs.length;
 			TypedArray array = getCachedStyledAttributes(len);
 			array.mRsrcs = attrs;
+			array.mTheme = this;
 			mAssets.applyStyle(theme, 0, 0, null, attrs, array.mData, array.mIndices);
 			return array;
 		}
@@ -1299,6 +1300,7 @@ public class Resources {
 			int len = attrs.length;
 			TypedArray array = getCachedStyledAttributes(len);
 			array.mRsrcs = attrs;
+			array.mTheme = this;
 			mAssets.applyStyle(theme, 0, resid, null, attrs,
 				array.mData, array.mIndices);
 			if (false) {
@@ -1392,6 +1394,7 @@ public class Resources {
 				set, attrs, array.mData, array.mIndices);
 			array.mRsrcs = attrs;
 			array.mXml = parser;
+			array.mTheme = this;
 			if (false && set != null) { // TODO: set should probably never be null...?
 				int[] data = array.mData;
 
