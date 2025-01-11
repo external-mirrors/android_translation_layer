@@ -433,9 +433,9 @@ public class TypedArray {
 		} else if (type == TypedValue.TYPE_STRING) {
 			final TypedValue value = mValue;
 			if (getValueAt(index, value)) {
-				final ComplexColor cc = mResources.loadComplexColor(
+				ColorStateList csl = mResources.loadColorStateList(
 				    value, value.resourceId, mTheme);
-				return cc.getDefaultColor();
+				return csl.getDefaultColor();
 			}
 			return defValue;
 		} else if (type == TypedValue.TYPE_ATTRIBUTE) {
