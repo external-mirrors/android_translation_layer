@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 
@@ -174,4 +175,8 @@ public class Dialog implements Window.Callback, DialogInterface {
 	}
 
 	public void setCancelMessage(Message msg) {}
+
+	public boolean onTouchEvent(MotionEvent event) {
+		return false;
+	}
 }

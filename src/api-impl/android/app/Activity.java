@@ -587,4 +587,12 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
 		return null;
 	}
+
+	public boolean onSearchRequested() {
+		return false;
+	}
+
+	public View getCurrentFocus() {
+		return null;
+	}
 }

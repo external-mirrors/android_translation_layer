@@ -34,4 +34,6 @@ public class Animation {
 	public void setRepeatCount(int count) {}
 
 	public void reset() {}
+
+	public void start() {}
 }

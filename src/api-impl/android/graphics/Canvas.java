@@ -6,7 +6,11 @@ public class Canvas {
 	private Bitmap bitmap;
 	private GskCanvas gsk_canvas;
 
-	public Canvas() {}
+	public Canvas() {
+		if (!(this instanceof GskCanvas)) {
+			gsk_canvas = new GskCanvas(0);
+		}
+	}
 
 	public Canvas(Bitmap bmp) {
 		this.bitmap = bmp;
@@ -462,4 +466,6 @@ public class Canvas {
 		outRect.set(0, 0, 100, 100);
 		return true;
 	}
+
+	public void drawPaint(Paint paint) {}
 }

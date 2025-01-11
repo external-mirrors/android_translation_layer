@@ -338,4 +338,12 @@ public class TextUtils {
 	public static String htmlEncode(String s) {
 		return s;
 	}
+
+	public static CharSequence concat(CharSequence[] array) {
+		StringBuilder sb = new StringBuilder();
+		for (CharSequence cs : array) {
+			sb.append(cs);
+		}
+		return sb;
+	}
 }

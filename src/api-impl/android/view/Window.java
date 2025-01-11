@@ -2,6 +2,7 @@ package android.view;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.transition.Transition;
 import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 
@@ -134,5 +135,23 @@ public class Window {
 
 	public void setTitle(CharSequence title) {
 		set_title(native_window, title != null ? title.toString() : context.getPackageName());
+	}
+
+	public Transition getSharedElementEnterTransition() {
+		return new Transition();
+	}
+
+	public void setSharedElementExitTransition(Transition transition) {}
+
+	public void setSharedElementReenterTransition(Transition transition) {}
+
+	public void setSharedElementReturnTransition(Transition transition) {}
+
+	public Transition getSharedElementExitTransition() {
+		return new Transition();
+	}
+
+	public Transition getSharedElementReenterTransition() {
+		return new Transition();
 	}
 }

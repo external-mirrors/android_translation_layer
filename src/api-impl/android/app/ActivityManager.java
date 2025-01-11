@@ -84,4 +84,6 @@ public class ActivityManager {
 	public List<ApplicationExitInfo> getHistoricalProcessExitReasons(String pkgname, int pid, int maxNum) {
 		return Collections.emptyList();
 	}
+
+	public static boolean isUserAMonkey() {return false;}
 }

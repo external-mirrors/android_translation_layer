@@ -73,6 +73,8 @@ public class ValueAnimator extends Animator {
 		return 1.0f;
 	}
 
+	public void setObjectValues(Object[] values) {}
+
 	/**
 	 * Implementors of this interface can add themselves as update listeners
 	 * to an <code>ValueAnimator</code> instance to receive callbacks on every animation

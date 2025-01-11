@@ -366,4 +366,6 @@ public class TextView extends View {
 	public void setAutoSizeTextTypeUniformWithPresetSizes(int[] presetSizes, int unit) {}
 
 	public void setCompoundDrawableTintList(ColorStateList tint) {}
+
+	public void setIncludeFontPadding(boolean includePadding) {}
 }

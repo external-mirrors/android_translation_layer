@@ -92,6 +92,10 @@ public class Path {
 
 	public void arcTo(RectF oval, float startAngle, float sweepAngle, boolean forceMoveTo) {}
 
+	public void arcTo(RectF oval, float startAngle, float sweepAngle) {}
+
+	public void arcTo(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean forceMoveTo) {}
+
 	public void rMoveTo(float x, float y) {
 		native_rel_move_to(getBuilder(), x, y);
 	}
@@ -118,6 +122,10 @@ public class Path {
 		addPath(path, matrix);
 	}
 
+	public void addPath(Path path) {
+		addPath(path, Matrix.IDENTITY_MATRIX);
+	}
+
 	public void addRect(RectF rect, Direction direction) {
 		native_add_rect(getBuilder(), rect.left, rect.top, rect.right, rect.bottom);
 	}
@@ -137,6 +145,8 @@ public class Path {
 	                         float rx, float ry, Direction direction) {}
 
 	public void addOval(RectF rect, Direction direction) {}
+
+	public void addCircle(float x, float y, float radius, Direction direction) {}
 
 	public void transform(Matrix matrix) {
 		builder = native_transform(getGskPath(), matrix.ni());

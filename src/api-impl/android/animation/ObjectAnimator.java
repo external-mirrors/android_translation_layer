@@ -39,4 +39,8 @@ public class ObjectAnimator extends ValueAnimator {
 
 	public void setPropertyName(String propertyName) {}
 
+	public static ObjectAnimator ofPropertyValuesHolder(Object target, PropertyValuesHolder... values) {
+		return new ObjectAnimator();
+	}
+
 }

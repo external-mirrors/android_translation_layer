@@ -99,4 +99,6 @@ public class PopupWindow {
 	}
 
 	public void setAnimationStyle(int animationStyle) {}
+
+	public void setTouchModal(boolean touchModal) {}
 }

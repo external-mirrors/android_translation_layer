@@ -89,6 +89,10 @@ public class ProgressBar extends View {
 		native_setProgress(widget, progress / (float)max);
 	}
 
+	public void setProgress(int progress, boolean animate) {
+		setProgress(progress);
+	}
+
 	public void setSecondaryProgress(int secondaryProgress) {}
 
 	public int getProgress() {

@@ -337,7 +337,12 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return The value of the field as a string.
 	 */
 	public String getString(int row, int column) {
-		return String.valueOf(rows.get(row - startPos)[column]);
+		Object value = rows.get(row - startPos)[column];
+		if (value == null) {
+			return null;
+		} else {
+			return String.valueOf(value);
+		}
 	}
 
 	/**

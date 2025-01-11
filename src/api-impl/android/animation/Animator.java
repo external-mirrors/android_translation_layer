@@ -48,4 +48,8 @@ public class Animator {
 
 	public void end() {}
 
+	public TimeInterpolator getInterpolator() { return null; }
+
+	public boolean isRunning() { return false; }
+
 }

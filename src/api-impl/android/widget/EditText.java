@@ -56,4 +56,6 @@ public class EditText extends TextView {
 
 	@Override
 	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {}
+
+	public void selectAll() {}
 }

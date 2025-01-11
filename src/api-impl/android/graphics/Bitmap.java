@@ -180,6 +180,10 @@ public final class Bitmap {
 		buffer.position(buffer.position() + getAllocationByteCount());
 	}
 
+	public int getByteCount() {
+		return getAllocationByteCount();
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

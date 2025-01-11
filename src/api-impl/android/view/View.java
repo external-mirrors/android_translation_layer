@@ -15,6 +15,7 @@ import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -2112,4 +2113,10 @@ public class View implements Drawable.Callback {
 	public float getTransitionAlpha() {
 		return 1.0f;
 	}
+
+	public void onWindowFocusChanged(boolean hasFocus) {}
+
+	public void setAnimation(Animation animation) {}
+
+	public boolean performAccessibilityAction(int action, Bundle arguments) { return false; }
 }
