@@ -41,6 +41,7 @@ public class LayoutInflater {
 	}
 
 	public interface Factory2 {
+		public View onCreateView(View parent, String name, Context context, AttributeSet attrs);
 	}
 
 	private Factory2 mFactory2;
@@ -117,11 +118,14 @@ public class LayoutInflater {
 
 		Slog.v(TAG, tabs(indent) + "createViewFromTag called: parent: " + parent + ", name: " + name);
 
-		View view;
+		View view = null;
 
-		if (-1 == name.indexOf('.')) {
+		if (context instanceof Factory2) {
+			view = ((Factory2)context).onCreateView(parent, name, context, attrs);
+		}
+		if (view == null && -1 == name.indexOf('.')) {
 			view = onCreateView(parent, name, attrs);
-		} else {
+		} else if (view == null) {
 			view = createView(name, null, attrs);
 		}
 

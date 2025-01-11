@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
@@ -34,7 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Activity extends ContextThemeWrapper implements Window.Callback {
+public class Activity extends ContextThemeWrapper implements Window.Callback, LayoutInflater.Factory2 {
 	private final static String TAG = "Activity";
 
 	public static final int RESULT_CANCELED = 0;
@@ -581,5 +582,9 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		if (view == null)
 			throw new IllegalArgumentException("ID does not reference a View inside this View");
 		return view;
+	}
+
+	public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
+		return null;
 	}
 }
