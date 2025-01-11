@@ -1,5 +1,7 @@
 package android.animation;
 
+import java.lang.reflect.Method;
+
 import android.graphics.Path;
 import android.util.Property;
 
@@ -25,7 +27,9 @@ public class ObjectAnimator extends ValueAnimator {
 		return new ObjectAnimator();
 	}
 
-	public static <T> ObjectAnimator ofInt(T target, String propertyName, int... values) {
+	public static <T> ObjectAnimator ofInt(T target, String propertyName, int... values) throws ReflectiveOperationException {
+		Method setter = target.getClass().getMethod("set" + Character.toUpperCase(propertyName.charAt(0)) + propertyName.substring(1), int.class);
+		setter.invoke(target, values[values.length - 1]);
 		return new ObjectAnimator();
 	}
 
