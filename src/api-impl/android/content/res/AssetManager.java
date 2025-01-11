@@ -685,7 +685,7 @@ public final class AssetManager {
 	 */
 	/*package*/ native final int getResourceIdentifier(String name, String type, String defPackage);
 
-	/*package*/ /*native*/ final String getResourceName(int resid) {
+	public /*native*/ final String getResourceName(int resid) {
 		String name = getResourcePackageName(resid);
 		String type = getResourceTypeName(resid);
 		if (type != null)

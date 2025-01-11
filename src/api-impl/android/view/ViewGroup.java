@@ -359,7 +359,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void setClipToPadding(boolean clipToPadding) {}
 
 	public View findViewById(int id) {
-		Slog.v(TAG, "findViewById: looking for id: " + String.format("%x", id) + "(" + getResources().getResourceName(id) + ")" + " | checking: " + this + ",id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
+		Slog.v(TAG, "findViewById: looking for id: " + String.format("%x", id) + "(" + getResources().getAssets().getResourceName(id) + ")" + " | checking: " + this + ",id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
 		if (this.id == id) {
 			Slog.v(TAG, "findViewById: found: "+this+" | id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
 			return this;
