@@ -321,11 +321,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 		Slog.i(TAG, "startActivityForResult(" + intent + ", " + requestCode + "," + options + ") called");
 		if (intent.getComponent() != null) {
 			try {
-				Class<? extends Activity> cls = Class.forName(intent.getComponent().getClassName()).asSubclass(Activity.class);
-				Constructor<? extends Activity> constructor = cls.getConstructor();
-				final Activity activity = constructor.newInstance();
-				activity.intent = intent;
-				activity.getWindow().native_window = getWindow().native_window;
+				final Activity activity = internalCreateActivity(intent.getComponent().getClassName(), getWindow().native_window, intent);
 				activity.resultRequestCode = requestCode;
 				activity.resultActivity = this;
 				runOnUiThread(new Runnable() {
@@ -334,7 +330,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback {
 						nativeStartActivity(activity);
 					}
 				});
-			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (ReflectiveOperationException e) {
 				onActivityResult(requestCode, 0 /*RESULT_CANCELED*/, new Intent());
 			}
 		} else if (FILE_CHOOSER_ACTIONS.contains(intent.getAction())) {
