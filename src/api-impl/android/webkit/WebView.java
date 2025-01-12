@@ -43,6 +43,7 @@ public class WebView extends View {
 	}
 
 	public void setVerticalScrollBarEnabled(boolean enabled) {}
+	public void setVerticalScrollbarOverlay(boolean overlay) {}
 
 	public void addJavascriptInterface(Object object, String name) {
 		// HACK: directly call onRenderingDone for OctoDroid, as the javascript interface is not implemented yet
@@ -81,6 +82,8 @@ public class WebView extends View {
 	AssetManager internalGetAssetManager() {
 		return getContext().getResources().getAssets();
 	}
+
+	public void resumeTimers() {}
 
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);

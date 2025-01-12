@@ -346,4 +346,8 @@ public class TextUtils {
 		}
 		return sb;
 	}
+
+	public static String substring(CharSequence s, int start, int end) {
+		return s.subSequence(start, end).toString();
+	}
 }

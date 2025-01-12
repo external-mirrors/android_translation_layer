@@ -559,6 +559,7 @@ srcs = [
 	'android/widget/ImageView.java',
 	'android/widget/LinearLayout.java',
 	'android/widget/ListAdapter.java',
+	'android/widget/ListPopupWindow.java',
 	'android/widget/ListView.java',
 	'android/widget/MediaController.java',
 	'android/widget/MultiAutoCompleteTextView.java',

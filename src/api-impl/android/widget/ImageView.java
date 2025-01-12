@@ -41,7 +41,8 @@ public class ImageView extends View {
 			colorFilter = new PorterDuffColorFilter(a.getColor(com.android.internal.R.styleable.ImageView_tint, 0),
 					PorterDuff.Mode.values()[a.getInt(com.android.internal.R.styleable.ImageView_tintMode, PorterDuff.Mode.SRC_IN.nativeInt)]);
 		setImageDrawable(a.getDrawable(com.android.internal.R.styleable.ImageView_src));
-		setScaleType(scaletype_from_int[a.getInt(com.android.internal.R.styleable.ImageView_scaleType, 3 /*CENTER*/)]);
+		if (a.hasValue(com.android.internal.R.styleable.ImageView_scaleType))
+			setScaleType(scaletype_from_int[a.getInt(com.android.internal.R.styleable.ImageView_scaleType, 3 /*CENTER*/)]);
 		a.recycle();
 	}
 

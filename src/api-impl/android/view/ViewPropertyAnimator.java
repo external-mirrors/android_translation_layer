@@ -61,6 +61,10 @@ public class ViewPropertyAnimator {
 		return this;
 	}
 
+	public ViewPropertyAnimator translationXBy(float translationX) {
+		return this;
+	}
+
 	public void start() {
 		new Handler().postDelayed(new Runnable() {
 

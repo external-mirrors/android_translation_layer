@@ -595,4 +595,10 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public View getCurrentFocus() {
 		return null;
 	}
+
+	public void setProgressBarIndeterminateVisibility(boolean indeterminate) {}
+
+	public int getChangingConfigurations() {
+		return 0;
+	}
 }

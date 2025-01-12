@@ -61,6 +61,8 @@ public class Notification implements Parcelable {
 		return "Notification [" + title + ", " + text + ", " + actions + "]";
 	}
 
+	public String getGroup() {return null;}
+
 	public static class Builder {
 		private Notification notification;
 

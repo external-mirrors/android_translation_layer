@@ -5,6 +5,7 @@ import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.text.BoringLayout;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -371,4 +372,14 @@ public class TextView extends View {
 	public void setCompoundDrawableTintList(ColorStateList tint) {}
 
 	public void setIncludeFontPadding(boolean includePadding) {}
+
+	public float getLineSpacingExtra() {return 0.f;}
+
+	public Bundle getInputExtras(boolean key) {
+		return new Bundle();
+	}
+
+	public void setError(CharSequence error) {
+		System.out.println("ERROR: " + error);
+	}
 }

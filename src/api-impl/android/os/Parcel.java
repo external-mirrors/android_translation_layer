@@ -1,5 +1,8 @@
 package android.os;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Parcel {
 
 	public static Parcel obtain() {
@@ -54,5 +57,27 @@ public class Parcel {
 
 	public int dataSize() {
 		return 0;
+	}
+
+	public void writeStringList(List<String> list) {
+		System.out.println("Parcel.writeStringList(" + list + ")");
+	}
+
+	public void unmarshall(byte[] data, int offset, int length) {}
+
+	public String readString() {
+		return "fixme: Parcel.readString()";
+	}
+
+	public byte readByte() {
+		return 0;
+	}
+
+	public ArrayList<String> createStringArrayList() {
+		return new ArrayList<String>();
+	}
+
+	public Parcelable readParcelable(ClassLoader loader) {
+		return null;
 	}
 }

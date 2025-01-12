@@ -6,6 +6,8 @@ import android.util.AttributeSet;
 
 public class AutoCompleteTextView extends EditText {
 
+	private ListAdapter adapter;
+
 	public interface OnDismissListener {
 	}
 
@@ -31,12 +33,24 @@ public class AutoCompleteTextView extends EditText {
 		return 0;
 	}
 
-	public void setAdapter(ListAdapter adapter) {}
+	public void setAdapter(ListAdapter adapter) {
+		this.adapter = adapter;
+	}
+
+	public ListAdapter getAdapter() {
+		return adapter;
+	}
 
 	public void setThreshold(int threshold) {}
 
 	public int getImeOptions() {
 		return 0;
 	}
+
+	public int getListSelection() {
+		return 0;
+	}
+
+	public void performCompletion() {}
 
 }

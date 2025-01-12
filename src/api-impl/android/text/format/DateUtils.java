@@ -37,4 +37,11 @@ public class DateUtils {
 	public static String formatDateTime(Context context, long millis, int flags) {
 		return new Date(millis).toString();
 	}
+
+	public static String formatDateRange(Context context, long fromMillis, long toMillis, int flags) {
+		if (fromMillis == toMillis)
+			return formatDateTime(context, fromMillis, flags);
+		else
+			return formatDateTime(context, fromMillis, flags) + " - " + formatDateTime(context, toMillis, flags);
+	}
 }

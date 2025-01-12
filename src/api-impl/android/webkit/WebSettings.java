@@ -4,6 +4,11 @@ public class WebSettings {
 
 	public static enum LayoutAlgorithm {
 		NORMAL,
+		NARROW_COLUMNS,
+	}
+
+	public static enum RenderPriority {
+		HIGH,
 	}
 
 	public String getUserAgentString() {
@@ -41,4 +46,10 @@ public class WebSettings {
 	public void setAppCacheEnabled(boolean enabled) {}
 
 	public void setAppCachePath(String path) {}
+
+	public void setLoadWithOverviewMode(boolean overview) {}
+
+	public void setRenderPriority(RenderPriority priority) {}
+
+	public void setBlockNetworkLoads(boolean block) {}
 }

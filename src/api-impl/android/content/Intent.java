@@ -373,4 +373,8 @@ public class Intent implements Parcelable {
 		extras.putParcelableArrayList(name, value);
 		return this;
 	}
+
+	public int filterHashCode() {
+		return 0;
+	}
 }
