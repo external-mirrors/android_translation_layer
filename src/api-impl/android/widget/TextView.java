@@ -26,8 +26,8 @@ import android.view.KeyEvent;
 import android.view.View;
 
 public class TextView extends View {
-	public String text;
 	private ColorStateList colors = new ColorStateList(new int[][] {new int[0]}, new int[1]);
+	private CharSequence text;
 
 	public TextView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
@@ -82,6 +82,7 @@ public class TextView extends View {
 	protected native long native_constructor(Context context, AttributeSet attrs);
 
 	public void setText(CharSequence text) {
+		this.text = text;
 		native_setText(text != null ? text.toString() : null);
 
 		if (text instanceof android.text.Spanned)
@@ -194,7 +195,9 @@ public class TextView extends View {
 	public int getCompoundPaddingTop() {return 0;}
 	public int getCompoundPaddingBottom() {return 0;}
 
-	public native CharSequence getText();
+	public CharSequence getText() {
+		return text;
+	};
 
 	public void setCompoundDrawablePadding(int pad) {}
 

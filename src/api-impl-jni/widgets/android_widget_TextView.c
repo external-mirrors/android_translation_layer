@@ -97,11 +97,6 @@ JNIEXPORT void JNICALL Java_android_widget_TextView_native_1set_1markup(JNIEnv *
 	gtk_label_set_use_markup(label, value);
 }
 
-JNIEXPORT jobject JNICALL Java_android_widget_TextView_getText(JNIEnv *env, jobject this)
-{
-	return _JSTRING(gtk_label_get_text(box_get_label(env, _PTR(_GET_LONG_FIELD(this, "widget")))));
-}
-
 JNIEXPORT void JNICALL Java_android_widget_TextView_native_1setCompoundDrawables(JNIEnv *env, jobject this, jlong widget_ptr, jlong left, jlong top, jlong right, jlong bottom)
 {
 	GtkWidget *box = GTK_WIDGET(_PTR(widget_ptr));
