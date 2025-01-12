@@ -368,4 +368,9 @@ public class Intent implements Parcelable {
 	public void removeExtra(String name) {
 		extras.remove(name);
 	}
+
+	public Intent putParcelableArrayListExtra(String name, ArrayList<? extends Parcelable> value) {
+		extras.putParcelableArrayList(name, value);
+		return this;
+	}
 }

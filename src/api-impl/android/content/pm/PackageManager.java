@@ -1427,6 +1427,16 @@ public class PackageManager {
 	 * not contain such an activity.
 	 */
 	public Intent getLaunchIntentForPackage(String packageName) {
+		if (!Context.this_application.getPackageName().equals(packageName))
+			return null;
+		for (PackageParser.Activity activity: Context.pkg.activities) {
+			for (PackageParser.IntentInfo intent: activity.intents) {
+				Slog.i(TAG, intent.toString());
+				if (intent.hasCategory("android.intent.category.LAUNCHER")) {
+					return new Intent("android.intent.action.MAIN", null).setComponent(new ComponentName(packageName, activity.className));
+				}
+			}
+		}
 		return null;
 	}
 
