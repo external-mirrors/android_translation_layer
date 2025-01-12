@@ -28,7 +28,7 @@ public class ContentResolver {
 
 	public ParcelFileDescriptor openFileDescriptor(Uri uri, String mode) throws FileNotFoundException {
 		if ("file".equals(uri.getScheme())) {
-			return ParcelFileDescriptor.open(new File(uri.toString()), ParcelFileDescriptor.parseMode(mode));
+			return ParcelFileDescriptor.open(new File(uri.getPath()), ParcelFileDescriptor.parseMode(mode));
 		} else {
 			ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
 			if (provider != null)
