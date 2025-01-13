@@ -10,22 +10,59 @@
 #include "../views/AndroidLayout.h"
 
 #include "../generated_headers/android_view_View.h"
+#include "../generated_headers/android_view_MotionEvent.h"
+
+#define JAVA_ENUM_CLASS android_view_MotionEvent
+enum {
+	JAVA_ENUM(ACTION_DOWN),
+	JAVA_ENUM(ACTION_UP),
+	JAVA_ENUM(ACTION_MOVE),
+	JAVA_ENUM(ACTION_CANCEL),
+
+	JAVA_ENUM(ACTION_POINTER_DOWN),
+	JAVA_ENUM(ACTION_POINTER_UP),
+
+	JAVA_ENUM(ACTION_SCROLL),
+};
+#undef JAVA_ENUM_CLASS
 
 #define SOURCE_TOUCHSCREEN 0x1002
+
+#define MAX_POINTERS 50
+
+struct pointer {
+	int id;
+	int index;
+	float coord_x;
+	float coord_y;
+	float raw_x;
+	float raw_y;
+};
+
+GPtrArray *pointer_indices = NULL;
 
 static GdkEvent *canceled_event = NULL;
 static WrapperWidget *cancel_triggerer = NULL;
 
-static bool call_ontouch_callback(WrapperWidget *wrapper, int action, double x, double y, GtkPropagationPhase phase, guint32 timestamp, GdkEvent *event)
+static struct pointer pointers[MAX_POINTERS] = {};
+
+static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct pointer pointers[MAX_POINTERS], GPtrArray *pointer_indices, GtkPropagationPhase phase, guint32 timestamp, GdkEvent *event)
 {
 	bool ret;
-	double raw_x;
-	double raw_y;
 	JNIEnv *env = get_jni_env();
 	jobject this = wrapper->jobj;
 
-	gdk_event_get_position(event, &raw_x, &raw_y);
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, (float)x, (float)y, (long)timestamp, (float)raw_x, (float)raw_y);
+	int num_pointers = pointer_indices->len;
+	jintArray ids = (*env)->NewIntArray(env, num_pointers);
+	jfloatArray coords = (*env)->NewFloatArray(env, num_pointers * 4);
+	for (int i = 0; i < num_pointers; i++) {
+		struct pointer *pointer = (struct pointer *)g_ptr_array_index(pointer_indices, i);
+		(*env)->SetIntArrayRegion(env, ids, i, 1, &pointer->id);
+		/* put in all four float values starting at coord_x */
+		(*env)->SetFloatArrayRegion(env, coords, 4 * i, 4, &pointer->coord_x);
+	}
+
+	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, (long)timestamp, ids, coords);
 
 	if (wrapper->custom_dispatch_touch) {
 		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
@@ -46,7 +83,7 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, double x, 
 
 	(*env)->DeleteLocalRef(env, motion_event);
 
-	if (action == MOTION_EVENT_ACTION_UP)
+	if (action == ACTION_UP)
 		wrapper->intercepting_touch = false;
 	return ret;
 }
@@ -68,49 +105,104 @@ static void gdk_event_get_widget_relative_position(GdkEvent *event, GtkWidget *w
 	*y = p.y;
 }
 
+void remove_pointer_fast(GPtrArray *pointer_indices, struct pointer *pointer)
+{
+	g_ptr_array_remove_index_fast(pointer_indices, pointer->index);
+	if(pointer->index != pointer_indices->len) {
+		/* update the index field of the pointer that was moved in to fill the empty space */
+		struct pointer *replacement_pointer = (struct pointer *)g_ptr_array_index(pointer_indices, pointer->index);
+		replacement_pointer->index = pointer->index;
+	}
+	/* mark as empty, other fields don't matter */
+	pointer->id = 0;
+}
+
 // TODO: find a way to reconcile this with libandroid/input.c?
 static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *event, gpointer user_data)
 {
 	double x;
 	double y;
 
+	uintptr_t id = (uintptr_t)gdk_event_get_event_sequence(event);
+
+	/* FIXME: this will clash with touchscreen */
+	if(id == 0)
+		id = 1;
+
+	int pointer_index;
+
+	if(pointers[id].id) {
+		pointer_index = pointers[id].index;
+	} else {
+		/* index of a hypothetical next appended element */
+		pointer_index = pointer_indices->len;
+	}
+
+	int action;
+	GdkEventType event_type = gdk_event_get_event_type(event);
+	switch(event_type) {
+		case GDK_BUTTON_PRESS:
+		case GDK_TOUCH_BEGIN:
+			action = pointer_index > 0 ? (ACTION_POINTER_DOWN | (pointer_index << 8)) : ACTION_DOWN;
+			break;
+		case GDK_BUTTON_RELEASE:
+		case GDK_TOUCH_END:
+			action = pointer_index > 0 ? (ACTION_POINTER_UP | (pointer_index << 8)) : ACTION_UP;
+			break;
+		case GDK_MOTION_NOTIFY:
+			if (!(gdk_event_get_modifier_state(event) & GDK_BUTTON1_MASK))
+				return false;
+		case GDK_TOUCH_UPDATE:
+			action = ACTION_MOVE;
+			break;
+		default: // not a touch or mouse event, nothing to do here
+			return false;
+	}
+
 	GtkWidget *widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(event_controller));
 	WrapperWidget *wrapper = WRAPPER_WIDGET(widget);
 	GtkPropagationPhase phase = gtk_event_controller_get_propagation_phase(GTK_EVENT_CONTROLLER(event_controller));
 	guint32 timestamp = gdk_event_get_time(event);
 
-	// TODO: this doesn't work for multitouch
+	if (id >= MAX_POINTERS) {
+		fprintf(stderr, "exiting - event sequence %w64d larger than %d, did Gtk implementation change?", id, MAX_POINTERS);
+		exit(1);
+	}
+
+	double raw_x;
+	double raw_y;
+	gdk_event_get_position(event, &raw_x, &raw_y);
+	gdk_event_get_widget_relative_position(event, widget, &x, &y);
+
+	if(!pointers[id].id) {
+		/* if this is a new sequence, add a slot for it */
+		g_ptr_array_add(pointer_indices, &pointers[id]);
+		/* we appended a single element, so it must be at pointer_index */
+		pointers[id].index = pointer_index;
+		pointers[id].id = id;
+	}
+	
+	pointers[id].coord_x = x;
+	pointers[id].coord_y = y;
+	pointers[id].raw_x = x;
+	pointers[id].raw_y = y;
+
+	// TODO: does this work properly with multitouch?
 	if (cancel_triggerer == wrapper) { // cancel done
 		canceled_event = NULL;
 		cancel_triggerer = NULL;
 	} else if (event == canceled_event) {
 		gdk_event_get_widget_relative_position(event, widget, &x, &y);
-		call_ontouch_callback(wrapper, MOTION_EVENT_ACTION_CANCEL, x, y, phase, timestamp, event);
+		call_ontouch_callback(wrapper, ACTION_CANCEL, pointers, pointer_indices, phase, timestamp, event);
+		remove_pointer_fast(pointer_indices, &pointers[id]);
 		return false;
 	}
-	switch(gdk_event_get_event_type(event)) {
-		case GDK_BUTTON_PRESS:
-		case GDK_TOUCH_BEGIN:
-			gdk_event_get_widget_relative_position(event, widget, &x, &y);
-			return call_ontouch_callback(wrapper, MOTION_EVENT_ACTION_DOWN, x, y, phase, timestamp, event);
-			break;
-		case GDK_BUTTON_RELEASE:
-		case GDK_TOUCH_END:
-			gdk_event_get_widget_relative_position(event, widget, &x, &y);
-			return call_ontouch_callback(wrapper, MOTION_EVENT_ACTION_UP, x, y, phase, timestamp, event);
-			break;
-		case GDK_MOTION_NOTIFY:
-			if (!(gdk_event_get_modifier_state(event) & GDK_BUTTON1_MASK))
-				break;
-		case GDK_TOUCH_UPDATE:
-			gdk_event_get_widget_relative_position(event, widget, &x, &y);
-			return call_ontouch_callback(wrapper, MOTION_EVENT_ACTION_MOVE, x, y, phase, timestamp, event);
-			break;
-		default:
-			break;
-	}
 
-	return false;
+	gboolean ret = call_ontouch_callback(wrapper, action, pointers, pointer_indices, phase, timestamp, event);
+	if (event_type == GDK_BUTTON_RELEASE || event_type == GDK_TOUCH_END) {
+		remove_pointer_fast(pointer_indices, &pointers[id]);
+	}
+	return ret;
 }
 
 static void on_click(GtkGestureClick *gesture, int n_press, double x, double y, gpointer user_data)
@@ -138,7 +230,7 @@ static gboolean scroll_cb(GtkEventControllerScroll* self, gdouble dx, gdouble dy
 		dx /= MAGIC_SCROLL_FACTOR;
 		dy /= MAGIC_SCROLL_FACTOR;
 	}
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_CLASS_POINTER, MOTION_EVENT_ACTION_SCROLL, dx, -dy, (long)0, 0.f, 0.f);
+	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor_single, SOURCE_CLASS_POINTER, ACTION_SCROLL, 0, dx, -dy, 0.f, 0.f);
 
 	gboolean ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onGenericMotionEvent, motion_event);
 	if((*env)->ExceptionCheck(env))
@@ -152,6 +244,9 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 	GtkEventController *old_controller = g_object_get_data(G_OBJECT(widget), "on_touch_listener");
 	if(old_controller)
 		return;
+
+	if(!pointer_indices)
+		pointer_indices = g_ptr_array_new_full(20, NULL);
 
 	GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_event_controller_legacy_new());
 	gtk_event_controller_set_propagation_phase(controller, GTK_PHASE_BUBBLE);

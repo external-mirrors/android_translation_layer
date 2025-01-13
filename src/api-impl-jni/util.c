@@ -94,7 +94,8 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.paint.getColor = _METHOD(handle_cache.paint.class, "getColor", "()I");
 
 	handle_cache.motion_event.class = _REF((*env)->FindClass(env, "android/view/MotionEvent"));
-	handle_cache.motion_event.constructor = _METHOD(handle_cache.motion_event.class, "<init>", "(IIFFJFF)V");
+	handle_cache.motion_event.constructor = _METHOD(handle_cache.motion_event.class, "<init>", "(IIJ[I[F)V");
+	handle_cache.motion_event.constructor_single = _METHOD(handle_cache.motion_event.class, "<init>", "(IIJFFFF)V");
 
 	handle_cache.sensor_event.class = _REF((*env)->FindClass(env, "android/hardware/SensorEvent"));
 	handle_cache.sensor_event.constructor = _METHOD(handle_cache.sensor_event.class, "<init>", "([FLandroid/hardware/Sensor;)V");
@@ -193,7 +194,7 @@ static int fallback_verbose_log(int prio, const char *tag, const char *fmt, va_l
 	pthread_mutex_lock(&mutex);
 	static char buf[1024];
 	ret = vsnprintf(buf, sizeof(buf), fmt, ap);
-	fprintf(stderr, "%lu: %s\n", pthread_self(), buf);
+	fprintf(stderr, "%w64u: %s\n", (uint64_t)pthread_self(), buf);
 	pthread_mutex_unlock(&mutex);
 
 	return ret;

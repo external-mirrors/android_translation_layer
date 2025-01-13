@@ -1365,25 +1365,31 @@ public final class MotionEvent extends InputEvent {
 	private static native void nativeScale(int nativePtr, float scale);
 	private static native void nativeTransform(int nativePtr, Matrix matrix);
 
+	private static final int X_OFFSET = 0;
+	private static final int Y_OFFSET = 1;
+	private static final int RAW_X_OFFSET = 2;
+	private static final int RAW_Y_OFFSET = 3;
+
 	int source;
 	int action;
-	float coord_x;
-	float coord_y;
 	long eventTime;
-	float raw_x;
-	float raw_y;
+	int[] ids;
+	float[] coords;
 
 	private MotionEvent() {
 	}
 
-	public MotionEvent(int source, int action, float coord_x, float coord_y, long eventTime, float raw_x, float raw_y) {
+	public MotionEvent(int source, int action, long eventTime, float x, float y, float raw_x, float raw_y) {
+		this(source, action, eventTime, new int[]{0}, new float[]{x, y, raw_x, raw_y});
+	}
+
+	public MotionEvent(int source, int action, long eventTime, int[] ids, float[] coords) {
 		this.source = source;
 		this.action = action;
-		this.coord_x = coord_x;
-		this.coord_y = coord_y;
 		this.eventTime = eventTime;
-		this.raw_x = raw_x;
-		this.raw_y = raw_y;
+
+		this.ids = ids;
+		this.coords = coords;
 	}
 
 	@Override
@@ -1537,7 +1543,7 @@ public final class MotionEvent extends InputEvent {
 		MotionEvent ev = obtain();
 		synchronized (gSharedTempLock) {
 			ensureSharedTempPointerCapacity(1);
-			final PointerProperties[] pp = gSharedTempPointerProperties;
+			/*final PointerProperties[] pp = gSharedTempPointerProperties;
 			pp[0].clear();
 			pp[0].id = 0;
 
@@ -1546,7 +1552,7 @@ public final class MotionEvent extends InputEvent {
 			pc[0].x = x;
 			pc[0].y = y;
 			pc[0].pressure = pressure;
-			pc[0].size = size;
+			pc[0].size = size;*/
 
 //			ev.mNativePtr = nativeInitialize(ev.mNativePtr,
 //							 deviceId, /*InputDevice.SOURCE_UNKNOWN*/ 0, action, 0, edgeFlags, metaState, 0,
@@ -1554,8 +1560,8 @@ public final class MotionEvent extends InputEvent {
 //							 downTime * NS_PER_MS, eventTime * NS_PER_MS,
 //							 1, pp, pc);
 			ev.action = action;
-			ev.coord_x = x;
-			ev.coord_y = y;
+			ev.ids = new int[]{1};
+			ev.coords = new float[] {x, y, 0, 0};
 			ev.eventTime = eventTime;
 			return ev;
 		}
@@ -1634,11 +1640,10 @@ public final class MotionEvent extends InputEvent {
 		MotionEvent ev = obtain();
 		ev.source = other.source;
 		ev.action = other.action;
-		ev.coord_x = other.coord_x;
-		ev.coord_y = other.coord_y;
-		ev.raw_x = other.raw_x;
-		ev.raw_y = other.raw_y;
+		ev.ids = other.ids.clone();
+		ev.coords = other.coords.clone();
 		ev.eventTime = other.eventTime;
+
 		return ev;
 	}
 
@@ -1755,7 +1760,7 @@ public final class MotionEvent extends InputEvent {
 	 * @return The index associated with the action.
 	 */
 	public final int getActionIndex() {
-		return 0; // FIXME
+		return (action & ACTION_POINTER_INDEX_MASK) >> ACTION_POINTER_INDEX_SHIFT;
 	}
 
 	/**
@@ -1856,7 +1861,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_X
 	 */
 	public final float getX() {
-		return coord_x;
+		return coords[0 + X_OFFSET];
 	}
 
 	/**
@@ -1866,7 +1871,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_Y
 	 */
 	public final float getY() {
-		return coord_y;
+		return coords[0 + Y_OFFSET];
 	}
 
 	/**
@@ -1951,9 +1956,9 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final float getAxisValue(int axis) {
 		if (axis == AXIS_HSCROLL)
-			return coord_x;
+			return coords[0 + X_OFFSET];
 		else if (axis == AXIS_VSCROLL)
-			return coord_y;
+			return coords[0 + Y_OFFSET];
 		return nativeGetAxisValue(mNativePtr, axis, 0, HISTORY_CURRENT);
 	}
 
@@ -1962,7 +1967,7 @@ public final class MotionEvent extends InputEvent {
 	 * >= 1.
 	 */
 	public final int getPointerCount() {
-		return 1; // TODO: implement this properly
+		return ids.length;
 	}
 
 	/**
@@ -1974,7 +1979,7 @@ public final class MotionEvent extends InputEvent {
 	 * (the first pointer that is down) to {@link #getPointerCount()}-1.
 	 */
 	public final int getPointerId(int pointerIndex) {
-		return pointerIndex;
+		return ids[pointerIndex];
 	}
 
 	/**
@@ -2020,7 +2025,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_X
 	 */
 	public final float getX(int pointerIndex) {
-		return coord_x;
+		return coords[4*pointerIndex + X_OFFSET];
 	}
 
 	/**
@@ -2035,7 +2040,15 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_Y
 	 */
 	public final float getY(int pointerIndex) {
-		return coord_y;
+		return coords[4*pointerIndex + Y_OFFSET];
+	}
+
+	public final float getRawX(int pointerIndex) {
+		return coords[4*pointerIndex + RAW_X_OFFSET];
+	}
+
+	public final float getRawY(int pointerIndex) {
+		return coords[4*pointerIndex + RAW_Y_OFFSET];
 	}
 
 	/**
@@ -2243,7 +2256,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_X
 	 */
 	public final float getRawX() {
-		return raw_x;
+		return coords[0 + RAW_X_OFFSET];
 	}
 
 	/**
@@ -2256,7 +2269,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_Y
 	 */
 	public final float getRawY() {
-		return raw_y;
+		return coords[0 + RAW_Y_OFFSET];
 	}
 
 	/**
@@ -2739,8 +2752,9 @@ public final class MotionEvent extends InputEvent {
 	public final void offsetLocation(float deltaX, float deltaY) {
 		if (deltaX != 0.0f || deltaY != 0.0f) {
 			// nativeOffsetLocation(mNativePtr, deltaX, deltaY);
-			this.coord_x += deltaX;
-			this.coord_y += deltaY;
+			/* FIXME: loop for all pointers? */
+			coords[0 + X_OFFSET] += deltaX;
+			coords[0 + Y_OFFSET] += deltaY;
 		}
 	}
 

@@ -181,6 +181,14 @@ extern "C" {
 #define android_view_MotionEvent_HISTORY_CURRENT -2147483648L
 #undef android_view_MotionEvent_MAX_RECYCLED
 #define android_view_MotionEvent_MAX_RECYCLED 10L
+#undef android_view_MotionEvent_X_OFFSET
+#define android_view_MotionEvent_X_OFFSET 0L
+#undef android_view_MotionEvent_Y_OFFSET
+#define android_view_MotionEvent_Y_OFFSET 1L
+#undef android_view_MotionEvent_RAW_X_OFFSET
+#define android_view_MotionEvent_RAW_X_OFFSET 2L
+#undef android_view_MotionEvent_RAW_Y_OFFSET
+#define android_view_MotionEvent_RAW_Y_OFFSET 3L
 /*
  * Class:     android_view_MotionEvent
  * Method:    nativeInitialize
