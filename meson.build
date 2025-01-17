@@ -158,8 +158,8 @@ resources = gnome.compile_resources('com.gitlab.android_translation_layer.androi
 
 executable('android-translation-layer', [
                                         	'src/main-executable/main.c',
-                                        	'src/main-executable/r_debug.c',
                                         	'src/main-executable/back_button.c',
+                                        	'src/main-executable/bionic_compat.c',
                                         	resources
                                         ],
                                         install: true,
