@@ -54,14 +54,18 @@ public class MediaCodec {
 		outputBuffers = new ByteBuffer[2];
 		freeOutputBuffers = new ArrayDeque<>(outputBuffers.length);
 		for (int i = 0; i < outputBuffers.length; i++) {
-			outputBuffers[i] = ByteBuffer.allocate(4096).order(ByteOrder.LITTLE_ENDIAN);
+			outputBuffers[i] = ByteBuffer.allocate(8192).order(ByteOrder.LITTLE_ENDIAN);
 			freeOutputBuffers.add(i);
 		}
 
-		if ("aac".equals(codecName)) {
+		if ("aac".equals(codecName) || "mp3".equals(codecName) || "opus".equals(codecName)) {
 			native_configure_audio(native_codec, format.getByteBuffer("csd-0"), format.getInteger("sample-rate"), format.getInteger("channel-count"));
 		} else if ("h264".equals(codecName)) {
 			native_configure_video(native_codec, format.getByteBuffer("csd-0"), format.getByteBuffer("csd-1"), surface);
+		} else {
+			System.out.println("configure: format " + format + " not implemented");
+			Thread.dumpStack();
+			System.exit(1);
 		}
 	}
 

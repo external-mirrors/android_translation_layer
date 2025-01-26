@@ -33,6 +33,7 @@ struct ATL_codec_context {
 	union {
 		struct {
 			SwrContext *swr;
+			int sample_rate;
 		} audio;
 		struct {
 			struct SwsContext *sws;  // for software decoding
@@ -45,6 +46,10 @@ JNIEXPORT jlong JNICALL Java_android_media_MediaCodec_native_1constructor(JNIEnv
 {
 	const char *name = (*env)->GetStringUTFChars(env, codec_name, NULL);
 	const AVCodec *codec = avcodec_find_decoder_by_name(name);
+	if (!codec) {
+		printf("Codec %s not found\n", name);
+		exit(0);
+	}
 	(*env)->ReleaseStringUTFChars(env, codec_name, name);
 	if (!codec)
 		return 0;
@@ -65,15 +70,24 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1audio(JN
 
 	printf("Java_android_media_MediaCodec_native_1configure_1audio(%s, %d, %d)\n", codec_ctx->codec->name, sample_rate, nb_channels);
 
+	ctx->audio.sample_rate = sample_rate;
 	codec_ctx->sample_rate = sample_rate;
-	codec_ctx->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_STEREO;
-	codec_ctx->ch_layout.nb_channels = nb_channels;
+	if (nb_channels == 1)
+		codec_ctx->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_MONO;
+	else if (nb_channels == 2)
+		codec_ctx->ch_layout = (AVChannelLayout) AV_CHANNEL_LAYOUT_STEREO;
+	else {
+		printf("MediaCodec: Unsupported number of channels %d\n", nb_channels);
+		exit(0);
+	}
 
-	codec_ctx->extradata_size = get_nio_buffer_size(env, extradata);
-	data = get_nio_buffer(env, extradata, &array_ref, &array);
-	codec_ctx->extradata = av_mallocz(codec_ctx->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
-	memcpy(codec_ctx->extradata, data, codec_ctx->extradata_size);
-	release_nio_buffer(env, array_ref, array);
+	if (extradata) {
+		codec_ctx->extradata_size = get_nio_buffer_size(env, extradata);
+		data = get_nio_buffer(env, extradata, &array_ref, &array);
+		codec_ctx->extradata = av_mallocz(codec_ctx->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
+		memcpy(codec_ctx->extradata, data, codec_ctx->extradata_size);
+		release_nio_buffer(env, array_ref, array);
+	}
 
 	for (int i = 0; i < codec_ctx->extradata_size; i++) {
 		printf("params->extradata[%d] = %x\n", i, codec_ctx->extradata[i]);
@@ -270,7 +284,7 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1start(JNIEnv *env, 
 		int ret = swr_alloc_set_opts2(&ctx->audio.swr,
 			&codec_ctx->ch_layout,
 			AV_SAMPLE_FMT_S16,
-			codec_ctx->sample_rate,
+			ctx->audio.sample_rate,
 			&codec_ctx->ch_layout,
 			codec_ctx->sample_fmt,
 			codec_ctx->sample_rate,
@@ -348,7 +362,7 @@ JNIEXPORT jint JNICALL Java_android_media_MediaCodec_native_1dequeueOutputBuffer
 		int outSamples = swr_convert(ctx->audio.swr, &raw_buffer, frame->nb_samples, (uint8_t const **) (frame->data), frame->nb_samples);
 		release_nio_buffer(env, array_ref, array);
 		_SET_INT_FIELD(buffer_info, "offset", 0);
-		_SET_INT_FIELD(buffer_info, "size", outSamples * 2 * 2);
+		_SET_INT_FIELD(buffer_info, "size", outSamples * 2 * codec_ctx->ch_layout.nb_channels);
 
 		av_frame_free(&frame);
 	} else if (codec_ctx->codec_type == AVMEDIA_TYPE_VIDEO) {
