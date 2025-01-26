@@ -16,4 +16,6 @@ public class AccessibilityNodeInfo {
 
 		public int getId() {return 0;}
 	}
+
+	public static AccessibilityNodeInfo obtain() {return null;}
 }
