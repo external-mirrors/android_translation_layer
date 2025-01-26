@@ -184,6 +184,10 @@ public final class Bitmap {
 		return getAllocationByteCount();
 	}
 
+	public boolean isMutable() {
+		return true;
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
