@@ -38,6 +38,8 @@ struct ATL_codec_context {
 		struct {
 			struct SwsContext *sws;  // for software decoding
 			SurfaceViewWidget *surface_view_widget;
+			size_t extradata_size;
+			uint8_t *extradata;
 		} video;
 	};
 };
@@ -203,7 +205,6 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JN
 	AVCodecContext *codec_ctx = ctx->codec;
 	jarray array_ref;
 	jbyte *array;
-	void *data;
 	int sps_size;
 	int pps_size;
 
@@ -212,31 +213,21 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JN
 	sps_size = get_nio_buffer_size(env, csd0);
 	pps_size = get_nio_buffer_size(env, csd1);
 
-	// libavcodec wants the complete AVC decoder configuration record, but android APIs pass only SPS and PPS records
-	// see https://stackoverflow.com/questions/29790334/how-to-fill-extradata-field-of-avcodeccontext-with-sps-and-pps-data
-	codec_ctx->extradata_size = 11 + sps_size + pps_size;
-	codec_ctx->extradata = av_mallocz(codec_ctx->extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
-	codec_ctx->extradata[0] = 0x01;
-	codec_ctx->extradata[1] = 0x4d;
-	codec_ctx->extradata[2] = 0x40;
-	codec_ctx->extradata[3] = 0x1f;
-	codec_ctx->extradata[4] = 0xff;
-	codec_ctx->extradata[5] = 0xe0 | 1;
-	codec_ctx->extradata[6] = (sps_size>>8) & 0xff;
-	codec_ctx->extradata[7] = (sps_size) & 0xff;
-	data = get_nio_buffer(env, csd0, &array_ref, &array);
-	memcpy(codec_ctx->extradata + 8, data, sps_size);
+	size_t extradata_size = sps_size + pps_size;
+	uint8_t *extradata = av_mallocz(extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
+	memcpy(extradata, get_nio_buffer(env, csd0, &array_ref, &array), extradata_size);
 	release_nio_buffer(env, array_ref, array);
-	codec_ctx->extradata[8 + sps_size] = 1;
-	codec_ctx->extradata[9 + sps_size] = (pps_size>>8) & 0xff;
-	codec_ctx->extradata[10 + sps_size] = (pps_size) & 0xff;
-	data = get_nio_buffer(env, csd1, &array_ref, &array);
-	memcpy(codec_ctx->extradata + 11 + sps_size, data, pps_size);
+	memcpy(extradata + sps_size, get_nio_buffer(env, csd1, &array_ref, &array), extradata_size);
 	release_nio_buffer(env, array_ref, array);
 
-	for (int i = 0; i < codec_ctx->extradata_size; i++) {
-		printf("params->extradata[%d] = %x\n", i, codec_ctx->extradata[i]);
+	for (int i = 0; i < extradata_size; i++) {
+		printf("extradata[%d] = %x\n", i, extradata[i]);
 	}
+
+	/* For some reason, using AVCodecContext.extradata doesn't work with livestreams.
+	   As a workaround, we inject the extradata into the first frame. */
+	ctx->video.extradata = extradata;
+	ctx->video.extradata_size = extradata_size;
 
 	int i = 0;
 	while (1) {
@@ -311,6 +302,14 @@ JNIEXPORT jint JNICALL Java_android_media_MediaCodec_native_1queueInputBuffer(JN
 		pkt = av_packet_alloc();
 		pkt->size = get_nio_buffer_size(env, buffer);
 		pkt->data = get_nio_buffer(env, buffer, &array_ref, &array);
+		if (codec_ctx->codec_type == AVMEDIA_TYPE_VIDEO && ctx->video.extradata_size) {
+			uint8_t *data = pkt->data;
+			pkt->data = av_malloc(pkt->size + ctx->video.extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
+			memcpy(pkt->data, ctx->video.extradata, ctx->video.extradata_size);
+			memcpy(pkt->data + ctx->video.extradata_size, data, pkt->size);
+			pkt->size += ctx->video.extradata_size;
+			ctx->video.extradata_size = 0;
+		}
 		pkt->pts = presentationTimeUs;
 	}
 	ret = avcodec_send_packet(codec_ctx, pkt);
