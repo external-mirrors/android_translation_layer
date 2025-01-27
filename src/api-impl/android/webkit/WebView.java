@@ -3,6 +3,7 @@ package android.webkit;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.AttributeSet;
+import android.util.Base64;
 import android.view.View;
 
 public class WebView extends View {
@@ -63,6 +64,12 @@ public class WebView extends View {
 	public void destroy() {}
 
 	public void loadDataWithBaseURL(String baseUrl, String data, String mimeType, String encoding, String historyUrl) {
+		if ("base64".equals(encoding)) {
+			data = new String(Base64.decode(data, 0));
+		}
+		if (mimeType != null && mimeType.contains(";")) {
+			mimeType = mimeType.substring(0, mimeType.indexOf(";"));			
+		}
 		// webkit doesn't allow overwriting the file:// uri scheme. So we replace it with the android-asset:// scheme
 		data = data.replace("file:///android_asset/", "android-asset:///assets/");
 		native_loadDataWithBaseURL(widget, baseUrl, data, mimeType, encoding);
@@ -84,6 +91,10 @@ public class WebView extends View {
 	}
 
 	public void resumeTimers() {}
+
+	public void loadData(String data, String mimeType, String encoding) {
+		loadDataWithBaseURL("about:blank", data, mimeType, encoding, "about:blank");
+	}
 
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
