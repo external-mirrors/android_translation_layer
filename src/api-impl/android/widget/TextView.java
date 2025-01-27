@@ -382,4 +382,8 @@ public class TextView extends View {
 	public void setError(CharSequence error) {
 		System.out.println("ERROR: " + error);
 	}
+
+	public int getTotalPaddingLeft() {return 0;}
+
+	public int getTotalPaddingTop() {return 0;}
 }
