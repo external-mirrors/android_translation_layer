@@ -159,7 +159,10 @@ public class ImageView extends View {
 
 	public final void setColorFilter(int color, PorterDuff.Mode mode) {}
 
-	public void setImageTintList(ColorStateList tint) {}
+	public void setImageTintList(ColorStateList tint) {
+		colorFilter = new PorterDuffColorFilter(tint.getDefaultColor(), PorterDuff.Mode.SRC_IN);
+		setImageDrawable(drawable);
+	}
 
 	public void setImageAlpha(int alpha) {}
 
