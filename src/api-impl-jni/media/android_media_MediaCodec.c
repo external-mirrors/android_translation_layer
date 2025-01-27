@@ -266,26 +266,6 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1start(JNIEnv *env, 
 	if(avcodec_open2(codec_ctx, codec_ctx->codec, NULL)<0){
 		printf("Codec cannot be found");
 	}
-
-	if (codec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
-		printf("ctx->sample_rate = %d\n", codec_ctx->sample_rate);
-		printf("ctx->ch_layout.nb_channels = %d\n", codec_ctx->ch_layout.nb_channels);
-		printf("ctx->sample_fmt = %d\n", codec_ctx->sample_fmt);
-
-		int ret = swr_alloc_set_opts2(&ctx->audio.swr,
-			&codec_ctx->ch_layout,
-			AV_SAMPLE_FMT_S16,
-			ctx->audio.sample_rate,
-			&codec_ctx->ch_layout,
-			codec_ctx->sample_fmt,
-			codec_ctx->sample_rate,
-			0,
-			NULL);
-		if (ret != 0) {
-			fprintf(stderr, "FFmpegDecoder error: Swresampler alloc fail\n");
-		}
-		swr_init(ctx->audio.swr);
-	}
 }
 
 #define INFO_TRY_AGAIN_LATER -1
@@ -357,6 +337,25 @@ JNIEXPORT jint JNICALL Java_android_media_MediaCodec_native_1dequeueOutputBuffer
 	_SET_LONG_FIELD(buffer_info, "presentationTimeUs", frame->pts);
 
 	if (codec_ctx->codec_type == AVMEDIA_TYPE_AUDIO) {
+		if (!ctx->audio.swr) {
+			printf("ctx->sample_rate = %d\n", codec_ctx->sample_rate);
+			printf("ctx->ch_layout.nb_channels = %d\n", codec_ctx->ch_layout.nb_channels);
+			printf("ctx->sample_fmt = %d\n", codec_ctx->sample_fmt);
+
+			int ret = swr_alloc_set_opts2(&ctx->audio.swr,
+				&codec_ctx->ch_layout,
+				AV_SAMPLE_FMT_S16,
+				ctx->audio.sample_rate,
+				&codec_ctx->ch_layout,
+				codec_ctx->sample_fmt,
+				codec_ctx->sample_rate,
+				0,
+				NULL);
+			if (ret != 0) {
+				fprintf(stderr, "FFmpegDecoder error: Swresampler alloc fail\n");
+			}
+			swr_init(ctx->audio.swr);
+		}
 		uint8_t *raw_buffer = get_nio_buffer(env, buffer, &array_ref, &array);
 		int outSamples = swr_convert(ctx->audio.swr, &raw_buffer, frame->nb_samples, (uint8_t const **) (frame->data), frame->nb_samples);
 		release_nio_buffer(env, array_ref, array);
