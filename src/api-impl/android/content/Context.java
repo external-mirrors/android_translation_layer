@@ -87,6 +87,7 @@ public class Context extends Object {
 	public static PackageManager package_manager;
 
 	public /*← FIXME?*/ static Application this_application;
+	private LayoutInflater layout_inflater = new LayoutInflater(this);
 
 	File data_dir = null;
 	File prefs_dir = null;
@@ -219,7 +220,7 @@ public class Context extends Object {
 			case "accessibility":
 				return new AccessibilityManager();
 			case "layout_inflater":
-				return new LayoutInflater(this);
+				return layout_inflater;
 			case "wifi":
 				return new WifiManager();
 			case "bluetooth":

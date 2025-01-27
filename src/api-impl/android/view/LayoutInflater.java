@@ -24,6 +24,8 @@ import android.util.Slog;
 import android.util.Xml;
 import java.io.FileReader;
 import java.lang.reflect.Constructor;
+import java.util.LinkedList;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 import org.xmlpull.v1.XmlPullParserFactory;
@@ -46,6 +48,7 @@ public class LayoutInflater {
 
 	private Factory2 mFactory2;
 	private Context context;
+	private LinkedList<Factory2> factories = new LinkedList<>();
 
 	public LayoutInflater(Context context) {
 		this.context = context;
@@ -63,10 +66,11 @@ public class LayoutInflater {
 
 	public void setFactory2(Factory2 factory) {
 		this.mFactory2 = factory;
+		factories.addFirst(factory);
 	}
 
 	public static LayoutInflater from(Context context) {
-		return new LayoutInflater(context);
+		return (LayoutInflater)context.getSystemService("layout_inflater");
 	}
 
 	public final View createView(String name, String prefix, AttributeSet attrs) throws Exception {
@@ -121,7 +125,12 @@ public class LayoutInflater {
 
 		View view = null;
 
-		if (context instanceof Factory2) {
+		for (Factory2 factory : factories) {
+			view = factory.onCreateView(parent, name, context, attrs);
+			if (view != null)
+				break;
+		}
+		if (view == null && context instanceof Factory2) {
 			view = ((Factory2)context).onCreateView(parent, name, context, attrs);
 		}
 		if (view == null && -1 == name.indexOf('.')) {
@@ -332,7 +341,9 @@ public class LayoutInflater {
 	}
 
 	public LayoutInflater cloneInContext(Context context) {
-		return this;
+		LayoutInflater inflater = new LayoutInflater(context);
+		inflater.factories.addAll(factories);
+		return inflater;
 	}
 
 	public Context getContext() {

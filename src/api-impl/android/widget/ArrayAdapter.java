@@ -282,7 +282,7 @@ public class ArrayAdapter<T> extends BaseAdapter /*implements Filterable*/ {
 	}
 	private void init(Context context, int resource, int textViewResourceId, List<T> objects) {
 		mContext = context;
-		mInflater = new LayoutInflater(context);
+		mInflater = (LayoutInflater)context.getSystemService("layout_inflater");
 		mResource = mDropDownResource = resource;
 		mObjects = objects;
 		mFieldId = textViewResourceId;

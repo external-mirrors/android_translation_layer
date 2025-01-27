@@ -407,7 +407,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public LayoutInflater getLayoutInflater() {
-		return new LayoutInflater(this);
+		return (LayoutInflater)getSystemService("layout_inflater");
 	}
 
 	public boolean isChangingConfigurations() {return false;}
