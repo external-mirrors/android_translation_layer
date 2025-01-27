@@ -28,7 +28,7 @@ import android.view.View;
 
 public class TextView extends View {
 	private ColorStateList colors = new ColorStateList(new int[][] {new int[0]}, new int[1]);
-	private CharSequence text;
+	private CharSequence text = "";
 
 	public TextView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
