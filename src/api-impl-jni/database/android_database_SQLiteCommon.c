@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 /*
-** Rewritten from C++ to C for Android Translation Layer: 
+** Rewritten from C++ to C for Android Translation Layer:
 */
 
 #include <stdio.h>
@@ -128,7 +128,7 @@ void throw_sqlite3_exception_errcode_message(JNIEnv* env, int errcode,
 
 	if (sqlite3Message) {
 		char *zFullmsg = sqlite3_mprintf(
-			"%s (code %d)%s%s", sqlite3Message, errcode, 
+			"%s (code %d)%s%s", sqlite3Message, errcode,
 			(message ? ": " : ""), (message ? message : "")
 		);
 		printf("throwing new %s\n", exceptionClass);

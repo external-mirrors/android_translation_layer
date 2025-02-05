@@ -6,7 +6,7 @@ import android.content.Context;
  * default values are mainly based on AOSPs defaults. Does not account for scaling yet.
  */
 public class ViewConfiguration {
-	
+
 	public static ViewConfiguration get(Context context) {
 		return new ViewConfiguration();
 	}

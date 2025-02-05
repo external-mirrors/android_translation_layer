@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 
@@ -1743,7 +1743,7 @@ public final class SQLiteDatabase extends SQLiteClosable {
 	 * Returns true if the new version code is greater than the current database version.
 	 *
 	 * @param newVersion The new version code.
-	 * @return True if the new version code is greater than the current database version. 
+	 * @return True if the new version code is greater than the current database version.
 	 */
 	public boolean needUpgrade(int newVersion) {
 		return newVersion > getVersion();

@@ -14,5 +14,5 @@ public class WallpaperManager {
 	}
 
 	private static native void set_bitmap(long texture);
-	
+
 }

@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 
 package android.database.sqlite;
 
 /**
- * An exception that indicates that an IO error occured while accessing the 
+ * An exception that indicates that an IO error occured while accessing the
  * SQLite database file.
  */
 public class SQLiteDiskIOException extends SQLiteException {

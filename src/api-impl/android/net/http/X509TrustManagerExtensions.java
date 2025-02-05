@@ -10,7 +10,7 @@ public class X509TrustManagerExtensions {
 
 	public X509TrustManagerExtensions(X509TrustManager tm) {}
 
-	public List<X509Certificate> checkServerTrusted (X509Certificate[] chain, 
+	public List<X509Certificate> checkServerTrusted (X509Certificate[] chain,
                 String authType, String host) {
 		return new ArrayList<>();
 	}

@@ -68,4 +68,3 @@ public interface PerformanceTestCase
      */
     boolean isPerformanceOnly();
 }
-

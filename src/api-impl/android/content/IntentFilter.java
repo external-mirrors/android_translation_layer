@@ -10,7 +10,7 @@ import android.net.Uri;
 import java.util.Iterator;
 
 public class IntentFilter {
-	
+
 	private List<String> actions = new ArrayList<>();
 	private Set<String> categories = new HashSet<>();
 	private List<String> dataSchemes = new ArrayList<>();

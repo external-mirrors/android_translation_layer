@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 /*
-** Rewritten from C++ to C for Android Translation Layer: 
+** Rewritten from C++ to C for Android Translation Layer:
 */
 
 #include <jni.h>

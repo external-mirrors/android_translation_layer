@@ -68,7 +68,7 @@ public class WebView extends View {
 			data = new String(Base64.decode(data, 0));
 		}
 		if (mimeType != null && mimeType.contains(";")) {
-			mimeType = mimeType.substring(0, mimeType.indexOf(";"));			
+			mimeType = mimeType.substring(0, mimeType.indexOf(";"));
 		}
 		// webkit doesn't allow overwriting the file:// uri scheme. So we replace it with the android-asset:// scheme
 		data = data.replace("file:///android_asset/", "android-asset:///assets/");

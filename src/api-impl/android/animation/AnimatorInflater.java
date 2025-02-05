@@ -11,5 +11,5 @@ public class AnimatorInflater {
 	public static StateListAnimator loadStateListAnimator(Context context, int resId) {
 		return new StateListAnimator();
 	}
-	
+
 }

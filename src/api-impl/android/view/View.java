@@ -1099,7 +1099,7 @@ public class View implements Drawable.Callback {
 	protected native void native_requestLayout(long widget);
 	protected native void native_setBackgroundDrawable(long widget, long paintable);
 	protected native void native_queueAllocate(long widget);
-	
+
 	protected native void native_addClass(long widget, String className);
 	protected native void native_removeClass(long widget, String className);
 

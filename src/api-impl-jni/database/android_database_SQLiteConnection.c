@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 /*
-** Rewritten from C++ to C for Android Translation Layer: 
+** Rewritten from C++ to C for Android Translation Layer:
 */
 
 #include <stdlib.h>
@@ -69,14 +69,14 @@ static const int BUSY_TIMEOUT_MS = 2500;
 
 /*
 ** This function is a collation sequence callback equivalent to the built-in
-** BINARY sequence. 
+** BINARY sequence.
 **
 ** Stock Android uses a modified version of sqlite3.c that calls out to a module
 ** named "sqlite3_android" to add extra built-in collations and functions to
 ** all database handles. Specifically, collation sequence "LOCALIZED". For now,
 ** this module does not include sqlite3_android (since it is difficult to build
 ** with the NDK only). Instead, this function is registered as "LOCALIZED" for all
-** new database handles. 
+** new database handles.
 */
 static int coll_localized(
 	void *not_used,
@@ -585,17 +585,17 @@ static jboolean setWindowNumColumns(
 }
 
 /*
-** This method has been rewritten for org.sqlite.database.*. The original 
+** This method has been rewritten for org.sqlite.database.*. The original
 ** android implementation used the C++ interface to populate a CursorWindow
 ** object. Since the NDK does not export this interface, we invoke the Java
 ** interface using standard JNI methods to do the same thing.
 **
-** This function executes the SQLite statement object passed as the 4th 
+** This function executes the SQLite statement object passed as the 4th
 ** argument and copies one or more returned rows into the CursorWindow
-** object passed as the 5th argument. The set of rows copied into the 
+** object passed as the 5th argument. The set of rows copied into the
 ** CursorWindow is always contiguous.
 **
-** The only row that *must* be copied into the CursorWindow is row 
+** The only row that *must* be copied into the CursorWindow is row
 ** iRowRequired. Ideally, all rows from iRowStart through to the end
 ** of the query are copied into the CursorWindow. If this is not possible
 ** (CursorWindow objects have a finite capacity), some compromise position
@@ -607,11 +607,11 @@ static jboolean setWindowNumColumns(
 **
 ** where iStart is the index of the first row copied into the CursorWindow.
 ** If the countAllRows argument is true, nRow is the total number of rows
-** returned by the query. Otherwise, nRow is one greater than the index of 
+** returned by the query. Otherwise, nRow is one greater than the index of
 ** the last row copied into the CursorWindow.
 */
 JNIEXPORT jlong JNICALL Java_android_database_sqlite_SQLiteConnection_nativeExecuteForCursorWindow(
-	JNIEnv *env, 
+	JNIEnv *env,
 	jclass clazz,
 	jlong connectionPtr,            /* Pointer to SQLiteConnection C++ object */
 	jlong statementPtr,             /* Pointer to sqlite3_stmt object */

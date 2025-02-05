@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 public class AccountManager {
-	
+
 	public static AccountManager get(Context context) {
 		return new AccountManager();
 	}

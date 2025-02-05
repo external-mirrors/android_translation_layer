@@ -46,7 +46,7 @@ public class TestMethod {
         this.enclosingClassname = enclosingClass.getName();
         this.testMethodName = methodName;
     }
-    
+
     public TestMethod(TestCase testCase) {
         this(testCase.getName(), testCase.getClass());
     }

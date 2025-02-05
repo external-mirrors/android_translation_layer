@@ -38,11 +38,11 @@ static void web_view_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_
 
 JNIEXPORT jlong JNICALL Java_android_webkit_WebView_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
-	/* 
-         * many apps use webview just for fingerprinting or displaying ads, which seems like
-         * a waste of resources even if we deal with fingerprinting and ads in some other way
-         * in the future.
-         */
+	/*
+	 * many apps use webview just for fingerprinting or displaying ads, which seems like
+	 * a waste of resources even if we deal with fingerprinting and ads in some other way
+	 * in the future.
+	 */
 	if(!getenv("ATL_UGLY_ENABLE_WEBVIEW"))
 		return Java_android_view_View_native_1constructor(env, this, context, attrs);
 

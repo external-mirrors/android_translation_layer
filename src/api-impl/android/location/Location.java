@@ -23,5 +23,5 @@ public class Location {
 	public double getBearing() {
 		return bearing;
 	}
-	
+
 }

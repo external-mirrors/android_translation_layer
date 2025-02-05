@@ -185,7 +185,7 @@ public abstract class AdapterView<T extends Adapter> extends ViewGroup {
 	 * The last selected position we used when notifying
 	 */
 	int mOldSelectedPosition = INVALID_POSITION;
-	
+
 	/**
 	 * The id of the last selected position we used when notifying
 	 */
@@ -702,7 +702,7 @@ public abstract class AdapterView<T extends Adapter> extends ViewGroup {
 			// Force one here to make sure that the state of the list matches
 			// the state of the adapter.
 			if (mDataChanged) {
-				this.onLayout(false, getLeft(), getTop(), getRight(), getBottom()); 
+				this.onLayout(false, getLeft(), getTop(), getRight(), getBottom());
 			}
 		} else {
 			if (mEmptyView != null) mEmptyView.setVisibility(View.GONE);

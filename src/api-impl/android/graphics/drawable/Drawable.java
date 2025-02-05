@@ -71,7 +71,7 @@ public class Drawable {
 			public int getChangingConfigurations() {
 				return Drawable.this.getChangingConfigurations();
 			}
-			
+
 		};
 	}
 
@@ -127,7 +127,7 @@ public class Drawable {
 
 	public void invalidateSelf() {
 		native_invalidate(paintable);
-	
+
 		/* this shouldn't ever be needed with Gtk, but let's play it safe for now */
 		if (this.callback != null) {
 			callback.invalidateDrawable(this);

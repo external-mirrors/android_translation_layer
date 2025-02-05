@@ -1672,7 +1672,7 @@ public class RelativeLayout extends ViewGroup {
 			private static final int POOL_LIMIT = 100;
 			// private static final SynchronizedPool<Node> sPool =
 			//         new SynchronizedPool<Node>(POOL_LIMIT);
-	
+
 			static Node acquire(View view) {
 				Node node;// = sPool.acquire();
 				// if (node == null) {
@@ -1681,7 +1681,7 @@ public class RelativeLayout extends ViewGroup {
 				node.view = view;
 				return node;
 			}
-	
+
 			void release() {
 				view = null;
 				dependents.clear();

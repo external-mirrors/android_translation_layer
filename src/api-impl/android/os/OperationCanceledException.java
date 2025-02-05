@@ -22,7 +22,7 @@ package android.os;
  * @see CancellationSignal
  */
 public class OperationCanceledException extends RuntimeException {
- 
+
 	public OperationCanceledException() {
 		this(null);
 	}

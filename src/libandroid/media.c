@@ -596,5 +596,3 @@ media_status_t AMediaCodecCryptoInfo_getEncryptedBytes(AMediaCodecCryptoInfo*, s
 {
 	return -1;
 }
-
-

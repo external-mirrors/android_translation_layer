@@ -147,7 +147,7 @@ public class PopupMenu {
 	 * calling {@code popupMenu.getMenuInflater().inflate(menuRes, popupMenu.getMenu())}.
 	 *
 	 * @param menuRes Menu resource to inflate
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public void inflate(int menuRes) throws Exception {
 		getMenuInflater().inflate(menuRes, getMenu());
@@ -336,7 +336,7 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'clearHeader'");
 		}
-		
+
 	}
 
 	private class MenuItemImpl implements MenuItem {

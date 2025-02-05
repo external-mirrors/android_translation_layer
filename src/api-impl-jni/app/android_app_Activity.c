@@ -109,7 +109,7 @@ void current_activity_back_pressed(void){
 	jmethodID current_activity_on_back_pressed_method_id = (*env) ->GetMethodID(env, current_activity_class, "onBackPressed", "()V");
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	
+
 	// Either a new activity was added to the backlog or the current activity's onBackPressed method was changed
 	if(g_list_length(activity_backlog) > 1 || handle_cache.activity.onBackPressed != current_activity_on_back_pressed_method_id){
 		(*env)->CallVoidMethod(env, activity_current, handle_cache.activity.onBackPressed);
@@ -222,7 +222,7 @@ static void file_dialog_callback(GObject* source_object, GAsyncResult* res, gpoi
 
 	if (file) {
 		char *uri = g_file_get_uri(file);
-		
+
 		(*env)->CallVoidMethod(env, d->activity, fileChooserResultCallback, d->request_code, RESULT_OK, d->action, _JSTRING(uri));
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);

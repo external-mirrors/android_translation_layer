@@ -1674,7 +1674,7 @@ public class PackageManager {
 	 * to modify the data returned.
 	 *
 	 * @return ProviderInfo containing information about the service.
-	 * @throws Exception 
+	 * @throws Exception
 	 *
 	 * @see #GET_META_DATA
 	 * @see #GET_SHARED_LIBRARY_FILES
@@ -2402,7 +2402,7 @@ public class PackageManager {
 	 *
 	 * @return ContentProviderInfo Information about the provider, if found,
 	 *         else null.
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	public ProviderInfo resolveContentProvider(String authority, int flags) {
 		for (PackageParser.Provider p : Context.pkg.providers) {

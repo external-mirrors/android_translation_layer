@@ -9,5 +9,5 @@ public class InflateException extends RuntimeException {
 	public InflateException(String string) {
 		super(string);
 	}
-	
+
 }

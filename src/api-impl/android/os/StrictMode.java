@@ -11,7 +11,7 @@ public final class StrictMode {
 	public static ThreadPolicy allowThreadDiskReads() {
 		return new ThreadPolicy();
 	}
-	public static ThreadPolicy getThreadPolicy() { 
+	public static ThreadPolicy getThreadPolicy() {
 		return new ThreadPolicy();
 	}
 
@@ -22,7 +22,7 @@ public final class StrictMode {
 		final int mask;
 		final OnThreadViolationListener listener;
 		final Executor callbackExecutor;
-		
+
 		private ThreadPolicy(int mask, OnThreadViolationListener listener, Executor executor) {
 		    this.mask = mask;
 		    this.listener = listener;
@@ -37,7 +37,7 @@ public final class StrictMode {
 				public void execute(Runnable command) {}
 			};
 		}
-	
+
 		public static final class Builder {
 			private int mask = 0;
 			private OnThreadViolationListener listener;

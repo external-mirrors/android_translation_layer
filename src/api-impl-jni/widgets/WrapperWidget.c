@@ -34,7 +34,7 @@ static void wrapper_widget_get_property (GObject *object, guint property_id, GVa
 
 	switch ((WrapperWidgetProperty) property_id)
 	{
-		case ATL_ID: 
+		case ATL_ID:
 		{
 			jint id_jint = (*env)->CallIntMethod(env, jobj, handle_cache.view.getId);
 			if((*env)->ExceptionCheck(env))
@@ -83,7 +83,7 @@ static void wrapper_widget_get_property (GObject *object, guint property_id, GVa
 			(*env)->ReleaseStringUTFChars(env, super_classes_names_obj, super_classes_names);
 			break;
 		}
-		
+
 
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -220,13 +220,13 @@ static void wrapper_widget_class_init(WrapperWidgetClass *class)
 
 	object_class->set_property = wrapper_widget_set_property;
 	object_class->get_property = wrapper_widget_get_property;
-	
+
 	// According to testing, these properties are not evaluated till we open the GtkInspector
 	wrapper_widget_properties[ATL_ID] = g_param_spec_string("ATL-id", "ATL: ID", "ID of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_ID_NAME] = g_param_spec_string("ATL-id-name", "ATL: ID name", "Name of the ID of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_CLASS_NAME] = g_param_spec_string("ATL-class-name", "ATL: Class name", "Name of the class of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_SUPER_CLASS_NAMES] = g_param_spec_string("ATL-superclasses-names", "ATL: Super classes names", "Names of all the superclasses of the component class", "", G_PARAM_READABLE);
-	
+
 	g_object_class_install_properties (object_class, N_PROPERTIES, wrapper_widget_properties);
 }
 

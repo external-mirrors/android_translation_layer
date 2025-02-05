@@ -13,5 +13,5 @@ public class ShapeDrawable extends Drawable {
 	public void setPadding(Rect padding) {}
 
 	public void setShape(Shape shape) {}
-	
+
 }

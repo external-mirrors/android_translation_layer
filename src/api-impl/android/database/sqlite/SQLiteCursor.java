@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /*
-** Modified to support SQLite extensions by the SQLite developers: 
+** Modified to support SQLite extensions by the SQLite developers:
 ** sqlite-dev@sqlite.org.
 */
 
@@ -130,10 +130,10 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 		return mCount;
 	}
 
-	/* 
+	/*
 	** The AbstractWindowClass contains protected methods clearOrCreateWindow() and
 	** closeWindow(), which are used by the android.database.sqlite.* version of this
-	** class. But, since they are marked with "@hide", the following replacement 
+	** class. But, since they are marked with "@hide", the following replacement
 	** versions are required.
 	*/
 	private void awc_clearOrCreateWindow(String name){

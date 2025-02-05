@@ -224,7 +224,7 @@ public class HeaderViewListAdapter implements ListAdapter, Filterable {
 			mAdapter.unregisterDataSetObserver(observer);
 		}
 	}
-	
+
 	public ListAdapter getWrappedAdapter() {
 		return mAdapter;
 	}

@@ -83,7 +83,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	 *
 	 * @param className  class name of activity or null
 	 * @return  instance of main activity class
-	 * @throws Exception 
+	 * @throws Exception
 	 */
 	private static Activity createMainActivity(String className, long native_window, String uriString) throws Exception {
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;

@@ -6,4 +6,3 @@ final public class JobWorkItem {
 	public JobWorkItem(Intent intent) {
 	}
 }
-

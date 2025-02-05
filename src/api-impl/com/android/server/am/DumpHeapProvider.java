@@ -58,7 +58,7 @@ public class DumpHeapProvider extends ContentProvider {
 	public int delete(Uri uri, String selection, String[] selectionArgs) {
 		return 0;
 	}
-	
+
 	@Override
 	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		return 0;

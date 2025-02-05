@@ -3,7 +3,7 @@ package android.text;
 import android.graphics.Canvas;
 
 public class Layout {
-	
+
 	public enum Alignment {
 		ALIGN_NORMAL,
 		ALIGN_OPPOSITE,

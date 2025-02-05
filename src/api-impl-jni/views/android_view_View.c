@@ -181,7 +181,7 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 		pointers[id].index = pointer_index;
 		pointers[id].id = id;
 	}
-	
+
 	pointers[id].coord_x = x;
 	pointers[id].coord_y = y;
 	pointers[id].raw_x = x;
