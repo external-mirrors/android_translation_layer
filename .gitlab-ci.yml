@@ -1,4 +1,9 @@
-trigger_job:
+stages:
+  - build
+  - cts
+
+build_trigger_job:
+  stage: build
   variables:
     # the build script assumes it's run from a MR context
     CI_MERGE_REQUEST_TARGET_BRANCH_NAME: master
@@ -8,3 +13,11 @@ trigger_job:
   trigger:
     project: android_translation_layer/aports
     branch: atl-nightlies-atl
+    strategy: depend
+
+
+cts_trigger_job:
+  stage: cts
+  trigger:
+    project: android_translation_layer/android_translation_layer.gitlab.io
+    branch: master
