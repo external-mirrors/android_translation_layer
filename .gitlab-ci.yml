@@ -3,6 +3,8 @@ stages:
   - cts
 
 build_trigger_job:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
   stage: build
   variables:
     # the build script assumes it's run from a MR context
@@ -17,6 +19,8 @@ build_trigger_job:
 
 
 cts_trigger_job:
+  rules:
+    - if: $CI_PIPELINE_SOURCE != "merge_request_event"
   stage: cts
   trigger:
     project: android_translation_layer/android_translation_layer.gitlab.io
