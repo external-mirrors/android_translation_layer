@@ -85,7 +85,7 @@ public class NotificationManager {
 		action = "".equals(action) ? null : action;
 		className = "".equals(className) ? null : className;
 		Intent intent = intents.remove(id);
-		if (intent == null || !Objects.equals(action, intent.getAction()) || !Objects.equals(className, intent.getComponent().getClassName())) {
+		if (intent == null || !Objects.equals(action, intent.getAction()) || !Objects.equals(className, intent.getComponent() == null ? null : intent.getComponent().getClassName())) {
 			intent = new Intent(action);
 			if (className != null) {
 				intent.setComponent(new ComponentName(context, className));
