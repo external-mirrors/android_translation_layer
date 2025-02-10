@@ -179,9 +179,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		}
 
 		TypedArray ta = obtainStyledAttributes(new int[] {R.attr.windowBackground});
-		Drawable background = ta.getDrawable(0);
-		if (background != null)
-			window.setBackgroundDrawable(background);
+		try {
+			Drawable background = ta.getDrawable(0);
+			if (background != null)
+				window.setBackgroundDrawable(background);
+		} catch (Exception e) {
+			Slog.e(TAG, "Error setting window background", e);
+		}
 		ta.recycle();
 
 		return;
