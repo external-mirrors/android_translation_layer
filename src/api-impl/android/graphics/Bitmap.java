@@ -35,6 +35,7 @@ public final class Bitmap {
 	private Config config = Config.ARGB_8888;
 	private boolean hasAlpha = true;
 	long bytes = 0;  // used by native function AndroidBitmap_lockPixels()
+	private boolean recycled = false;
 
 	Bitmap(long texture) {
 		this(native_get_width(texture), native_get_height(texture), Config.ARGB_8888);
@@ -116,7 +117,7 @@ public final class Bitmap {
 	}
 
 	public void eraseColor(int color) {
-		recycle();
+		native_recycle(texture, snapshot);
 		snapshot = native_erase_color(color, width, height);
 		texture = 0;
 	}
@@ -125,6 +126,7 @@ public final class Bitmap {
 		native_recycle(texture, snapshot);
 		texture = 0;
 		snapshot = 0;
+		recycled = true;
 	}
 
 	public int getRowBytes() {
@@ -150,7 +152,7 @@ public final class Bitmap {
 	}
 
 	public boolean isRecycled() {
-		return texture == 0 && snapshot == 0;
+		return recycled;
 	}
 
 	public void setHasAlpha(boolean hasAlpha) {
