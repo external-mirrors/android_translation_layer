@@ -19,6 +19,7 @@ public class Paint {
 
 	long paint;   // native paint
 	private Xfermode xfermode;
+	private Shader shader;
 
 	public Paint() {
 		paint = native_create();
@@ -100,7 +101,10 @@ public class Paint {
 		return colorFilter;
 	}
 
-	public Shader setShader(Shader shader) { return shader; }
+	public Shader setShader(Shader shader) {
+		this.shader = shader;
+		return shader;
+	}
 
 	public enum Style {
 		/**
@@ -268,7 +272,7 @@ public class Paint {
 	public void setTextAlign(Align align) {}
 
 	public Shader getShader() {
-		return new Shader();
+		return shader;
 	}
 
 	public PathEffect getPathEffect() {

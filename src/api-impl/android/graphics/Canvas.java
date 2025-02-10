@@ -356,7 +356,8 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint) {
-			System.out.println("XXXXXXX bitmap(bitmap, matrix, paint)");
+		gsk_canvas.snapshot = this.bitmap.getSnapshot();
+		gsk_canvas.drawBitmap(bitmap, matrix, paint);
 		/*       nativeDrawBitmapMatrix(mNativeCanvas, bitmap.ni(), matrix.ni(),
 			       paint != null ? paint.mNativePaint : 0);*/
 	}
@@ -380,7 +381,7 @@ public class Canvas {
 
 	public void setBitmap(Bitmap bitmap) {
 		this.bitmap = bitmap;
-		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.snapshot = bitmap == null ? 0 : bitmap.getSnapshot();
 	}
 
 	public void drawPath(Path path, Paint paint) {
@@ -394,7 +395,12 @@ public class Canvas {
 
 	public void restoreToCount(int count) {}
 
-	public void drawRoundRect(RectF rect, float rx, float ry, Paint paint) {}
+	public void drawRoundRect(RectF rect, float rx, float ry, Paint paint) {
+		if (paint.getShader() instanceof BitmapShader) {
+			BitmapShader shader = (BitmapShader)paint.getShader();
+			drawBitmap(shader.bitmap, 0, 0, paint);
+		}
+	}
 
 	public void getMatrix(Matrix matrix) {
 		matrix.reset();

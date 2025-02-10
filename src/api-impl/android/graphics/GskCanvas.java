@@ -88,6 +88,15 @@ public class GskCanvas extends Canvas {
 	}
 
 	@Override
+	public void drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint) {
+		save();
+		concat(matrix);
+		drawBitmap(bitmap, 0, 0, paint);
+		restore();
+
+	}
+
+	@Override
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
 		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint != null ? paint.paint : default_paint.paint);
 	}
@@ -95,6 +104,11 @@ public class GskCanvas extends Canvas {
 	@Override
 	public void scale(float sx, float sy) {
 		native_scale(snapshot, sx, sy);
+	}
+
+	@Override
+	public void concat(Matrix matrix) {
+		native_concat(snapshot, matrix.native_instance);
 	}
 
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
@@ -108,4 +122,5 @@ public class GskCanvas extends Canvas {
 	protected native void native_drawText(long snapshot, String text, float x, float y, long paint);
 	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, long paint);
 	protected native void native_scale(long snapshot, float sx, float sy);
+	protected native void native_concat(long snapshot, long matrix);
 }

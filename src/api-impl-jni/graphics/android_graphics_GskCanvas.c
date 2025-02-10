@@ -131,3 +131,10 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1scale(JNIEnv *env
 	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
 	gtk_snapshot_scale(snapshot, x, y);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1concat(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong matrix_ptr)
+{
+	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
+	gtk_snapshot_transform_matrix(snapshot, matrix);
+}

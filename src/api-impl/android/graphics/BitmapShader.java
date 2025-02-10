@@ -2,7 +2,11 @@ package android.graphics;
 
 public class BitmapShader extends Shader {
 
-	public BitmapShader(Bitmap bitmap, TileMode tileX, TileMode tileY) {}
+	Bitmap bitmap;
+
+	public BitmapShader(Bitmap bitmap, TileMode tileX, TileMode tileY) {
+		this.bitmap = bitmap;
+	}
 
 	public void setLocalMatrix(Matrix matrix) {}
 }
