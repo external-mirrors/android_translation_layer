@@ -2,6 +2,7 @@ package android.view;
 
 import android.animation.Animator;
 import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import android.os.Handler;
 
 public class ViewPropertyAnimator {
@@ -71,7 +72,7 @@ public class ViewPropertyAnimator {
 			@Override
 			public void run() {
 				if (listener != null)
-					listener.onAnimationEnd(new Animator());
+					listener.onAnimationEnd(new ValueAnimator());
 			}
 		}, startDelay+duration);
 	}
