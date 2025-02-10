@@ -1,5 +1,7 @@
 package android.graphics;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.Buffer;
 
 import android.util.DisplayMetrics;
@@ -25,6 +27,11 @@ public final class Bitmap {
 			this.gdk_memory_format = gdk_memory_format;
 			this.android_memory_format = android_memory_format;
 		}
+	}
+
+	public enum CompressFormat {
+		JPEG,
+		PNG,
 	}
 
 	private int width;
@@ -190,6 +197,16 @@ public final class Bitmap {
 		return true;
 	}
 
+	public boolean compress(Bitmap.CompressFormat format, int quality, OutputStream stream) throws IOException {
+		if (format == CompressFormat.PNG) {
+			stream.write(native_save_to_png(getTexture()));
+			return true;
+		} else {
+			stream.write(("fixme Bitmap.compress " + format.name()).getBytes());
+			return false;
+		}
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
@@ -209,4 +226,5 @@ public final class Bitmap {
 	private static native long native_ref_texture(long texture);
 	private static native void native_get_pixels(long texture, int[] pixels, int offset, int stride, int x, int y, int width, int height);
 	private static native void native_copy_to_buffer(long texture, Buffer buffer, int memory_format, int stride);
+	private static native byte[] native_save_to_png(long texture);
 }

@@ -113,3 +113,15 @@ JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1copy_1to_1buffer(JNI
 	release_nio_buffer(env, array_ref, array);
 	gdk_texture_downloader_free(downloader);
 }
+
+JNIEXPORT jbyteArray JNICALL Java_android_graphics_Bitmap_native_1save_1to_1png(JNIEnv *env, jclass class, jlong texture_ptr)
+{
+	GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
+	GBytes *bytes = gdk_texture_save_to_png_bytes(texture);
+	jbyteArray result = (*env)->NewByteArray(env, g_bytes_get_size(bytes));
+	gsize size;
+	gconstpointer data = g_bytes_get_data(bytes, &size);
+	(*env)->SetByteArrayRegion(env, result, 0, size, data);
+	g_bytes_unref(bytes);
+	return result;
+}
