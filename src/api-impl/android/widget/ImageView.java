@@ -74,6 +74,9 @@ public class ImageView extends View {
 			drawable = drawable.mutate();
 			drawable.setColorFilter(colorFilter);
 		}
+		if (this.drawable != null) {
+			this.drawable.setCallback(null);
+		}
 		this.drawable = drawable;
 		if (drawable != null) {
 			drawable.setCallback(this);
