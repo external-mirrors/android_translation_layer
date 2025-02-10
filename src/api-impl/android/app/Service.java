@@ -1,10 +1,15 @@
 package android.app;
 
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.Intent;
 import android.os.IBinder;
 
-public abstract class Service extends Context {
+public abstract class Service extends ContextWrapper {
+
+	public Service() {
+		super(null);
+	}
 
 	public void onCreate() {
 		System.out.println("Service.onCreate() called");
