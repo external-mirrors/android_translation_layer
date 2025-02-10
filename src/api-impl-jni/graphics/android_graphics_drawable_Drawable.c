@@ -88,8 +88,15 @@ JNIEXPORT jlong JNICALL Java_android_graphics_drawable_Drawable_native_1construc
 	return _INTPTR(paintable);
 }
 
+static guint queue_invalidate_contents(GdkPaintable *paintable)
+{
+	gdk_paintable_invalidate_contents(paintable);
+	return G_SOURCE_REMOVE;
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1invalidate(JNIEnv *env, jobject this, jlong paintable_ptr) {
-	gdk_paintable_invalidate_contents(GDK_PAINTABLE(_PTR(paintable_ptr)));
+	// GTK doesn't allow invalidating a paintable while it's being drawn, so we need to queue it up
+	g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_invalidate_contents), GDK_PAINTABLE(_PTR(paintable_ptr)), NULL);
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1draw(JNIEnv *env, jobject this, jlong paintable_ptr, jlong snapshot_ptr, jint width, jint height) {
