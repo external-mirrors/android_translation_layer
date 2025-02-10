@@ -517,7 +517,10 @@ public class Context extends Object {
 		if (intent.getAction() != null && intent.getAction().equals("android.intent.action.CHOOSER")) {
 			intent = (Intent)intent.getExtras().get("android.intent.extra.INTENT");
 		}
-		if (intent.getComponent() == null) {
+		String className = null;
+		if (intent.getComponent() != null) {
+			className = intent.getComponent().getClassName();
+		} else {
 			if (intent.getAction() != null && intent.getAction().equals("android.intent.action.SEND")) {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
 				String text = intent.getStringExtra("android.intent.extra.TEXT");
@@ -525,6 +528,7 @@ public class Context extends Object {
 					text = String.valueOf(intent.getExtras().get("android.intent.extra.STREAM"));
 				if (text != null)
 					ClipboardManager.native_set_clipboard(text);
+				return;
 			} else if (intent.getData() != null) {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
 				if (intent.getData().getScheme().equals("content")) {
@@ -537,15 +541,28 @@ public class Context extends Object {
 					}
 				}
 				Activity.nativeOpenURI(String.valueOf(intent.getData()));
+				return;
 			}
+			for (PackageParser.Activity activity: pkg.activities) {
+				for (PackageParser.IntentInfo intentInfo: activity.intents) {
+					if (intentInfo.matchAction(intent.getAction())) {
+						className = activity.className;
+						break;
+					}
+				}
+			}
+		}
+		if (className == null) {
+			Slog.w(TAG, "startActivity: intent could not be handled.");
 			return;
 		}
+		final String className_ = className;
 		final Intent intent_ = intent;
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
 				try {
-					Activity activity = Activity.internalCreateActivity(intent_.getComponent().getClassName(), this_application.native_window, intent_);
+					Activity activity = Activity.internalCreateActivity(className_, this_application.native_window, intent_);
 					Activity.nativeStartActivity(activity);
 				} catch (Exception e) {
 					e.printStackTrace();
