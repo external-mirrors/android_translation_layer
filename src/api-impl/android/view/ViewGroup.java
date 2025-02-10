@@ -424,6 +424,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public boolean getClipToPadding() { return false; }
 
+	public boolean isTransitionGroup() { return false; }
+
 	public static class LayoutParams {
 		public static final int FILL_PARENT = -1;
 		public static final int MATCH_PARENT = -1;
@@ -582,5 +584,29 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public interface OnHierarchyChangeListener {
 		public void onChildViewAdded(View parent, View child);
 		public void onChildViewRemoved(View parent, View child);
+	}
+
+	@Override
+	public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'onNestedScrollAccepted'");
+	}
+
+	@Override
+	public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'onNestedPreScroll'");
+	}
+
+	@Override
+	public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'onNestedScroll'");
+	}
+
+	@Override
+	public void onStopNestedScroll(View target) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'onStopNestedScroll'");
 	}
 }

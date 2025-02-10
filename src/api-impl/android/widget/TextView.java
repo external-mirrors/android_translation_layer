@@ -386,4 +386,6 @@ public class TextView extends View {
 	public int getTotalPaddingLeft() {return 0;}
 
 	public int getTotalPaddingTop() {return 0;}
+
+	public int getImeOptions() {return 0;}
 }

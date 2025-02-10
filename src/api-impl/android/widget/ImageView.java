@@ -189,6 +189,8 @@ public class ImageView extends View {
 
 	public void setColorFilter(int color) {}
 
+	public void setColorFilter(ColorFilter cf) {}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	protected native void native_setDrawable(long widget, long paintable);

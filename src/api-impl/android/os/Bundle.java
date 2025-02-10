@@ -489,17 +489,6 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	}
 
 	/**
-	 * Inserts a long array value into the mapping of this Bundle, replacing
-	 * any existing value for the given key.  Either key or value may be null.
-	 *
-	 * @param key a String, or null
-	 * @param value a long array object, or null
-	 */
-	public void putLongArray(String key, long[] value) {
-		mMap.put(key, value);
-	}
-
-	/**
 	 * Inserts a float array value into the mapping of this Bundle, replacing
 	 * any existing value for the given key.  Either key or value may be null.
 	 *
@@ -1038,27 +1027,6 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 			return (char[])o;
 		} catch (ClassCastException e) {
 			typeWarning(key, o, "char[]", e);
-			return null;
-		}
-	}
-
-	/**
-	 * Returns the value associated with the given key, or null if
-	 * no mapping of the desired type exists for the given key or a null
-	 * value is explicitly associated with the key.
-	 *
-	 * @param key a String, or null
-	 * @return a long[] value, or null
-	 */
-	public long[] getLongArray(String key) {
-		Object o = mMap.get(key);
-		if (o == null) {
-			return null;
-		}
-		try {
-			return (long[])o;
-		} catch (ClassCastException e) {
-			typeWarning(key, o, "long[]", e);
 			return null;
 		}
 	}

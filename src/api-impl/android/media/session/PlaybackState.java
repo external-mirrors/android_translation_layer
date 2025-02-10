@@ -1,5 +1,7 @@
 package android.media.session;
 
+import android.os.Bundle;
+
 public class PlaybackState {
 
 	public int state;
@@ -43,10 +45,23 @@ public class PlaybackState {
 			return this;
 		}
 
+		public Builder addCustomAction(CustomAction action) {return this;}
+
 		public PlaybackState build() {
 			return state;
 		}
 
+	}
+
+	public static class CustomAction {
+
+		public static class Builder {
+			public Builder(String action, CharSequence label, int icon) {}
+
+			public Builder setExtras(Bundle extras) {return this;}
+
+			public CustomAction build() {return new CustomAction();}
+		}
 	}
 
 }

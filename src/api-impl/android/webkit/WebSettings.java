@@ -52,4 +52,6 @@ public class WebSettings {
 	public void setRenderPriority(RenderPriority priority) {}
 
 	public void setBlockNetworkLoads(boolean block) {}
+
+	public void setMixedContentMode(int mode) {}
 }

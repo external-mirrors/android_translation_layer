@@ -73,6 +73,9 @@ public final class StrictMode {
 			public Builder penaltyLog() {
 				return this;
 			}
+			public Builder penaltyDeath() {
+				return this;
+			}
 			public ThreadPolicy build() {
 				return new ThreadPolicy(mask, listener, executor);
 			}

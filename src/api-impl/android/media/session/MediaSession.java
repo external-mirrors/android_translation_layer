@@ -7,6 +7,7 @@ import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.MediaDescription;
 import android.media.MediaMetadata;
+import android.os.Bundle;
 import android.os.Handler;
 
 public class MediaSession {
@@ -71,6 +72,14 @@ public class MediaSession {
 	public void release() {}
 
 	public void setPlaybackToLocal(AudioAttributes audioAttributes) {}
+
+	public void setExtras(Bundle extras) {}
+
+	public void setSessionActivity(PendingIntent pendingIntent) {}
+
+	public boolean isActive() {
+		return true;
+	}
 
 	protected native void nativeSetState(int state, long actions, long position, long updateTime, String title, String subTitle, String artUrl);
 	protected native void nativeSetCallback(Callback callback);

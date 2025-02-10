@@ -15,4 +15,8 @@ public class Binder implements IBinder {
 
 	@Override
 	public boolean transact(int code, Parcel data, Parcel reply, int flags) { return false; }
+
+	public static int getCallingUid() { return 0; }
+
+	public static int getCallingPid() { return 0; }
 }

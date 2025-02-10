@@ -39,6 +39,30 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'onNestedFling'");
 		}
+
+		@Override
+		public void onNestedScrollAccepted(View child, View target, int nestedScrollAxes) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'onNestedScrollAccepted'");
+		}
+
+		@Override
+		public void onNestedPreScroll(View target, int dx, int dy, int[] consumed) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'onNestedPreScroll'");
+		}
+
+		@Override
+		public void onNestedScroll(View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'onNestedScroll'");
+		}
+
+		@Override
+		public void onStopNestedScroll(View target) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'onStopNestedScroll'");
+		}
 	}
 
 	public android.view.Display getDefaultDisplay() {

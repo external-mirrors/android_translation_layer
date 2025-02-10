@@ -111,4 +111,8 @@ public class ProgressBar extends View {
 	public void incrementProgressBy(int diff) {
 		setProgress(progress + diff);
 	}
+
+	public int getSecondaryProgress() {
+		return 0;
+	}
 }

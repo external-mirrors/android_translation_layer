@@ -213,4 +213,8 @@ public class CursorWrapper implements Cursor {
 	public Bundle respond(Bundle extras) {
 		return cursor.respond(extras);
 	}
+
+	public Cursor getWrappedCursor() {
+		return cursor;
+	}
 }

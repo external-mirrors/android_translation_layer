@@ -1828,6 +1828,7 @@ public class PackageManager {
 			case "com.google.android.c2dm.permission.SEND":
 			case "com.fsck.k9.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
 			case "net.thunderbird.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
+			case "de.danoeh.antennapod.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
 				return PERMISSION_GRANTED;
 			default:
 				System.out.println("PackageManager.checkPermission: >" + permName + "< not handled\n");

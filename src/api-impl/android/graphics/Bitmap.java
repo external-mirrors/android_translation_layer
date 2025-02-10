@@ -207,6 +207,12 @@ public final class Bitmap {
 		}
 	}
 
+	public void setPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {}
+
+	public void reconfigure(int width, int height, Bitmap.Config config) {}
+
+	public void setPremultiplied(boolean premultiplied) {}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

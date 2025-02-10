@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.AttributeSet;
 import android.util.Base64;
-import android.view.View;
+import android.view.ViewGroup;
 
-public class WebView extends View {
+public class WebView extends ViewGroup {
 
 	private WebViewClient webViewClient;
 

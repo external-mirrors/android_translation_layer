@@ -17,4 +17,8 @@ public class URLUtil {
 			&& (url.length() > 7)
 			&& url.substring(0, 8).equalsIgnoreCase("https://");
 	}
+
+	public static boolean isContentUrl(String url) {
+		return url.startsWith("content://");
+	}
 }

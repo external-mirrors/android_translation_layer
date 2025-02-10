@@ -4,6 +4,7 @@ import android.R;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.AlarmManager;
+import android.app.AppOpsManager;
 import android.app.Application;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
@@ -227,7 +228,8 @@ public class Context extends Object {
 				return new BluetoothManager();
 			case "jobscheduler":
 				return new JobScheduler();
-
+			case "appops":
+				return new AppOpsManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;

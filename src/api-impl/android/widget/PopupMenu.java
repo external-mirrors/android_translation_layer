@@ -545,6 +545,12 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'setNumericShortcut'");
 		}
+
+		@Override
+		public boolean expandActionView() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'expandActionView'");
+		}
 	}
 
 }

@@ -8,7 +8,10 @@ public interface MenuItem {
 		public boolean onMenuItemClick(MenuItem item);
 	}
 
-	public interface OnActionExpandListener {}
+	public interface OnActionExpandListener {
+		public boolean onMenuItemActionExpand(MenuItem item);
+		public boolean onMenuItemActionCollapse(MenuItem item);
+	}
 
 	public MenuItem setIcon(int iconRes);
 
@@ -69,4 +72,6 @@ public interface MenuItem {
 	public CharSequence getTitle();
 
 	public MenuItem setNumericShortcut(char numericChar);
+
+	public boolean expandActionView();
 }
