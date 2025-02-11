@@ -43,12 +43,16 @@ public class PopupWindow {
 	protected native long native_constructor();
 	protected native void native_setContentView(long widget, long contentView);
 	protected native void native_showAsDropDown(long widget, long anchor, int xoff, int yoff, int gravity);
+	protected native boolean native_isShowing(long widget);
+	protected native void native_dismiss(long widget);
 
 	public void setBackgroundDrawable(Drawable background) {}
 
 	public void setInputMethodMode(int mode) {}
 
-	public boolean isShowing() {return false;}
+	public boolean isShowing() {
+		return native_isShowing(popover);
+	}
 
 	public native void setOnDismissListener(OnDismissListener listener);
 
@@ -58,8 +62,10 @@ public class PopupWindow {
 
 	public void setContentView(View view) {
 		contentView = view;
-		contentView.attachToWindowInternal();
-		native_setContentView(popover, view.widget);
+		if (contentView != null) {
+			contentView.attachToWindowInternal();
+		}
+		native_setContentView(popover, view == null ? 0 : view.widget);
 	}
 
 	public int getInputMethodMode() {return 0;}
@@ -95,7 +101,7 @@ public class PopupWindow {
 	}
 
 	public void dismiss() {
-		System.out.println("PopupWindow.dismiss() called");
+		native_dismiss(popover);
 	}
 
 	public void setAnimationStyle(int animationStyle) {}

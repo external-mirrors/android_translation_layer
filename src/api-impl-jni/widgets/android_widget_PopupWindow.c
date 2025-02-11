@@ -58,3 +58,13 @@ JNIEXPORT void JNICALL Java_android_widget_PopupWindow_setOnDismissListener(JNIE
 	GtkWidget *popover = GTK_WIDGET(_PTR(_GET_LONG_FIELD(this, "popover")));
 	g_signal_connect(popover, "closed", G_CALLBACK(on_closed_cb), _REF(listener));
 }
+
+JNIEXPORT jboolean JNICALL Java_android_widget_PopupWindow_native_1isShowing(JNIEnv *env, jobject this, jlong popover_ptr)
+{
+	return gtk_widget_get_visible(GTK_WIDGET(_PTR(popover_ptr)));
+}
+
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1dismiss(JNIEnv *env, jobject this, jlong popover_ptr)
+{
+	gtk_popover_popdown(GTK_POPOVER(_PTR(popover_ptr)));
+}

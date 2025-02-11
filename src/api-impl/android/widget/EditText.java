@@ -16,6 +16,10 @@ public class EditText extends TextView {
 		super(context, attrs);
 	}
 
+	public EditText(Context context, AttributeSet attrs, int defStyle, int defStyleRes) {
+		super(context, attrs, defStyle, defStyleRes);
+	}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	protected native String native_getText(long widget);

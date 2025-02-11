@@ -33,6 +33,22 @@ JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1showAsDropDown
 
 /*
  * Class:     android_widget_PopupWindow
+ * Method:    native_isShowing
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_widget_PopupWindow_native_1isShowing
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_widget_PopupWindow
+ * Method:    native_dismiss
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1dismiss
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_widget_PopupWindow
  * Method:    setOnDismissListener
  * Signature: (Landroid/widget/PopupWindow/OnDismissListener;)V
  */

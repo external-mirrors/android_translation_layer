@@ -17,6 +17,11 @@ public class ContextThemeWrapper extends ContextWrapper {
 		setTheme(themeResId);
 	}
 
+	public ContextThemeWrapper(Context context, Resources.Theme theme) {
+		super(context);
+		this.theme = theme;
+	}
+
 	@Override
 	public void setTheme(int resid) {
 		if (theme == null) {
