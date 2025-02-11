@@ -380,6 +380,9 @@ public class Canvas {
 	}
 
 	public void setBitmap(Bitmap bitmap) {
+		if (!bitmap.isMutable()) {
+			throw new IllegalStateException("Bitmap must be mutable");
+		}
 		this.bitmap = bitmap;
 		gsk_canvas.snapshot = bitmap == null ? 0 : bitmap.getSnapshot();
 	}
@@ -393,7 +396,10 @@ public class Canvas {
 		return false;
 	}
 
-	public void restoreToCount(int count) {}
+	public void restoreToCount(int count) {
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.restoreToCount(count);
+	}
 
 	public void drawRoundRect(RectF rect, float rx, float ry, Paint paint) {
 		if (paint.getShader() instanceof BitmapShader) {
@@ -425,11 +431,11 @@ public class Canvas {
 	}
 
 	public int getWidth() {
-		return 10; //FIXME
+		return (bitmap == null) ? 0 : bitmap.getWidth();
 	}
 
 	public int getHeight() {
-		return 10; //FIXME
+		return (bitmap == null) ? 0 : bitmap.getHeight();
 	}
 
 	public void drawColor(int dummy) {}

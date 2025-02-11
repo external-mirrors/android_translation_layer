@@ -443,7 +443,11 @@ public class BitmapFactory {
 	 *         size be returned (in opts.outWidth and opts.outHeight)
 	 */
 	public static Bitmap decodeResource(Resources res, int id, Options opts) throws NotFoundException {
-		return decodeStreamInternal(res.openRawResource(id), null, opts);
+		Bitmap bitmap = decodeStreamInternal(res.openRawResource(id), null, opts);
+		if (opts != null && opts.inScaled == false) {
+			bitmap.mutable = false;
+		}
+		return bitmap;
 	}
 
 	/**

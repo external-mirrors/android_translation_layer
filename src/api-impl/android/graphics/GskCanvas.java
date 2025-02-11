@@ -6,7 +6,7 @@ package android.graphics;
  */
 public class GskCanvas extends Canvas {
 	public long snapshot;
-	private int save_count = 0;
+	private int save_count = 1;
 
 	private static Paint default_paint = new Paint();
 
@@ -28,6 +28,9 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void restoreToCount(int count) {
+		if (count < 1) {
+			throw new IllegalArgumentException("count must be >= 1");
+		}
 		while (save_count > count) {
 			restore();
 		}

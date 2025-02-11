@@ -43,6 +43,7 @@ public final class Bitmap {
 	private boolean hasAlpha = true;
 	long bytes = 0;  // used by native function AndroidBitmap_lockPixels()
 	private boolean recycled = false;
+	boolean mutable = true;
 
 	Bitmap(long texture) {
 		this(native_get_width(texture), native_get_height(texture), Config.ARGB_8888);
@@ -194,7 +195,7 @@ public final class Bitmap {
 	}
 
 	public boolean isMutable() {
-		return true;
+		return mutable;
 	}
 
 	public boolean compress(Bitmap.CompressFormat format, int quality, OutputStream stream) throws IOException {
