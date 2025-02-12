@@ -45,6 +45,7 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	private final String name;
 	private int numColumns;
 	private List<Object[]> rows = new ArrayList<>();
+	private boolean all_references_released = false;
 
 	/**
 	 * Creates a new empty cursor window and gives it a name.
@@ -168,6 +169,10 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return True if successful.
 	 */
 	public boolean setNumColumns(int columnNum) {
+		if (all_references_released)
+			throw new IllegalStateException("CursorWindow has no more references");
+		if (columnNum < 0)
+			return false;
 		this.numColumns = columnNum;
 		return true;
 	}
@@ -271,7 +276,10 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return The field type.
 	 */
 	public int getType(int row, int column) {
-		Object value = rows.get(row - startPos)[column];
+		int row_idx = row - startPos;
+		if (row_idx < 0 || row_idx >= rows.size())
+			return Cursor.FIELD_TYPE_NULL;
+		Object value = rows.get(row_idx)[column];
 		if (value instanceof String) {
 			return Cursor.FIELD_TYPE_STRING;
 		} else if (value instanceof Long) {
@@ -307,7 +315,14 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return The value of the field as a byte array.
 	 */
 	public byte[] getBlob(int row, int column) {
-		return (byte[])rows.get(row - startPos)[column];
+		if (row - startPos < 0)
+			throw new IllegalStateException("Row index out of range");
+		Object value = rows.get(row - startPos)[column];
+		if (value instanceof byte[] || value == null) {
+			return (byte[]) value;
+		} else {
+			throw new SQLiteException("Blob value expected");
+		}
 	}
 
 	/**
@@ -380,7 +395,9 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 			throw new IllegalArgumentException("CharArrayBuffer should not be null");
 		}
 		String result = String.valueOf(rows.get(row - startPos)[column]);
-		buffer.data = result.toCharArray();
+		if (buffer.data == null || buffer.data.length < result.length())
+			buffer.data = new char[Math.max(64, result.length())];
+		result.getChars(0, result.length(), buffer.data, 0);
 		buffer.sizeCopied = result.length();
 	}
 
@@ -412,7 +429,11 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 		if (object instanceof Long)
 			result = (Long)object;
 		else if (object instanceof String)
-			result = Long.parseLong((String) object);
+			try {
+				result = Long.parseLong((String) object);
+			} catch (NumberFormatException e) {
+				result = 0L;
+			}
 		else if (object instanceof Double)
 			result = ((Double) object).longValue();
 		else if (object == null)
@@ -446,7 +467,21 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return The value of the field as a <code>double</code>.
 	 */
 	public double getDouble(int row, int column) {
-		return (Double)rows.get(row - startPos)[column];
+		Object value = rows.get(row - startPos)[column];
+		if (value instanceof Double)
+			return (Double)value;
+		else if (value instanceof String)
+			try {
+				return Double.parseDouble((String) value);
+			} catch (NumberFormatException e) {
+				return 0.0;
+			}
+		else if (value instanceof Long)
+			return ((Long)value).doubleValue();
+		else if (value == null)
+			return 0.0;
+		else
+			throw new SQLiteException("Unexpected object type for getDouble: " + value.getClass().getName());
 	}
 
 	/**
@@ -519,7 +554,13 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 	 * @return True if successful.
 	 */
 	public boolean putString(String value, int row, int column) {
-		rows.get(row - startPos)[column] = value;
+		int row_idx = row - startPos;
+		if (row_idx < 0 || row_idx >= rows.size())
+			return false;
+		Object[] row_array = rows.get(row_idx);
+		if (column < 0 || column >= row_array.length)
+			return false;
+		row_array[column] = value;
 		return true;
 	}
 
@@ -568,6 +609,7 @@ public class CursorWindow extends SQLiteClosable implements Parcelable {
 
 	@Override
 	protected void onAllReferencesReleased() {
+		all_references_released = true;
 	}
 
 	private static int getCursorWindowSize() {
