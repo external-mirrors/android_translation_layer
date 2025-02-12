@@ -694,4 +694,8 @@ public class Context extends Object {
 	public boolean isDeviceProtectedStorage() {
 		return false;
 	}
+
+	public Drawable getWallpaper() {
+		return null;
+	}
 }
