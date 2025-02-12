@@ -50,3 +50,9 @@ JNIEXPORT void JNICALL Java_android_app_Dialog_nativeClose(JNIEnv *env, jobject 
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
 	gtk_window_close(dialog);
 }
+
+JNIEXPORT jboolean JNICALL Java_android_app_Dialog_nativeIsShowing(JNIEnv *env, jobject this, jlong ptr)
+{
+	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
+	return gtk_widget_is_visible(GTK_WIDGET(dialog));
+}

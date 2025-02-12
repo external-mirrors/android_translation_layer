@@ -20,6 +20,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 	private native void nativeSetContentView(long ptr, long widget);
 	private native void nativeShow(long ptr);
 	private native void nativeClose(long ptr);
+	private native boolean nativeIsShowing(long ptr);
 
 	private Context context;
 	private Window window;
@@ -90,7 +91,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 	}
 
 	public boolean isShowing() {
-		return false;
+		return nativeIsShowing(nativePtr);
 	}
 
 	public void dismiss() {
