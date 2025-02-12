@@ -659,6 +659,11 @@ public class Context extends Object {
 		return db;
 	}
 
+	public boolean deleteDatabase(String name) {
+		File dbFile = getDatabasePath(name);
+		return dbFile.delete();
+	}
+
 	public Context createConfigurationContext(Configuration configuration) {
 		return new Context();
 	}
