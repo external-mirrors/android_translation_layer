@@ -20,4 +20,6 @@ public interface Editable extends CharSequence {
 
 	public void setFilters(InputFilter[] filters);
 
+	public Editable delete(int start, int end);
+
 }

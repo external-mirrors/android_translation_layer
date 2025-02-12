@@ -1,6 +1,8 @@
 package android.text;
 
 import android.graphics.Canvas;
+import android.graphics.GskCanvas;
+import android.graphics.Path;
 
 public class Layout {
 
@@ -12,69 +14,241 @@ public class Layout {
 		ALIGN_RIGHT,
 	}
 
+	public class Directions {}
+
+	long layout;  // native PangoLayout
 	private CharSequence text;
 	private TextPaint paint;
+	private float spacing_mult;
+	private float spacing_add;
+	private Alignment align;
 
 	protected Layout(CharSequence text, TextPaint paint, int width, Layout.Alignment align, float spacingMult, float spacingAdd) {
 		this.text = text;
 		this.paint = paint;
+		this.spacing_mult = spacingMult;
+		this.spacing_add = spacingAdd;
+		this.align = align;
+		layout = native_constructor(text.toString(), paint.paint, width);
 	}
 
-	public int getLineCount() {return 1;}
+	public int getLineCount() {
+		return native_get_line_count(layout);
+	}
 
-	public float getLineWidth(int line) {return 10;}
+	public float getLineWidth(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_width(layout, line);
+	}
 
-	public TextPaint getPaint() {return new TextPaint();}
+	public TextPaint getPaint() {
+		return paint;
+	}
 
-	public int getEllipsisCount(int line) {return 0;}
+	public int getEllipsisCount(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_ellipsis_count(layout, line);
+	}
 
 	public CharSequence getText() {return text;}
 
-	public int getWidth() {return 10;}
+	public int getWidth() {
+		return native_get_width(layout);
+	}
 
 	public int getHeight() {
-		return (int)(paint.measureText("_") * 3);
+		System.out.println("height = " + native_get_height(layout));
+		System.out.println("should be " + ((int)(paint.measureText("_") * 3)));
+		return native_get_height(layout);
 	}
 
 	public void draw(Canvas canvas) {
-		canvas.drawText(text.toString(), 0, 0, paint);
+		if (canvas instanceof GskCanvas)
+			native_draw(layout, ((GskCanvas)canvas).snapshot, paint.paint);
+		else
+			canvas.drawText(text.toString(), 0, 0, paint);
 	}
 
-	public int getParagraphDirection(int line) {return 0;}
+	public int getParagraphDirection(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return 0;
+	}
 
 	public static float getDesiredWidth(CharSequence source, int start, int end, TextPaint paint) {
 		return paint.measureText(source, start, end);
 	}
 
-	public int getLineEnd(int line) {return 100;}
+	public int getLineBaseline(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_baseline(layout, line);
+	}
 
-	public int getLineStart(int line) {return 0;}
+	public int getLineAscent(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_ascent(layout, line);
+	}
 
-	public int getLineAscent(int line) {return 0;}
+	public int getLineDescent(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_descent(layout, line);
+	}
 
-	public int getLineDescent(int line) {return 0;}
+	public int getTopPadding() {return -5;}
 
-	public int getTopPadding() {return 0;}
-
-	public int getBottomPadding() {return 0;}
-
-	public float getLineLeft(int line) {return 0;}
-
-	public int getLineBottom(int line) {return 0;}
-
-	public int getLineBaseline(int line) {return 0;}
+	public int getBottomPadding() {return 5;}
 
 	public boolean isRtlCharAt(int offset) {return false;}
 
-	public float getSecondaryHorizontal(int line) {return 0;}
+	public float getSecondaryHorizontal(int line) {
+		if (getLineDirections(0) == null)
+			throw new NullPointerException();
+		return 0;
+	}
 
-	public int getLineForVertical(int y) {return 0;}
+	public int getLineForVertical(int y) {
+		return native_get_line_for_vertical(layout, y);
+	}
 
-	public int getOffsetForHorizontal(int line, float x) {return 0;}
+	public int getOffsetForHorizontal(int line, float x) {
+		if (getLineDirections(0) == null)
+			throw new NullPointerException();
+		return 0;
+	}
 
-	public float getPrimaryHorizontal(int line) {return 0;}
+	public float getPrimaryHorizontal(int line) {
+		if (getLineDirections(0) == null)
+			throw new NullPointerException();
+		return 0;
+	}
 
 	public int getLineForOffset(int offset) {return 0;}
 
-	public int getLineTop(int line) {return 0;}
+	public int getLineTop(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_top(layout, line);
+	}
+
+	public int getLineBottom(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_bottom(layout, line);
+	}
+
+	public float getLineLeft(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_left(layout, line);
+	}
+
+	public float getLineRight(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_right(layout, line);
+	}
+
+	public int getLineStart(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_left(layout, line);
+	}
+
+	public int getLineEnd(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return native_get_line_right(layout, line);
+	}
+
+	public boolean isSpanned() {
+		return text instanceof Spanned;
+	}
+
+	public void increaseWidthTo(int width) {
+		if (width < getWidth())
+			throw new RuntimeException("cannot decrease width");
+		native_set_width(layout, width);
+	}
+
+	public float getSpacingMultiplier() {
+		return spacing_mult;
+	}
+
+	public float getSpacing_add() {
+		return spacing_add;
+	}
+
+	public void getSelectionPath(int start, int end, Path path) {
+		if (start != end && getLineDirections(0) == null)
+			throw new NullPointerException();
+	}
+
+	public int getParagraphRight(int line) {
+		return getWidth();
+	}
+
+	public int getParagraphLeft(int line) {
+		return 0;
+	}
+
+	public Alignment getParagraphAlignment(int line) {
+		return align;
+	}
+
+	public int getOffsetToRightOf(int offset) {
+		if (getLineDirections(0) == null)
+			throw new NullPointerException();
+		return offset;
+	}
+
+	public int getOffsetToLeftOf(int offset) {
+		if (getLineDirections(0) == null)
+			throw new NullPointerException();
+		return offset;
+	}
+
+	public Directions getLineDirections(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return new Directions();
+	}
+
+	public int getLineVisibleEnd(int line) {
+		return getLineEnd(line);
+	}
+
+	public boolean getLineContainsTab(int line) { return text.toString().split("\n")[line].contains("\t"); }
+
+	public int getEllipsizedWidth() {
+		return getWidth();
+	}
+
+	public int getEllipsisStart(int line) {
+		if (line < 0 || line >= getLineCount())
+			throw new ArrayIndexOutOfBoundsException();
+		return 0;
+	}
+
+	protected native long native_constructor(String text, long paint, int width);
+	protected native void native_set_width(long layout, int width);
+	protected native int native_get_width(long layout);
+	protected native int native_get_height(long layout);
+	protected native int native_get_line_count(long layout);
+	protected native int native_get_line_top(long layout, int line);
+	protected native int native_get_line_bottom(long layout, int line);
+	protected native int native_get_line_left(long layout, int line);
+	protected native int native_get_line_right(long layout, int line);
+	protected native int native_get_line_width(long layout, int line);
+	protected native int native_get_line_baseline(long layout, int line);
+	protected native int native_get_line_ascent(long layout, int line);
+	protected native int native_get_line_descent(long layout, int line);
+	protected native int native_get_line_for_vertical(long layout, int y);
+	protected native void native_set_ellipsize(long layout, int ellipsize_mode, float ellipsize_width);
+	protected native int native_get_ellipsis_count(long layout, int line);
+	protected native void native_draw(long layout, long snapshot, long paint);
 }

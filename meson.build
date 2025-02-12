@@ -111,6 +111,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/net/android_net_ConnectivityManager.c',
                                                                   	'src/api-impl-jni/os/android_os_Process.c',
                                                                   	'src/api-impl-jni/sensors/android_hardware_SensorManager.c',
+                                                                  	'src/api-impl-jni/text/android_text_Layout.c',
                                                                   	'src/api-impl-jni/util.c',
                                                                   	'src/api-impl-jni/views/AndroidLayout.c',
                                                                   	'src/api-impl-jni/views/android_view_View.c',

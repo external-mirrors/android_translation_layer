@@ -8,7 +8,21 @@ public class StaticLayout extends Layout {
 						float spacingmult, float spacingadd,
 						boolean includepad,
 						TextUtils.TruncateAt ellipsize, int ellipsizedWidth, int maxLines) {
-		super(source, paint, outerwidth, align, spacingmult, spacingadd);
+		super(source.toString(), paint, outerwidth, align, spacingmult, spacingadd);
+	}
+
+	public StaticLayout(CharSequence source, TextPaint paint, int outerwidth, Alignment align, float spacingmult, float spacingadd, boolean includepad) {
+		super(source.toString(), paint, outerwidth, align, spacingmult, spacingadd);
+	}
+
+	public StaticLayout(CharSequence source, int start, int end, TextPaint paint, int outerwidth, Alignment align, float spacingmult, float spacingadd, boolean includepad, TextUtils.TruncateAt ellipsize, int ellipsizedWidth) {
+		super(source.toString(), paint, outerwidth, align, spacingmult, spacingadd);
+		if (ellipsize != null)
+			native_set_ellipsize(layout, ellipsize == null ? 0 : ellipsize.ordinal()+1, ellipsizedWidth);
+	}
+
+	public StaticLayout(CharSequence source, int start, int end, TextPaint paint, int outerwidth, Alignment align, float spacingmult, float spacingadd, boolean includepad) {
+		super(source.toString(), paint, outerwidth, align, spacingmult, spacingadd);
 	}
 
 	public static class Builder {

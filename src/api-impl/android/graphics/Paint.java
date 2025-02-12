@@ -17,7 +17,7 @@ public class Paint {
 	public static final int AUTO_HINTING_TEXT_FLAG    = (1 << 11);
 	public static final int VERTICAL_TEXT_FLAG        = (1 << 12);
 
-	long paint;   // native paint
+	public long paint;   // native paint
 	private Xfermode xfermode;
 	private Shader shader;
 
