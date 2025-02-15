@@ -592,6 +592,7 @@ srcs = [
 	'android/widget/TableRow.java',
 	'android/widget/TextView.java',
 	'android/widget/Toast.java',
+	'android/widget/ToggleButton.java',
 	'android/widget/Toolbar.java',
 	'android/widget/ViewAnimator.java',
 	'android/widget/ZoomButton.java',

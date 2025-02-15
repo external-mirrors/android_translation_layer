@@ -43,7 +43,7 @@ public class TextView extends View {
 	}
 
 	public TextView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-		super(context, attrs, defStyleAttr);
+		super(context, attrs, defStyleAttr, defStyleRes);
 
 		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.TextView, defStyleAttr, 0);
 		try {

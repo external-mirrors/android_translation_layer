@@ -7,14 +7,22 @@ import android.util.AttributeSet;
 
 public abstract class CompoundButton extends Button implements Checkable {
 	Drawable button_drawable = null;
-	public Drawable mButtonDrawable;  // directly accessed by androidx
+	public Drawable mButtonDrawable; // directly accessed by androidx
 
 	public CompoundButton(Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	public CompoundButton(Context context, AttributeSet attributeSet) {
-		super(context, attributeSet);
+		this(context, attributeSet, 0);
+	}
+
+	public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr) {
+		this(context, attrs, defStyleAttr, 0);
+	}
+
+	public CompoundButton(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
 	@Override

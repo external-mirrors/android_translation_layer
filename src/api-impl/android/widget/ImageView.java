@@ -20,12 +20,12 @@ public class ImageView extends View {
 	private Drawable drawable = null;
 	private ColorFilter colorFilter = null;
 
-	public ImageView(Context context, AttributeSet attrs) {
-		this(context, attrs, 0);
-	}
-
 	public ImageView(Context context) {
 		this(context, null);
+	}
+
+	public ImageView(Context context, AttributeSet attrs) {
+		this(context, attrs, 0);
 	}
 
 	public ImageView(Context context, AttributeSet attrs, int defStyleAttr) {
