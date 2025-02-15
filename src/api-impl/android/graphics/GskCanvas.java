@@ -79,6 +79,18 @@ public class GskCanvas extends Canvas {
 	}
 
 	@Override
+	public void drawLines(float[] points, Paint paint) {
+		drawLines(points, 0, points.length, paint);
+	}
+
+	@Override
+	public void drawLines(float[] points, int offset, int count, Paint paint) {
+		if (offset + count < 0 /* overflow */ || offset + count > points.length)
+			throw new IndexOutOfBoundsException();
+		native_drawLines(snapshot, points, offset, count, paint != null ? paint.paint : default_paint.paint);
+	}
+
+	@Override
 	public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
 		Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
 		Rect dst = new Rect((int)left, (int)top, (int)left + bitmap.getWidth(), (int)top + bitmap.getHeight());
@@ -122,6 +134,7 @@ public class GskCanvas extends Canvas {
 	protected native void native_save(long snapshot);
 	protected native void native_restore(long snapshot);
 	protected native void native_drawLine(long snapshot, float startX, float startY, float stopX, float stopY, long paint);
+	protected native void native_drawLines(long snapshot, float[] points, int offset, int count, long paint);
 	protected native void native_drawText(long snapshot, String text, float x, float y, long paint);
 	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, long paint);
 	protected native void native_scale(long snapshot, float sx, float sy);

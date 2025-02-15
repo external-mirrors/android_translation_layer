@@ -82,6 +82,15 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLine(JNIEnv *
 	gtk_snapshot_restore(snapshot);
 }
 
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawLines(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloatArray points_arr, jint offset, jint count, jlong paint_ptr)
+{
+	jfloat *points = (*env)->GetFloatArrayElements(env, points_arr, NULL);
+	for(int i = offset; i < count; i++)
+		Java_android_graphics_GskCanvas_native_1drawLine(env, this_class, snapshot_ptr, points[i + 0], points[i + 1], points[i + 2], points[i + 3], paint_ptr);
+	(*env)->ReleaseFloatArrayElements(env, points_arr, points, 0);
+}
+
+
 extern GtkWidget *window;
 
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jstring text, jfloat x, jfloat y, jlong paint_ptr)

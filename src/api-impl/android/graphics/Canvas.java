@@ -378,6 +378,15 @@ public class Canvas {
 		gsk_canvas.drawLine(startX, startY, stopX, stopY, paint);
 	}
 
+	public void drawLines(float[] points, Paint paint) {
+		drawLines(points, 0, points.length, paint);
+	}
+
+	public void drawLines(float[] points, int offset, int count, Paint paint) {
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawLines(points, offset, count, paint);
+	}
+
 	public void setBitmap(Bitmap bitmap) {
 		if (bitmap != null && !bitmap.isMutable()) {
 			throw new IllegalStateException("Bitmap must be mutable");
