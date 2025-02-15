@@ -12,6 +12,7 @@ public class PropertyValuesHolder {
 	private Object value;
 	private String property_name;
 	private Method setter;
+	Property property;
 
 	public static PropertyValuesHolder ofFloat(String propertyName, float... values) {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
@@ -38,6 +39,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_float = values;
 		propertyValuesHolder.property_name = property.getName();
+		propertyValuesHolder.property = property;
 		return propertyValuesHolder;
 	}
 
@@ -45,6 +47,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_object = values;
 		propertyValuesHolder.property_name = property.getName();
+		propertyValuesHolder.property = property;
 		return propertyValuesHolder;
 	}
 
@@ -52,6 +55,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_int = values;
 		propertyValuesHolder.property_name = property.getName();
+		propertyValuesHolder.property = property;
 		return propertyValuesHolder;
 	}
 
@@ -73,10 +77,12 @@ public class PropertyValuesHolder {
 
 	public void setProperty_name(String propertyName) {
 		this.property_name = propertyName;
+		property = null;
 	}
 
 	public void setProperty(Property property) {
 		property_name = property.getName();
+		this.property = property;
 	}
 
 	public void init() {}
@@ -108,6 +114,10 @@ public class PropertyValuesHolder {
 	}
 
 	public void setupSetterAndGetter(Object target) {
+		if (property != null) {
+			setter = null;
+			return;
+		}
 		try {
 			Class<?> clazz;
 			if (values_float != null) {
@@ -128,7 +138,10 @@ public class PropertyValuesHolder {
 	}
 
 	public void setAnimatedValue(Object target) {
-		if (setter != null && value != null) {
+		if (property != null) {
+			property.set(target, value);
+			return;
+		} else if (setter != null && value != null) {
 			try {
 				setter.invoke(target, value);
 			} catch (ReflectiveOperationException e) {
