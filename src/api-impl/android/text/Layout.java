@@ -29,7 +29,7 @@ public class Layout {
 		this.spacing_mult = spacingMult;
 		this.spacing_add = spacingAdd;
 		this.align = align;
-		layout = native_constructor(text.toString(), paint.paint, width);
+		layout = native_constructor(text != null ? text.toString() : "", paint.paint, width);
 	}
 
 	public int getLineCount() {
