@@ -45,6 +45,7 @@ public class PopupWindow {
 	protected native void native_showAsDropDown(long widget, long anchor, int xoff, int yoff, int gravity);
 	protected native boolean native_isShowing(long widget);
 	protected native void native_dismiss(long widget);
+	protected native void native_update(long widget, long anchor, int xoff, int yoff, int width, int height);
 
 	public void setBackgroundDrawable(Drawable background) {}
 
@@ -109,4 +110,8 @@ public class PopupWindow {
 	public void setTouchModal(boolean touchModal) {}
 
 	public void setElevation(float elevation) {}
+
+	public void update(View anchor, int xoff, int yoff, int width, int height) {
+		native_update(popover, anchor.widget, xoff, yoff, width, height);
+	}
 }

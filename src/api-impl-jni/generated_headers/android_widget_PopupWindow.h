@@ -49,6 +49,14 @@ JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1dismiss
 
 /*
  * Class:     android_widget_PopupWindow
+ * Method:    native_update
+ * Signature: (JJIIII)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1update
+  (JNIEnv *, jobject, jlong, jlong, jint, jint, jint, jint);
+
+/*
+ * Class:     android_widget_PopupWindow
  * Method:    setOnDismissListener
  * Signature: (Landroid/widget/PopupWindow/OnDismissListener;)V
  */

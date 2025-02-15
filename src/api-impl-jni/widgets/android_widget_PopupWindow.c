@@ -68,3 +68,13 @@ JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1dismiss(JNIEnv *e
 {
 	gtk_popover_popdown(GTK_POPOVER(_PTR(popover_ptr)));
 }
+
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1update(JNIEnv *env, jobject this, jlong popover_ptr, jlong anchor_ptr, jint x, jint y, jint width, jint height)
+{
+	GtkPopover *popover = GTK_POPOVER(_PTR(popover_ptr));
+	WrapperWidget *anchor = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(_PTR(anchor_ptr))));
+	gtk_widget_set_size_request(GTK_WIDGET(popover), width, height);
+	gtk_widget_insert_before(GTK_WIDGET(popover), GTK_WIDGET(anchor), NULL);
+	gtk_popover_present(GTK_POPOVER(popover));
+	gtk_popover_popup(popover);
+}

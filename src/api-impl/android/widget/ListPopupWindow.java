@@ -669,9 +669,9 @@ public class ListPopupWindow {
 
 			mPopup.setOutsideTouchable(!mForceIgnoreOutsideTouch && !mDropDownAlwaysVisible);
 
-			// mPopup.update(getAnchorView(), mDropDownHorizontalOffset,
-			// 				mDropDownVerticalOffset, (widthSpec < 0)? -1 : widthSpec,
-			// 				(heightSpec < 0)? -1 : heightSpec);
+			mPopup.update(getAnchorView(), mDropDownHorizontalOffset,
+							mDropDownVerticalOffset, (widthSpec < 0)? -1 : widthSpec,
+							(heightSpec < 0)? -1 : heightSpec);
 			// mPopup.getContentView().restoreDefaultFocus();
 		} else {
 			final int widthSpec;
