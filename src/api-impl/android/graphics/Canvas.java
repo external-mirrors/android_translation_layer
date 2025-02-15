@@ -380,7 +380,7 @@ public class Canvas {
 	}
 
 	public void setBitmap(Bitmap bitmap) {
-		if (!bitmap.isMutable()) {
+		if (bitmap != null && !bitmap.isMutable()) {
 			throw new IllegalStateException("Bitmap must be mutable");
 		}
 		this.bitmap = bitmap;
