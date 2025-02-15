@@ -268,6 +268,14 @@ public class Drawable {
 		return new Drawable(paintable);
 	}
 
+	public static Drawable createFromPath(String path) {
+		if (path == null)
+			return null;
+
+		long paintable = native_paintable_from_path(path);
+		return new Drawable(paintable);
+	}
+
 	protected boolean onStateChange(int[] stateSet) {
 		return false;
 	}
