@@ -207,7 +207,6 @@ public class Canvas {
 	 * @param py The y-coord for the pivot point (unchanged by the scale)
 	 */
 	public final void scale(float sx, float sy, float px, float py) {
-		System.out.println("XXXXXXX scale(sx, sy, px, py)");
 		translate(px, py);
 		scale(sx, sy);
 		translate(-px, -py);
@@ -463,6 +462,10 @@ public class Canvas {
 	}
 
 	public boolean isHardwareAccelerated() {
+		return false;
+	}
+
+	public boolean clipRect(RectF rect) {
 		return false;
 	}
 

@@ -30,11 +30,20 @@ public class VelocityTracker {
 	public void computeCurrentVelocity(int units, float maxVelocity) {}
 	public void computeCurrentVelocity(int units) {}
 
+	public float getXVelocity() {
+		return getXVelocity(-1);
+	}
+
 	public float getXVelocity(int id) {
 		if (currentEventTime == startEventTime)
 			return 0.f;
 		return (currentX - startX) / (currentEventTime - startEventTime) * 1000;
 	}
+
+	public float getYVelocity() {
+		return getYVelocity();
+	}
+
 	public float getYVelocity(int id) {
 		if (currentEventTime == startEventTime)
 			return 0.f;

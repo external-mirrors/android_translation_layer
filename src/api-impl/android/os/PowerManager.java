@@ -8,7 +8,9 @@ public final class PowerManager {
 
 		public void release() {}
 
-		public boolean isHeld() { return false; }
+		public boolean isHeld() {
+			return false;
+		}
 
 		public void acquire(long timeout) {}
 	}
@@ -21,7 +23,15 @@ public final class PowerManager {
 
 	public static final int FULL_WAKE_LOCK = 0x1a;
 
-	public boolean isPowerSaveMode() { return false; }
+	public boolean isPowerSaveMode() {
+		return false;
+	}
 
-	public boolean isScreenOn() { return true; }
+	public boolean isScreenOn() {
+		return true;
+	}
+
+	public boolean isIgnoringBatteryOptimizations(String packageName) {
+		return true;
+	}
 }

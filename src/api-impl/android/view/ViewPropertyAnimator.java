@@ -42,6 +42,14 @@ public class ViewPropertyAnimator {
 		return this;
 	}
 
+	public ViewPropertyAnimator x(float rotation) {
+		return this;
+	}
+
+	public ViewPropertyAnimator y(float rotation) {
+		return this;
+	}
+
 	public ViewPropertyAnimator rotation(float rotation) {
 		return this;
 	}

@@ -20,6 +20,7 @@ public class Paint {
 	public long paint;   // native paint
 	private Xfermode xfermode;
 	private Shader shader;
+	private Align align = Align.CENTER;
 
 	public Paint() {
 		paint = native_create();
@@ -320,6 +321,10 @@ public class Paint {
 
 	public Style getStyle() {
 		return Style.values[native_get_style(paint)];
+	}
+
+	public Align getTextAlign() {
+		return align;
 	}
 
 	private static native long native_create();

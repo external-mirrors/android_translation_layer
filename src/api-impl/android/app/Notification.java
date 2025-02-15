@@ -29,7 +29,11 @@ public class Notification implements Parcelable {
 
 	public int iconLevel;
 
+	public RemoteViews bigContentView;
+
 	public RemoteViews contentView;
+
+	public RemoteViews headsUpContentView;
 
 	public long[] vibrate;
 

@@ -32,6 +32,9 @@ public final class Bitmap {
 	public enum CompressFormat {
 		JPEG,
 		PNG,
+		WEBP,
+		WEBP_LOSSY,
+		WEBP_LOSSLESS,
 	}
 
 	private int width;

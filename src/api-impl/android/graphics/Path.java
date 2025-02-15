@@ -112,6 +112,10 @@ public class Path {
 		native_rel_quad_to(getBuilder(), x1, y1, x2, y2);
 	}
 
+	public void addArc (RectF oval, float startAngle, float sweepAngle) {}
+
+	public void addArc (float left, float top, float right, float bottom, float startAngle, float sweepAngle) {}
+
 	public void addPath(Path path, Matrix matrix) {
 		native_add_path(getBuilder(), path.getGskPath(), matrix.ni());
 	}
@@ -151,6 +155,13 @@ public class Path {
 	public void transform(Matrix matrix) {
 		builder = native_transform(getGskPath(), matrix.ni());
 		path = 0;
+	}
+
+	public void transform(Matrix matrix, Path out_path) {
+		if(out_path == null)
+			out_path = this;
+
+		out_path.transform(matrix);
 	}
 
 	public void computeBounds(RectF bounds, boolean exact) {
