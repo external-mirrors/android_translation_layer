@@ -1876,12 +1876,16 @@ public class View implements Drawable.Callback {
 			native_keep_screen_on(widget, true);
 	}
 	protected void onDetachedFromWindow() {
-		attachedToWindow = false;
 		if (onAttachStateChangeListener != null) {
 			onAttachStateChangeListener.onViewDetachedFromWindow(this);
 		}
 		if (keepScreenOn)
 			native_keep_screen_on(widget, false);
+	}
+
+	void detachFromWindowInternal() {
+		onDetachedFromWindow();
+		attachedToWindow = false;
 	}
 	public void attachToWindowInternal() {
 		onAttachedToWindow();
