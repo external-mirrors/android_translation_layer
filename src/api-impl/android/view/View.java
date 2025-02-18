@@ -2108,7 +2108,16 @@ public class View implements Drawable.Callback {
 
 	public boolean requestRectangleOnScreen(Rect rectangle) {return false;}
 
-	public boolean dispatchKeyEvent(KeyEvent event) {return false;}
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		return false;
+	}
+
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if (event.getAction() == KeyEvent.ACTION_DOWN)
+			return onKeyDown(event.getKeyCode(), event);
+		else
+			return false;
+	}
 
 	public WindowInsets getRootWindowInsets() {return null;}
 

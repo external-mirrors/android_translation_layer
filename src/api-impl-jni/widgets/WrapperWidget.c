@@ -272,6 +272,16 @@ static bool on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	return ret;
 }
 
+#define KEYCODE_0 7
+#define KEYCODE_1 8
+#define KEYCODE_2 9
+#define KEYCODE_3 10
+#define KEYCODE_4 11
+#define KEYCODE_5 12
+#define KEYCODE_6 13
+#define KEYCODE_7 14
+#define KEYCODE_8 15
+#define KEYCODE_9 16
 #define KEYCODE_DPAD_UP 19
 #define KEYCODE_DPAD_DOWN 20
 #define KEYCODE_DPAD_LEFT 21
@@ -296,6 +306,26 @@ static int map_key_code(int key_code) {
 			return KEYCODE_DEL;
 		case GDK_KEY_Delete:
 			return KEYCODE_FORWARD_DEL;
+		case GDK_KEY_0:
+			return KEYCODE_0;
+		case GDK_KEY_1:
+			return KEYCODE_1;
+		case GDK_KEY_2:
+			return KEYCODE_2;
+		case GDK_KEY_3:
+			return KEYCODE_3;
+		case GDK_KEY_4:
+			return KEYCODE_4;
+		case GDK_KEY_5:
+			return KEYCODE_5;
+		case GDK_KEY_6:
+			return KEYCODE_6;
+		case GDK_KEY_7:
+			return KEYCODE_7;
+		case GDK_KEY_8:
+			return KEYCODE_8;
+		case GDK_KEY_9:
+			return KEYCODE_9;
 		default:
 			return key_code;
 	}
@@ -367,7 +397,8 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	}
 
 	jmethodID dispatch_key_event_method = _METHOD(_CLASS(jobj), "dispatchKeyEvent", "(Landroid/view/KeyEvent;)Z");
-	if (dispatch_key_event_method != handle_cache.view.dispatchKeyEvent) {
+	jmethodID on_key_down_method = _METHOD(_CLASS(jobj), "onKeyDown", "(ILandroid/view/KeyEvent;)Z");
+	if (dispatch_key_event_method != handle_cache.view.dispatchKeyEvent || on_key_down_method != handle_cache.view.onKeyDown) {
 		GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_event_controller_key_new());
 		g_signal_connect(controller, "key-pressed", G_CALLBACK(on_key_pressed), wrapper);
 		g_signal_connect(controller, "key-released", G_CALLBACK(on_key_released), wrapper);
