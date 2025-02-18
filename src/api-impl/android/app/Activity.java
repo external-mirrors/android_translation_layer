@@ -428,7 +428,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	@Override
 	public boolean onCreatePanelMenu(int featureId, Menu menu) {
 		if (featureId == Window.FEATURE_OPTIONS_PANEL) {
-			return onCreateOptionsMenu(menu);
+			// HACK: catch non critical error occuring in Open Sudoku app
+			try {
+				return onCreateOptionsMenu(menu);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
 		}
 		return false;
 	}
