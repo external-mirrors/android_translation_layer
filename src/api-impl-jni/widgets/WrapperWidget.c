@@ -375,6 +375,15 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 		(*env)->DeleteLocalRef(env, canvas_class);
 	}
 
+	jmethodID performClick_method = _METHOD(_CLASS(jobj), "performClick", "()Z");
+	if (performClick_method != handle_cache.view.performClick) {
+		GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_gesture_click_new());
+
+		g_signal_connect(controller, "released", G_CALLBACK(on_click), wrapper->jobj);
+		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
+		widget_set_needs_allocation(wrapper->child);
+	}
+
 	jmethodID ontouchevent_method = _METHOD(_CLASS(jobj), "onTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	jmethodID dispatchtouchevent_method = _METHOD(_CLASS(jobj), "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	wrapper->custom_dispatch_touch = dispatchtouchevent_method != handle_cache.view.dispatchTouchEvent;
@@ -385,15 +394,6 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	jmethodID computeScroll_method = _METHOD(_CLASS(jobj), "computeScroll", "()V");
 	if (computeScroll_method != handle_cache.view.computeScroll) {
 		wrapper->computeScroll_method = computeScroll_method;
-	}
-
-	jmethodID performClick_method = _METHOD(_CLASS(jobj), "performClick", "()Z");
-	if (performClick_method != handle_cache.view.performClick) {
-		GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_gesture_click_new());
-
-		g_signal_connect(controller, "released", G_CALLBACK(on_click), wrapper->jobj);
-		gtk_widget_add_controller(wrapper->child, controller);
-		widget_set_needs_allocation(wrapper->child);
 	}
 
 	jmethodID dispatch_key_event_method = _METHOD(_CLASS(jobj), "dispatchKeyEvent", "(Landroid/view/KeyEvent;)Z");
