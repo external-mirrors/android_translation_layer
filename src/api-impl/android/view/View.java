@@ -1011,7 +1011,12 @@ public class View implements Drawable.Callback {
 		if (canvas instanceof GskCanvas)
 			native_drawBackground(widget, ((GskCanvas)canvas).snapshot);
 		onDraw(canvas);
-		dispatchDraw(canvas);
+		// HACK: catch non critical exceptions happening in some composeUI apps
+		try {
+			dispatchDraw(canvas);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public View(Context context) {
