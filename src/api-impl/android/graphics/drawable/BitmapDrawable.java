@@ -14,6 +14,7 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
 import android.util.AttributeSet;
 
 public class BitmapDrawable extends Drawable {
@@ -56,4 +57,6 @@ public class BitmapDrawable extends Drawable {
 	public int getIntrinsicHeight() {
 		return bitmap.getHeight();
 	}
+
+	public void setTileModeX(Shader.TileMode mode) {}
 }

@@ -73,6 +73,8 @@ public class PopupWindow {
 
 	public int getMaxAvailableHeight(View anchor, int yOffset) {return 500;}
 
+	public int getMaxAvailableHeight(View anchor, int yOffset, boolean ignoreKeyboard) {return 500;}
+
 	public native void setWidth(int width);
 
 	public native void setHeight(int height);
@@ -114,4 +116,6 @@ public class PopupWindow {
 	public void update(View anchor, int xoff, int yoff, int width, int height) {
 		native_update(popover, anchor.widget, xoff, yoff, width, height);
 	}
+
+	public void setWindowLayoutType(int type) {}
 }

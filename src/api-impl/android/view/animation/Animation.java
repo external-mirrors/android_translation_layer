@@ -33,6 +33,8 @@ public class Animation {
 
 	public void setRepeatCount(int count) {}
 
+	public void setRepeatMode(int mode) {}
+
 	public void reset() {}
 
 	public void start() {}

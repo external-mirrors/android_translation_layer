@@ -3,6 +3,7 @@ package android.widget;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -293,7 +294,9 @@ public class TextView extends View {
 		return new BoringLayout(getText(), getPaint(), getWidth(), Layout.Alignment.ALIGN_NORMAL, 1, 0, new BoringLayout.Metrics(), false);
 	}
 
-	public int getCurrentTextColor() {return 0;}
+	public int getCurrentTextColor() {
+		return Color.CYAN;
+	}
 
 	public void setSingleLine(boolean singleLine) {}
 
@@ -392,4 +395,6 @@ public class TextView extends View {
 	public int getTotalPaddingTop() {return 0;}
 
 	public int getImeOptions() {return 0;}
+
+	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 }

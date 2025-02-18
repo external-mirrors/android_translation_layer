@@ -74,6 +74,10 @@ public class ViewPropertyAnimator {
 		return this;
 	}
 
+	public ViewPropertyAnimator rotationBy(float rotation) {
+		return this;
+	}
+
 	public void start() {
 		new Handler().postDelayed(new Runnable() {
 

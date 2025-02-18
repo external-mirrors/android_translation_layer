@@ -2136,4 +2136,6 @@ public class View implements Drawable.Callback {
 	public boolean performAccessibilityAction(int action, Bundle arguments) { return false; }
 
 	public boolean isDirty() { return false; }
+
+	public float getX() { return getLeft(); }
 }

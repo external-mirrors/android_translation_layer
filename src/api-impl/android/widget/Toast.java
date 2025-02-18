@@ -1,6 +1,7 @@
 package android.widget;
 
 import android.content.Context;
+import android.view.View;
 
 public class Toast {
 
@@ -23,4 +24,6 @@ public class Toast {
 	public void show() {
 		System.out.println("showing toast: " + text);
 	}
+
+	public void setView(View view) {}
 }

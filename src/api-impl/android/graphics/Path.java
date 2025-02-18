@@ -186,6 +186,11 @@ public class Path {
 		return false;
 	}
 
+	public void set(Path src) {
+		reset();
+		addPath(src);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {
