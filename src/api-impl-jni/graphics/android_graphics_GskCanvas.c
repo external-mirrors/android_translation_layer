@@ -102,6 +102,13 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *
 	const char *str = (*env)->GetStringUTFChars(env, text, NULL);
 	pango_layout_set_text(layout, str, -1);
 	(*env)->ReleaseStringUTFChars(env, text, str);
+	PangoRectangle rect;
+	pango_layout_get_pixel_extents(layout, NULL, &rect);
+	y -= rect.height;
+	if (paint->alignment == PANGO_ALIGN_CENTER)
+		x -= rect.width / 2.f;
+	else if (paint->alignment == PANGO_ALIGN_RIGHT)
+		x -= rect.width;
 	gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(x, y));
 	gtk_snapshot_append_layout(snapshot, layout, &paint->color);
 	gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(-x, -y));

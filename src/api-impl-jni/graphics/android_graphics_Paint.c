@@ -1,5 +1,6 @@
 #include <glib.h>
 #include <gsk/gsk.h>
+#include <gtk/gtk.h>
 
 #include "AndroidPaint.h"
 #include "../defines.h"
@@ -130,4 +131,29 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter(JN
 	});
 	graphene_vec4_init(&paint->color_offset, ((color >> 16) & 0xFF) / 255.f, ((color >> 8) & 0xFF) / 255.f, ((color >> 0) & 0xFF) / 255.f, 0);
 	paint->use_color_filter = mode != -1;
+}
+
+extern GtkWidget *window;
+
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1get_1text_1bounds(JNIEnv *env, jclass clazz, jlong paint_ptr, jstring text_ptr, jobject bounds)
+{
+	struct AndroidPaint *paint = _PTR(paint_ptr);
+	PangoLayout *layout = pango_layout_new(gtk_widget_get_pango_context(window));
+	pango_layout_set_font_description(layout, paint->font);
+	const char *str = (*env)->GetStringUTFChars(env, text_ptr, NULL);
+	pango_layout_set_text(layout, str, -1);
+	(*env)->ReleaseStringUTFChars(env, text_ptr, str);
+	PangoRectangle rect;
+	pango_layout_get_pixel_extents(layout, NULL, &rect);
+	_SET_INT_FIELD(bounds, "left", rect.x);
+	_SET_INT_FIELD(bounds, "top", rect.y);
+	_SET_INT_FIELD(bounds, "right", rect.x + rect.width);
+	_SET_INT_FIELD(bounds, "bottom", rect.y + rect.height);
+	g_object_unref(layout);
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1align(JNIEnv *env, jclass clazz, jlong paint_ptr, jint align)
+{
+	struct AndroidPaint *paint = _PTR(paint_ptr);
+	paint->alignment = align;
 }

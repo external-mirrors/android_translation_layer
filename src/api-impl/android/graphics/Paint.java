@@ -60,11 +60,18 @@ public class Paint {
 	public Typeface setTypeface(Typeface typeface) {
 		return typeface;
 	}
-	public void getTextBounds(String text, int start, int end, Rect bounds) {}
-	public void getTextBounds(char[] text, int index, int count, Rect bounds) {}
+	public void getTextBounds(String text, int start, int end, Rect bounds) {
+		if (end > text.length())
+			end = text.length();
+		native_get_text_bounds(paint, text.substring(start, end), bounds);
+	}
+	public void getTextBounds(char[] text, int index, int count, Rect bounds) {
+		native_get_text_bounds(paint, new String(text, index, count), bounds);
+	}
 	public int getTextWidths(String text, int start, int end, float[] widths) {
-		// TODO fix it
-		return 0;
+		Rect bounds = new Rect();
+		native_get_text_bounds(paint, text.substring(start, end), bounds);
+		return bounds.width();
 	}
 	public void setFilterBitmap(boolean filter) {}
 
@@ -78,7 +85,7 @@ public class Paint {
 	}
 
 	public float ascent() {
-		return 10;
+		return -getTextSize();
 	}
 
 	public float measureText(char[] text, int index, int count) { return 10; }
@@ -253,8 +260,8 @@ public class Paint {
 	}
 
 	public enum Align {
-		CENTER,
 		LEFT,
+		CENTER,
 		RIGHT,
 	}
 
@@ -270,7 +277,10 @@ public class Paint {
 		return new Typeface();
 	}
 
-	public void setTextAlign(Align align) {}
+	public void setTextAlign(Align align) {
+		this.align = align;
+		native_set_text_align(paint, align.ordinal());
+	}
 
 	public Shader getShader() {
 		return shader;
@@ -343,4 +353,6 @@ public class Paint {
 	private static native void native_set_text_size(long paint, float size);
 	private static native float native_get_text_size(long paint);
 	private static native void native_set_color_filter(long paint, int mode, int color);
+	private static native void native_get_text_bounds(long paint, String text, Rect bounds);
+	private static native void native_set_text_align(long paint, int align);
 }

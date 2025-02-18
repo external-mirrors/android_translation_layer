@@ -161,6 +161,22 @@ JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1text_1size
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter
   (JNIEnv *, jclass, jlong, jint, jint);
 
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_get_text_bounds
+ * Signature: (JLjava/lang/String;Landroid/graphics/Rect;)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1get_1text_1bounds
+  (JNIEnv *, jclass, jlong, jstring, jobject);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_set_text_align
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1align
+  (JNIEnv *, jclass, jlong, jint);
+
 #ifdef __cplusplus
 }
 #endif
