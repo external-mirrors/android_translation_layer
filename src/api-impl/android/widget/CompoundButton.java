@@ -72,4 +72,7 @@ public abstract class CompoundButton extends Button implements Checkable {
 	public ColorStateList getButtonTintList() {
 		return null;
 	}
+
+	@Override
+	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {}
 }

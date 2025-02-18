@@ -7,6 +7,8 @@ import android.util.AttributeSet;
 
 public class Button extends TextView {
 
+	private Drawable compoundDrawableLeft;
+
 	public Button(Context context) {
 		this(context, null);
 	}
@@ -38,6 +40,7 @@ public class Button extends TextView {
 	public native final void native_setText(long widget, String text);
 	@Override
 	protected native void nativeSetOnClickListener(long widget);
+	protected native void native_setCompoundDrawables(long widget, long paintable);
 
 	@Override
 	public void setText(CharSequence text) {
@@ -51,6 +54,9 @@ public class Button extends TextView {
 	public void setTextSize(float size) {}
 
 	@Override
-	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {}
+	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {
+		compoundDrawableLeft = left;
+		native_setCompoundDrawables(widget, left != null ? left.paintable : 0);
+	}
 
 }

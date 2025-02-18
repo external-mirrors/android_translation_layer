@@ -225,6 +225,14 @@ JNIEXPORT void JNICALL Java_android_widget_Button_nativeSetOnClickListener
 
 /*
  * Class:     android_widget_Button
+ * Method:    native_setCompoundDrawables
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_Button_native_1setCompoundDrawables
+  (JNIEnv *, jobject, jlong, jlong);
+
+/*
+ * Class:     android_widget_Button
  * Method:    getText
  * Signature: ()Ljava/lang/CharSequence;
  */
