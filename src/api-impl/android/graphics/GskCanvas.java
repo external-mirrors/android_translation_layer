@@ -74,6 +74,11 @@ public class GskCanvas extends Canvas {
 	}
 
 	@Override
+	public void drawText(String text, int start, int end, float x, float y, Paint paint) {
+		drawText(text.substring(start, end), x, y, paint);
+	}
+
+	@Override
 	public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
 		native_drawLine(snapshot, startX, startY, stopX, stopY, paint != null ? paint.paint : default_paint.paint);
 	}
@@ -114,6 +119,11 @@ public class GskCanvas extends Canvas {
 	@Override
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
 		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint != null ? paint.paint : default_paint.paint);
+	}
+
+	@Override
+	public void drawCircle(float cx, float cy, float radius, Paint paint) {
+		drawRoundRect(cx - radius, cy - radius, cx + radius, cy + radius, radius, radius, paint);
 	}
 
 	@Override

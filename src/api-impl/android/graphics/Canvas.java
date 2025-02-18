@@ -118,11 +118,8 @@ public class Canvas {
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
 	public void drawText(String text, int start, int end, float x, float y, Paint paint) {
-		/*      if ((start | end | (end - start) | (text.length() - end)) < 0) {
-			  throw new IndexOutOfBoundsException();
-		      }
-		      native_drawText(mNativeCanvas, text, start, end, x, y, paint.mBidiFlags,
-			      paint.mNativePaint);*/
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawText(text, start, end, x, y, paint);
 	}
 
 	/**
@@ -422,7 +419,10 @@ public class Canvas {
 
 	public void translate(float dx, float dy) {}
 
-	public void drawCircle(float cx, float cy, float radius, Paint paint) {}
+	public void drawCircle(float cx, float cy, float radius, Paint paint) {
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawCircle(cx, cy, radius, paint);
+	}
 
 	public Rect getClipBounds() {
 		return new Rect(0, 0, 10, 10);
