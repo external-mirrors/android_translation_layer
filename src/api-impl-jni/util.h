@@ -128,6 +128,10 @@ struct handle_cache {
 		jmethodID onCreate;
 		jmethodID start;
 	} instrumentation;
+	struct {
+		jclass class;
+		jmethodID drawText;
+	} canvas;
 };
 
 extern struct handle_cache handle_cache;

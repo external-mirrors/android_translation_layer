@@ -175,6 +175,9 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.webview.class = _REF((*env)->FindClass(env, "android/webkit/WebView"));
 	handle_cache.webview.internalGetAssetManager = _METHOD(handle_cache.webview.class, "internalGetAssetManager", "()Landroid/content/res/AssetManager;");
 	handle_cache.webview.internalLoadChanged = _METHOD(handle_cache.webview.class, "internalLoadChanged", "(ILjava/lang/String;)V");
+
+	handle_cache.canvas.class = _REF((*env)->FindClass(env, "android/graphics/Canvas"));
+	handle_cache.canvas.drawText = _METHOD(handle_cache.canvas.class, "drawText", "(Ljava/lang/CharSequence;IIFFLandroid/graphics/Paint;)V");
 }
 
 void extract_from_apk(const char *path, const char *target) {

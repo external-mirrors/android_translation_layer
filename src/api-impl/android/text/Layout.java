@@ -2,6 +2,7 @@ package android.text;
 
 import android.graphics.Canvas;
 import android.graphics.GskCanvas;
+import android.graphics.Paint;
 import android.graphics.Path;
 
 public class Layout {
@@ -59,8 +60,6 @@ public class Layout {
 	}
 
 	public int getHeight() {
-		System.out.println("height = " + native_get_height(layout));
-		System.out.println("should be " + ((int)(paint.measureText("_") * 3)));
 		return native_get_height(layout);
 	}
 
@@ -68,7 +67,7 @@ public class Layout {
 		if (canvas instanceof GskCanvas)
 			native_draw(layout, ((GskCanvas)canvas).snapshot, paint.paint);
 		else
-			canvas.drawText(text.toString(), 0, 0, paint);
+			native_draw_custom_canvas(layout, canvas, paint);
 	}
 
 	public int getParagraphDirection(int line) {
@@ -251,4 +250,5 @@ public class Layout {
 	protected native void native_set_ellipsize(long layout, int ellipsize_mode, float ellipsize_width);
 	protected native int native_get_ellipsis_count(long layout, int line);
 	protected native void native_draw(long layout, long snapshot, long paint);
+	protected native void native_draw_custom_canvas(long layout, Canvas canvas, Paint paint);
 }

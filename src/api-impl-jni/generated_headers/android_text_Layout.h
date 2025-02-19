@@ -143,6 +143,14 @@ JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1ellipsis_1count
 JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw
   (JNIEnv *, jobject, jlong, jlong, jlong);
 
+/*
+ * Class:     android_text_Layout
+ * Method:    native_draw_custom_canvas
+ * Signature: (JLandroid/graphics/Canvas;Landroid/graphics/Paint;)V
+ */
+JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw_1custom_1canvas
+  (JNIEnv *, jobject, jlong, jobject, jobject);
+
 #ifdef __cplusplus
 }
 #endif

@@ -2,6 +2,7 @@
 #include <pango/pango.h>
 
 #include "../defines.h"
+#include "../util.h"
 #include "../graphics/AndroidPaint.h"
 #include "../generated_headers/android_text_Layout.h"
 
@@ -148,4 +149,23 @@ JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw(JNIEnv *env, jobjec
 	struct AndroidPaint *android_paint = _PTR(paint_ptr);
 
 	gtk_snapshot_append_layout(snapshot, pango_layout, &android_paint->color);
+}
+
+JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw_1custom_1canvas(JNIEnv *env, jobject object, jlong layout, jobject canvas, jobject paint)
+{
+	PangoLayout *pango_layout = PANGO_LAYOUT(_PTR(layout));
+
+	const gchar *text = pango_layout_get_text(pango_layout);
+	PangoLayoutIter *pango_iter = pango_layout_get_iter(pango_layout);
+	do {
+		PangoLayoutLine *pango_line = pango_layout_iter_get_line_readonly(pango_iter);
+
+		jstring text_jstr = (*env)->NewStringUTF(env, text + pango_line->start_index);
+		jint end = (*env)->GetStringLength(env, text_jstr);
+		if (pango_line->length < end)
+			end = pango_line->length;
+		jfloat y = (float)pango_layout_iter_get_baseline(pango_iter) / PANGO_SCALE;
+		(*env)->CallVoidMethod(env, canvas, handle_cache.canvas.drawText, text_jstr, (jint)0, end, (jfloat)0, y, paint);
+		(*env)->DeleteLocalRef(env, text_jstr);
+	} while (pango_layout_iter_next_line(pango_iter));
 }

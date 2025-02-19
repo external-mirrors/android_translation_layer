@@ -104,7 +104,7 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1drawText(JNIEnv *
 	(*env)->ReleaseStringUTFChars(env, text, str);
 	PangoRectangle rect;
 	pango_layout_get_pixel_extents(layout, NULL, &rect);
-	y -= rect.height;
+	y -= (float)pango_layout_get_baseline(layout) / PANGO_SCALE;
 	if (paint->alignment == PANGO_ALIGN_CENTER)
 		x -= rect.width / 2.f;
 	else if (paint->alignment == PANGO_ALIGN_RIGHT)
