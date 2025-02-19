@@ -534,6 +534,7 @@ srcs = [
 	'android/webkit/URLUtil.java',
 	'android/webkit/ViewAnimator.java',
 	'android/webkit/WebChromeClient.java',
+	'android/webkit/WebResourceResponse.java',
 	'android/webkit/WebSettings.java',
 	'android/webkit/WebView.java',
 	'android/webkit/WebViewClient.java',
