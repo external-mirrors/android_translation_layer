@@ -21,6 +21,7 @@ import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.Slog;
 import android.util.TypedValue;
 
 import java.io.FileDescriptor;
@@ -91,6 +92,9 @@ public final class AssetManager {
 	private boolean mOpen = true;
 	private HashMap<Integer, RuntimeException> mRefStacks;
 
+	private ArrayList<String> asset_paths = new ArrayList<String>();
+
+
 	/**
 	 * Create a new AssetManager containing only the basic system assets.
 	 * Applications will not generally use this method, instead retrieving the
@@ -99,7 +103,6 @@ public final class AssetManager {
 	 * {@hide}
 	 */
 	public AssetManager() {
-		// FIXME: evaluate if this can be axed
 		synchronized (this) {
 			if (DEBUG_REFS) {
 				mNumRefs = 0;
@@ -124,13 +127,15 @@ public final class AssetManager {
 				for (String path : paths) {
 					if (path != null) {
 						path = path.substring(path.indexOf("file:") + 5, path.indexOf("!/AndroidManifest.xml"));
-						addAssetPath(path);
+						asset_paths.add(path);
 					}
 				}
 			} catch (IOException e) {
 				Log.e(TAG, "failed to load resources.arsc" + e);
 			}
-			addAssetPath(android.os.Environment.getExternalStorageDirectory().getAbsolutePath());
+			asset_paths.add(android.os.Environment.getExternalStorageDirectory().getAbsolutePath() + "/");
+			/*String*/Object[] asset_paths_arr = asset_paths.toArray();
+			native_setApkAssets(asset_paths_arr, asset_paths_arr.length);
 		}
 	}
 
@@ -598,32 +603,14 @@ public final class AssetManager {
 	 * the cookie of the added asset, or 0 on failure.
 	 * {@hide}
 	 */
-	public final int addAssetPath(String path) {
-		int res = addAssetPathNative(path);
-		return res;
+	/* this is not particularly efficient, avoid if possible */
+	public final void addAssetPath(String path) {
+			asset_paths.add(path);
+			/*String*/Object[] asset_paths_arr = asset_paths.toArray();
+			native_setApkAssets(asset_paths_arr, asset_paths_arr.length);
 	}
 
 	private native final int addAssetPathNative(String path);
-
-	/**
-	 * Add multiple sets of assets to the asset manager at once.  See
-	 * {@link #addAssetPath(String)} for more information.  Returns array of
-	 * cookies for each added asset with 0 indicating failure, or null if
-	 * the input array of paths is null.
-	 * {@hide}
-	 */
-	public final int[] addAssetPaths(String[] paths) {
-		if (paths == null) {
-			return null;
-		}
-
-		int[] cookies = new int[paths.length];
-		for (int i = 0; i < paths.length; i++) {
-			cookies[i] = addAssetPath(paths[i]);
-		}
-
-		return cookies;
-	}
 
 	public static void extractFromAPK(String path, String target) throws IOException {
 		if (path.endsWith("/")) { // directory
@@ -685,16 +672,7 @@ public final class AssetManager {
 	 */
 	/*package*/ native final int getResourceIdentifier(String name, String type, String defPackage);
 
-	public /*native*/ final String getResourceName(int resid) {
-		String name = getResourcePackageName(resid);
-		String type = getResourceTypeName(resid);
-		if (type != null)
-			name += ':' + type;
-		String entry = getResourceEntryName(resid);
-		if (entry != null)
-			name += '/' + entry;
-		return name;
-	}
+	public native final String getResourceName(int resid);
 	/*package*/ native final String getResourcePackageName(int resid);
 	/*package*/ native final String getResourceTypeName(int resid);
 	/*package*/ native final String getResourceEntryName(int resid);
@@ -872,7 +850,7 @@ public final class AssetManager {
 
 	private native final void init();
 	private /*native*/ final void destroy() {
-		System.out.println("AssetManager.destroy(): STUB");
+		Slog.w(TAG, "AssetManager.destroy(): STUB");
 	}
 
 	private final void incRefsLocked(int id) {
@@ -898,4 +876,6 @@ public final class AssetManager {
 			destroy();
 		}
 	}
+
+	private native final void native_setApkAssets(/*String*/Object[] paths, int num_assets);
 }

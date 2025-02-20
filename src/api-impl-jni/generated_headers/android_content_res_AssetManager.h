@@ -99,6 +99,14 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getResourceIdentifi
 
 /*
  * Class:     android_content_res_AssetManager
+ * Method:    getResourceName
+ * Signature: (I)Ljava/lang/String;
+ */
+JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceName
+  (JNIEnv *, jobject, jint);
+
+/*
+ * Class:     android_content_res_AssetManager
  * Method:    getResourcePackageName
  * Signature: (I)Ljava/lang/String;
  */
@@ -352,6 +360,14 @@ JNIEXPORT jintArray JNICALL Java_android_content_res_AssetManager_getArrayString
  */
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_init
   (JNIEnv *, jobject);
+
+/*
+ * Class:     android_content_res_AssetManager
+ * Method:    native_setApkAssets
+ * Signature: ([Ljava/lang/Object;I)V
+ */
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_native_1setApkAssets
+  (JNIEnv *, jobject, jobjectArray, jint);
 
 #ifdef __cplusplus
 }
