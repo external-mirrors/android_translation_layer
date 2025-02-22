@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import android.accounts.Account;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.MatrixCursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
@@ -40,10 +41,17 @@ public class ContentResolver {
 
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
-		if (provider != null)
+		if (provider != null) {
 			return provider.query(uri, projection, selection, selectionArgs, sortOrder);
-		else
+		} else if ("file".equals(uri.getScheme())) {
+			MatrixCursor cursor = new MatrixCursor(projection);
+			Object[] row = new Object[projection.length];
+			native_query_file_info(uri.getPath(), projection, row);
+			cursor.addRow(row);
+			return cursor;
+		} else {
 			return null;
+		}
 	}
 
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder, CancellationSignal cancellationSignal) {
@@ -94,4 +102,6 @@ public class ContentResolver {
 	public static boolean isSyncActive(Account account, String authority) {
 		return false;
 	}
+
+	private static native void native_query_file_info(String path, String[] attributes, Object[] result);
 }
