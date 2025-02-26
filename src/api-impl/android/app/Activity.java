@@ -267,11 +267,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 		root_view = getLayoutInflater().inflate(layoutResID, null, false);
 
-		System.out.println("~~~~~~~~~~~");
-		System.out.println(root_view.toString());
-		System.out.printf("%x\n", root_view.id);
-		System.out.println("~~~~~~~~~~~");
-
 		window.setContentView(root_view);
 		onContentChanged();
 	}
@@ -286,9 +281,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public <T extends android.view.View> T findViewById(int id) {
-		System.out.printf(TAG, "- findViewById - asked for view with id: %x\n", id);
 		View view = window.findViewById(id);
-		Slog.i(TAG, "- findViewById - found this: " + view);
 
 		return (T)view;
 	}
