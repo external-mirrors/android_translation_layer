@@ -41,7 +41,7 @@ public class VelocityTracker {
 	}
 
 	public float getYVelocity() {
-		return getYVelocity();
+		return getYVelocity(-1);
 	}
 
 	public float getYVelocity(int id) {
