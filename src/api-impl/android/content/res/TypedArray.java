@@ -25,6 +25,8 @@ import android.os.StrictMode;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import dalvik.system.VMRuntime;
+
 import com.android.internal.util.XmlUtils;
 import java.util.Arrays;
 
@@ -40,29 +42,22 @@ import java.util.Arrays;
 public class TypedArray {
 
 	static TypedArray obtain(Resources res, int len) {
-		final TypedArray attrs = res.mTypedArrayPool.acquire();
-		if (attrs != null) {
-			attrs.mLength = len;
-			attrs.mRecycled = false;
-
-			final int fullLen = len * AssetManager.STYLE_NUM_ENTRIES;
-			if (attrs.mData.length >= fullLen) {
-				return attrs;
-			}
-
-			attrs.mData = new int[fullLen];
-			attrs.mIndices = new int[1 + len];
-			return attrs;
+		TypedArray attrs = res.mTypedArrayPool.acquire();
+		if (attrs == null) {
+			attrs = new TypedArray(res);
 		}
 
-		return new TypedArray(res,
-				      new int[len * AssetManager.STYLE_NUM_ENTRIES],
-				      new int[1 + len], len);
+		attrs.mRecycled = false;
+		// Reset the assets, which may have changed due to configuration changes
+		// or further resource loading.
+		attrs.mAssets = res.getAssets();
+		attrs.resize(len);
+		return attrs;
 	}
 
 	private final Resources mResources;
 	private final DisplayMetrics mMetrics;
-	private final AssetManager mAssets;
+	private AssetManager mAssets;
 
 	private boolean mRecycled;
 
@@ -71,9 +66,25 @@ public class TypedArray {
 	/*package*/ XmlResourceParser mXml;
 	/*package*/ Resources.Theme mTheme;
 	/*package*/ int[] mData;
+	/*package*/ long mDataAddress;
 	/*package*/ int[] mIndices;
+	/*package*/ long mIndicesAddress;
 	/*package*/ int mLength;
 	/*package*/ TypedValue mValue = new TypedValue();
+
+
+	private void resize(int len) {
+		mLength = len;
+		final int dataLen = len * AssetManager.STYLE_NUM_ENTRIES;
+		final int indicesLen = len + 1;
+		final VMRuntime runtime = VMRuntime.getRuntime();
+		if (mData == null || mData.length < dataLen) {
+			mData = (int[]) runtime.newNonMovableArray(int.class, dataLen);
+			mDataAddress = runtime.addressOf(mData);
+			mIndices = (int[]) runtime.newNonMovableArray(int.class, indicesLen);
+			mIndicesAddress = runtime.addressOf(mIndices);
+		}
+	}
 
 	/**
 	 * Returns the number of values in this array.
@@ -954,6 +965,31 @@ public class TypedArray {
 		return mData[index + AssetManager.STYLE_TYPE];
 	}
 
+
+	/**
+	* Returns the resource ID of the style against which the specified attribute was resolved,
+	* otherwise returns defValue.
+	*
+	* @param index Index of attribute whose source style to retrieve.
+	* @param defValue Value to return if the attribute is not defined or
+	*                 not a resource.
+	*
+	* @return Attribute source style resource ID or defValue if it was not resolved in any style.
+	* @throws RuntimeException if the TypedArray has already been recycled.
+	*/
+	public int getSourceStyleResourceId(/*@StyleableRes*/ int index, int defValue) {
+		if (mRecycled) {
+			throw new RuntimeException("Cannot make calls to a recycled instance!");
+		}
+
+		index *= AssetManager.STYLE_NUM_ENTRIES;
+		final int resid = mData[index + AssetManager.STYLE_SOURCE_RESOURCE_ID];
+		if (resid != 0) {
+			return resid;
+		}
+		return defValue;
+	}
+
 	/**
 	 * Determines whether there is an attribute at <var>index</var>.
 	 * <p>
@@ -1159,6 +1195,7 @@ public class TypedArray {
 		outValue.changingConfigurations = data[index + AssetManager.STYLE_CHANGING_CONFIGURATIONS];
 		outValue.density = data[index + AssetManager.STYLE_DENSITY];
 		outValue.string = (type == TypedValue.TYPE_STRING) ? loadStringValueAt(index) : null;
+		outValue.sourceStyleResourceId = data[index + AssetManager.STYLE_SOURCE_RESOURCE_ID];
 		return true;
 	}
 
@@ -1175,14 +1212,10 @@ public class TypedArray {
 		return mAssets.getPooledString(cookie, data[index + AssetManager.STYLE_DATA]);
 	}
 
-	// FIXME
-	public /*package*/ TypedArray(Resources resources, int[] data, int[] indices, int len) {
+	protected TypedArray(Resources resources) {
 		mResources = resources;
 		mMetrics = mResources.mMetrics;
 		mAssets = mResources.mAssets;
-		mData = data;
-		mIndices = indices;
-		mLength = len;
 	}
 
 	@Override

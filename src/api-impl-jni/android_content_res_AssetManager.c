@@ -349,6 +349,38 @@ JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JN
 	return ret;
 }
 
+JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_retrieveAttributes(JNIEnv *env, jobject this,
+                                                                                    jlong parser_ptr,
+                                                                                    jintArray java_attrs, jint attrs_len,
+                                                                                    long out_values, long out_indices)
+{
+       struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+       struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
+
+       jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
+
+       return RetrieveAttributes(asset_manager, parser, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
+
+       (*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
+}
+
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle(JNIEnv *env, jclass this,
+                                                                        jlong theme_ptr, jlong parser_ptr,
+                                                                        jint def_style_attr, jint def_style_res,
+                                                                        jintArray java_attrs, jint attrs_len,
+                                                                        long out_values, long out_indices)
+{
+       struct Theme *theme = _PTR(theme_ptr);
+       struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
+
+       jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
+
+       ApplyStyle(theme, parser, def_style_attr, def_style_res, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
+
+       (*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
+}
+
+
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getArraySize(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));

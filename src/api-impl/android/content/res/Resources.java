@@ -527,7 +527,7 @@ public class Resources {
 			throw new NotFoundException("Array resource ID #0x" + Integer.toHexString(id));
 		}
 
-		TypedArray array = getCachedStyledAttributes(len);
+		TypedArray array = TypedArray.obtain(this, len);
 		array.mLength = mAssets.retrieveArray(id, array.mData);
 		array.mIndices[0] = 0;
 
@@ -1213,6 +1213,8 @@ public class Resources {
 	public final class Theme {
 		private long theme;
 
+		private boolean debug = false;
+
 		/**
 		 * Place new attribute values into the theme.  The style resource
 		 * specified by <var>resid</var> will be retrieved from this Theme's
@@ -1267,12 +1269,7 @@ public class Resources {
 		 * @see #obtainStyledAttributes(AttributeSet, int[], int, int)
 		 */
 		public TypedArray obtainStyledAttributes(int[] attrs) {
-			int len = attrs.length;
-			TypedArray array = getCachedStyledAttributes(len);
-			array.mRsrcs = attrs;
-			array.mTheme = this;
-			mAssets.applyStyle(theme, 0, 0, null, attrs, array.mData, array.mIndices);
-			return array;
+			return obtainStyledAttributes(null, attrs, 0, 0);
 		}
 
 		/**
@@ -1297,39 +1294,7 @@ public class Resources {
 		 */
 		public TypedArray obtainStyledAttributes(int resid, int[] attrs)
 		    throws NotFoundException {
-			int len = attrs.length;
-			TypedArray array = getCachedStyledAttributes(len);
-			array.mRsrcs = attrs;
-			array.mTheme = this;
-			mAssets.applyStyle(theme, 0, resid, null, attrs,
-				array.mData, array.mIndices);
-			if (false) {
-				int[] data = array.mData;
-
-				System.out.println("**********************************************************");
-				System.out.println("**********************************************************");
-				System.out.println("**********************************************************");
-				System.out.println("Attributes:");
-				String s = "  Attrs:";
-				int i;
-				for (i=0; i<attrs.length; i++) {
-					s = s + " 0x" + Integer.toHexString(attrs[i]);
-				}
-				System.out.println(s);
-				s = "  Found:";
-				TypedValue value = new TypedValue();
-				for (i=0; i<attrs.length; i++) {
-					int d = i*AssetManager.STYLE_NUM_ENTRIES;
-					value.type = data[d+AssetManager.STYLE_TYPE];
-					value.data = data[d+AssetManager.STYLE_DATA];
-					value.assetCookie = data[d+AssetManager.STYLE_ASSET_COOKIE];
-					value.resourceId = data[d+AssetManager.STYLE_RESOURCE_ID];
-					s = s + " 0x" + Integer.toHexString(attrs[i])
-					+ "=" + value;
-				}
-				System.out.println(s);
-			}
-			return array;
+			return obtainStyledAttributes(null, attrs, 0, resid);
 		}
 
 		/**
@@ -1383,19 +1348,21 @@ public class Resources {
 		public TypedArray obtainStyledAttributes(AttributeSet set,
 							 int[] attrs, int defStyleAttr, int defStyleRes) {
 			int len = attrs.length;
-			TypedArray array = getCachedStyledAttributes(len);
+			TypedArray array = TypedArray.obtain(getResources(), len);
 
 			// XXX note that for now we only work with compiled XML files.
 			// To support generic XML files we will need to manually parse
 			// out the attributes from the XML file (applying type information
 			// contained in the resources and such).
 			XmlResourceParser parser = (XmlResourceParser)set;
-			mAssets.applyStyle(theme, defStyleAttr, defStyleRes,
-				set, attrs, array.mData, array.mIndices);
+			AssetManager.applyStyle(theme, set != null ? ((XmlBlock.Parser)set).mParseState : 0,
+			                        defStyleAttr, defStyleRes,
+			                        attrs, attrs.length, array.mDataAddress, array.mIndicesAddress);
 			array.mRsrcs = attrs;
 			array.mXml = parser;
 			array.mTheme = this;
-			if (false && set != null) { // TODO: set should probably never be null...?
+
+			if (debug && set != null) {
 				int[] data = array.mData;
 
 				System.out.println("Attributes:");
@@ -1478,7 +1445,7 @@ public class Resources {
 		public boolean resolveAttribute(int resid, TypedValue outValue,
 						boolean resolveRefs) {
 			boolean got = mAssets.getThemeValue(theme, resid, outValue, resolveRefs);
-			if (false) {
+			if (debug) {
 				System.out.println(
 				    "resolveAttribute #" + Integer.toHexString(resid) + " got=" + got + ", type=0x" + Integer.toHexString(outValue.type) + ", data=0x" + Integer.toHexString(outValue.data));
 			}
@@ -1623,17 +1590,15 @@ public class Resources {
 	 */
 	public TypedArray obtainAttributes(AttributeSet set, int[] attrs) {
 		int len = attrs.length;
-		TypedArray array = getCachedStyledAttributes(len);
+		TypedArray array = TypedArray.obtain(this, len);
 
 		// XXX note that for now we only work with compiled XML files.
 		// To support generic XML files we will need to manually parse
 		// out the attributes from the XML file (applying type information
 		// contained in the resources and such).
-		XmlResourceParser parser = (XmlResourceParser)set;
-		mAssets.applyStyle(0, 0, 0,
-				set, attrs, array.mData, array.mIndices);
+		XmlBlock.Parser parser = (XmlBlock.Parser)set;
+		getAssets().retrieveAttributes(parser.mParseState, attrs, attrs.length, array.mDataAddress, array.mIndicesAddress);
 
-		array.mRsrcs = attrs;
 		array.mXml = parser;
 
 		return array;
@@ -1653,7 +1618,7 @@ public class Resources {
 	public void updateConfiguration(Configuration config,
 					DisplayMetrics metrics, CompatibilityInfo compat) {
 		synchronized (mAccessLock) {
-			if (false) {
+			if (DEBUG_CONFIG) {
 				Slog.i(TAG, "**** Updating config of " + this + ": old config is " + mConfiguration + " old compat is " + mCompatibilityInfo);
 				Slog.i(TAG, "**** Updating config of " + this + ": new config is " + config + " new compat is " + compat);
 			}
@@ -2581,40 +2546,6 @@ public class Resources {
 			+ Integer.toHexString(id));*/
 	}
 
-	private TypedArray getCachedStyledAttributes(int len) {
-		synchronized (mAccessLock) {
-			TypedArray attrs = mCachedStyledAttributes;
-			if (attrs != null) {
-				mCachedStyledAttributes = null;
-				if (DEBUG_ATTRIBUTES_CACHE) {
-					mLastRetrievedAttrs = new RuntimeException("here");
-					mLastRetrievedAttrs.fillInStackTrace();
-				}
-
-				attrs.mLength = len;
-				int fullLen = len * AssetManager.STYLE_NUM_ENTRIES;
-				if (attrs.mData.length >= fullLen) {
-					return attrs;
-				}
-				attrs.mData = new int[fullLen];
-				attrs.mIndices = new int[1 + len];
-				return attrs;
-			}
-			if (DEBUG_ATTRIBUTES_CACHE) {
-				RuntimeException here = new RuntimeException("here");
-				here.fillInStackTrace();
-				if (mLastRetrievedAttrs != null) {
-					Log.i(TAG, "Allocated new TypedArray of " + len + " in " + this, here);
-					Log.i(TAG, "Last retrieved attributes here", mLastRetrievedAttrs);
-				}
-				mLastRetrievedAttrs = here;
-			}
-			return new TypedArray(this,
-					      new int[len * AssetManager.STYLE_NUM_ENTRIES],
-					      new int[1 + len], len);
-		}
-	}
-
 
 	/**
 	* Obtains styled attributes from the theme, if available, or unstyled
@@ -2629,16 +2560,5 @@ public class Resources {
 		}
 
 		return theme.obtainStyledAttributes(set, attrs, 0, 0);
-	}
-
-	private Resources() {
-		mAssets = AssetManager.getSystem();
-		// NOTE: Intentionally leaving this uninitialized (all values set
-		// to zero), so that anyone who tries to do something that requires
-		// metrics will get a very wrong value.
-		mConfiguration.setToDefaults();
-		mMetrics.setToDefaults();
-		updateConfiguration(null, null);
-		mAssets.ensureStringBlocks();
 	}
 }

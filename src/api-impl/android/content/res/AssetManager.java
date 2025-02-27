@@ -700,101 +700,28 @@ public final class AssetManager {
 	 */
 	private native final int loadResourceBagValue(int ident, int bagEntryId, TypedValue outValue,
 						      boolean resolve);
-	/*package*/ static final int STYLE_NUM_ENTRIES = 6;
+	/*package*/ static final int STYLE_NUM_ENTRIES = 7;
 	/*package*/ static final int STYLE_TYPE = 0;
 	/*package*/ static final int STYLE_DATA = 1;
 	/*package*/ static final int STYLE_ASSET_COOKIE = 2;
 	/*package*/ static final int STYLE_RESOURCE_ID = 3;
 	/*package*/ static final int STYLE_CHANGING_CONFIGURATIONS = 4;
 	/*package*/ static final int STYLE_DENSITY = 5;
-	/*package*/ /*native*/ final boolean applyStyle(long theme,
-							   int defStyleAttr, int defStyleRes, AttributeSet set,
-							   int[] inAttrs, int[] outValues, int[] outIndices) {
-		TypedValue value = new TypedValue();
-		XmlResourceParser parser = (XmlResourceParser)set;
-		if (defStyleRes == 0 && theme != 0 && loadThemeAttributeValue(theme, defStyleAttr, value, true) >= 0)
-			defStyleRes = value.data;
-		if (defStyleRes == 0 && set != null) {
-			defStyleRes = parser.getStyleAttribute();
-		}
+	/*package*/ static final int STYLE_SOURCE_RESOURCE_ID = 6;
 
-		outIndices[0] = 0;
-
-		Map<Integer,Integer> xmlCache = new HashMap<>();
-		if (set != null) {
-			for (int j=0; j<set.getAttributeCount(); j++) {
-				xmlCache.put(set.getAttributeNameResource(j), j);
-			}
-		}
-		for (int i = 0; i < inAttrs.length; i++) {
-			int d = i*AssetManager.STYLE_NUM_ENTRIES;
-			// reset values in case of cached array
-			int resId = inAttrs[i];
-			boolean found = false;
-			value.resourceId = 0;
-			value.type = -1;
-			value.data = 0;
-			value.assetCookie = -1;
-			while (true) {
-				if (resId == 0) {
-					value.type = 0;
-					value.data = 0;
-					value.resourceId = 0;
-					value.assetCookie = -1;
-					found = true;
-				} else if (xmlCache.containsKey(resId)) {
-					value.type = XmlBlock.nativeGetAttributeDataType(((XmlBlock.Parser)parser).mParseState, xmlCache.get(resId));
-					value.data = XmlBlock.nativeGetAttributeData(((XmlBlock.Parser)parser).mParseState, xmlCache.get(resId));
-					value.resourceId = 0;
-					value.assetCookie = -1;
-					if (value.type != TypedValue.TYPE_ATTRIBUTE)
-						found = true;
-				} else {
-					int block = -1;
-					if (theme != 0 && (value.type == TypedValue.TYPE_ATTRIBUTE || value.type == -1))
-						block = loadThemeAttributeValue(theme, resId, value, true);
-					if (block < 0 && defStyleRes != 0 && (value.type == TypedValue.TYPE_ATTRIBUTE || value.type == -1))
-						block = loadResourceBagValue(defStyleRes, resId, value, true);
-					if (block < 0 && value.type == TypedValue.TYPE_REFERENCE)
-						block = loadResourceValue(resId, (short)0, value, true);
-					if (block >= 0) {
-						found = true;
-					}
-				}
-				if (value.type == TypedValue.TYPE_REFERENCE && value.data != 0) {
-					String typeName = getResourceTypeName(value.data);
-					if ("style".equals(typeName) || "array".equals(typeName)) {
-						// style and array are complex types, which can't be stored in a TypedArray
-						value.resourceId = value.data;
-						break;
-					}
-				}
-				if ((value.type == TypedValue.TYPE_REFERENCE || value.type == TypedValue.TYPE_ATTRIBUTE) && value.data != resId) {
-					resId = value.data;
-				} else {
-					break;
-				}
-			}
-			if (found) {
-				outValues[d + AssetManager.STYLE_RESOURCE_ID] = value.resourceId;
-				outValues[d + AssetManager.STYLE_TYPE] = value.type;
-				outValues[d + AssetManager.STYLE_DATA] = value.data;
-				outValues[d + AssetManager.STYLE_ASSET_COOKIE] = value.assetCookie;
-				outIndices[++outIndices[0]] = i;
-			} else {
-				outValues[d+AssetManager.STYLE_RESOURCE_ID] = 0;
-				outValues[d+AssetManager.STYLE_TYPE] = 0;
-				outValues[d+AssetManager.STYLE_DATA] = 0;
-				outValues[d+AssetManager.STYLE_ASSET_COOKIE] = -1;
-			}
-		}
-		return true;
-	}
+	/*package*/ native static final void applyStyle(long theme, long parser,
+	                                                int defStyleAttr, int defStyleRes,
+	                                                int[] inAttrs, int length,
+	                                                long outValuesAddress, long outIndicesAddress);
 
 	/*package*/ native static final boolean resolveAttrs(long theme, int defStyleAttr,
 	                                                     int defStyleRes, int[] inValues,
 	                                                     int[] inAttrs, int[] outValues,
 	                                                     int[] outIndices);
+	/*package*/ native final boolean retrieveAttributes(long xmlParser,
+	                                                    int[] inAttrs, int length,
+	                                                    long outValuesAddress, long outIndicesAddress);
+
 	/*package*/ native final int getArraySize(int resource);
 	/*package*/ native final int retrieveArray(int resource, int[] outValues);
 	private native final int getStringBlockCount();

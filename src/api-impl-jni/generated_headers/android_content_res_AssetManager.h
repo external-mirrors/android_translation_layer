@@ -20,7 +20,7 @@ extern "C" {
 #undef android_content_res_AssetManager_DEBUG_REFS
 #define android_content_res_AssetManager_DEBUG_REFS 0L
 #undef android_content_res_AssetManager_STYLE_NUM_ENTRIES
-#define android_content_res_AssetManager_STYLE_NUM_ENTRIES 6L
+#define android_content_res_AssetManager_STYLE_NUM_ENTRIES 7L
 #undef android_content_res_AssetManager_STYLE_TYPE
 #define android_content_res_AssetManager_STYLE_TYPE 0L
 #undef android_content_res_AssetManager_STYLE_DATA
@@ -33,6 +33,8 @@ extern "C" {
 #define android_content_res_AssetManager_STYLE_CHANGING_CONFIGURATIONS 4L
 #undef android_content_res_AssetManager_STYLE_DENSITY
 #define android_content_res_AssetManager_STYLE_DENSITY 5L
+#undef android_content_res_AssetManager_STYLE_SOURCE_RESOURCE_ID
+#define android_content_res_AssetManager_STYLE_SOURCE_RESOURCE_ID 6L
 /*
  * Class:     android_content_res_AssetManager
  * Method:    getPooledString
@@ -211,11 +213,27 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValu
 
 /*
  * Class:     android_content_res_AssetManager
+ * Method:    applyStyle
+ * Signature: (JJII[IIJJ)V
+ */
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle
+  (JNIEnv *, jclass, jlong, jlong, jint, jint, jintArray, jint, jlong, jlong);
+
+/*
+ * Class:     android_content_res_AssetManager
  * Method:    resolveAttrs
  * Signature: (JII[I[I[I[I)Z
  */
 JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs
   (JNIEnv *, jclass, jlong, jint, jint, jintArray, jintArray, jintArray, jintArray);
+
+/*
+ * Class:     android_content_res_AssetManager
+ * Method:    retrieveAttributes
+ * Signature: (J[IIJJ)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_retrieveAttributes
+  (JNIEnv *, jobject, jlong, jintArray, jint, jlong, jlong);
 
 /*
  * Class:     android_content_res_AssetManager
