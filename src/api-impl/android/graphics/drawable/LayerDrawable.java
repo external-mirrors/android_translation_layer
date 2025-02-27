@@ -17,6 +17,7 @@
 package android.graphics.drawable;
 
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -106,13 +107,13 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 	}
 
 //	@Override
-	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs)
+	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs, Theme theme)
 	    throws XmlPullParserException, IOException {
 		//super.inflate(r, parser, attrs);
 
 		int type;
 
-		TypedArray a = r.obtainAttributes(attrs, com.android.internal.R.styleable.LayerDrawable);
+		TypedArray a = obtainAttributes(r, theme, attrs, com.android.internal.R.styleable.LayerDrawable);
 
 //		mOpacityOverride = a.getInt(com.android.internal.R.styleable.LayerDrawable_opacity, PixelFormat.UNKNOWN);
 
@@ -131,7 +132,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 				continue;
 			}
 
-			a = r.obtainAttributes(attrs,
+			a = obtainAttributes(r, theme, attrs,
 					       com.android.internal.R.styleable.LayerDrawableItem);
 
 			int left = a.getDimensionPixelOffset(
@@ -159,7 +160,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 					throw new XmlPullParserException(parser.getPositionDescription() + ": <item> tag requires a 'drawable' attribute or "
 									 + "child tag defining a drawable");
 				}
-				dr = Drawable.createFromXmlInner(r, parser, attrs);
+				dr = Drawable.createFromXmlInner(r, parser, attrs, theme);
 			}
 
 			if (dr != null)

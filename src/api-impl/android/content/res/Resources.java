@@ -2216,7 +2216,7 @@ public class Resources {
 		     try {
 			 XmlResourceParser rp = loadXmlResourceParser(
 				 file, id, value.assetCookie, "drawable");
-			 dr = Drawable.createFromXml(this, rp);
+			 dr = Drawable.createFromXml(this, rp, theme);
 			 rp.close();
 		     } catch (Exception e) {
 			 Trace.traceEnd(Trace.TRACE_TAG_RESOURCES);

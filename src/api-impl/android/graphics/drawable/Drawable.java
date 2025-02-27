@@ -14,6 +14,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.content.res.Resources.Theme;
+import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -154,6 +155,13 @@ public class Drawable {
 		return false;
 	}
 
+	protected static TypedArray obtainAttributes(Resources r, Theme theme, AttributeSet set, int[] attrs) {
+		if (theme != null)
+			return theme.obtainStyledAttributes(set, attrs, 0, 0);
+		else
+			return r.obtainAttributes(set, attrs);
+	}
+
 	public void clearColorFilter() {}
 
 	public final int getLevel() {return 0;}
@@ -202,12 +210,16 @@ public class Drawable {
 	public boolean isProjected () {return false;}
 
 	public static Drawable createFromXml(Resources resources, XmlResourceParser parser) throws XmlPullParserException, IOException {
+		return createFromXml(resources, parser, null);
+	}
+
+	public static Drawable createFromXml(Resources resources, XmlResourceParser parser, Theme theme) throws XmlPullParserException, IOException {
 		int type;
 		while ((type=parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT);
 		if (type != XmlPullParser.START_TAG)
 			throw new XmlPullParserException("No start tag found");
 
-		return createFromXmlInner(resources, parser, parser, null);
+		return createFromXmlInner(resources, parser, parser, theme);
 	}
 
 	public static Drawable createFromXmlInner(Resources resources, XmlPullParser parser, AttributeSet attrs) throws XmlPullParserException, IOException {
@@ -217,15 +229,15 @@ public class Drawable {
 	public static Drawable createFromXmlInner(Resources resources, XmlPullParser parser, AttributeSet attrs, Theme theme) throws XmlPullParserException, IOException {
 		if ("selector".equals(parser.getName())) {
 			StateListDrawable drawable = new StateListDrawable();
-			drawable.inflate(resources, parser, attrs, null);
+			drawable.inflate(resources, parser, attrs, theme);
 			return drawable;
 		} else if ("shape".equals(parser.getName())) {
 			GradientDrawable drawable = new GradientDrawable();
-			drawable.inflate(resources, parser, attrs);
+			drawable.inflate(resources, parser, attrs, theme);
 			return drawable;
 		} else if ("bitmap".equals(parser.getName())) {
 			BitmapDrawable drawable = new BitmapDrawable();
-			drawable.inflate(resources, parser, attrs, null);
+			drawable.inflate(resources, parser, attrs, theme);
 			return drawable;
 		} else if ("transition".equals(parser.getName())) {
 			return new Drawable();
@@ -234,11 +246,11 @@ public class Drawable {
 			return new ColorDrawable(0);
 		} else if ("vector".equals(parser.getName())) {
 			VectorDrawable drawable = new VectorDrawable();
-			drawable.inflate(resources, parser, attrs, null);
+			drawable.inflate(resources, parser, attrs, theme);
 			return drawable;
 		} else if ("layer-list".equals(parser.getName())) {
 			LayerDrawable drawable = new LayerDrawable();
-			drawable.inflate(resources, parser, attrs);
+			drawable.inflate(resources, parser, attrs, theme);
 			return drawable;
 		} else if ("nine-patch".equals(parser.getName())) {
 			return new NinePatchDrawable(resources, null, null, null, null);

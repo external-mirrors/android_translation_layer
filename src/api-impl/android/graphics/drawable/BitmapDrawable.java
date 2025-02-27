@@ -40,10 +40,12 @@ public class BitmapDrawable extends Drawable {
 
 	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs, Theme theme)
 			throws XmlPullParserException, IOException {
-		final TypedArray a = r.obtainAttributes(attrs, R.styleable.BitmapDrawable);
+		final TypedArray a = obtainAttributes(r, theme, attrs, R.styleable.BitmapDrawable);
 		if (a.hasValue(R.styleable.BitmapDrawable_src)) {
+			try {
 			bitmap = ((BitmapDrawable)a.getDrawable(R.styleable.BitmapDrawable_src)).bitmap;
 			paintable = bitmap.getTexture();
+			} catch (java.lang.Exception e) {e.printStackTrace();}
 		}
 		a.recycle();
 	}

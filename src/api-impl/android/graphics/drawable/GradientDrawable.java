@@ -18,6 +18,7 @@ package android.graphics.drawable;
 
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -850,12 +851,12 @@ public class GradientDrawable extends Drawable {
 	}
 
 	public void inflate(Resources r, XmlPullParser parser,
-			    AttributeSet attrs)
+			    AttributeSet attrs, Theme theme)
 	    throws XmlPullParserException, IOException {
 
 		final GradientState st = mGradientState;
 
-		TypedArray a = r.obtainAttributes(attrs,
+		TypedArray a = obtainAttributes(r, theme, attrs,
 						  com.android.internal.R.styleable.GradientDrawable);
 
 		// super.inflateWithAttributes(r, parser, a,
@@ -904,7 +905,7 @@ public class GradientDrawable extends Drawable {
 			String name = parser.getName();
 
 			if (name.equals("size")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.GradientDrawableSize);
 				int width = a.getDimensionPixelSize(
 				    com.android.internal.R.styleable.GradientDrawableSize_width, -1);
@@ -913,7 +914,7 @@ public class GradientDrawable extends Drawable {
 				a.recycle();
 				setSize(width, height);
 			} else if (name.equals("gradient")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.GradientDrawableGradient);
 				int startColor = a.getColor(
 				    com.android.internal.R.styleable.GradientDrawableGradient_startColor, 0);
@@ -1009,14 +1010,14 @@ public class GradientDrawable extends Drawable {
 				}
 
 			} else if (name.equals("solid")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.GradientDrawableSolid);
 				int argb = a.getColor(
 				    com.android.internal.R.styleable.GradientDrawableSolid_color, 0);
 				a.recycle();
 				setColor(argb);
 			} else if (name.equals("stroke")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.GradientDrawableStroke);
 				int width = a.getDimensionPixelSize(
 				    com.android.internal.R.styleable.GradientDrawableStroke_width, 0);
@@ -1033,7 +1034,7 @@ public class GradientDrawable extends Drawable {
 				}
 				a.recycle();
 			} else if (name.equals("corners")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.DrawableCorners);
 				int radius = a.getDimensionPixelSize(
 				    com.android.internal.R.styleable.DrawableCorners_radius, 0);
@@ -1057,7 +1058,7 @@ public class GradientDrawable extends Drawable {
 				}
 				a.recycle();
 			} else if (name.equals("padding")) {
-				a = r.obtainAttributes(attrs,
+				a = obtainAttributes(r, theme, attrs,
 						       com.android.internal.R.styleable.GradientDrawablePadding);
 				mPadding = new Rect(
 				    a.getDimensionPixelOffset(

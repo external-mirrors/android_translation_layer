@@ -234,7 +234,7 @@ public class AnimationDrawable extends DrawableContainer implements Runnable, An
 /*	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs)
 	    throws XmlPullParserException, IOException {
 
-		TypedArray a = r.obtainAttributes(attrs,
+		TypedArray a = obtainAttributes(r, theme, attrs,
 						  com.android.internal.R.styleable.AnimationDrawable);
 
 		super.inflateWithAttributes(r, parser, a,
@@ -262,7 +262,7 @@ public class AnimationDrawable extends DrawableContainer implements Runnable, An
 				continue;
 			}
 
-			a = r.obtainAttributes(attrs, com.android.internal.R.styleable.AnimationDrawableItem);
+			a = obtainAttributes(r, theme, attrs, com.android.internal.R.styleable.AnimationDrawableItem);
 			int duration = a.getInt(
 			    com.android.internal.R.styleable.AnimationDrawableItem_duration, -1);
 			if (duration < 0) {
@@ -287,7 +287,7 @@ public class AnimationDrawable extends DrawableContainer implements Runnable, An
 									 +
 									 " defining a drawable");
 				}
-				dr = Drawable.createFromXmlInner(r, parser, attrs);
+				dr = Drawable.createFromXmlInner(r, parser, attrs, theme);
 			}
 
 			mAnimationState.addFrame(dr, duration);
