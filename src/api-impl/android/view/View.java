@@ -847,6 +847,7 @@ public class View implements Drawable.Callback {
 	private int oldWidthMeasureSpec = -1;
 	private int oldHeightMeasureSpec = -1;
 	private boolean layoutRequested = true;
+	private boolean layoutPending = true;
 	private int oldWidth;
 	private int oldHeight;
 	protected boolean haveCustomMeasure = true;
@@ -1366,6 +1367,7 @@ public class View implements Drawable.Callback {
 			oldHeightMeasureSpec = heightMeasureSpec;
 			onMeasure(widthMeasureSpec, heightMeasureSpec);
 			layoutRequested = false;
+			layoutPending = true;
 		}
 	}
 
@@ -1441,8 +1443,10 @@ public class View implements Drawable.Callback {
 		native_layout(widget, l, t, r, b);
 	}
 
-	/** Helper function to be called from GTKs LayoutManager via JNI */
-	private void layoutInternal(int width, int height) {
+	/** Helper function to be called from GTK's LayoutManager via JNI
+	 * @return true if the layout changed
+	 */
+	private boolean layoutInternal(int width, int height) {
 		// if the layout is triggered from a native widget, we might not have measured yet
 		if (width != getMeasuredWidth() || height != getMeasuredHeight()) {
 			measure(width | MeasureSpec.EXACTLY, height | MeasureSpec.EXACTLY);
@@ -1452,9 +1456,15 @@ public class View implements Drawable.Callback {
 			onSizeChanged(width, height, oldWidth, oldHeight);
 		bottom = top + height;
 		right = left + width;
-		onLayout(changed, 0, 0, width, height);
-		oldWidth = width;
-		oldHeight = height;
+		if (changed || layoutPending) {
+			layoutPending = false;
+			onLayout(changed, 0, 0, width, height);
+			oldWidth = width;
+			oldHeight = height;
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	public int getLeft() {

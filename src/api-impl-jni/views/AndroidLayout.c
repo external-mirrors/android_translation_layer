@@ -70,9 +70,18 @@ static void android_layout_allocate(GtkLayoutManager *layout_manager, GtkWidget 
 		height = layout->real_height;
 	}
 
-	(*env)->CallVoidMethod(env, layout->view, handle_cache.view.layoutInternal, width, height);
+	jboolean layoutChanged = (*env)->CallBooleanMethod(env, layout->view, handle_cache.view.layoutInternal, width, height);
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+	if (!layoutChanged) {  // No change in layout. Reapply the current allocations
+		for (GtkWidget *child = gtk_widget_get_first_child(widget); child; child = gtk_widget_get_next_sibling(child)) {
+			graphene_matrix_t transform_matrix;
+			if (gtk_widget_compute_transform(child, widget, &transform_matrix)) {
+				GskTransform *transform = gsk_transform_matrix(NULL, &transform_matrix);
+				gtk_widget_allocate(child, gtk_widget_get_width(child), gtk_widget_get_height(child), gtk_widget_get_baseline(child), transform);
+			}
+		}
+	}
 }
 
 static GtkSizeRequestMode android_layout_get_request_mode(GtkLayoutManager *layout_manager, GtkWidget *widget)
