@@ -122,6 +122,8 @@ public class PropertyValuesHolder {
 			Class<?> clazz;
 			if (values_float != null) {
 				clazz = float.class;
+			} else if (values_int != null) {
+				clazz = int.class;
 			} else {
 				clazz = values_object[0].getClass();
 			}
