@@ -4,6 +4,8 @@ public class DecelerateInterpolator implements Interpolator{
 
 	private float factor = 1.0f;
 
+	public DecelerateInterpolator() {}
+
 	public DecelerateInterpolator(float value) {
 		factor = value;
 	}
