@@ -37,7 +37,6 @@ JNIEXPORT void JNICALL Java_android_widget_Button_native_1setText(JNIEnv *env, j
 
 	const char *nativeText = ((*env)->GetStringUTFChars(env, text, NULL));
 	gtk_label_set_text(box_get_label(env, gtk_button_get_child(button)), nativeText);
-	gtk_button_set_label(button, nativeText);
 	((*env)->ReleaseStringUTFChars(env, text, nativeText));
 }
 
