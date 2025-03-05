@@ -30,6 +30,15 @@ enum {
 #define JAVA_COOKIE(cookie) (cookie != -1 ? (jint)(cookie + 1) : -1)
 #define NATIVE_COOKIE(cookie) (cookie != -1 ? (ApkAssetsCookie)(cookie - 1) : -1)
 
+void _AssetManager_unlock(struct AssetManager ** asset_manager)
+{
+	AssetManager_unlock(*asset_manager);
+}
+
+#define AM_SCOPEDLOCK(asset_manager) \
+	AssetManager_lock(asset_manager); \
+	__attribute__((__cleanup__(_AssetManager_unlock))) struct AssetManager *_RESERVED_am = asset_manager;
+
 #define ASSET_DIR "assets/"
 char *get_app_data_dir();
 
@@ -38,6 +47,7 @@ JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_openAsset(JNIEnv *
 	const char *file_name = _CSTRING(_file_name);
 
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct Asset *asset = AssetManager_openNonAsset(asset_manager, file_name, mode);
 	android_log_printf(ANDROID_LOG_VERBOSE, "["__FILE__"]", "AssetManager_openAsset(%p, %s, %d) returns %p\n", asset_manager, file_name, mode, asset);
 
@@ -53,6 +63,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_openAssetFd(JNIEnv 
 	const char *file_name = _CSTRING(_file_name);
 
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct Asset *asset = AssetManager_openNonAsset(asset_manager, file_name, mode);
 	android_log_printf(ANDROID_LOG_VERBOSE, "["__FILE__"]", "AssetManager_openAssetFd(%p, %s, %d, ...)\n", asset_manager, file_name, mode);
 
@@ -66,6 +77,9 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_openAssetFd(JNIEnv 
 
 JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_getAssetLength(JNIEnv *env, jobject this, jlong _asset)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	struct Asset *asset = _PTR(_asset);
 	return Asset_getLength(asset);
 }
@@ -79,6 +93,8 @@ JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_getAssetRemainingL
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_readAsset(JNIEnv *env, jobject this, jlong _asset, jbyteArray b, jlong offset, jlong length)
 {
 	int ret;
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 
 	struct Asset *asset = _PTR(_asset);
 	jbyte *array = _GET_BYTE_ARRAY_ELEMENTS(b);
@@ -92,6 +108,8 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_readAssetChar(JNIEn
 {
 	int ret;
 	uint8_t byte;
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 
 	struct Asset *asset = _PTR(_asset);
 	ret = Asset_read(asset, &byte, 1);
@@ -100,12 +118,18 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_readAssetChar(JNIEn
 
 JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_seekAsset(JNIEnv *env, jobject this, jlong _asset, jlong offset, jint whence)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	struct Asset *asset = _PTR(_asset);
 	return Asset_seek(asset, offset, whence);
 }
 
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_destroyAsset(JNIEnv *env, jobject this, jlong _asset)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	struct Asset *asset = _PTR(_asset);
 	Asset_delete(asset);
 }
@@ -124,6 +148,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_init(JNIEnv *env, j
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_native_1setApkAssets(JNIEnv *env, jobject this, jobjectArray paths, int num_assets)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const struct ApkAssets* apk_assets[num_assets];
 	for (int i = 0; i < num_assets; i++) {
 		jstring path_jstr = (jstring)((*env)->GetObjectArrayElement(env, paths, i));
@@ -140,6 +165,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_native_1setApkAsset
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceValue(JNIEnv *env, jobject this, jint ident, jshort density, jobject outValue, jboolean resolve)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	uint32_t resId = ident;
 	struct Res_value value;
 	uint32_t outSpecFlags;
@@ -172,6 +198,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceValue(J
 JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_getArrayStringResource(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const struct ResolvedBag* bag = AssetManager_getBag(asset_manager, ident);
 	jobjectArray array = (*env)->NewObjectArray(env, bag->entry_count, (*env)->FindClass(env, "java/lang/String"), NULL);
 	for (int i = 0; i < bag->entry_count; i++) {
@@ -204,6 +231,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getResourceIdentifi
 	uint32_t ret;
 
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	if (name_jstr)
 		name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
 	if (type_jstr)
@@ -224,6 +252,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getResourceIdentifi
 JNIEXPORT jobject JNICALL Java_android_content_res_AssetManager_getPooledString(JNIEnv *env, jobject this, jint cookie, jint index)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const struct ResStringPool *string_pool = AssetManager_getStringPoolForCookie(asset_manager, NATIVE_COOKIE(cookie));
 	size_t len;
 	const char16_t *string = ResStringPool_stringAt(string_pool, index, &len);
@@ -233,23 +262,31 @@ JNIEXPORT jobject JNICALL Java_android_content_res_AssetManager_getPooledString(
 JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_newTheme(JNIEnv *env, jobject this)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct Theme *theme = AssetManager_newTheme(asset_manager);
 	return _INTPTR(theme);
 }
 
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_deleteTheme(JNIEnv *env, jobject this, jlong theme_ptr)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	Theme_delete(_PTR(theme_ptr));
 }
 
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyThemeStyle(JNIEnv *env, jobject this, jlong theme_ptr, jint styleRes, jboolean force)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	Theme_applyStyle(_PTR(theme_ptr), styleRes, force);
 }
 
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadThemeAttributeValue(JNIEnv *env, jobject this, jlong theme_ptr, jint ident, jobject outValue, jboolean resolve)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct Theme *theme = _PTR(theme_ptr);
 	struct Res_value value;
 	uint32_t outSpecFlags;
@@ -279,12 +316,15 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadThemeAttributeV
 }
 
 /* function ported from AOSP - Copyright 2006, The Android Open Source Project */
-JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JNIEnv *env, jclass this,
+JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JNIEnv *env, jobject this,
                                                                               jlong theme_ptr, jint def_style_attr,
                                                                               jint def_style_res, jintArray java_values,
                                                                               jintArray java_attrs, jintArray out_java_values,
                                                                               jintArray out_java_indices)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	struct Theme *theme = _PTR(theme_ptr);
 	const jsize attrs_len = (*env)->GetArrayLength(env, java_attrs);
 	const jsize out_values_len = (*env)->GetArrayLength(env, out_java_values);
@@ -354,36 +394,43 @@ JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_retrieveAttribu
                                                                                     jintArray java_attrs, jint attrs_len,
                                                                                     long out_values, long out_indices)
 {
-       struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
-       struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+	struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
 
-       jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
+	jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
 
-       return RetrieveAttributes(asset_manager, parser, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
+	jboolean ret = RetrieveAttributes(asset_manager, parser, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
 
-       (*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
+	(*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
+
+	return ret;
 }
 
-JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle(JNIEnv *env, jclass this,
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle(JNIEnv *env, jobject this,
                                                                         jlong theme_ptr, jlong parser_ptr,
                                                                         jint def_style_attr, jint def_style_res,
                                                                         jintArray java_attrs, jint attrs_len,
                                                                         long out_values, long out_indices)
 {
-       struct Theme *theme = _PTR(theme_ptr);
-       struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 
-       jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
+	struct Theme *theme = _PTR(theme_ptr);
+	struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
 
-       ApplyStyle(theme, parser, def_style_attr, def_style_res, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
+	jint *attrs = (*env)->GetIntArrayElements(env, java_attrs, 0);
 
-       (*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
+	ApplyStyle(theme, parser, def_style_attr, def_style_res, (uint32_t *)attrs, attrs_len, (uint32_t *)_PTR(out_values), (uint32_t *)_PTR(out_indices));
+
+	(*env)->ReleaseIntArrayElements(env, java_attrs, attrs, JNI_ABORT);
 }
 
 
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getArraySize(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const struct ResolvedBag* bag = AssetManager_getBag(asset_manager, ident);
 	return bag->entry_count;
 }
@@ -391,6 +438,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_getArraySize(JNIEnv
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_retrieveArray(JNIEnv *env, jobject this, jint ident, jintArray outArray)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 
 	jint *array = (*env)->GetIntArrayElements(env, outArray, NULL);
 	const struct ResolvedBag* bag = AssetManager_getBag(asset_manager, ident);
@@ -417,6 +465,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_retrieveArray(JNIEn
 JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceName(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct resource_name res_name;
 	gchar *type8 = NULL;
 	gchar *entry8 = NULL;
@@ -444,6 +493,7 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceName(
 JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourcePackageName(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct resource_name res_name;
 	bool ret = AssetManager_getResourceName(asset_manager, ident, &res_name);
 	return (ret && res_name.package) ? (*env)->NewStringUTF(env, res_name.package) : NULL;
@@ -452,6 +502,7 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourcePacka
 JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceTypeName(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct resource_name res_name;
 	bool ret = AssetManager_getResourceName(asset_manager, ident, &res_name);
 	if(!ret)
@@ -464,6 +515,7 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceTypeN
 JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceEntryName(JNIEnv *env, jobject this, jint ident)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	struct resource_name res_name;
 	bool ret = AssetManager_getResourceName(asset_manager, ident, &res_name);
 	if(!ret)
@@ -476,6 +528,7 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceEntry
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValue(JNIEnv *env, jobject this, jint ident, jint bagEntryId, jobject outValue, jboolean resolve)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	ApkAssetsCookie cookie = -1;
 
 	const struct ResolvedBag* bag = AssetManager_getBag(asset_manager, ident);
@@ -511,8 +564,11 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValu
 	return JAVA_COOKIE(cookie);
 }
 
-JNIEXPORT void JNICALL Java_android_content_res_AssetManager_copyTheme(JNIEnv *env, jclass class, jlong dest, jlong src)
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_copyTheme(JNIEnv *env, jobject this, jlong dest, jlong src)
 {
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
+
 	Theme_setTo(_PTR(dest), _PTR(src));
 }
 
@@ -524,6 +580,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_setConfiguration(
     jint screenLayout, jint uiMode, jint majorVersion)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const struct ResTable_config config = {
 		.mcc = mcc,
 		.mnc = mnc,
@@ -587,6 +644,7 @@ JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_list(JNIEnv
 JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_openXmlAssetNative(JNIEnv *env, jobject this, jint cookie, jstring _file_name)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	const char *file_name = (*env)->GetStringUTFChars(env, _file_name, NULL);
 	struct Asset *asset = AssetManager_openNonAsset(asset_manager, file_name, ACCESS_BUFFER);
 	(*env)->ReleaseStringUTFChars(env, _file_name, file_name);
@@ -600,6 +658,7 @@ JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_openXmlAssetNative
 JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_getLocales(JNIEnv *env, jobject this)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 	char **locales = AssetManager_getLocales(asset_manager, false, true);
 	int i = 0;
 	while (locales[i] != NULL) i++;

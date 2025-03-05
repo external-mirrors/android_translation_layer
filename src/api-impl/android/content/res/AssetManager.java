@@ -709,12 +709,12 @@ public final class AssetManager {
 	/*package*/ static final int STYLE_DENSITY = 5;
 	/*package*/ static final int STYLE_SOURCE_RESOURCE_ID = 6;
 
-	/*package*/ native static final void applyStyle(long theme, long parser,
+	/*package*/ native final void applyStyle(long theme, long parser,
 	                                                int defStyleAttr, int defStyleRes,
 	                                                int[] inAttrs, int length,
 	                                                long outValuesAddress, long outIndicesAddress);
 
-	/*package*/ native static final boolean resolveAttrs(long theme, int defStyleAttr,
+	/*package*/ native final boolean resolveAttrs(long theme, int defStyleAttr,
 	                                                     int defStyleRes, int[] inValues,
 	                                                     int[] inAttrs, int[] outValues,
 	                                                     int[] outIndices);
@@ -749,8 +749,8 @@ public final class AssetManager {
 
 	private native final long newTheme();
 	private native final void deleteTheme(long theme);
-	/*package*/ native static final void applyThemeStyle(long theme, int styleRes, boolean force);
-	/*package*/ native static final void copyTheme(long dest, long source);
+	/*package*/ native final void applyThemeStyle(long theme, int styleRes, boolean force);
+	/*package*/ native final void copyTheme(long dest, long source);
 	/*package*/ native final int loadThemeAttributeValue(long theme, int ident,
 								    TypedValue outValue,
 								    boolean resolve);

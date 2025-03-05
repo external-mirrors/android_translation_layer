@@ -1246,7 +1246,7 @@ public class Resources {
 		 * @param other The existing Theme to copy from.
 		 */
 		public void setTo(Theme other) {
-			AssetManager.copyTheme(this.theme, other.theme);
+			getAssets().copyTheme(this.theme, other.theme);
 		}
 
 		/**
@@ -1355,7 +1355,7 @@ public class Resources {
 			// out the attributes from the XML file (applying type information
 			// contained in the resources and such).
 			XmlResourceParser parser = (XmlResourceParser)set;
-			AssetManager.applyStyle(theme, set != null ? ((XmlBlock.Parser)set).mParseState : 0,
+			getAssets().applyStyle(theme, set != null ? ((XmlBlock.Parser)set).mParseState : 0,
 			                        defStyleAttr, defStyleRes,
 			                        attrs, attrs.length, array.mDataAddress, array.mIndicesAddress);
 			array.mRsrcs = attrs;
@@ -1418,7 +1418,7 @@ public class Resources {
 			}
 
 			final TypedArray array = TypedArray.obtain(Resources.this, len);
-			AssetManager.resolveAttrs(theme, 0, 0, values, attrs, array.mData, array.mIndices);
+			getAssets().resolveAttrs(theme, 0, 0, values, attrs, array.mData, array.mIndices);
 			array.mTheme = this;
 			array.mXml = null;
 
