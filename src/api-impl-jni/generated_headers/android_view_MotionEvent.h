@@ -453,14 +453,6 @@ JNIEXPORT void JNICALL Java_android_view_MotionEvent_nativeGetPointerProperties
 JNIEXPORT void JNICALL Java_android_view_MotionEvent_nativeScale
   (JNIEnv *, jclass, jint, jfloat);
 
-/*
- * Class:     android_view_MotionEvent
- * Method:    nativeTransform
- * Signature: (ILandroid/graphics/Matrix;)V
- */
-JNIEXPORT void JNICALL Java_android_view_MotionEvent_nativeTransform
-  (JNIEnv *, jclass, jint, jobject);
-
 #ifdef __cplusplus
 }
 #endif

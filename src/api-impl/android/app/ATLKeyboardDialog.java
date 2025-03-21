@@ -1,0 +1,12 @@
+package android.app;
+
+import android.content.Context;
+
+public class ATLKeyboardDialog extends Dialog {
+	@Override
+	protected native long nativeInit();
+
+	public ATLKeyboardDialog(Context context) {
+		super(context);
+	}
+}

@@ -37,6 +37,7 @@ srcs = [
 	'android/app/ApplicationErrorReport.java',
 	'android/app/ApplicationExitInfo.java',
 	'android/app/Dialog.java',
+	'android/app/ATLKeyboardDialog.java',
 	'android/app/DownloadManager.java',
 	'android/app/Fragment.java',
 	'android/app/FragmentManager.java',
