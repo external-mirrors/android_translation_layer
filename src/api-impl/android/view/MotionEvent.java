@@ -1363,7 +1363,8 @@ public final class MotionEvent extends InputEvent {
 							      int pointerIndex, PointerProperties outPointerProperties);
 
 	private static native void nativeScale(int nativePtr, float scale);
-	private static native void nativeTransform(int nativePtr, Matrix matrix);
+	private static /* native */ void nativeTransform(int nativePtr, Matrix matrix) {
+	}
 
 	private static final int X_OFFSET = 0;
 	private static final int Y_OFFSET = 1;

@@ -45,6 +45,16 @@ portal_openuri = gnome.gdbus_codegen('portal-openuri',
                                      'src/api-impl-jni/content/org.freedesktop.portal.OpenURI.xml',
                                      interface_prefix: 'org.freedesktop.portal')
 
+extra_deps = []
+extra_jni_srcs = []
+
+layer_shell_dep = dependency('gtk4-layer-shell-0', required : false)
+if layer_shell_dep.found()
+  extra_deps = [ layer_shell_dep ]
+  extra_jni_srcs = [ 'src/api-impl-jni/app/android_app_ATLKeyboardDialog.c' ]
+  add_project_arguments('-DATL_HAS_OSK', language: 'c')
+endif
+
 # libandroid
 libandroid_so = shared_library('android', [
                                           	'src/libandroid/asset_manager.c',
@@ -70,6 +80,11 @@ libandroid_so = shared_library('android', [
                                           	'-Wl,-z,lazy',  # outdated Nvidia driver version 340 lacks EGL symbols
                                           ])
 
+wayland_protos_dep = dependency('wayland-protocols', version: '>=1.12')
+
+# wayland protocols for osk
+subdir('protocol')
+
 libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/android_app_NativeActivity.c',
                                                                   	'src/api-impl-jni/android_content_res_AssetManager.c',
@@ -85,6 +100,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/app/android_app_Dialog.c',
                                                                   	'src/api-impl-jni/app/android_app_NotificationManager.c',
                                                                   	'src/api-impl-jni/app/android_app_WallpaperManager.c',
+                                                                        'src/api-impl-jni/android_inputmethodservice_InputMethodService.c',
                                                                   	'src/api-impl-jni/AssetInputStream.c',
                                                                   	'src/api-impl-jni/audio/android_media_AudioTrack.c',
                                                                   	'src/api-impl-jni/audio/android_media_SoundPool.c',
@@ -138,15 +154,19 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_TextView.c',
                                                                   	mpris,
                                                                   	portal_openuri,
+                                                                        wl_proto_headers,
+                                                                        wl_proto_sources,
+                                                                        extra_jni_srcs,
                                                                   ] + marshal_files,
                                                                   install: true,
                                                                   install_dir : get_option('libdir') / 'java/dex/android_translation_layer/natives',
                                                                   install_rpath: '$ORIGIN/:' + get_option('prefix') / get_option('libdir') / 'art',
                                                                   dependencies: [
+                                                                        extra_deps,
                                                                   	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
                                                                   	dependency('libportal'), dependency('sqlite3'), dependency('libavcodec', version: '>=59'), dependency('libdrm'),
                                                                   	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
-                                                                  	libandroidfw_dep
+                                                                  	libandroidfw_dep, wayland_protos_dep
                                                                   ],
                                                                   link_with: [ libandroid_so ],
                                                                   link_args: [

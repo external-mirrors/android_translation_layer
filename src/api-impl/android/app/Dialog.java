@@ -15,7 +15,7 @@ import android.view.Window;
 public class Dialog implements Window.Callback, DialogInterface {
 	protected long nativePtr;
 
-	private native long nativeInit();
+	protected native long nativeInit();
 	private native void nativeSetTitle(long ptr, String title);
 	private native void nativeSetContentView(long ptr, long widget);
 	private native void nativeShow(long ptr);

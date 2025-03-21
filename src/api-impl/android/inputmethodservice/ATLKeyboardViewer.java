@@ -29,6 +29,11 @@ public class ATLKeyboardViewer extends Activity {
 			System.exit(1);
 		}
 
-		ims.launch_keyboard();
+		boolean is_layershell = true;
+
+		if (extras.containsKey("layershell") && extras.getString("layershell").equals("off"))
+			is_layershell = false;
+
+		ims.launch_keyboard(is_layershell);
 	}
 }

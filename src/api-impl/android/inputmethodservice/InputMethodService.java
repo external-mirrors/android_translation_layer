@@ -1,6 +1,8 @@
 package android.inputmethodservice;
 
 import android.app.Dialog;
+import android.app.Dialog;
+import android.app.ATLKeyboardDialog;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -30,38 +32,58 @@ public class InputMethodService extends AbstractInputMethodService {
 	private Dialog kb_dialog;
 
 	class ATLInputConnection extends BaseInputConnection {
+		protected long nativePtr;
+
+		private native long nativeInit();
+		private native boolean nativeSetCompositingText(long ptr, String text, int newCursorPosition);
+		private native boolean nativeSetCompositingRegion(long ptr, int start, int end);
+		private native boolean nativeFinishComposingText(long ptr);
+		private native boolean nativeCommitText(long ptr, String text, int newCursorPosition);
+		private native boolean nativeDeleteSurroundingText(long ptr, int beforeLength, int afterLength);
+		private native boolean nativeSetSelection(long ptr, int start, int end);
+		private native boolean nativeSendKeyEvent(long ptr, long time, long key, long state);
+
+
 		ATLInputConnection() {
 			super(null, false);
+			nativePtr = nativeInit();
 		}
 
 		@Override
 		public boolean setComposingText(CharSequence text, int newCursorPosition) {
-			System.out.println("softkeyboard preview: setComposingText(\""+text+"\", "+newCursorPosition+")");
-			return true;
+			return nativeSetCompositingText(nativePtr, text.toString(), newCursorPosition);
+		}
+
+		@Override
+		public boolean setComposingRegion(int start, int end) {
+			return nativeSetCompositingRegion(nativePtr, start, end);
 		}
 
 		@Override
 		public boolean finishComposingText() {
-			System.out.println("softkeyboard preview: finishComposingText()");
-			return true;
+			return nativeFinishComposingText(nativePtr);
 		}
 
 		@Override
 		public boolean commitText(CharSequence text, int newCursorPosition) {
-			System.out.println("softkeyboard preview: commitText(\""+text+"\", "+newCursorPosition+")");
-			return true;
+			return nativeCommitText(nativePtr, text.toString(), newCursorPosition);
 		}
 
 		@Override
 		public boolean deleteSurroundingText(int beforeLength, int afterLength) {
-			System.out.println("softkeyboard preview: deleteSurroundingText("+beforeLength+", "+afterLength+")");
-			return true;
+			System.out.println("ATLKeyboardIMS: deleteSurroundingText("+ beforeLength + ", " + afterLength +")");
+			return nativeDeleteSurroundingText(nativePtr, beforeLength, afterLength);
+		}
+
+		@Override
+		public boolean setSelection(int start, int end) {
+			return nativeSetSelection(nativePtr, start, end);
 		}
 
 		@Override
 		public boolean sendKeyEvent(KeyEvent event) {
 			System.out.println("softkeyboard preview: sendKeyEvent("+event+")");
-			return true;
+			return nativeSendKeyEvent(nativePtr, event.getEventTime(), event.getKeyCode(), event.getAction());
 		}
 
 		/* these functions are noop on AOSP by default, so we just add a print for debugging purposes and still return false */
@@ -84,8 +106,11 @@ public class InputMethodService extends AbstractInputMethodService {
 		super(new Context());
 	}
 
-	public void launch_keyboard() {
-		kb_dialog = new Dialog(this);
+	public void launch_keyboard(boolean is_layershell) {
+		if (is_layershell)
+			kb_dialog = new ATLKeyboardDialog(this);
+		else
+			kb_dialog = new Dialog(this);
 
 		View decorview = kb_dialog.getWindow().getDecorView();
 		decorview.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
@@ -138,7 +163,7 @@ public class InputMethodService extends AbstractInputMethodService {
 	}
 
 	public InputBinding getCurrentInputBinding() {
-		return new InputBinding(new ATLInputConnection(), null, 0, 0);
+		return new InputBinding(input_connection, null, 0, 0);
 	}
 
 	public IBinder onBind(Intent intent) {
