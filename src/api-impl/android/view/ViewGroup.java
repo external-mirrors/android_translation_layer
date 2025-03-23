@@ -136,14 +136,27 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void detachViewFromParent(int index) {
-		removeViewInternal(children.get(index));
+		children.remove(index).parent = null;
 	}
 
 	public void attachViewToParent(View view, int index, LayoutParams params) {
-		addViewInternal(view, index, params);
+		if (!checkLayoutParams(params))
+			params = generateLayoutParams(params);
+
+		view.parent = this;
+		view.setLayoutParams(params);
+		if (index < 0)
+			index = children.size();
+		children.add(index, view);
 	}
 
 	protected void removeDetachedView(View child, boolean animate) {
+		native_removeView(widget, child.widget);
+		if (isAttachedToWindow())
+			child.detachFromWindowInternal();
+		if (onHierarchyChangeListener != null) {
+			onHierarchyChangeListener.onChildViewRemoved(this, child);
+		}
 	}
 
 	protected native void native_addView(long widget, long child, int index, LayoutParams params);
@@ -373,7 +386,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void detachViewFromParent(View view) {
-		removeView(view);
+		children.remove(view);
+		view.parent = null;
 	}
 
 	public void setTouchscreenBlocksFocus(boolean touchscreenBlocksFocus) {}
