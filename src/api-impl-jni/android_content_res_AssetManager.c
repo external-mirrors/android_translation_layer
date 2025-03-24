@@ -392,7 +392,7 @@ JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JN
 JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_retrieveAttributes(JNIEnv *env, jobject this,
                                                                                     jlong parser_ptr,
                                                                                     jintArray java_attrs, jint attrs_len,
-                                                                                    long out_values, long out_indices)
+                                                                                    jlong out_values, jlong out_indices)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
 	AM_SCOPEDLOCK(asset_manager)
@@ -411,7 +411,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle(JNIEnv *
                                                                         jlong theme_ptr, jlong parser_ptr,
                                                                         jint def_style_attr, jint def_style_res,
                                                                         jintArray java_attrs, jint attrs_len,
-                                                                        long out_values, long out_indices)
+                                                                        jlong out_values, jlong out_indices)
 {
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
 	AM_SCOPEDLOCK(asset_manager)
