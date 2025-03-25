@@ -1732,7 +1732,15 @@ public class View implements Drawable.Callback {
 
 	public void setOnCreateContextMenuListener (View.OnCreateContextMenuListener l) {}
 
-	public void startAnimation(Animation animation) {}
+	protected void onAnimationStart() {}
+
+	protected void onAnimationEnd() {}
+
+	public void startAnimation(Animation animation) {
+		onAnimationStart();
+		animation.start();
+		onAnimationEnd();
+	}
 
 	public void getDrawingRect(Rect rect) {
 		rect.left = getScrollX();

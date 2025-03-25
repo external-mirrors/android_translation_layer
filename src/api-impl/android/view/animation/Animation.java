@@ -1,8 +1,5 @@
 package android.view.animation;
 
-import android.os.Handler;
-import android.os.Looper;
-
 public class Animation {
 
 	public interface AnimationListener {
@@ -10,6 +7,8 @@ public class Animation {
 		public void onAnimationRepeat(Animation animation);
 		public void onAnimationStart(Animation animation);
 	}
+
+	private AnimationListener listener;
 
 	public void setDuration(long durationMillis) {}
 
@@ -23,12 +22,7 @@ public class Animation {
 	public void setStartOffset(long offset) {}
 
 	public void setAnimationListener(AnimationListener l) {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				l.onAnimationEnd(Animation.this); // FIXME
-			}
-		});
+		this.listener = l;
 	}
 
 	public void setRepeatCount(int count) {}
@@ -37,5 +31,14 @@ public class Animation {
 
 	public void reset() {}
 
-	public void start() {}
+	public void start() {
+		if (listener != null) {
+			listener.onAnimationStart(this);
+			listener.onAnimationEnd(this);
+		}
+	}
+
+	public boolean hasStarted() {
+		return false;
+	}
 }
