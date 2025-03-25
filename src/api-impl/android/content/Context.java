@@ -60,6 +60,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.security.Provider;
+import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -125,6 +127,10 @@ public class Context extends Object {
 		application_info.nativeLibraryDir = (new File(Environment.getExternalStorageDirectory(), "lib")).getAbsolutePath();
 		application_info.sourceDir = native_get_apk_path();
 		package_manager = new PackageManager();
+
+		Provider provider = new Provider("AndroidKeyStore", 1.0, "Android KeyStore provider") {};
+		provider.put("KeyStore.AndroidKeyStore", "android.security.keystore.AndroidKeyStore");
+		Security.addProvider(provider);
 
 		r.applyPackageQuirks(application_info.packageName);
 	}

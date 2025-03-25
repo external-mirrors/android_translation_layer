@@ -354,6 +354,7 @@ srcs = [
 	'android/provider/CalendarContract.java',
 	'android/provider/ContactsContract.java',
 	'android/provider/Settings.java',
+	'android/security/keystore/AndroidKeyStore.java',
 	'android/service/media/MediaBrowserService.java',
 	'android/telecom/ConnectionService.java',
 	'android/telecom/TelecomManager.java',
