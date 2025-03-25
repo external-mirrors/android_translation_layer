@@ -492,7 +492,7 @@ public class PackageParser {
 	}
 
 	public Package parsePackage(File sourceFile, String destCodePath,
-				    DisplayMetrics metrics, int flags) { /*
+				    DisplayMetrics metrics, int flags) {
 				 mParseError = PackageManager.INSTALL_SUCCEEDED;
 
 				 mArchiveSourcePath = sourceFile.getPath();
@@ -521,7 +521,7 @@ public class PackageParser {
 				 boolean assetError = true;
 				 try {
 				     assmgr = new AssetManager();
-				     int cookie = assmgr.addAssetPath(mArchiveSourcePath);
+				     int cookie = 1; assmgr.addAssetPath(mArchiveSourcePath);
 				     if (cookie != 0) {
 					 res = new Resources(assmgr, metrics, null);
 					 assmgr.setConfiguration(0, 0, null, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -583,8 +583,6 @@ public class PackageParser {
 				 pkg.mSignatures = null;
 
 				 return pkg;
-			     */
-		return null;
 	}
 
 	/**
