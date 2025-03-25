@@ -155,13 +155,13 @@ public class Layout {
 	public int getLineStart(int line) {
 		if (line < 0 || line >= getLineCount())
 			throw new ArrayIndexOutOfBoundsException();
-		return native_get_line_left(layout, line);
+		return native_get_line_start(layout, line);
 	}
 
 	public int getLineEnd(int line) {
 		if (line < 0 || line >= getLineCount())
 			throw new ArrayIndexOutOfBoundsException();
-		return native_get_line_right(layout, line);
+		return native_get_line_end(layout, line);
 	}
 
 	public boolean isSpanned() {
@@ -238,6 +238,8 @@ public class Layout {
 	protected native int native_get_width(long layout);
 	protected native int native_get_height(long layout);
 	protected native int native_get_line_count(long layout);
+	protected native int native_get_line_start(long layout, int line);
+	protected native int native_get_line_end(long layout, int line);
 	protected native int native_get_line_top(long layout, int line);
 	protected native int native_get_line_bottom(long layout, int line);
 	protected native int native_get_line_left(long layout, int line);

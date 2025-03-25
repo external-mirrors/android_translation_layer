@@ -49,6 +49,22 @@ JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1count
 
 /*
  * Class:     android_text_Layout
+ * Method:    native_get_line_start
+ * Signature: (JI)I
+ */
+JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1start
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     android_text_Layout
+ * Method:    native_get_line_end
+ * Signature: (JI)I
+ */
+JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1end
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     android_text_Layout
  * Method:    native_get_line_top
  * Signature: (JI)I
  */
