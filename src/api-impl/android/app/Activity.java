@@ -27,6 +27,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -337,6 +338,19 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 			}
 		} else if (FILE_CHOOSER_ACTIONS.contains(intent.getAction())) {
 			nativeFileChooser(FILE_CHOOSER_ACTIONS.indexOf(intent.getAction()), intent.getType(), intent.getStringExtra("android.intent.extra.TITLE"), requestCode);
+		} else if ("android.intent.action.INSTALL_PACKAGE".equals(intent.getAction())) {
+			try {
+				Process p = new ProcessBuilder("/usr/bin/env", "android-translation-layer", "--install", intent.getData().getPath()).start();
+				int exitValue = p.waitFor();
+				if (exitValue == 0) {
+					onActivityResult(requestCode, -1 /*RESULT_OK*/, new Intent());
+				} else {
+					onActivityResult(requestCode, 0 /*RESULT_CANCELED*/, new Intent());
+				}
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
+				onActivityResult(requestCode, 0 /*RESULT_CANCELED*/, new Intent());
+			}
 		} else {
 			Slog.i(TAG, "startActivityForResult: intent was not handled. Calling onActivityResult(RESULT_CANCELED).");
 			onActivityResult(requestCode, 0 /*RESULT_CANCELED*/, new Intent());
