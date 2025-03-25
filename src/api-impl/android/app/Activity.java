@@ -89,15 +89,18 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;
 		if (className == null) {
 			for (PackageParser.Activity activity: pkg.activities) {
+				boolean isDefault = false;
 				for (PackageParser.IntentInfo intent: activity.intents) {
 					Slog.i(TAG, intent.toString());
 					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER")) ||
 						(uri != null && intent.hasDataScheme(uri.getScheme()))) {
 						className = activity.className;
-						break;
+						isDefault = intent.hasCategory("android.intent.category.DEFAULT");
+						if (isDefault)
+							break;
 					}
 				}
-				if (className != null)
+				if (isDefault)
 					break;
 			}
 		} else {
