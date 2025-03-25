@@ -52,6 +52,10 @@ public class IntentFilter {
 		dataSchemes.add(dataScheme);
 	}
 
+	public void addDataAuthority(String host, String port) {}
+
+	public void addDataPath(String path, int type) {}
+
 	public boolean hasDataScheme(String dataScheme) {
 		return dataSchemes.contains(dataScheme);
 	}
@@ -73,6 +77,17 @@ public class IntentFilter {
 	}
 
 	public int match(String action, String type, String scheme, Uri data, Set<String> categories, String logTag) {
-		return -1/*NO_MATCH_TYPE*/;
+		int ret = 0;
+		if (!matchAction(action)) {
+			ret = -3/*NO_MATCH_ACTION*/;
+		}
+		if (scheme == null) {
+			ret = 0x00100000/*MATCH_CATEGORY_EMPTY*/ | 0x00008000/*MATCH_ADJUSTMENT_NORMAL*/;
+		} else if (hasDataScheme(scheme)) {
+			ret = 0x00200000/*MATCH_CATEGORY_SCHEME*/ | 0x00008000/*MATCH_ADJUSTMENT_NORMAL*/;
+		} else {
+			ret = -2/*NO_MATCH_DATA*/;
+		}
+		return ret;
 	}
 }
