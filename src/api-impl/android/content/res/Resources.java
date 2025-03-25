@@ -109,7 +109,7 @@ public class Resources {
 	/*package*/ final Object mAccessLock = new Object();
 	/*package*/ final Configuration mTmpConfig = new Configuration();
 	/*package*/ TypedValue mTmpValue = new TypedValue();
-	/*package*/ final Map<Long,WeakReference<Drawable.ConstantState>> mDrawableCache = new HashMap<Long,WeakReference<Drawable.ConstantState>>(0);
+	/*package*/ Object mDrawableCache = new HashMap<Long,WeakReference<Drawable.ConstantState>>(0);
 	private final ConfigurationBoundResourceCache<ComplexColor> mComplexColorCache = new ConfigurationBoundResourceCache<>(this);
 	/*package*/ final LongSparseArray<WeakReference<Drawable.ConstantState>> mColorDrawableCache = new LongSparseArray<WeakReference<Drawable.ConstantState>>(0);
 	/*package*/ boolean mPreloading;
@@ -211,6 +211,19 @@ public class Resources {
 		mToken = new WeakReference<IBinder>(token);
 		updateConfiguration(config, metrics);
 		//        assets.ensureStringBlocks();
+	}
+
+	public void applyPackageQuirks(String packageName) {
+		// F-Droid expects mDrawableCache to be a ThemedResourceCache while most other apps expect a Map
+		if ("org.fdroid.fdroid".equals(packageName)) {
+			mDrawableCache = new ThemedResourceCache<Drawable>() {
+				@Override
+				protected boolean shouldInvalidateEntry(Drawable entry, int configChanges) {
+					// TODO Auto-generated method stub
+					throw new UnsupportedOperationException("Unimplemented method 'shouldInvalidateEntry'");
+				}
+			};
+		}
 	}
 
 	/**

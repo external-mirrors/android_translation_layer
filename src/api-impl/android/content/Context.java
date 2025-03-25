@@ -125,6 +125,8 @@ public class Context extends Object {
 		application_info.nativeLibraryDir = (new File(Environment.getExternalStorageDirectory(), "lib")).getAbsolutePath();
 		application_info.sourceDir = native_get_apk_path();
 		package_manager = new PackageManager();
+
+		r.applyPackageQuirks(application_info.packageName);
 	}
 
 	private static native String native_get_apk_path();
