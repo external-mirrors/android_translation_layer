@@ -15,6 +15,7 @@ import java.util.Objects;
 
 public class ViewGroup extends View implements ViewParent, ViewManager {
 	public ArrayList<View> children;
+	private ArrayList<View> detachedChildren;
 	private OnHierarchyChangeListener onHierarchyChangeListener;
 	private LayoutTransition transition;
 
@@ -34,6 +35,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		super(context, attrs, defStyleAttr);
 
 		children = new ArrayList<View>();
+		detachedChildren = new ArrayList<View>();
 	}
 
 	public void addView(View child) {
@@ -136,10 +138,15 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void detachViewFromParent(int index) {
-		children.remove(index).parent = null;
+		View child = children.remove(index);
+		child.parent = null;
+		detachedChildren.add(child);
 	}
 
 	public void attachViewToParent(View view, int index, LayoutParams params) {
+		if (!detachedChildren.remove(view)) {
+			addViewInternal(view, index, params);
+		}
 		if (!checkLayoutParams(params))
 			params = generateLayoutParams(params);
 
@@ -151,6 +158,9 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected void removeDetachedView(View child, boolean animate) {
+		if (!detachedChildren.remove(child))
+			return;
+		child.parent = null;
 		native_removeView(widget, child.widget);
 		if (isAttachedToWindow())
 			child.detachFromWindowInternal();
@@ -388,6 +398,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void detachViewFromParent(View view) {
 		children.remove(view);
 		view.parent = null;
+		detachedChildren.add(view);
 	}
 
 	public void setTouchscreenBlocksFocus(boolean touchscreenBlocksFocus) {}
