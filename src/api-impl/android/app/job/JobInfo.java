@@ -1,6 +1,7 @@
 package android.app.job;
 
 import android.content.ComponentName;
+import android.os.PersistableBundle;
 
 public class JobInfo {
 
@@ -18,6 +19,26 @@ public class JobInfo {
 		}
 
 		public Builder setOverrideDeadline(long a) {
+			return this;
+		}
+
+		public Builder setExtras(PersistableBundle extras) {
+			return this;
+		}
+
+		public Builder setRequiresCharging(boolean requiresCharging) {
+			return this;
+		}
+
+		public Builder setRequiresDeviceIdle(boolean requiresDeviceIdle) {
+			return this;
+		}
+
+		public Builder setBackoffCriteria(long initialBackoffMillis, int backoffPolicy) {
+			return this;
+		}
+
+		public Builder setPersisted(boolean persisted) {
 			return this;
 		}
 

@@ -1,6 +1,7 @@
 package android.widget;
 
 import android.content.Context;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -118,4 +119,8 @@ public class PopupWindow {
 	}
 
 	public void setWindowLayoutType(int type) {}
+
+	public void setIsClippedToScreen(boolean isClippedToScreen) {}
+
+	public void setEpicenterBounds(Rect bounds) {}
 }

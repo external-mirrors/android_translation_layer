@@ -623,4 +623,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Unimplemented method 'onStopNestedScroll'");
 	}
+
+	public void requestChildFocus(View child, View focused) {}
 }

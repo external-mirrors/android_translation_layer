@@ -158,4 +158,25 @@ public class Color {
 		}
 		hsv[2] = max;
 	}
+
+	public static int HSVToColor(float[] hsv) {
+		float h = hsv[0];
+		float s = hsv[1];
+		float v_ = hsv[2];
+		int hi = (int)Math.floor(h / 60) % 6;
+		float f = (h / 60 - (float)Math.floor(h / 60)) * 6;
+		int p = (int)(v_ * (1 - s) * 255.f + 0.5f);
+		int q = (int)(v_ * (1 - f * s) * 255.f + 0.5f);
+		int t = (int)(v_ * (1 - (1 - f) * s) * 255.f + 0.5f);
+		int v = (int)(v_ * 255.f + 0.5f);
+		switch (hi) {
+			case 0: return Color.rgb(v, t, p);
+			case 1: return Color.rgb(q, v, p);
+			case 2: return Color.rgb(p, v, t);
+			case 3: return Color.rgb(p, q, v);
+			case 4: return Color.rgb(t, p, v);
+			case 5: return Color.rgb(v, p, q);
+		}
+		return 0;
+	}
 }

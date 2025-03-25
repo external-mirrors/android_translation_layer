@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.LayoutDirection;
 import android.util.TypedValue;
 
 public class Drawable {
@@ -322,6 +323,10 @@ public class Drawable {
 	}
 
 	public void setHotspot(float x, float y) {}
+
+	public int getLayoutDirection() {
+		return LayoutDirection.LTR;
+	}
 
 	protected static native long native_paintable_from_path(String path);
 	protected native long native_constructor();

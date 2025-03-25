@@ -217,6 +217,10 @@ public final class Bitmap {
 
 	public void setPremultiplied(boolean premultiplied) {}
 
+	public Bitmap extractAlpha() {
+		return this.copy(config, mutable);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

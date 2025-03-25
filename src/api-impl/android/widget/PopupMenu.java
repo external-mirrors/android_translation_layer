@@ -234,9 +234,8 @@ public class PopupMenu {
 		}
 
 		@Override
-		public MenuItem getItem(int id) {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Unimplemented method 'getItem'");
+		public MenuItem getItem(int index) {
+			return items.get(index);
 		}
 
 		@Override
@@ -297,8 +296,7 @@ public class PopupMenu {
 
 		@Override
 		public int size() {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Unimplemented method 'size'");
+			return items.size();
 		}
 
 		@Override

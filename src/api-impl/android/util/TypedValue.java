@@ -572,4 +572,8 @@ public class TypedValue {
 		sb.append("}");
 		return sb.toString();
 	}
+
+	public int getComplexUnit() {
+		return (data >> COMPLEX_UNIT_SHIFT) & COMPLEX_UNIT_MASK;
+	}
 };

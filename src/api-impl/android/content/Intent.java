@@ -1,8 +1,13 @@
 package android.content;
 
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.util.AttributeSet;
+import org.xmlpull.v1.XmlPullParser;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -377,5 +382,13 @@ public class Intent implements Parcelable {
 
 	public int filterHashCode() {
 		return 0;
+	}
+
+	public static Intent parseIntent(Resources res, XmlPullParser parser, AttributeSet attrs) {
+		return new Intent();
+	}
+
+	public ComponentName resolveActivity(PackageManager pm) {
+		return component;
 	}
 }

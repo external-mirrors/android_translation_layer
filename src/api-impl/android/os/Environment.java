@@ -799,4 +799,8 @@ public class Environment {
 	public static boolean isExternalStorageLegacy() {
 		return true;
 	}
+
+	public static String getExternalStorageState(File path) {
+		return Environment.MEDIA_MOUNTED;
+	}
 }

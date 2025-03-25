@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.GskCanvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Point;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
@@ -889,7 +890,11 @@ public class View implements Drawable.Callback {
 	public static final Property<View, Float> ALPHA = new Property<View, Float>(Float.class, "alpha") {
 		@Override
 		public Float get(View object) {
-			return 0.f;
+			return object.getAlpha();
+		}
+		@Override
+		public void set(View object, Float value) {
+			object.setAlpha(value);
 		}
 	};
 
@@ -1867,7 +1872,7 @@ public class View implements Drawable.Callback {
 
 	public void setForeground(Drawable foreground) {}
 
-	public boolean canScrollVertically(int value) {return true;}
+	public boolean canScrollVertically(int value) {return false;}
 
 	public boolean isInTouchMode() {return false;}
 
@@ -2169,4 +2174,14 @@ public class View implements Drawable.Callback {
 	public boolean isDirty() { return false; }
 
 	public float getX() { return getLeft(); }
+
+	public boolean getGlobalVisibleRect(Rect visibleRect, Point globalOffset) {
+		boolean result = native_getGlobalVisibleRect(widget, visibleRect);
+		globalOffset.set(visibleRect.left, visibleRect.top);
+		return result;
+	}
+
+	public void restoreHierarchyState(SparseArray<Parcelable> container) {}
+
+	public boolean isHovered() { return false; }
 }

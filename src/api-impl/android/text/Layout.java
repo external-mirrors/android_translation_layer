@@ -80,6 +80,10 @@ public class Layout {
 		return paint.measureText(source, start, end);
 	}
 
+	public static float getDesiredWidth(CharSequence source, TextPaint paint) {
+		return paint.measureText(source, 0, source.length());
+	}
+
 	public int getLineBaseline(int line) {
 		if (line < 0 || line >= getLineCount())
 			throw new ArrayIndexOutOfBoundsException();

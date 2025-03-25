@@ -191,6 +191,12 @@ public class Path {
 		addPath(src);
 	}
 
+	public void offset(float dx, float dy) {
+		Matrix matrix = new Matrix();
+		matrix.setTranslate(dx, dy);
+		transform(matrix);
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

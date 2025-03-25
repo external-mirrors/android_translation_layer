@@ -397,4 +397,6 @@ public class TextView extends View {
 	public int getImeOptions() {return 0;}
 
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
+
+	public void setBreakStrategy(int strategy) {}
 }

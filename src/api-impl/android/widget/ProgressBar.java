@@ -13,6 +13,7 @@ public class ProgressBar extends View {
 	protected int progress = 0;
 	private boolean indeterminate = false;
 	private Drawable indeterminateDrawable;
+	private Drawable progressDrawable = new Drawable();
 
 	public ProgressBar(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
@@ -58,13 +59,7 @@ public class ProgressBar extends View {
 
 
 	public Drawable getProgressDrawable() {
-		return new Drawable() {
-			@Override
-			public void draw(Canvas canvas) {
-				// TODO Auto-generated method stub
-				throw new UnsupportedOperationException("Unimplemented method 'draw'");
-			}
-		};
+		return progressDrawable;
 	}
 
 	public Drawable getIndeterminateDrawable() {
@@ -103,7 +98,8 @@ public class ProgressBar extends View {
 		this.indeterminateDrawable = indeterminateDrawable;
 	}
 
-	public void setProgressDrawable(Drawable indeterminateDrawable) {
+	public void setProgressDrawable(Drawable progressDrawable) {
+		this.progressDrawable = progressDrawable;
 	}
 
 	public native void native_setIndeterminate(boolean indeterminate);

@@ -245,6 +245,8 @@ public class Context extends Object {
 	}
 
 	public final Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (serviceClass == LayoutInflater.class)
+			return layout_inflater;
 		return serviceClass.getConstructors()[0].newInstance();
 	}
 
@@ -705,5 +707,14 @@ public class Context extends Object {
 
 	public Drawable getWallpaper() {
 		return null;
+	}
+
+	public String[] databaseList() {
+		File databaseDir = new File(getDataDirFile(), "databases");
+		if (databaseDir.exists()) {
+			return databaseDir.list();
+		} else {
+			return new String[0];
+		}
 	}
 }

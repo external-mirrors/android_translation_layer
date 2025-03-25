@@ -3,8 +3,10 @@ package android.app;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.os.Bundle;
+import android.os.Parcelable;
 
-public class PendingIntent {
+public class PendingIntent implements Parcelable {
 
 	private int requestCode;
 	Intent intent;
@@ -25,12 +27,27 @@ public class PendingIntent {
 
 	public void send(Context context, int code, Intent intent) {}
 
+	public void send() {
+		Context context = Context.this_application;
+		if (type == 0) { // type Activity
+			context.startActivity(intent);
+		} else if (type == 1) { // type Service
+			context.startService(intent);
+		} else if (type == 2) { // type Broadcast
+			context.sendBroadcast(intent);
+		}
+	}
+
 	public static PendingIntent getActivity(Context context, int requestCode, Intent intent, int flags) {
 		return new PendingIntent(requestCode, intent, 0);
 	}
 
 	public static PendingIntent getService(Context context, int requestCode, Intent intent, int flags) {
 		return new PendingIntent(requestCode, intent, 1);
+	}
+
+	public static PendingIntent getActivities(Context context, int requestCode, Intent[] intents, int flags, Bundle options) {
+		return new PendingIntent(requestCode, intents[0], 0);
 	}
 
 	public String toString() {

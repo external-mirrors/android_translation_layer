@@ -17,4 +17,8 @@ public class JobScheduler {
 	public int enqueue(JobInfo job, JobWorkItem work) {
 		return 1; //RESULT_SUCCESS
 	}
+
+	public int schedule(JobInfo job) {
+		return 1; //RESULT_SUCCESS
+	}
 }

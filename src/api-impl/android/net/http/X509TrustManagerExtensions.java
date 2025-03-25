@@ -1,7 +1,7 @@
 package android.net.http;
 
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.net.ssl.X509TrustManager;
@@ -12,6 +12,6 @@ public class X509TrustManagerExtensions {
 
 	public List<X509Certificate> checkServerTrusted (X509Certificate[] chain,
                 String authType, String host) {
-		return new ArrayList<>();
+		return Arrays.asList(chain);
 	}
 }

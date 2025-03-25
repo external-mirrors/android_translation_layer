@@ -482,6 +482,10 @@ public class Canvas {
 		return false;
 	}
 
+	public boolean clipRect(RectF rect, Region.Op op) {
+		return false;
+	}
+
 	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {}
 
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {}

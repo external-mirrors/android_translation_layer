@@ -53,7 +53,8 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawPath(Path path, Paint paint) {
-		native_drawPath(snapshot, path.getGskPath(), paint != null ? paint.paint : default_paint.paint);
+		if (path != null)
+			native_drawPath(snapshot, path.getGskPath(), paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override

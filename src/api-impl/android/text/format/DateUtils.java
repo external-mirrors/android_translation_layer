@@ -44,4 +44,8 @@ public class DateUtils {
 		else
 			return formatDateTime(context, fromMillis, flags) + " - " + formatDateTime(context, toMillis, flags);
 	}
+
+	public static CharSequence getRelativeTimeSpanString(long time, long now, long minResolutionMillis, int flags) {
+		return new Date(time).toString();
+	}
 }

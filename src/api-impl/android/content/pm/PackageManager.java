@@ -1385,7 +1385,11 @@ public class PackageManager {
 	 * @see #GET_UNINSTALLED_PACKAGES
 	 */
 	public PackageInfo getPackageInfo(String packageName, int flags) throws NameNotFoundException {
-		return PackageParser.generatePackageInfo(Context.pkg, new int[0], flags, 0, 0, new HashSet<>(), new PackageUserState());
+		if (packageName.equals(Context.pkg.packageName)) {
+			return PackageParser.generatePackageInfo(Context.pkg, new int[0], flags, 0, 0, new HashSet<>(), new PackageUserState());
+		} else {
+			throw new NameNotFoundException();
+		}
 	}
 
 	/**
@@ -1820,15 +1824,15 @@ public class PackageManager {
 	 * @see #PERMISSION_DENIED
 	 */
 	public int checkPermission(String permName, String pkgName) {
+		if (permName != null && permName.endsWith(".DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"))
+			return PERMISSION_GRANTED;
+
 		switch (permName) {
 			// TODO: we shouldn't just automatically grant these once we have bubblewrap set up
 			// for now, the app can access anything it wants, so no point telling it otherwise
 			case "android.permission.WRITE_EXTERNAL_STORAGE":
 			case "android.permission.READ_EXTERNAL_STORAGE":
 			case "com.google.android.c2dm.permission.SEND":
-			case "com.fsck.k9.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
-			case "net.thunderbird.android.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
-			case "de.danoeh.antennapod.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION":
 				return PERMISSION_GRANTED;
 			default:
 				System.out.println("PackageManager.checkPermission: >" + permName + "< not handled\n");
@@ -2094,7 +2098,7 @@ public class PackageManager {
 	 * that are available on the system, or null if there are none(!!).
 	 */
 	public FeatureInfo[] getSystemAvailableFeatures() {
-		return null;
+		return new FeatureInfo[0];
 	}
 
 	/**
@@ -3453,5 +3457,9 @@ public class PackageManager {
 	public static String getDataDirForUser(int userId, String packageName) {
 		// TODO: This should be shared with Installer's knowledge of user directory
 		return Environment.getDataDirectory().toString() + "/user/" + userId + "/" + packageName;
+	}
+
+	public PackageInstaller getPackageInstaller() {
+		return new PackageInstaller();
 	}
 }

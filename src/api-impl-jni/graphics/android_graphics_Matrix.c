@@ -267,3 +267,11 @@ JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1setValues(JNIEnv *en
 	graphene_matrix_init_from_float(matrix, *values4x4);
 	(*env)->ReleaseFloatArrayElements(env, values_ref, values, 0);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1setRotate__JFFF(JNIEnv *env, jclass class, jlong matrix_ptr, jfloat degrees, jfloat px, jfloat py)
+{
+	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
+	graphene_matrix_init_translate(matrix, &GRAPHENE_POINT3D_INIT(-px, -py, 0));
+	graphene_matrix_rotate_z(matrix, degrees);
+	graphene_matrix_translate(matrix, &GRAPHENE_POINT3D_INIT(px, py, 0));
+}

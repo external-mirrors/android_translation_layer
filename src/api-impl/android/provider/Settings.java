@@ -18,12 +18,16 @@ public class Settings {
 			}
 		}
 		public static int getInt(ContentResolver content_resolver, String key) {
+			return getInt(content_resolver, key, -1);
+		}
+
+		public static int getInt(ContentResolver content_resolver, String key, int def) {
 			switch (key) {
 				case "limit_ad_tracking":
 					return 1; // obviously, duh
 				default:
 					java.lang.System.out.println("!!!! Settings$Secure.getInt: unknown key: >" + key + "<");
-					return -1;
+					return def;
 			}
 		}
 	}

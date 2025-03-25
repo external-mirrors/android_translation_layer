@@ -12,7 +12,7 @@ public class BaseBundle {
 	// Invariant - exactly one of mMap / mParcelledData will be null
 	// (except inside a call to unparcel)
 
-	/* package */ ArrayMap<String, Object> mMap = null;
+	/* package */ ArrayMap<String, Object> mMap = new ArrayMap<>();
 
 	// Log a message if the value was non-null but not of the expected type
 	void typeWarning(String key, Object value, String className,
