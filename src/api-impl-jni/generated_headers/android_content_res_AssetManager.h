@@ -217,7 +217,7 @@ JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValu
  * Signature: (JJII[IIJJ)V
  */
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle
-  (JNIEnv *, jclass, jlong, jlong, jint, jint, jintArray, jint, jlong, jlong);
+  (JNIEnv *, jobject, jlong, jlong, jint, jint, jintArray, jint, jlong, jlong);
 
 /*
  * Class:     android_content_res_AssetManager
@@ -225,7 +225,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyStyle
  * Signature: (JII[I[I[I[I)Z
  */
 JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs
-  (JNIEnv *, jclass, jlong, jint, jint, jintArray, jintArray, jintArray, jintArray);
+  (JNIEnv *, jobject, jlong, jint, jint, jintArray, jintArray, jintArray, jintArray);
 
 /*
  * Class:     android_content_res_AssetManager
@@ -321,7 +321,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_deleteTheme
  * Signature: (JIZ)V
  */
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyThemeStyle
-  (JNIEnv *, jclass, jlong, jint, jboolean);
+  (JNIEnv *, jobject, jlong, jint, jboolean);
 
 /*
  * Class:     android_content_res_AssetManager
@@ -329,7 +329,7 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_applyThemeStyle
  * Signature: (JJ)V
  */
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_copyTheme
-  (JNIEnv *, jclass, jlong, jlong);
+  (JNIEnv *, jobject, jlong, jlong);
 
 /*
  * Class:     android_content_res_AssetManager
