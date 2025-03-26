@@ -71,6 +71,10 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawText(String text, float x, float y, Paint paint) {
+		if(text == null) {
+			new Exception("drawText: text is null; stack trace:").printStackTrace();
+			return;
+		}
 		native_drawText(snapshot, text, x, y, paint != null ? paint.paint : default_paint.paint);
 	}
 

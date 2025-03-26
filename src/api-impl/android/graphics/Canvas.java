@@ -1,5 +1,8 @@
 package android.graphics;
 
+import android.content.res.Resources;
+import android.util.Log;
+
 public class Canvas {
 	public static final int HAS_ALPHA_LAYER_SAVE_FLAG = (1 << 2);
 
@@ -136,6 +139,7 @@ public class Canvas {
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
 	public void drawText(CharSequence text, int start, int end, float x, float y, Paint paint) {
+		drawText(text.toString(), start, end, x, y, paint);
 		/*if (text instanceof String || text instanceof SpannedString ||
 		    text instanceof SpannableString) {
 		    native_drawText(mNativeCanvas, text.toString(), start, end, x, y,
@@ -151,6 +155,11 @@ public class Canvas {
 		    TemporaryBuffer.recycle(buf);
 		}*/
 	}
+
+	public void drawTextOnPath(String text, Path path, float x_offset, float y_offset, Paint paint) {
+		Log.w("Canvas", "STUB: drawTextOnPath");
+	}
+
 	// ---
 	/**
 	 * <p>Draw the specified arc, which will be scaled to fit inside the
@@ -180,6 +189,7 @@ public class Canvas {
 		if (oval == null) {
 			throw new NullPointerException();
 		}
+		Log.w("Canvas", "STUB: drawArc");
 		/*native_drawArc(mNativeCanvas, oval, startAngle, sweepAngle,
 			useCenter, paint.mNativePaint);*/
 	}
@@ -308,7 +318,7 @@ public class Canvas {
 	 */
 	public void drawBitmap(int[] colors, int offset, int stride, float x, float y,
 			       int width, int height, boolean hasAlpha, Paint paint) {
-			System.out.println("XXXXXXX bitmap(colors, offset, ...)");
+		Log.w("Canvas", "STUB: drawBitmap(colors, offset, ...)");
 		/*        // check for valid input
 			if (width < 0) {
 			    throw new IllegalArgumentException("width must be >= 0");
@@ -417,7 +427,9 @@ public class Canvas {
 		matrix.reset();
 	}
 
-	public void translate(float dx, float dy) {}
+	public void translate(float dx, float dy) {
+		Log.w("Canvas", "STUB: translate");
+	}
 
 	public void drawCircle(float cx, float cy, float radius, Paint paint) {
 		gsk_canvas.snapshot = bitmap.getSnapshot();
@@ -425,14 +437,18 @@ public class Canvas {
 	}
 
 	public Rect getClipBounds() {
-		return new Rect(0, 0, 10, 10);
+		Rect rect = new Rect();
+		getClipBounds(rect);
+		return rect;
 	}
 
 	public boolean clipRect(Rect rect, Region.Op op) {
 		return false;
 	}
 
-	public void concat(Matrix matrix) {}
+	public void concat(Matrix matrix) {
+		Log.w("Canvas", "STUB: concat");
+	}
 
 	public boolean clipPath(Path path, Region.Op op) {
 		return false;
@@ -446,21 +462,29 @@ public class Canvas {
 		return (bitmap == null) ? 0 : bitmap.getHeight();
 	}
 
-	public void drawColor(int dummy) {}
+	public void drawColor(int color) {
+		Log.w("Canvas", "STUB: drawColor("+String.format("0x%08x", color)+")");
+	}
 
-	public void drawARGB(int a, int r, int g, int b) {}
+	public void drawARGB(int a, int r, int g, int b) {
+		Log.w("Canvas", "STUB: drawARGB("+a+", "+r+", "+g+", "+b+")");
+	}
 
 	public int saveLayer(RectF bounds, Paint paint, int flags) {
 		return save();
 	}
 
-	public void drawOval(RectF oval, Paint paint) {}
+	public void drawOval(RectF oval, Paint paint) {
+		Log.w("Canvas", "STUB: drawOval");
+	}
 
 	public boolean clipRect(int left, int top, int right, int bottom) {
 		return false;
 	}
 
-	public void drawColor(int color, PorterDuff.Mode mode) {}
+	public void drawColor(int color, PorterDuff.Mode mode) {
+		Log.w("Canvas", "STUB: drawColor("+String.format("0x%08x", color)+", "+mode+")");
+	}
 
 	public boolean clipRect(Rect rect) {
 		return false;
@@ -486,12 +510,17 @@ public class Canvas {
 		return false;
 	}
 
-	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {}
+	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {
+		Log.w("Canvas", "STUB: drawArc");
+	}
 
-	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {}
+	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
+		Log.w("Canvas", "STUB: drawRoundRect");
+	}
 
 	public boolean getClipBounds(Rect outRect) {
-		outRect.set(0, 0, 100, 100);
+		/* UGLY HACK */
+		outRect.set(0, 0, Resources.getSystem().getDisplayMetrics().widthPixels, Resources.getSystem().getDisplayMetrics().heightPixels);
 		return true;
 	}
 
