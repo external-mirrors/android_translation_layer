@@ -250,6 +250,7 @@ srcs = [
 	'android/graphics/drawable/shapes/RoundRectShape.java',
 	'android/graphics/drawable/shapes/Shape.java',
 	'android/hardware/ConsumerIrManager.java',
+	'android/hardware/GeomagneticField.java',
 	'android/hardware/Sensor.java',
 	'android/hardware/SensorEvent.java',
 	'android/hardware/SensorEventListener.java',
