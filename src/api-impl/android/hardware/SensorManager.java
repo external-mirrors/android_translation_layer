@@ -23,7 +23,7 @@ public class SensorManager {
 				new LocationManager().requestLocationUpdates(null, 0, 0, new LocationListener() {
 					@Override
 					public void onLocationChanged(Location location) {
-						listener.onSensorChanged(new SensorEvent(new float[]{(float)location.getBearing()}, sensor));
+						listener.onSensorChanged(new SensorEvent(new float[]{location.getBearing()}, sensor));
 					}
 				});
 				return true;

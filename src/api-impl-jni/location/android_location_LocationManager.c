@@ -14,12 +14,13 @@ static void location_updated (
 	gchar* description,
 	gint64 timestamp_s,
 	gint64 timestamp_ms,
-	JavaVM *jvm
-) {
+	JavaVM *jvm)
+{
 	JNIEnv *env;
 	(*jvm)->GetEnv(jvm, (void**)&env, JNI_VERSION_1_6);
 	jclass class = (*env)->FindClass(env, "android/location/LocationManager");
-	(*env)->CallStaticVoidMethod(env, class, _STATIC_METHOD(class, "locationUpdated", "(DDD)V"), latitude, longitude, heading);
+	jlong timestamp = timestamp_s * 1000 + timestamp_ms;
+	(*env)->CallStaticVoidMethod(env, class, _STATIC_METHOD(class, "locationUpdated", "(DDDDDDJ)V"), latitude, longitude, altitude, accuracy, speed, heading, timestamp);
 }
 
 JNIEXPORT void JNICALL Java_android_location_LocationManager_nativeGetLocation(JNIEnv *env, jobject) {

@@ -259,6 +259,7 @@ srcs = [
 	'android/hardware/input/InputManager.java',
 	'android/hardware/usb/UsbManager.java',
 	'android/location/Criteria.java',
+	'android/location/GnssStatus.java',
 	'android/location/Location.java',
 	'android/location/LocationListener.java',
 	'android/location/LocationManager.java',
