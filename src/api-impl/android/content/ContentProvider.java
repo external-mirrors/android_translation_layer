@@ -16,6 +16,14 @@ public abstract class ContentProvider {
 
 	static void createContentProviders() {
 		for (PackageParser.Provider provider_parsed : Context.pkg.providers) {
+			String process_name = provider_parsed.info.processName;
+			if(process_name != null && process_name.contains(":")) {
+				/* NOTE: even if it doesn't contain `:`, if it's not null we probably
+				 * need to check what it's requesting; `:` means it wants us to spawn
+				 * a new process, which we currently don't support */
+				System.out.println("not creating provider " + provider_parsed.className + ", it wants to be started in a new process (" + process_name + ")");
+				continue;
+			}
 			try {
 				String providerName = provider_parsed.className;
 				System.out.println("creating " + providerName);
