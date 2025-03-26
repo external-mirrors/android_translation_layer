@@ -87,7 +87,15 @@ public class TextView extends View {
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 
+	public void setText(int resId) {
+		setText(getContext().getResources().getText(resId));
+	}
+
 	public void setText(CharSequence text) {
+		setText(text, null);
+	}
+
+	public void setText(CharSequence text, BufferType type) {
 		this.text = text;
 		native_setText(text != null ? text.toString() : null);
 
@@ -95,10 +103,6 @@ public class TextView extends View {
 			native_set_markup(1);
 		if (!isLayoutRequested())
 			requestLayout();
-	}
-
-	public void setText(int resId) {
-		setText(getContext().getResources().getText(resId));
 	}
 
 	private native final void native_set_markup(int bool);
@@ -264,10 +268,6 @@ public class TextView extends View {
 
 	public void setTextIsSelectable(boolean selectable) {}
 
-	public void setText(CharSequence text, BufferType type) {
-		setText(text);
-	}
-
 	public MovementMethod getMovementMethod() {
 		return new BaseMovementMethod();
 	}
@@ -366,6 +366,10 @@ public class TextView extends View {
 
 	public int getLineHeight() {
 		return 10; // FIXME
+	}
+
+	public int getMaxHeight() {
+		return -1;
 	}
 
 	public boolean isAllCaps() { return false; }
