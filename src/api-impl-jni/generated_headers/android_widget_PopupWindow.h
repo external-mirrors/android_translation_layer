@@ -41,6 +41,22 @@ JNIEXPORT jboolean JNICALL Java_android_widget_PopupWindow_native_1isShowing
 
 /*
  * Class:     android_widget_PopupWindow
+ * Method:    native_setTouchable
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1setTouchable
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     android_widget_PopupWindow
+ * Method:    native_setTouchModal
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1setTouchModal
+  (JNIEnv *, jobject, jlong, jboolean);
+
+/*
+ * Class:     android_widget_PopupWindow
  * Method:    native_dismiss
  * Signature: (J)V
  */
@@ -65,19 +81,43 @@ JNIEXPORT void JNICALL Java_android_widget_PopupWindow_setOnDismissListener
 
 /*
  * Class:     android_widget_PopupWindow
- * Method:    setWidth
- * Signature: (I)V
+ * Method:    native_setWidth
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_android_widget_PopupWindow_setWidth
-  (JNIEnv *, jobject, jint);
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1setWidth
+  (JNIEnv *, jobject, jlong, jint);
 
 /*
  * Class:     android_widget_PopupWindow
- * Method:    setHeight
- * Signature: (I)V
+ * Method:    native_setHeight
+ * Signature: (JI)V
  */
-JNIEXPORT void JNICALL Java_android_widget_PopupWindow_setHeight
-  (JNIEnv *, jobject, jint);
+JNIEXPORT void JNICALL Java_android_widget_PopupWindow_native_1setHeight
+  (JNIEnv *, jobject, jlong, jint);
+
+/*
+ * Class:     android_widget_PopupWindow
+ * Method:    native_getWidth
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_widget_PopupWindow_native_1getWidth
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_widget_PopupWindow
+ * Method:    native_getHeight
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_widget_PopupWindow_native_1getHeight
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_widget_PopupWindow
+ * Method:    native_isTouchable
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_widget_PopupWindow_native_1isTouchable
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }
