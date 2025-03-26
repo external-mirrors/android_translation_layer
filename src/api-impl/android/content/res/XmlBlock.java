@@ -137,7 +137,7 @@ final class XmlBlock {
 		}
 		public String getText() {
 			int id = nativeGetText(mParseState);
-			return id >= 0 ? mStrings.get(id).toString() : null;
+			return id >= 0 ? (String)getPooledString(id) : null;
 		}
 		public int getLineNumber() {
 			return nativeGetLineNumber(mParseState);
@@ -165,7 +165,7 @@ final class XmlBlock {
 		}
 		public String getNamespace() {
 			int id = nativeGetNamespace(mParseState);
-			return id >= 0 ? mStrings.get(id).toString() : "";
+			return id >= 0 ? (String)getPooledString(id) : "";
 		}
 		public String getName() {
 			return nativeGetName(mParseState);
@@ -175,7 +175,7 @@ final class XmlBlock {
 			if (DEBUG)
 				System.out.println("getAttributeNamespace of " + index + " = " + id);
 			if (id >= 0)
-				return mStrings.get(id).toString();
+				return (String)getPooledString(id);
 			else if (id == -1)
 				return "";
 			throw new IndexOutOfBoundsException(String.valueOf(index));
@@ -185,7 +185,7 @@ final class XmlBlock {
 			if (DEBUG)
 				System.out.println("getAttributeName of " + index + " = " + id);
 			if (id >= 0)
-				return mStrings.get(id).toString();
+				return (String)getPooledString(id);
 			throw new IndexOutOfBoundsException(String.valueOf(index));
 		}
 		public String getAttributePrefix(int index) {
@@ -417,7 +417,7 @@ final class XmlBlock {
 
 		public String getIdAttribute() {
 			int id = nativeGetIdAttribute(mParseState);
-			return id >= 0 ? mStrings.get(id).toString() : null;
+			return id >= 0 ? (String)getPooledString(id) : null;
 		}
 		public String getClassAttribute() {
 			return nativeGetClassAttribute(mParseState);

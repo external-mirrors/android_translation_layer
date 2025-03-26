@@ -114,6 +114,12 @@ JNIEXPORT jint JNICALL Java_android_content_res_XmlBlock_nativeGetAttributeData(
 	return ResXMLParser_getAttributeData(parser, index);
 }
 
+JNIEXPORT jint JNICALL Java_android_content_res_XmlBlock_nativeGetAttributeName(JNIEnv *env, jclass this, jlong parser_ptr, jint index)
+{
+	struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
+	return ResXMLParser_getAttributeNameID(parser, index);
+}
+
 JNIEXPORT void JNICALL Java_android_content_res_XmlBlock_nativeDestroyParseState(JNIEnv *env, jobject this, jlong parser_ptr)
 {
 	struct ResXMLParser *parser = (struct ResXMLParser *)_PTR(parser_ptr);
