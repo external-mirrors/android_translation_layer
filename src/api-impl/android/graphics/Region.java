@@ -14,6 +14,9 @@
  * limitations under the License.
  */
 package android.graphics;
+
+import android.util.Log;
+
 // import android.util.Pools.SynchronizedPool;
 public class Region {
 	private static final int MAX_POOL_SIZE = 10;
@@ -70,7 +73,7 @@ public class Region {
 	 * Set the region to the empty region
 	 */
 	public void setEmpty() {
-		nativeSetRect(mNativeRegion, 0, 0, 0, 0);
+		Log.w("graphics/Region", "TODO: nativeSetRect(mNativeRegion, 0, 0, 0, 0);");
 	}
 	/**
 	 * Set the region to the specified region.
@@ -230,8 +233,8 @@ public class Region {
 	 * true if the result of the op is not empty.
 	 */
 	public boolean op(Rect r, Op op) {
-		return nativeOp(mNativeRegion, r.left, r.top, r.right, r.bottom,
-				op.nativeInt);
+		Log.w("graphics/Region", "TODO: return nativeOp(mNativeRegion, r.left, r.top, r.right, r.bottom, op.nativeInt);");
+		return true;
 	}
 	/**
 	 * Perform the specified Op on this region and the specified rect. Return
