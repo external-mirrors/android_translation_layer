@@ -19,6 +19,7 @@ package android.content.pm;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -1834,6 +1835,14 @@ public class PackageManager {
 			case "android.permission.READ_EXTERNAL_STORAGE":
 			case "com.google.android.c2dm.permission.SEND":
 				return PERMISSION_GRANTED;
+			// only tell the app that it can access location if it *actually* can
+			// (until we find apps that refuse to launch without being lied to anyway)
+			case "android.permission.ACCESS_FINE_LOCATION":
+			case "android.permission.ACCESS_COARSE_LOCATION":
+				if(System.getenv("ATL_UGLY_ENABLE_LOCATION") != null)
+					return PERMISSION_GRANTED;
+				else
+					return PERMISSION_DENIED;
 			default:
 				System.out.println("PackageManager.checkPermission: >" + permName + "< not handled\n");
 				return PERMISSION_DENIED;
@@ -2142,7 +2151,34 @@ public class PackageManager {
 	 * @see #GET_RESOLVED_FILTER
 	 */
 	public ResolveInfo resolveActivity(Intent intent, int flags) {
-		return new ResolveInfo();
+		ResolveInfo info = null;
+		ActivityInfo activity_info = null;
+
+		if (intent.getComponent() != null) {
+			for (PackageParser.Activity activity: Context.pkg.activities) {
+				if (intent.getComponent().getClassName() == activity.className)
+					activity_info = activity.info;
+			}
+		} else {
+			for (PackageParser.Activity activity: Context.pkg.activities) {
+				for (PackageParser.IntentInfo intentInfo: activity.intents) {
+					if (intentInfo.matchAction(intent.getAction())) {
+						activity_info = activity.info;
+						break;
+					}
+				}
+			}
+		}
+
+		if (activity_info == null) {
+			return null;
+		}
+
+		info = new ResolveInfo();
+		info.activityInfo.exported = true;
+		info.activityInfo = activity_info;
+
+		return info;
 	}
 
 	/**
@@ -2200,9 +2236,12 @@ public class PackageManager {
 	 */
 	public List<ResolveInfo> queryIntentActivities(Intent intent,
 						       int flags) {
-		ResolveInfo info = new ResolveInfo();
-		info.activityInfo.exported = true;
-		return Arrays.asList(info);
+		/* FIXME - we may need to return more than one */
+		ResolveInfo info = resolveActivity(intent, flags);
+		if (info != null)
+			return Arrays.asList(info);
+		else
+			return Collections.emptyList();
 	}
 
 	/**
