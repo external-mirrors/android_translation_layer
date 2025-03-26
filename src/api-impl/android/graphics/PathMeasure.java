@@ -16,4 +16,8 @@ public class PathMeasure {
 	public boolean getSegment(float start, float end, Path dst, boolean forceClosed) {
 		return false;
 	}
+
+	public boolean getPosTan(float distance, float[] pos, float[] tan) {
+		return false;
+	}
 }

@@ -56,6 +56,10 @@ public class IntentFilter {
 
 	public void addDataPath(String path, int type) {}
 
+	public final void addDataSchemeSpecificPart(String ssp, int type) {
+		/* FIXME */
+	}
+
 	public boolean hasDataScheme(String dataScheme) {
 		return dataSchemes.contains(dataScheme);
 	}

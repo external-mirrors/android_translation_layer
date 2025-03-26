@@ -57,7 +57,7 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	 * Constructs a new, empty Bundle.
 	 */
 	public Bundle() {
-		mMap = new ArrayMap<String, Object>();
+		super();
 		mClassLoader = getClass().getClassLoader();
 	}
 

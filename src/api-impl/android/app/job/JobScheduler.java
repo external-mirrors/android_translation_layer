@@ -21,4 +21,7 @@ public class JobScheduler {
 	public int schedule(JobInfo job) {
 		return 1; //RESULT_SUCCESS
 	}
+
+	public void cancel(int dummy) {
+	}
 }

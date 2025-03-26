@@ -1,6 +1,6 @@
 /*
  * most of this file:
- * 
+ *
  * Copyright (C) 2006 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,10 +18,10 @@
 
 package android.text;
 
+import com.android.internal.util.ArrayUtils;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.regex.Pattern;
-
-import com.android.internal.util.ArrayUtils;
 
 public class TextUtils {
 	public static int getLayoutDirectionFromLocale(Locale locale) {
@@ -255,7 +255,7 @@ public class TextUtils {
 		}
 
 		if (buf == null || buf.length < len)
-		    buf = ArrayUtils.newUnpaddedCharArray(len);
+			buf = ArrayUtils.newUnpaddedCharArray(len);
 
 		return buf;
 	}
@@ -376,5 +376,81 @@ public class TextUtils {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * An interface for splitting strings according to rules that are opaque to the user of this
+	 * interface. This also has less overhead than split, which uses regular expressions and
+	 * allocates an array to hold the results.
+	 *
+	 * <p>The most efficient way to use this class is:
+	 *
+	 * <pre>
+	 * // Once
+	 * TextUtils.StringSplitter splitter = new TextUtils.SimpleStringSplitter(delimiter);
+	 *
+	 * // Once per string to split
+	 * splitter.setString(string);
+	 * for (String s : splitter) {
+	 *     ...
+	 * }
+	 * </pre>
+	 */
+	public interface StringSplitter extends Iterable<String> {
+		public void setString(String string);
+	}
+
+	/**
+	 * A simple string splitter.
+	 *
+	 * <p>If the final character in the string to split is the delimiter then no empty string will
+	 * be returned for the empty string after that delimeter. That is, splitting <tt>"a,b,"</tt> on
+	 * comma will return <tt>"a", "b"</tt>, not <tt>"a", "b", ""</tt>.
+	 */
+	public static class SimpleStringSplitter implements StringSplitter, Iterator<String> {
+		private String mString;
+		private char mDelimiter;
+		private int mPosition;
+		private int mLength;
+
+		/**
+		 * Initializes the splitter. setString may be called later.
+		 * @param delimiter the delimeter on which to split
+		 */
+		public SimpleStringSplitter(char delimiter) {
+			mDelimiter = delimiter;
+		}
+
+		/**
+		 * Sets the string to split
+		 * @param string the string to split
+		 */
+		public void setString(String string) {
+			mString = string;
+			mPosition = 0;
+			mLength = mString.length();
+		}
+
+		public Iterator<String> iterator() {
+			return this;
+		}
+
+		public boolean hasNext() {
+			return mPosition < mLength;
+		}
+
+		public String next() {
+			int end = mString.indexOf(mDelimiter, mPosition);
+			if (end == -1) {
+				end = mLength;
+			}
+			String nextString = mString.substring(mPosition, end);
+			mPosition = end + 1; // Skip the delimiter.
+			return nextString;
+		}
+
+		public void remove() {
+			throw new UnsupportedOperationException();
+		}
 	}
 }

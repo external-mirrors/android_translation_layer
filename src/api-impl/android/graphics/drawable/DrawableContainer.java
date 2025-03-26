@@ -66,22 +66,24 @@ public class DrawableContainer extends Drawable {
 
 	@Override
 	public void draw(Canvas canvas) {
-		state.drawables[curIndex].draw(canvas);
+		if (curIndex != -1)
+			state.drawables[curIndex].draw(canvas);
 	}
 
 	@Override
 	public int getIntrinsicHeight() {
-		return state.drawables[curIndex].getIntrinsicHeight();
+		return curIndex != -1 ? state.drawables[curIndex].getIntrinsicHeight() : -1;
 	}
 
 	@Override
 	public int getIntrinsicWidth() {
-		return state.drawables[curIndex].getIntrinsicWidth();
+		return curIndex != -1 ? state.drawables[curIndex].getIntrinsicWidth() : -1;
 	}
 
 	@Override
 	public void setBounds(int left, int top, int right, int bottom) {
-		state.drawables[curIndex].setBounds(left, top, right, bottom);
+		if (curIndex != -1)
+			state.drawables[curIndex].setBounds(left, top, right, bottom);
 	}
 
 	public void setEnterFadeDuration(int duration) {}

@@ -1,5 +1,5 @@
 package android.text.style;
 
-public class BackgroundColorSpan {
+public class BackgroundColorSpan extends CharacterStyle {
 	public BackgroundColorSpan(int color) {}
 }

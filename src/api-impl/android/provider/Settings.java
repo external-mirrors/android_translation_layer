@@ -6,6 +6,12 @@ import android.util.AndroidException;
 
 public class Settings {
 	public static final class Secure {
+		public static final Uri CONTENT_URI = Uri.parse("content://settings/secure");
+
+		public static Uri getUriFor(String name) {
+			return Uri.withAppendedPath(CONTENT_URI, name);
+		}
+
 		public static String getString(ContentResolver content_resolver, String key) {
 			switch (key) {
 				case "android_id":
@@ -25,6 +31,8 @@ public class Settings {
 			switch (key) {
 				case "limit_ad_tracking":
 					return 1; // obviously, duh
+				case "user_setup_complete":
+					return 1;
 				default:
 					java.lang.System.out.println("!!!! Settings$Secure.getInt: unknown key: >" + key + "<");
 					return def;

@@ -8,4 +8,8 @@ public class KeyguardManager {
 	public boolean isKeyguardLocked() {
 		return false;
 	}
+
+	public boolean isKeyguardSecure() {
+		return true;
+	}
 }

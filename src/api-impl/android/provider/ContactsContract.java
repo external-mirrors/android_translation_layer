@@ -6,8 +6,12 @@ public class ContactsContract {
 
 	public static final class CommonDataKinds {
 
-		public static class Phone {
+		public static final class Phone {
 			public static final Uri CONTENT_URI = Uri.parse("content://com.android.contacts/phones");
+		}
+
+		public static final class Email {
+			public static final Uri CONTENT_URI = Uri.parse("content://com.android.contacts/emails");
 		}
 	}
 

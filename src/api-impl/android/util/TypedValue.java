@@ -398,6 +398,23 @@ public class TypedValue {
 		return res;
 	}
 
+	public int getComplexUnit() {
+		return (data >> COMPLEX_UNIT_SHIFT) & COMPLEX_UNIT_MASK;
+	}
+
+	/**
+	* Return the complex unit type for the given complex dimension. For example, a dimen type
+	* with value 12sp will return {@link #COMPLEX_UNIT_SP}. Use with values created with {@link
+	* #createComplexDimension(int, int)} etc.
+	*
+	* @return The complex unit type.
+	*
+	* @hide
+	*/
+	public static int getUnitFromComplexDimension(int complexDimension) {
+		return COMPLEX_UNIT_MASK & (complexDimension >> TypedValue.COMPLEX_UNIT_SHIFT);
+	}
+
 	/**
 	 * Converts an unpacked complex data value holding a dimension to its final floating
 	 * point value. The two parameters <var>unit</var> and <var>value</var>
@@ -571,9 +588,5 @@ public class TypedValue {
 		}
 		sb.append("}");
 		return sb.toString();
-	}
-
-	public int getComplexUnit() {
-		return (data >> COMPLEX_UNIT_SHIFT) & COMPLEX_UNIT_MASK;
 	}
 };

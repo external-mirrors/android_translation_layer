@@ -238,6 +238,8 @@ public class Context extends Object {
 				return new JobScheduler();
 			case "appops":
 				return new AppOpsManager();
+			case "user":
+				return new UserManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;
@@ -716,5 +718,10 @@ public class Context extends Object {
 		} else {
 			return new String[0];
 		}
+	}
+
+	public Context createDeviceProtectedStorageContext() {
+		/* FIXME: should be a different context, and return different storage locations */
+		return this;
 	}
 }

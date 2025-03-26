@@ -1,4 +1,4 @@
 package android.text.style;
 
-public class UnderlineSpan {
+public class UnderlineSpan extends CharacterStyle {
 }

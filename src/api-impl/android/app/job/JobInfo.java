@@ -10,15 +10,7 @@ public class JobInfo {
 	public static final class Builder {
 		public Builder(int jobId, ComponentName jobService) {}
 
-		public Builder setMinimumLatency(long minLatencyMillis) {
-			return this;
-		}
-
-		public Builder setRequiredNetworkType(int networkType) {
-			return this;
-		}
-
-		public Builder setOverrideDeadline(long a) {
+		public Builder setBackoffCriteria(long initialBackoffMillis, int backoffPolicy) {
 			return this;
 		}
 
@@ -26,19 +18,31 @@ public class JobInfo {
 			return this;
 		}
 
-		public Builder setRequiresCharging(boolean requiresCharging) {
+		public Builder setMinimumLatency(long minLatencyMillis) {
 			return this;
 		}
 
-		public Builder setRequiresDeviceIdle(boolean requiresDeviceIdle) {
+		public Builder setOverrideDeadline(long a) {
 			return this;
 		}
 
-		public Builder setBackoffCriteria(long initialBackoffMillis, int backoffPolicy) {
+		public Builder setPeriodic(long dummy) {
 			return this;
 		}
 
 		public Builder setPersisted(boolean persisted) {
+			return this;
+		}
+
+		public Builder setRequiredNetworkType(int networkType) {
+			return this;
+		}
+
+		public Builder setRequiresCharging(boolean requires_charging) {
+			return this;
+		}
+
+		public Builder setRequiresDeviceIdle(boolean requires_device_idle) {
 			return this;
 		}
 

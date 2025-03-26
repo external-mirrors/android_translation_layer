@@ -2,8 +2,6 @@ package android.net;
 
 import android.os.Handler;
 
-class NetworkCapabilities {}
-
 public class ConnectivityManager {
 
 	public class NetworkCallback {
@@ -35,10 +33,14 @@ public class ConnectivityManager {
 		return new Network();
 	}
 
-	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
+	public Network[] getAllNetworks() {
+		return new Network[] { getActiveNetwork() };
+	}
 
 	public NetworkCapabilities getNetworkCapabilities(Network network) {
 		return null;
 	}
+
+	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
 
 }

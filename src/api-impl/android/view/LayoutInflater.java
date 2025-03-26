@@ -60,7 +60,7 @@ public class LayoutInflater {
 		return mFactory;
 	}
 
-	public final void setFactory(LayoutInflater.Factory factory){
+	public void setFactory(LayoutInflater.Factory factory){
 		mFactory = factory;
 	}
 
