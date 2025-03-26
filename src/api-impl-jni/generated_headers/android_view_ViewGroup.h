@@ -231,6 +231,14 @@ JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChildren
 JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChild
   (JNIEnv *, jobject, jlong, jlong, jlong);
 
+/*
+ * Class:     android_view_ViewGroup
+ * Method:    native_dispatchTouchEvent
+ * Signature: (JLandroid/view/MotionEvent;DD)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_view_ViewGroup_native_1dispatchTouchEvent
+  (JNIEnv *, jobject, jlong, jobject, jdouble, jdouble);
+
 #ifdef __cplusplus
 }
 #endif

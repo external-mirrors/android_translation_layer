@@ -1075,11 +1075,20 @@ public class View implements Drawable.Callback {
 	}
 
 	private OnTouchListener on_touch_listener = null;
-	public boolean onTouchEvent(MotionEvent event) {
+
+	public boolean onTouchEventInternal(MotionEvent event) {
 		boolean handled = false;
 		if (on_touch_listener != null)
 			handled = on_touch_listener.onTouch(this, event);
+
+		if (!handled)
+			handled = onTouchEvent(event);
+
 		return handled;
+	}
+
+	public boolean onTouchEvent(MotionEvent event) {
+		return false;
 	}
 
 	public void setOnTouchListener(OnTouchListener l) {
@@ -1206,12 +1215,21 @@ public class View implements Drawable.Callback {
 
 	public native void setBackgroundColor(int color);
 	public native void native_setVisibility(long widget, int visibility, float alpha);
+
+	protected void onVisibilityChanged(View changedView, int visibility) {
+	}
+
+	protected void dispatchVisibilityChanged(View changedView, int visibility) {
+		onVisibilityChanged(changedView, visibility);
+	}
+
 	public void setVisibility(int visibility) {
 		native_setVisibility(widget, visibility, alpha);
 		if ((visibility == View.GONE) != (this.visibility == View.GONE)) {
 			requestLayout();
 		}
 		this.visibility = visibility;
+		dispatchVisibilityChanged(this, visibility);
 	}
 
 	public void setPadding(int left, int top, int right, int bottom) {

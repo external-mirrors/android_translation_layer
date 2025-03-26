@@ -77,6 +77,7 @@ struct handle_cache {
 		jmethodID getScrollY;
 		jmethodID performClick;
 		jmethodID onTouchEvent;
+		jmethodID onTouchEventInternal;
 		jmethodID dispatchTouchEvent;
 		jmethodID onInterceptTouchEvent;
 		jmethodID layoutInternal;
@@ -88,6 +89,10 @@ struct handle_cache {
 		jmethodID dispatchKeyEvent;
 		jmethodID onKeyDown;
 	} view;
+	struct {
+		jclass class;
+		jmethodID dispatchTouchEvent;
+	} view_group;
 	struct {
 		jclass class;
 		jmethodID extractFromAPK;

@@ -23,7 +23,7 @@ static void wrapper_widget_set_property (GObject *object, guint property_id, con
 	}
 }
 
-static void wrapper_widget_get_property (GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
+static void wrapper_widget_get_property(GObject *object, guint property_id, GValue *value, GParamSpec *pspec)
 {
 	WrapperWidget *self = WRAPPER_WIDGET(object);
 
@@ -91,7 +91,7 @@ static void wrapper_widget_get_property (GObject *object, guint property_id, GVa
 	}
 }
 
-static void wrapper_widget_init (WrapperWidget *wrapper_widget)
+static void wrapper_widget_init(WrapperWidget *wrapper_widget)
 {
 
 }
@@ -386,7 +386,7 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 
 	jmethodID ontouchevent_method = _METHOD(_CLASS(jobj), "onTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	jmethodID dispatchtouchevent_method = _METHOD(_CLASS(jobj), "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
-	wrapper->custom_dispatch_touch = dispatchtouchevent_method != handle_cache.view.dispatchTouchEvent;
+	wrapper->custom_dispatch_touch = (dispatchtouchevent_method != handle_cache.view.dispatchTouchEvent && dispatchtouchevent_method != handle_cache.view_group.dispatchTouchEvent);
 	if (ontouchevent_method != handle_cache.view.onTouchEvent || wrapper->custom_dispatch_touch) {
 		_setOnTouchListener(env, jobj, GTK_WIDGET(wrapper));
 	}

@@ -46,11 +46,40 @@ static WrapperWidget *cancel_triggerer = NULL;
 
 static struct pointer pointers[MAX_POINTERS] = {};
 
+bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, GdkEvent *event) {
+	int ret;
+
+	jobject this = wrapper->jobj;
+
+	if (wrapper->custom_dispatch_touch) {
+		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
+	} else if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
+		wrapper->intercepting_touch = (*env)->CallBooleanMethod(env, this, handle_cache.view.onInterceptTouchEvent, motion_event);
+		if (wrapper->intercepting_touch) {
+			if(event) {
+				// store the event that was canceled and let it propagate to the child widgets
+				canceled_event = event;
+				cancel_triggerer = wrapper;
+			} else {
+				/* this function is also called to synthesize an event, in which case there is no GdkEvent so not sure what to do */
+				fprintf(stderr, "view_dispatch_motionevent: onInterceptTouchEvent returned true but this is a synthesized event, please investigate\n");
+			}
+		}
+		ret = false;
+	} else {
+		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event);
+	}
+
+	if((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+
+	return ret;
+}
+
 static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct pointer pointers[MAX_POINTERS], GPtrArray *pointer_indices, GtkPropagationPhase phase, guint32 timestamp, GdkEvent *event)
 {
 	bool ret;
 	JNIEnv *env = get_jni_env();
-	jobject this = wrapper->jobj;
 
 	int num_pointers = pointer_indices->len;
 	jintArray ids = (*env)->NewIntArray(env, num_pointers);
@@ -62,24 +91,9 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 		(*env)->SetFloatArrayRegion(env, coords, 4 * i, 4, &pointer->coord_x);
 	}
 
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, (long)timestamp, ids, coords);
+	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, timestamp, ids, coords);
 
-	if (wrapper->custom_dispatch_touch) {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
-	} else if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
-		wrapper->intercepting_touch = (*env)->CallBooleanMethod(env, this, handle_cache.view.onInterceptTouchEvent, motion_event);
-		if (wrapper->intercepting_touch) {
-			// store the event that was canceled and let it propagate to the child widgets
-			canceled_event = event;
-			cancel_triggerer = wrapper;
-		}
-		ret = false;
-	} else {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEvent, motion_event);
-	}
-
-	if((*env)->ExceptionCheck(env))
-		(*env)->ExceptionDescribe(env);
+	ret = view_dispatch_motionevent(env, wrapper, phase, motion_event, event);
 
 	(*env)->DeleteLocalRef(env, motion_event);
 

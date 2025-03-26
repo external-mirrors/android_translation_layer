@@ -61,6 +61,10 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		addView(child, params);
 	}
 
+	public void addView(View child, int index, LayoutParams params) {
+		addViewInternal(child, index, params);
+	}
+
 	protected void addViewInternal(View child, int index, LayoutParams params) {
 		if (child.parent == this)
 			return;
@@ -81,9 +85,12 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		requestLayout();
 	}
 
-	public void addView(View child, int index, LayoutParams params) {
-		addViewInternal(child, index, params);
+	/* We never call this ourselves */
+	@Override
+	public boolean dispatchTouchEvent(MotionEvent event) {
+		return native_dispatchTouchEvent(widget, event, event.getX(), event.getY());
 	}
+
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params) {
 		addViewInternal(child, index, params);
@@ -166,6 +173,16 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			child.detachFromWindowInternal();
 		if (onHierarchyChangeListener != null) {
 			onHierarchyChangeListener.onChildViewRemoved(this, child);
+		}
+	}
+
+	@Override
+	protected void dispatchVisibilityChanged(View changedView, int visibility) {
+		if (children == null) // happens if this gets called during super constructor
+			return;
+
+		for (View child: children) {
+			child.dispatchVisibilityChanged(changedView, visibility);
 		}
 	}
 
@@ -636,4 +653,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void requestChildFocus(View child, View focused) {}
+
+	public native boolean native_dispatchTouchEvent(long widget, MotionEvent event, double x, double y);
 }

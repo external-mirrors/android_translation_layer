@@ -132,6 +132,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.view.getScrollY = _METHOD(handle_cache.view.class, "getScrollY", "()I");
 	handle_cache.view.performClick = _METHOD(handle_cache.view.class, "performClick", "()Z");
 	handle_cache.view.onTouchEvent = _METHOD(handle_cache.view.class, "onTouchEvent", "(Landroid/view/MotionEvent;)Z");
+	handle_cache.view.onTouchEventInternal = _METHOD(handle_cache.view.class, "onTouchEventInternal", "(Landroid/view/MotionEvent;)Z");
 	handle_cache.view.dispatchTouchEvent = _METHOD(handle_cache.view.class, "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	handle_cache.view.onInterceptTouchEvent = _METHOD(handle_cache.view.class, "onInterceptTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	handle_cache.view.layoutInternal = _METHOD(handle_cache.view.class, "layoutInternal", "(II)V");
@@ -142,6 +143,9 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.view.getAllSuperClasses = _METHOD(handle_cache.view.class, "getAllSuperClasses", "()Ljava/lang/String;");
 	handle_cache.view.dispatchKeyEvent = _METHOD(handle_cache.view.class, "dispatchKeyEvent", "(Landroid/view/KeyEvent;)Z");
 	handle_cache.view.onKeyDown = _METHOD(handle_cache.view.class, "onKeyDown", "(ILandroid/view/KeyEvent;)Z");
+
+	handle_cache.view_group.class = _REF((*env)->FindClass(env, "android/view/ViewGroup"));
+	handle_cache.view_group.dispatchTouchEvent = _METHOD(handle_cache.view_group.class, "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
 
 	handle_cache.asset_manager.class = _REF((*env)->FindClass(env, "android/content/res/AssetManager"));
 	handle_cache.asset_manager.extractFromAPK = _STATIC_METHOD(handle_cache.asset_manager.class, "extractFromAPK", "(Ljava/lang/String;Ljava/lang/String;)V");
