@@ -107,6 +107,11 @@ public class Build {
 	 * Various version strings.
 	 */
 	public static class VERSION {
+		static {
+			String SDK_INT_str = System.getProperty("Build.VERSION.SDK_INT");
+			SDK_INT = (SDK_INT_str != null) ? Integer.parseInt(SDK_INT_str) : Build.VERSION_CODES.GINGERBREAD;
+		}
+
 		/**
 		 * The internal value used by the underlying source control to
 		 * represent this build.  E.g., a perforce changelist number
@@ -123,7 +128,7 @@ public class Build {
 		 * The user-visible SDK version of the framework; its possible
 		 * values are defined in {@link Build.VERSION_CODES}.
 		 */
-		public static final int SDK_INT = Build.VERSION_CODES.GINGERBREAD;
+		public static final int SDK_INT;
 
 		/**
 		 * The user-visible SDK version of the framework in its raw String
