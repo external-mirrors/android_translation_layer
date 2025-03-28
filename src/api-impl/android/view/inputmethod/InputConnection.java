@@ -15,12 +15,9 @@
  */
 package android.view.inputmethod;
 import android.os.Bundle;
+import android.view.KeyEvent;
 
 class ExtractedText {}
-class ExtractedTextRequest {}
-class CompletionInfo {}
-class CorrectionInfo {}
-class KeyEvent {}
 
 /**
  * The InputConnection interface is the communication channel from an

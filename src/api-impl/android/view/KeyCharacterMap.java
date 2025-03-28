@@ -332,7 +332,8 @@ public class KeyCharacterMap {
 	 * @return The associated character or combining accent, or 0 if none.
 	 */
 	public int get(int keyCode, int metaState) {
-		metaState = KeyEvent.normalizeMetaState(metaState);
+		return 0;
+		/*metaState = KeyEvent.normalizeMetaState(metaState);
 		char ch = nativeGetCharacter(mPtr, keyCode, metaState);
 
 		int map = sCombiningToAccent.get(ch);
@@ -340,7 +341,7 @@ public class KeyCharacterMap {
 			return map | COMBINING_ACCENT;
 		} else {
 			return ch;
-		}
+		}*/
 	}
 
 	/**
