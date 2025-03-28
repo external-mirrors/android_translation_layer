@@ -7,6 +7,11 @@ import android.os.IBinder;
 
 public abstract class Service extends ContextWrapper {
 
+	/* HACK for InputMethodService */
+	public Service(Context baseContext) {
+		super(baseContext);
+	}
+
 	public Service() {
 		super(null);
 	}
