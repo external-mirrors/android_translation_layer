@@ -427,6 +427,7 @@ srcs = [
 	'android/text/style/ReplacementSpan.java',
 	'android/text/style/StrikethroughSpan.java',
 	'android/text/style/StyleSpan.java',
+	'android/text/style/SuggestionSpan.java',
 	'android/text/style/TextAppearanceSpan.java',
 	'android/text/style/TypefaceSpan.java',
 	'android/text/style/UnderlineSpan.java',
