@@ -1,5 +1,8 @@
 package android.hardware;
 
+import java.util.Arrays;
+import java.util.List;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -44,4 +47,8 @@ public class SensorManager {
 	}
 
 	native void register_accelerometer_listener_native(SensorEventListener listener, Sensor sensor, int sampling_period);
+
+	public List<Sensor> getSensorList(int type) {
+		return Arrays.asList(getDefaultSensor(type));
+	}
 }

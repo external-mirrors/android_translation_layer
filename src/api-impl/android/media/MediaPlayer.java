@@ -62,6 +62,12 @@ public class MediaPlayer {
 	public void reset() {}
 	public void release() {}
 
+	public boolean isPlaying() { return false; }
+
+	public void seekTo(int dummy) {}
+
+	public void setVolume(float leftVolume, float rightVolume) {}
+
 	public static native void native_prepare(long gtk_media_stream);
 	public native long native_setDataSource(String path);
 	public static native void native_setOnCompletionListener(long gtk_media_stream, MediaPlayer.OnCompletionListener listener);

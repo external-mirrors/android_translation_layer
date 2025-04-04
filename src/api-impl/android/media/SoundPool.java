@@ -40,6 +40,18 @@ public class SoundPool {
 		return nativePlay(nativePool, soundID);
 	}
 
+	public void autoResume() {
+		System.out.println("WARNING: SoundPool.autoResume not implemented yet");
+	}
+
+	public void autoPause() {
+		System.out.println("WARNING: SoundPool.autoPause not implemented yet");
+	}
+
+	public void setVolume(int streamType, float leftVolume, float rightVolume) {
+		System.out.println("WARNING: SoundPool.setVolume not implemented yet");
+	}
+
 	public class Builder {
 		public Builder setAudioAttributes(AudioAttributes attributes) {
 			return this;
