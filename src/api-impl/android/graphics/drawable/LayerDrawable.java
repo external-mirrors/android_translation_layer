@@ -78,13 +78,17 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		int length = layers.length;
 		ChildDrawable[] r = new ChildDrawable[length];
 
+		int j = 0;
 		for (int i = 0; i < length; i++) {
-			r[i] = new ChildDrawable();
-			r[i].mDrawable = layers[i];
+			if (layers[i] == null)
+				continue;
+			r[j] = new ChildDrawable();
+			r[j].mDrawable = layers[i];
 			layers[i].setCallback(this);
 			mLayerState.mChildrenChangingConfigurations |= layers[i].getChangingConfigurations();
+			j++;
 		}
-		mLayerState.mNum = length;
+		mLayerState.mNum = j;
 		mLayerState.mChildren = r;
 
 		ensurePadding();
