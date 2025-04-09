@@ -2192,4 +2192,8 @@ public class View implements Drawable.Callback {
 	public void restoreHierarchyState(SparseArray<Parcelable> container) {}
 
 	public boolean isHovered() { return false; }
+
+	public void scrollBy(int x, int y) {
+		scrollTo(scrollX + x, scrollY + y);
+	}
 }
