@@ -17,6 +17,9 @@ libart_dep = [
 libdl_bio_dep = [
 	cc.find_library('dl_bio')
 ]
+libc_bio_dep = [
+	cc.find_library('c_bio')
+]
 libandroidfw_dep = [
 	cc.find_library('androidfw', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ]),
 ]
@@ -183,16 +186,21 @@ executable('android-translation-layer', [
                                         	'src/main-executable/main.c',
                                         	'src/main-executable/back_button.c',
                                         	'src/main-executable/bionic_compat.c',
+                                        	'src/main-executable/libc_bio_path_overrides.c',
                                         	resources
                                         ],
                                         install: true,
                                         dependencies: [
-                                        	dependency('gtk4'), dependency('jni'), declare_dependency(link_with: libtranslationlayer_so), libart_dep, dependency('dl'), libdl_bio_dep, dependency('libportal')
+                                        	dependency('gtk4'), dependency('jni'), declare_dependency(link_with: libtranslationlayer_so), libart_dep, dependency('dl'), libdl_bio_dep, libc_bio_dep, dependency('libportal'), dependency('fontconfig'),
                                         ],
                                         link_args: [
                                         	'-rdynamic'
                                         ],
-                                        install_rpath: get_option('prefix') / get_option('libdir') / 'art:' + get_option('prefix') / get_option('libdir') / 'java/dex/android_translation_layer/natives')
+                                        install_rpath: get_option('prefix') / get_option('libdir') / 'art' + ':' +
+                                                       get_option('prefix') / get_option('libdir') / 'java/dex/android_translation_layer/natives',
+                                        c_args: [
+						'-DINSTALL_DATADIR="'+join_paths(get_option('prefix'), get_option('datadir'))+'"'
+                                        ])
 
 # hax.jar
 subdir('src/api-impl')
@@ -212,5 +220,9 @@ custom_target('test_runner.jar', build_by_default: false, input: [test_runner_ja
               command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
 
 #framework-res.apk
-subdir('res')
+subdir('res/framework-res')
 
+install_data([
+             	'res/fonts.xml'
+             ],
+             install_dir: join_paths(get_option('prefix'), get_option('datadir')) + '/atl')

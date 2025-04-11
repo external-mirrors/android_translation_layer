@@ -10,6 +10,7 @@
 #include "../api-impl-jni/app/android_app_Activity.h"
 
 #include "back_button.h"
+#include "libc_bio_path_overrides.h"
 
 #include <dlfcn.h>
 #include <errno.h>
@@ -720,6 +721,9 @@ void init_cmd_parameters(GApplication *app, struct jni_callback_data *d)
 void init__r_debug();
 void remove_ongoing_notifications();
 
+typedef bool (apply_path_overrides_func_type)(char **);
+void libc_bio_set_apply_path_overrides_func(apply_path_overrides_func_type *func);
+
 int main(int argc, char **argv)
 {
 	GtkApplication *app;
@@ -731,6 +735,8 @@ int main(int argc, char **argv)
 	// locale on android is always either C or C.UTF-8, and some apps might unbeknownst to them depend on that
 	// for correct functionality
 	setenv("LC_ALL", "C.UTF-8", 1);
+
+	libc_bio_set_apply_path_overrides_func(apply_path_overrides);
 
 	struct jni_callback_data *callback_data = malloc(sizeof(struct jni_callback_data));
 	callback_data->apk_main_activity_class = NULL;
