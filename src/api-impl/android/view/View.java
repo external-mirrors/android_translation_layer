@@ -1076,13 +1076,16 @@ public class View implements Drawable.Callback {
 
 	private OnTouchListener on_touch_listener = null;
 
-	public boolean onTouchEventInternal(MotionEvent event) {
+	public boolean onTouchEventInternal(MotionEvent event, boolean handle_gestures) {
 		boolean handled = false;
 		if (on_touch_listener != null)
 			handled = on_touch_listener.onTouch(this, event);
 
 		if (!handled)
 			handled = onTouchEvent(event);
+
+		if (handle_gestures && !handled && event.getAction() == MotionEvent.ACTION_UP)
+			handled = performClick();
 
 		return handled;
 	}

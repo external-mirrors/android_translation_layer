@@ -67,7 +67,7 @@ bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagati
 		}
 		ret = false;
 	} else {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event);
+		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event, (jboolean)(event == NULL));
 	}
 
 	if((*env)->ExceptionCheck(env))
