@@ -41,37 +41,52 @@ struct pointer {
 
 GPtrArray *pointer_indices = NULL;
 
-static GdkEvent *canceled_event = NULL;
-static WrapperWidget *cancel_triggerer = NULL;
+gpointer canceled_event = NULL;
+WrapperWidget *cancel_triggerer = NULL;
+int canceled_action = 0;
 
 static struct pointer pointers[MAX_POINTERS] = {};
 
-bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, GdkEvent *event) {
+bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, gpointer event, int action) {
 	int ret;
 
 	jobject this = wrapper->jobj;
+	bool is_synthetic = event == motion_event;
+
+	if (cancel_triggerer == wrapper) { // cancel done
+		canceled_event = NULL;
+		cancel_triggerer = NULL;
+		if (is_synthetic)
+			_SET_INT_FIELD(motion_event, "action", canceled_action);
+	}
 
 	if (wrapper->custom_dispatch_touch) {
 		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
 	} else if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
 		wrapper->intercepting_touch = (*env)->CallBooleanMethod(env, this, handle_cache.view.onInterceptTouchEvent, motion_event);
 		if (wrapper->intercepting_touch) {
-			if(event) {
-				// store the event that was canceled and let it propagate to the child widgets
-				canceled_event = event;
-				cancel_triggerer = wrapper;
-			} else {
-				/* this function is also called to synthesize an event, in which case there is no GdkEvent so not sure what to do */
-				fprintf(stderr, "view_dispatch_motionevent: onInterceptTouchEvent returned true but this is a synthesized event, please investigate\n");
+			// store the event that was canceled and let it propagate to the child widgets
+			canceled_event = event;
+			cancel_triggerer = wrapper;
+			if (is_synthetic) {
+				canceled_action = _GET_INT_FIELD(motion_event, "action");
+				_SET_INT_FIELD(motion_event, "action", ACTION_CANCEL);
 			}
 		}
 		ret = false;
 	} else {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event, (jboolean)(event == NULL));
+		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event, (jboolean)is_synthetic);
 	}
 
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+
+
+	if (action == ACTION_UP || action == ACTION_CANCEL)
+		wrapper->intercepting_touch = false;
+
+	if (action == ACTION_CANCEL)
+		ret = false;
 
 	return ret;
 }
@@ -93,12 +108,10 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 
 	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, timestamp, ids, coords);
 
-	ret = view_dispatch_motionevent(env, wrapper, phase, motion_event, event);
+	ret = view_dispatch_motionevent(env, wrapper, phase, motion_event, event, action);
 
 	(*env)->DeleteLocalRef(env, motion_event);
 
-	if (action == ACTION_UP)
-		wrapper->intercepting_touch = false;
 	return ret;
 }
 static void gdk_event_get_widget_relative_position(GdkEvent *event, GtkWidget *widget, double *x, double *y)
@@ -201,15 +214,8 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 	pointers[id].raw_x = x;
 	pointers[id].raw_y = y;
 
-	// TODO: does this work properly with multitouch?
-	if (cancel_triggerer == wrapper) { // cancel done
-		canceled_event = NULL;
-		cancel_triggerer = NULL;
-	} else if (event == canceled_event) {
-		gdk_event_get_widget_relative_position(event, widget, &x, &y);
-		call_ontouch_callback(wrapper, ACTION_CANCEL, pointers, pointer_indices, phase, timestamp, event);
-		remove_pointer_fast(pointer_indices, &pointers[id]);
-		return false;
+	if (event == canceled_event && cancel_triggerer != wrapper) {
+		action = ACTION_CANCEL;
 	}
 
 	gboolean ret = call_ontouch_callback(wrapper, action, pointers, pointer_indices, phase, timestamp, event);

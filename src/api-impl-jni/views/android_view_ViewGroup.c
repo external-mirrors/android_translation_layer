@@ -66,14 +66,17 @@ JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChild(JNIEnv *env
 
 /* FIXME: put this in a header */
 G_DECLARE_FINAL_TYPE(JavaWidget, java_widget, JAVA, WIDGET, GtkWidget)
-bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, GdkEvent *event);
+bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, gpointer event, int action);
 
 static bool dispatch_motionevent_if_JavaWidget(GtkWidget *widget, GtkPropagationPhase phase, jobject motion_event)
 {
 	if(!JAVA_IS_WIDGET(widget))
 		return false;
+	JNIEnv *env = get_jni_env();
 
-	return view_dispatch_motionevent(get_jni_env(), WRAPPER_WIDGET(gtk_widget_get_parent(widget)), phase, motion_event, NULL);
+	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
+	int action = _GET_INT_FIELD(motion_event, "action");
+	return view_dispatch_motionevent(env, wrapper, phase, motion_event, motion_event, action);
 }
 
 /* used by atl_propagate_synthetic_motionevent */
