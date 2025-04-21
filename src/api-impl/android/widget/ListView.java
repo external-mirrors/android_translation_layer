@@ -3626,4 +3626,22 @@ public class ListView extends AbsListView {
 
 		return false;
 	}
+
+	@Override
+	public View findViewById(int id) {
+		View view = super.findViewById(id);
+		if (view != null)
+			return view;
+		for (FixedViewInfo info: mHeaderViewInfos) {
+			view = info.view.findViewById(id);
+			if (view != null)
+				return view;
+		}
+		for (FixedViewInfo info: mFooterViewInfos) {
+			view = info.view.findViewById(id);
+			if (view != null)
+				return view;
+		}
+		return null;
+	}
 }
