@@ -25,7 +25,7 @@ import android.util.AttributeSet;
  * and then accelerates.
  *
  */
-public class AccelerateInterpolator implements Interpolator {
+public class AccelerateInterpolator extends BaseInterpolator {
 	private final float mFactor;
 	private final double mDoubleFactor;
 

@@ -463,7 +463,7 @@ public class Context extends Object {
 	public ComponentName startService(Intent intent) {
 		ComponentName component = intent.getComponent();
 		if (component == null) {
-			Slog.w(TAG, "startService: component is null");
+			Slog.w(TAG, "startService: component is null for intent: " + intent);
 			return null;
 		}
 

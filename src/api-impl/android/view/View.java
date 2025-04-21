@@ -2203,4 +2203,6 @@ public class View implements Drawable.Callback {
 	public void setAccessibilityPaneTitle(CharSequence paneTitle) {}
 
 	public void setAccessibilityHeading(boolean heading) {}
+
+	public WindowInsets computeSystemWindowInsets(WindowInsets insets, Rect contentInsets) { return insets; }
 }

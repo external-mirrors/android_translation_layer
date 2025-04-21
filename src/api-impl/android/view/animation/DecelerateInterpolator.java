@@ -1,6 +1,6 @@
 package android.view.animation;
 
-public class DecelerateInterpolator implements Interpolator{
+public class DecelerateInterpolator extends BaseInterpolator {
 
 	private float factor = 1.0f;
 
