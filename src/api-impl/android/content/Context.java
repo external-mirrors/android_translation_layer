@@ -133,11 +133,22 @@ public class Context extends Object {
 		Security.addProvider(provider);
 
 		r.applyPackageQuirks(application_info.packageName);
+
+		for (PackageParser.Activity receiver : pkg.receivers) {
+			for (PackageParser.ActivityIntentInfo intent : receiver.intents) {
+				if (intent.matchAction("org.unifiedpush.android.connector.MESSAGE")) {
+					nativeExportUnifiedPush(application_info.packageName);
+					break;
+				}
+			}
+		}
 	}
 
 	private static native String native_get_apk_path();
 	protected static native void native_updateConfig(Configuration config);
 	private static native void nativeOpenFile(int fd);
+	private static native void nativeExportUnifiedPush(String packageName);
+	private static native void nativeRegisterUnifiedPush(String token, String application);
 
 	static Application createApplication(long native_window) throws Exception {
 		Application application;
@@ -503,6 +514,16 @@ public class Context extends Object {
 
 	public boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int dummy3) {
 		if (intent.getComponent() == null) {
+			for (PackageParser.Service s : pkg.services) {
+				for (PackageParser.IntentInfo ii : s.intents) {
+					if (ii.matchAction(intent.getAction())) {
+						intent.setComponent(new ComponentName(pkg.packageName, s.className));
+						break;
+					}
+				}
+			}
+		}
+		if (intent.getComponent() == null) {
 			Slog.w(TAG, "Context.bindService: intent.getComponent() is null");
 			return false;
 		}
@@ -629,9 +650,25 @@ public class Context extends Object {
 	}
 
 	public void sendBroadcast(Intent intent) {
+		if ("org.unifiedpush.android.distributor.REGISTER".equals(intent.getAction())) {
+			nativeRegisterUnifiedPush(intent.getStringExtra("token"), intent.getStringExtra("application"));
+		}
 		for (IntentFilter filter : receiverMap.keySet()) {
 			if (filter.matchAction(intent.getAction())) {
 				receiverMap.get(filter).onReceive(this, intent);
+			}
+		}
+		for (PackageParser.Activity receiver : pkg.receivers) {
+			for (PackageParser.IntentInfo intentInfo : receiver.intents) {
+				if (intentInfo.matchAction(intent.getAction())) {
+					try {
+						Class<? extends BroadcastReceiver> cls = Class.forName(receiver.className).asSubclass(BroadcastReceiver.class);
+						BroadcastReceiver receiverInstance = cls.newInstance();
+						receiverInstance.onReceive(this, intent);
+					} catch (ReflectiveOperationException e) {
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 	}

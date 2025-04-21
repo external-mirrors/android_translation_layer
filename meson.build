@@ -47,6 +47,12 @@ mpris = gnome.gdbus_codegen('mpris-dbus',
 portal_openuri = gnome.gdbus_codegen('portal-openuri',
                                      'src/api-impl-jni/content/org.freedesktop.portal.OpenURI.xml',
                                      interface_prefix: 'org.freedesktop.portal')
+unifiedpush_distributor = gnome.gdbus_codegen('unifiedpush-distributor',
+                                              'src/api-impl-jni/content/org.unifiedpush.Distributor1.xml',
+                                              interface_prefix: 'org.unifiedpush')
+unifiedpush_connector = gnome.gdbus_codegen('unifiedpush-connector',
+                                            'src/api-impl-jni/content/org.unifiedpush.Connector1.xml',
+                                            interface_prefix: 'org.unifiedpush')
 
 extra_deps = []
 extra_jni_srcs = []
@@ -157,6 +163,8 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_TextView.c',
                                                                   	mpris,
                                                                   	portal_openuri,
+                                                                  	unifiedpush_distributor,
+                                                                  	unifiedpush_connector,
                                                                         wl_proto_headers,
                                                                         wl_proto_sources,
                                                                         extra_jni_srcs,

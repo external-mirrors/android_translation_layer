@@ -100,6 +100,7 @@ struct handle_cache {
 	struct {
 		jclass class;
 		jmethodID get_package_name;
+		jmethodID sendBroadcast;
 	} context;
 	struct {
 		jclass class;
@@ -123,6 +124,7 @@ struct handle_cache {
 		jclass class;
 		jmethodID constructor;
 		jmethodID putExtraCharSequence;
+		jmethodID putExtraByteArray;
 	} intent;
 	struct {
 		jclass class;

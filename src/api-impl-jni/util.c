@@ -156,6 +156,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.context.get_package_name = _METHOD(handle_cache.context.class, "getPackageName", "()Ljava/lang/String;");
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+	handle_cache.context.sendBroadcast = _METHOD(handle_cache.context.class, "sendBroadcast", "(Landroid/content/Intent;)V");
 
 	handle_cache.application.class = _REF((*env)->FindClass(env, "android/app/Application"));
 	handle_cache.application.get_app_icon_path = _METHOD(handle_cache.application.class, "get_app_icon_path", "()Ljava/lang/String;");
@@ -174,6 +175,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.intent.class = _REF((*env)->FindClass(env, "android/content/Intent"));
 	handle_cache.intent.constructor = _METHOD(handle_cache.intent.class, "<init>", "()V");
 	handle_cache.intent.putExtraCharSequence = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;Ljava/lang/CharSequence;)Landroid/content/Intent;");
+	handle_cache.intent.putExtraByteArray = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;[B)Landroid/content/Intent;");
 
 	handle_cache.instrumentation.class = _REF((*env)->FindClass(env, "android/app/Instrumentation"));
 

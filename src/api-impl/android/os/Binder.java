@@ -1,5 +1,7 @@
 package android.os;
 
+import android.content.Context;
+
 public class Binder implements IBinder {
 
 	public void attachInterface(IInterface owner, String descriptor) {}
@@ -16,7 +18,7 @@ public class Binder implements IBinder {
 	@Override
 	public boolean transact(int code, Parcel data, Parcel reply, int flags) { return false; }
 
-	public static int getCallingUid() { return 0; }
+	public static int getCallingUid() { return Context.this_application.getApplicationInfo().uid; }
 
 	public static int getCallingPid() { return 0; }
 }

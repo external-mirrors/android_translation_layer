@@ -6,6 +6,7 @@ public class ResolveInfo {
 	public ActivityInfo activityInfo = new ActivityInfo();
 	public ServiceInfo serviceInfo = new ServiceInfo();
 	public IntentFilter filter = new IntentFilter();
+	public int priority = -500;
 
 	public static class DisplayNameComparator {
 

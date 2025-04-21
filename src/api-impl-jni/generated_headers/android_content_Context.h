@@ -33,6 +33,22 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig
 JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile
   (JNIEnv *, jclass, jint);
 
+/*
+ * Class:     android_content_Context
+ * Method:    nativeExportUnifiedPush
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_content_Context_nativeExportUnifiedPush
+  (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     android_content_Context
+ * Method:    nativeRegisterUnifiedPush
+ * Signature: (Ljava/lang/String;Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_content_Context_nativeRegisterUnifiedPush
+  (JNIEnv *, jclass, jstring, jstring);
+
 #ifdef __cplusplus
 }
 #endif

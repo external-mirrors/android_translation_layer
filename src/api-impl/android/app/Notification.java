@@ -188,6 +188,10 @@ public class Notification implements Parcelable {
 
 		public Builder setSound(Uri sound) {return this;}
 
+		public Builder setSmallIcon(int icon) {return this;}
+
+		public Builder setTicker(CharSequence tickerText) {return this;}
+
 		public Notification build() {
 			return notification;
 		}

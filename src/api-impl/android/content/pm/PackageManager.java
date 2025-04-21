@@ -2318,6 +2318,11 @@ public class PackageManager {
 	 */
 	public List<ResolveInfo> queryBroadcastReceivers(Intent intent,
 							 int flags) {
+		if ("org.unifiedpush.android.distributor.REGISTER".equals(intent.getAction())) {
+			ResolveInfo ri = new ResolveInfo();
+			ri.activityInfo.exported = true;
+			return Arrays.asList(ri);
+		}
 		return new ArrayList<ResolveInfo>();
 	}
 

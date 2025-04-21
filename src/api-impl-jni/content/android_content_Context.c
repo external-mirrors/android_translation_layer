@@ -8,6 +8,8 @@
 #endif
 
 #include "portal-openuri.h"
+#include "unifiedpush-distributor.h"
+#include "unifiedpush-connector.h"
 
 #include "../defines.h"
 #include "../util.h"
@@ -85,4 +87,91 @@ JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile(JNIEnv *env, 
 	g_object_unref(fd_list);
 	g_object_unref(openuri);
 	g_object_unref(connection);
+}
+
+static void on_bus_acquired(GDBusConnection *connection, const char *name, gpointer user_data)
+{
+	Connector1 *connector1 = user_data;
+	g_dbus_interface_skeleton_export(G_DBUS_INTERFACE_SKELETON(connector1),
+	                                 connection, "/org/unifiedpush/Connector", NULL);
+}
+
+static gboolean on_new_endpoint(Connector1 *connector, GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	GVariant *parameters = g_dbus_method_invocation_get_parameters(invocation);
+	const char *token;
+	g_variant_get_child(parameters, 0, "s", &token);
+	const char *endpoint;
+	g_variant_get_child(parameters, 1, "s", &endpoint);
+	connector1_complete_new_endpoint(connector, invocation);
+
+	JNIEnv *env = get_jni_env();
+	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("org.unifiedpush.android.connector.NEW_ENDPOINT"));
+	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("token"), _JSTRING(token));
+	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("endpoint"), _JSTRING(endpoint));
+
+	jobject context = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;");
+	(*env)->CallVoidMethod(env, context, handle_cache.context.sendBroadcast, intent);
+	if ((*env)->ExceptionCheck(env)) {
+		(*env)->ExceptionDescribe(env);
+	}
+	return TRUE;
+}
+
+static gboolean on_message(Connector1 *connector, GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	GVariant *parameters = g_dbus_method_invocation_get_parameters(invocation);
+	const char *token;
+	g_variant_get_child(parameters, 0, "s", &token);
+	gsize size;
+	const int8_t *message = g_variant_get_fixed_array(g_variant_get_child_value(parameters, 1), &size, 1);
+	connector1_complete_message(connector, invocation);
+
+	JNIEnv *env = get_jni_env();
+	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("org.unifiedpush.android.connector.MESSAGE"));
+	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("token"), _JSTRING(token));
+	jbyteArray bytesMessage = (*env)->NewByteArray(env, size);
+	(*env)->SetByteArrayRegion(env, bytesMessage, 0, size, message);
+	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraByteArray, _JSTRING("bytesMessage"), bytesMessage);
+
+	jobject context = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;");
+	(*env)->CallVoidMethod(env, context, handle_cache.context.sendBroadcast, intent);
+	if ((*env)->ExceptionCheck(env)) {
+		(*env)->ExceptionDescribe(env);
+	}
+	return TRUE;
+}
+
+JNIEXPORT void JNICALL Java_android_content_Context_nativeExportUnifiedPush(JNIEnv *env, jclass this, jstring application_jstr)
+{
+	const char *application = (*env)->GetStringUTFChars(env, application_jstr, NULL);
+
+	Connector1 *connector1 = connector1_skeleton_new();
+	g_signal_connect(connector1, "handle-new-endpoint", G_CALLBACK(on_new_endpoint), NULL);
+	g_signal_connect(connector1, "handle-message", G_CALLBACK(on_message), NULL);
+	g_bus_own_name(G_BUS_TYPE_SESSION, application, G_BUS_NAME_OWNER_FLAGS_NONE,
+	              on_bus_acquired, NULL, NULL, connector1, NULL);
+	(*env)->ReleaseStringUTFChars(env, application_jstr, application);
+}
+
+JNIEXPORT void JNICALL Java_android_content_Context_nativeRegisterUnifiedPush(JNIEnv *env, jclass this, jstring token_jstr, jstring application_jstr)
+{
+	const char *token = (*env)->GetStringUTFChars(env, token_jstr, NULL);
+	const char *application = (*env)->GetStringUTFChars(env, application_jstr, NULL);
+
+	GDBusConnection *connection = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
+	Distributor1 *distributor1 = distributor1_proxy_new_sync(connection, 0, "org.unifiedpush.Distributor.kde", "/org/unifiedpush/Distributor", NULL, NULL);
+	GError *error = NULL;
+	distributor1_call_register(distributor1, application, token, "", NULL, NULL, &error);
+	if (error) {
+		printf("nativeRegisterUnifiedPush: error=%s\n", error->message);
+		g_error_free(error);
+	}
+	g_object_unref(distributor1);
+	g_object_unref(connection);
+
+	(*env)->ReleaseStringUTFChars(env, token_jstr, token);
+	(*env)->ReleaseStringUTFChars(env, application_jstr, application);
 }
