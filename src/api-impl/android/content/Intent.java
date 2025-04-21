@@ -2,6 +2,7 @@ package android.content;
 
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -391,4 +392,10 @@ public class Intent implements Parcelable {
 	public ComponentName resolveActivity(PackageManager pm) {
 		return component;
 	}
+
+	public void setSourceBounds(Rect sourceBounds) {}
+
+	public void setSelector(Intent selector) {}
+
+	public void setClipData(ClipData clip) {}
 }

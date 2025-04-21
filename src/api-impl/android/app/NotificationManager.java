@@ -118,4 +118,8 @@ public class NotificationManager {
 	public List<NotificationChannelGroup> getNotificationChannelGroups() {
 		return Collections.emptyList();
 	}
+
+	public boolean areNotificationsEnabled() {
+		return true;
+	}
 }

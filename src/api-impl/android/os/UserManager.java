@@ -7,4 +7,8 @@ public class UserManager {
 	public static boolean supportsMultipleUsers() {
 		return false;
 	}
+
+	public long getSerialNumberForUser(UserHandle user) {
+		return user.getIdentifier();
+	}
 }

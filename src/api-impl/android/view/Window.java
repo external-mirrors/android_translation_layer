@@ -154,4 +154,8 @@ public class Window {
 	public Transition getSharedElementReenterTransition() {
 		return new Transition();
 	}
+
+	public void setReturnTransition(Transition transition) {}
+
+	public void setEnterTransition(Transition transition) {}
 }

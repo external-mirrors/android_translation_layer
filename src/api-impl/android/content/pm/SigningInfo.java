@@ -12,4 +12,8 @@ public final class SigningInfo {
 	public Signature[] getSigningCertificateHistory() {
 		return null;
 	}
+
+	public boolean hasPastSigningCertificates() {
+		return false;
+	}
 }

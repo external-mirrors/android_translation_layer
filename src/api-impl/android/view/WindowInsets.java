@@ -59,4 +59,8 @@ public class WindowInsets {
 	public boolean isConsumed() {
 		return false;
 	}
+
+	public WindowInsets consumeDisplayCutout() {
+		return this;
+	}
 }

@@ -10,9 +10,12 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+
+import android.util.Slog;
 
 public class AndroidKeyStore extends KeyStoreSpi {
 
@@ -70,8 +73,8 @@ public class AndroidKeyStore extends KeyStoreSpi {
 
 	@Override
 	public Enumeration<String> engineAliases() {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'engineAliases'");
+		Slog.i("AndroidKeyStore", "engineAliases() called");
+		return Collections.emptyEnumeration();
 	}
 
 	@Override

@@ -11,4 +11,8 @@ public class Transition {
 	public Transition addListener(TransitionListener listener) {
 		return this;
 	}
+
+	public Transition excludeTarget(int targetId, boolean exclude) {
+		return this;
+	}
 }

@@ -2199,4 +2199,8 @@ public class View implements Drawable.Callback {
 	public void scrollBy(int x, int y) {
 		scrollTo(scrollX + x, scrollY + y);
 	}
+
+	public void setAccessibilityPaneTitle(CharSequence paneTitle) {}
+
+	public void setAccessibilityHeading(boolean heading) {}
 }

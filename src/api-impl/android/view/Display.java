@@ -1,6 +1,7 @@
 package android.view;
 
 import android.graphics.Point;
+import android.graphics.Rect;
 import android.util.DisplayMetrics;
 
 public final class Display {
@@ -62,5 +63,9 @@ public final class Display {
 
 	public void getRealSize(Point size) {
 		getSize(size);
+	}
+
+	public void getRectSize(Rect rect) {
+		rect.set(0, 0, getWidth(), getHeight());
 	}
 }

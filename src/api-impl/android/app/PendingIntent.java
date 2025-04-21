@@ -59,4 +59,12 @@ public class PendingIntent implements Parcelable {
 
 	public class CanceledException extends Exception {
 	}
+
+	public String getCreatorPackage() {
+		return Context.this_application.getPackageName();
+	}
+
+	public int getCreatorUid() {
+		return Context.this_application.getApplicationInfo().uid;
+	}
 }

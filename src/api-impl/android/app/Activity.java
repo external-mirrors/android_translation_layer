@@ -622,4 +622,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public int getChangingConfigurations() {
 		return 0;
 	}
+
+	public void finishAfterTransition() {
+		finish();
+	}
 }

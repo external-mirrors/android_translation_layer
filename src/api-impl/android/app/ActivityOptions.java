@@ -10,6 +10,10 @@ public class ActivityOptions {
 		return new ActivityOptions();
 	}
 
+	public static ActivityOptions makeSceneTransitionAnimation(Activity activity, View view, String name) {
+		return new ActivityOptions();
+	}
+
 	public Bundle toBundle() {
 		return null;
 	}

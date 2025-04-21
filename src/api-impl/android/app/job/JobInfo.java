@@ -46,6 +46,14 @@ public class JobInfo {
 			return this;
 		}
 
+		public Builder setRequiresBatteryNotLow(boolean requires_battery_not_low) {
+			return this;
+		}
+
+		public Builder setRequiresStorageNotLow(boolean requires_storage_not_low) {
+			return this;
+		}
+
 		public JobInfo build() {
 			return new JobInfo();
 		}

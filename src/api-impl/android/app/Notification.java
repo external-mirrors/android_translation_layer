@@ -53,6 +53,8 @@ public class Notification implements Parcelable {
 
 	public Bundle extras;
 
+	public String category;
+
 	String text;
 	String title;
 	List<Action> actions = new ArrayList<Action>();

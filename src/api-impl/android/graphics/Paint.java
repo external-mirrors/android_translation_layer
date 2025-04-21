@@ -337,6 +337,8 @@ public class Paint {
 		return align;
 	}
 
+	public boolean hasGlyph(String text) { return false; }
+
 	private static native long native_create();
 	private static native long native_clone(long paint);
 	private static native void native_recycle(long paint);

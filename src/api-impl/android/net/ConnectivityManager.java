@@ -43,4 +43,6 @@ public class ConnectivityManager {
 
 	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
 
+	public void registerDefaultNetworkCallback(NetworkCallback cb) {}
+
 }
