@@ -44,19 +44,27 @@ static void activity_unfocus(JNIEnv *env, jobject activity)
 		(*env)->ExceptionDescribe(env);
 }
 
+static jobject removed_activity = NULL;
+
 static void activity_focus(JNIEnv *env, jobject activity)
 {
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onStart);
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+	if (activity == removed_activity)
+		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onResume);
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+	if (activity == removed_activity)
+		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onPostResume);
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+	if (activity == removed_activity)
+		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onWindowFocusChanged, true);
 	if((*env)->ExceptionCheck(env))
@@ -73,6 +81,8 @@ static void activity_update_current(JNIEnv *env)
 
 		if (activity_new)
 			activity_focus(env, activity_new);
+		if (activity_new == removed_activity)
+			return;
 
 		activity_current = activity_new;
 	}
@@ -164,7 +174,7 @@ void activity_start(JNIEnv *env, jobject activity_object)
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeFinish(JNIEnv *env, jobject this, jlong window)
 {
 	GList *l;
-	jobject removed_activity = NULL;
+	removed_activity = NULL;
 	for (l = activity_backlog; l != NULL; l = l->next) {
 		if ((*env)->IsSameObject(env, this, l->data)) {
 			removed_activity = l->data;
