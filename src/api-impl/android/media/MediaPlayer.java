@@ -68,8 +68,18 @@ public class MediaPlayer {
 
 	public void setVolume(float leftVolume, float rightVolume) {}
 
+	public int getDuration() {
+		return native_getDuration(gtk_media_stream);
+	}
+
+	public int getCurrentPosition() {
+		return native_getCurrentPosition(gtk_media_stream);
+	}
+
 	public static native void native_prepare(long gtk_media_stream);
 	public native long native_setDataSource(String path);
 	public static native void native_setOnCompletionListener(long gtk_media_stream, MediaPlayer.OnCompletionListener listener);
 	public static native void native_start(long gtk_media_stream);
+	public static native int native_getDuration(long gtk_media_stream);
+	public static native int native_getCurrentPosition(long gtk_media_stream);
 }

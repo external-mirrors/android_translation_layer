@@ -56,3 +56,19 @@ JNIEXPORT void JNICALL Java_android_media_MediaPlayer_native_1start(JNIEnv *env,
 	gtk_media_stream_set_volume(media_stream, 1.0);
 	gtk_media_stream_play(media_stream);
 }
+
+JNIEXPORT jint JNICALL Java_android_media_MediaPlayer_native_1getDuration(JNIEnv *env, jclass this, jlong media_stream_ptr)
+{
+	GtkMediaStream *media_stream = _PTR(media_stream_ptr);
+
+	// convert from microseconds to milliseconds
+	return gtk_media_stream_get_duration(media_stream) / 1000;
+}
+
+JNIEXPORT jint JNICALL Java_android_media_MediaPlayer_native_1getCurrentPosition(JNIEnv *env, jclass this, jlong media_stream_ptr)
+{
+	GtkMediaStream *media_stream = _PTR(media_stream_ptr);
+
+	// convert from microseconds to milliseconds
+	return gtk_media_stream_get_timestamp(media_stream) / 1000;
+}

@@ -39,6 +39,22 @@ JNIEXPORT void JNICALL Java_android_media_MediaPlayer_native_1setOnCompletionLis
 JNIEXPORT void JNICALL Java_android_media_MediaPlayer_native_1start
   (JNIEnv *, jclass, jlong);
 
+/*
+ * Class:     android_media_MediaPlayer
+ * Method:    native_getDuration
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_media_MediaPlayer_native_1getDuration
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_media_MediaPlayer
+ * Method:    native_getCurrentPosition
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_media_MediaPlayer_native_1getCurrentPosition
+  (JNIEnv *, jclass, jlong);
+
 #ifdef __cplusplus
 }
 #endif
