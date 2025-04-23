@@ -74,4 +74,6 @@ public interface MenuItem {
 	public MenuItem setNumericShortcut(char numericChar);
 
 	public boolean expandActionView();
+
+	public boolean isActionViewExpanded();
 }

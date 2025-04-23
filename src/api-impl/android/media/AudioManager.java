@@ -56,4 +56,8 @@ public class AudioManager {
 	public boolean isStreamMute(int streamType) {
 		return false;
 	}
+
+	public boolean isMusicActive() {
+		return false;
+	}
 }

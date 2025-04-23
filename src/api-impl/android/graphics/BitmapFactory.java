@@ -626,9 +626,9 @@ public class BitmapFactory {
 
 		Trace.traceBegin(Trace.TRACE_TAG_GRAPHICS, "decodeFileDescriptor");
 		try {
-			if (nativeIsSeekable(fd)) {
-				bm = nativeDecodeFileDescriptor(fd, outPadding, opts);
-			} else {
+			//if (nativeIsSeekable(fd)) {
+			//	bm = nativeDecodeFileDescriptor(fd, outPadding, opts);
+			//} else {
 				FileInputStream fis = new FileInputStream(fd);
 				try {
 					bm = decodeStreamInternal(fis, outPadding, opts);
@@ -638,7 +638,7 @@ public class BitmapFactory {
 					} catch (Throwable t) { /* ignore */
 					}
 				}
-			}
+			//}
 
 			if (bm == null && opts != null && opts.inBitmap != null) {
 				throw new IllegalArgumentException("Problem decoding into existing bitmap");

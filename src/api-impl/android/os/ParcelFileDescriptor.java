@@ -601,19 +601,19 @@ public class ParcelFileDescriptor implements Closeable {
 	 *
 	 * @see #canDetectErrors()
 	 */
-	public int detachFd() { /*
-	     if (mWrapped != null) {
-		 return mWrapped.detachFd();
-	     } else {
-		 if (mClosed) {
-		     throw new IllegalStateException("Already closed");
-		 }
-		 final int fd = getFd();
-		 Parcel.clearFileDescriptor(mFd);
-		 writeCommStatusAndClose(Status.DETACHED, null);
-		 return fd;
-	     }*/
-		return -1;
+	public int detachFd() {
+		if (mWrapped != null) {
+			return mWrapped.detachFd();
+		} else {
+			if (mClosed) {
+				throw new IllegalStateException("Already closed");
+			}
+			final int fd = getFd();
+			// Parcel.clearFileDescriptor(mFd);
+			mFd.setInt$(-1);
+			writeCommStatusAndClose(Status.DETACHED, null);
+			return fd;
+		}
 	}
 
 	/**

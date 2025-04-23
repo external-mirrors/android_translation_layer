@@ -395,7 +395,15 @@ public class Intent implements Parcelable {
 
 	public void setSourceBounds(Rect sourceBounds) {}
 
+	public Rect getSourceBounds() {
+		return null;
+	}
+
 	public void setSelector(Intent selector) {}
 
 	public void setClipData(ClipData clip) {}
+
+	public String resolveType(Context context) {
+		return type;
+	}
 }

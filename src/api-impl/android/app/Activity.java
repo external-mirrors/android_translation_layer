@@ -258,7 +258,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	protected void onSaveInstanceState(Bundle outState) {
 	}
 
-	void onConfigurationChanged(Configuration newConfig) {
+	public void onConfigurationChanged(Configuration newConfig) {
 	}
 
 	public void onLowMemory() {

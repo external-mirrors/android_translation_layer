@@ -474,6 +474,10 @@ public class Canvas {
 		return save();
 	}
 
+	public int saveLayer(RectF bounds, Paint paint) {
+		return save();
+	}
+
 	public void drawOval(RectF oval, Paint paint) {
 		Log.w("Canvas", "STUB: drawOval");
 	}

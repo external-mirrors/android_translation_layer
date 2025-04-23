@@ -88,4 +88,12 @@ public class ViewPropertyAnimator {
 			}
 		}, startDelay+duration);
 	}
+
+	public ViewPropertyAnimator withEndAction(Runnable runnable) {
+		return this;
+	}
+
+	public ViewPropertyAnimator withStartAction(Runnable runnable) {
+		return this;
+	}
 }

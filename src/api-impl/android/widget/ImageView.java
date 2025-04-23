@@ -163,7 +163,10 @@ public class ImageView extends View {
 	public final void setColorFilter(int color, PorterDuff.Mode mode) {}
 
 	public void setImageTintList(ColorStateList tint) {
-		colorFilter = new PorterDuffColorFilter(tint.getDefaultColor(), PorterDuff.Mode.SRC_IN);
+		if (tint == null)
+			colorFilter = null;
+		else
+			colorFilter = new PorterDuffColorFilter(tint.getDefaultColor(), PorterDuff.Mode.SRC_IN);
 		setImageDrawable(drawable);
 	}
 
@@ -190,6 +193,10 @@ public class ImageView extends View {
 	public void setColorFilter(int color) {}
 
 	public void setColorFilter(ColorFilter cf) {}
+
+	public Matrix getImageMatrix() {
+		return Matrix.IDENTITY_MATRIX;
+	}
 
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);

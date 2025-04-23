@@ -335,6 +335,12 @@ public class PopupMenu {
 			throw new UnsupportedOperationException("Unimplemented method 'clearHeader'");
 		}
 
+		@Override
+		public SubMenu setIcon(Drawable icon) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'setIcon'");
+		}
+
 	}
 
 	private class MenuItemImpl implements MenuItem {
@@ -548,6 +554,12 @@ public class PopupMenu {
 		public boolean expandActionView() {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'expandActionView'");
+		}
+
+		@Override
+		public boolean isActionViewExpanded() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'isActionViewExpanded'");
 		}
 	}
 

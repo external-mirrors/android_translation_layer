@@ -654,5 +654,9 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void requestChildFocus(View child, View focused) {}
 
+	public boolean getClipChildren() {
+		return false;
+	}
+
 	public native boolean native_dispatchTouchEvent(long widget, MotionEvent event, double x, double y);
 }

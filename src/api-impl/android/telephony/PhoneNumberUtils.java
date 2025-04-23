@@ -7,6 +7,6 @@ public class PhoneNumberUtils {
 	}
 
 	public static boolean isGlobalPhoneNumber(String phoneNumber) {
-		return phoneNumber.startsWith("+") || phoneNumber.startsWith("00");
+		return phoneNumber != null && (phoneNumber.startsWith("+") || phoneNumber.startsWith("00"));
 	}
 }

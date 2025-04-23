@@ -403,4 +403,6 @@ public class TextView extends View {
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
 	public void setBreakStrategy(int strategy) {}
+
+	public void clearComposingText() {}
 }
