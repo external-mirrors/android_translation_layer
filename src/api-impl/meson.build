@@ -76,6 +76,7 @@ srcs = [
 	'android/bluetooth/le/ScanCallback.java',
 	'android/content/ActivityNotFoundException.java',
 	'android/content/AsyncQueryHandler.java',
+	'android/content/ATLMediaContentProvider.java',
 	'android/content/BroadcastReceiver.java',
 	'android/content/ClipboardManager.java',
 	'android/content/ClipData.java',

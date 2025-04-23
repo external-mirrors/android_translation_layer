@@ -34,6 +34,7 @@ public abstract class ContentProvider {
 				providers.put(provider_parsed.info.authority, provider);
 			} catch(Exception e) { e.printStackTrace(); }
 		}
+		providers.put("media", new ATLMediaContentProvider());
 	}
 
 	public boolean onCreate() {return false;}
