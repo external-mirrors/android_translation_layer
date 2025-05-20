@@ -94,4 +94,12 @@ public class IntentFilter {
 		}
 		return ret;
 	}
+
+	public final Iterator<String> schemesIterator() {
+		return dataSchemes.iterator();
+	}
+
+	public final Iterator authoritiesIterator() {
+		return null;
+	}
 }

@@ -1388,6 +1388,11 @@ public class PackageManager {
 	public PackageInfo getPackageInfo(String packageName, int flags) throws NameNotFoundException {
 		if (packageName.equals(Context.pkg.packageName)) {
 			return PackageParser.generatePackageInfo(Context.pkg, new int[0], flags, 0, 0, new HashSet<>(), new PackageUserState());
+		} else if (packageName.equals("atl")) {
+			PackageInfo info = new PackageInfo();
+			info.packageName = packageName;
+			info.signatures = new Signature[0];
+			return info;
 		} else {
 			throw new NameNotFoundException();
 		}
@@ -2241,6 +2246,18 @@ public class PackageManager {
 	 */
 	public List<ResolveInfo> queryIntentActivities(Intent intent,
 						       int flags) {
+		if ("android.intent.action.VIEW".equals(intent.getAction()) && intent.getData() != null
+		    && ("http".equals(intent.getData().getScheme()) || "https".equals(intent.getData().getScheme()))) {
+			ResolveInfo ri = new ResolveInfo();
+			ri.activityInfo.exported = true;
+			ri.activityInfo.name = "atl.browser";
+			ri.activityInfo.packageName = "atl";
+			ri.filter.addAction("android.intent.action.VIEW");
+			ri.filter.addCategory("android.intent.category.BROWSABLE");
+			ri.filter.addDataScheme("http");
+			ri.filter.addDataScheme("https");
+			return Arrays.asList(ri);
+		}
 		/* FIXME - we may need to return more than one */
 		ResolveInfo info = resolveActivity(intent, flags);
 		if (info != null)
