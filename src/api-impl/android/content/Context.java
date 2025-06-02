@@ -637,7 +637,7 @@ public class Context extends Object {
 	}
 
 	public final Drawable getDrawable(int resId) {
-		return getResources().getDrawable(resId);
+		return getResources().getDrawable(resId, getTheme());
 	}
 
 	public boolean isRestricted() { return false; }

@@ -710,6 +710,10 @@ public class Resources {
 	 * @return Drawable An object that can be used to draw this resource.
 	 */
 	public Drawable getDrawable(int id) throws NotFoundException {
+		return getDrawable(id, null);
+	}
+
+	public Drawable getDrawable(int id, Theme theme) throws NotFoundException {
 		TypedValue value;
 		synchronized (mAccessLock) {
 			value = mTmpValue;
@@ -722,7 +726,7 @@ public class Resources {
 		}
 		Drawable res = null;
 		try {
-			res = loadDrawable(value, id);
+			res = loadDrawable(value, id, theme);
 		} catch (NotFoundException e) { e.printStackTrace(); }
 		synchronized (mAccessLock) {
 			if (mTmpValue == null) {
@@ -730,10 +734,6 @@ public class Resources {
 			}
 		}
 		return res;
-	}
-
-	public Drawable getDrawable(int id, Theme theme) throws NotFoundException {
-		return getDrawable(id);
 	}
 
 	/**
