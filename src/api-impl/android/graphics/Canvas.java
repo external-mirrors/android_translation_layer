@@ -416,11 +416,18 @@ public class Canvas {
 		gsk_canvas.restoreToCount(count);
 	}
 
-	public void drawRoundRect(RectF rect, float rx, float ry, Paint paint) {
+	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
 		if (paint.getShader() instanceof BitmapShader) {
 			BitmapShader shader = (BitmapShader)paint.getShader();
 			drawBitmap(shader.bitmap, 0, 0, paint);
+		} else {
+			gsk_canvas.snapshot = bitmap.getSnapshot();
+			gsk_canvas.drawRoundRect(left, top, right, bottom, rx, ry, paint);
 		}
+	}
+
+	public void drawRoundRect(RectF rect, float rx, float ry, Paint paint) {
+		drawRoundRect(rect.left, rect.top, rect.right, rect.bottom, rx, ry, paint);
 	}
 
 	public void getMatrix(Matrix matrix) {
@@ -516,10 +523,6 @@ public class Canvas {
 
 	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {
 		Log.w("Canvas", "STUB: drawArc");
-	}
-
-	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
-		Log.w("Canvas", "STUB: drawRoundRect");
 	}
 
 	public boolean getClipBounds(Rect outRect) {
