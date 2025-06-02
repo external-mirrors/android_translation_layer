@@ -144,11 +144,18 @@ void remove_pointer_fast(GPtrArray *pointer_indices, struct pointer *pointer)
 	pointer->id = 0;
 }
 
+static bool action_up_already_handled = false;
+
 // TODO: find a way to reconcile this with libandroid/input.c?
 static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *event, gpointer user_data)
 {
 	double x;
 	double y;
+
+	if ((gdk_event_get_event_type(event) == GDK_TOUCH_END || gdk_event_get_event_type(event) == GDK_BUTTON_RELEASE) && action_up_already_handled) {
+		action_up_already_handled = false;
+		return true;
+	}
 
 	uintptr_t id = (uintptr_t)gdk_event_get_event_sequence(event);
 
@@ -231,10 +238,19 @@ static void on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	GtkWidget *widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
 
-	(*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.performClick);
+	jboolean handled = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.performClick);
 
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
+
+	if (handled) {
+		gtk_gesture_set_state(GTK_GESTURE(gesture), GTK_EVENT_SEQUENCE_CLAIMED);
+		// claiming fails if there is no last event, set a flag in that case
+		GdkEvent *event = gtk_gesture_get_last_event(GTK_GESTURE(gesture), gtk_gesture_get_last_updated_sequence(GTK_GESTURE(gesture)));
+		if (!event) {
+			action_up_already_handled = true;
+		}
+	}
 }
 
 #define SOURCE_CLASS_POINTER 0x2
