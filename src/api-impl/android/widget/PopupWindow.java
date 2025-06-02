@@ -37,6 +37,7 @@ public class PopupWindow {
 	}
 
 	private View contentView;
+	private Drawable background;
 	private long popover;  // native pointer to GtkPopover
 
 	public interface OnDismissListener {
@@ -44,6 +45,7 @@ public class PopupWindow {
 	}
 
 	public void setBackgroundDrawable(Drawable background) {
+		this.background = background;
 		/* FIXME: use a decorview? */
 		if(contentView != null) {
 			contentView.setBackgroundDrawable(background);
@@ -64,11 +66,14 @@ public class PopupWindow {
 
 	public void setFocusable(boolean focusable) {}
 
-	public Drawable getBackground() {return null;}
+	public Drawable getBackground() {
+		return background;
+	}
 
 	public void setContentView(View view) {
 		contentView = view;
 		if (contentView != null) {
+			contentView.setBackground(getBackground());
 			contentView.attachToWindowInternal();
 		}
 		native_setContentView(popover, view == null ? 0 : view.widget);
