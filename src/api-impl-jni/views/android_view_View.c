@@ -734,10 +734,25 @@ JNIEXPORT void JNICALL Java_android_view_View_nativeSetFullscreen(JNIEnv *env, j
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 	GtkWindow *window = GTK_WINDOW(gtk_widget_get_native(widget));
 	if (fullscreen) {
-		if (gtk_window_is_maximized(window))
+		if (gtk_window_is_maximized(window)) {
 			gtk_window_fullscreen(window);
-		else
+			// Android apps expect the fullscreen to happen immediately, so we need to mock the fullscreened window size
+			if (ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(widget))) {
+				AndroidLayout *layout = ATL_ANDROID_LAYOUT(gtk_widget_get_layout_manager(widget));
+				GdkSurface *surface = gtk_native_get_surface(GTK_NATIVE(window));
+				GdkDisplay *display = gdk_surface_get_display(surface);
+				GdkMonitor *monitor = gdk_display_get_monitor_at_surface(display, surface);
+				GdkRectangle geometry;
+				gdk_monitor_get_geometry(monitor, &geometry);
+				// check if fullscreen is slightly larger than the window, if so, we can safely mock the new size
+				if (layout->real_width <= geometry.width && layout->real_width > geometry.width - 200 && layout->real_height <= geometry.height && layout->real_height > geometry.height - 200) {
+					layout->real_width = geometry.width;
+					layout->real_height = geometry.height;
+				}
+			}
+		} else {
 			printf("blocking fullscreen request, because window is not maximized\n");
+		}
 	} else {
 		gtk_window_unfullscreen(window);
 	}
