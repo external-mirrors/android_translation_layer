@@ -3,7 +3,7 @@ package android.media;
 public class MediaCodecList {
 
 	public static int getCodecCount() {
-		return 4;
+		return 6;
 	}
 
 	public static MediaCodecInfo getCodecInfoAt(int index) {
@@ -16,6 +16,10 @@ public class MediaCodecList {
 			return new MediaCodecInfo("mp3", "audio/mpeg");
 		case 3:
 			return new MediaCodecInfo("opus", "audio/opus");
+		case 4:
+			return new MediaCodecInfo("vp8", "video/x-vnd.on2.vp8");
+		case 5:
+			return new MediaCodecInfo("vp9", "video/x-vnd.on2.vp9");
 		default:
 			return null;
 		}

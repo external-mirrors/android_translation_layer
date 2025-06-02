@@ -205,20 +205,26 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1configure_1video(JN
 	AVCodecContext *codec_ctx = ctx->codec;
 	jarray array_ref;
 	jbyte *array;
-	int sps_size;
-	int pps_size;
+	int sps_size = 0;
+	int pps_size = 0;
 
 	printf("Java_android_media_MediaCodec_native_1configure_video(%s)\n", codec_ctx->codec->name);
 
-	sps_size = get_nio_buffer_size(env, csd0);
-	pps_size = get_nio_buffer_size(env, csd1);
+	if (csd0)
+		sps_size = get_nio_buffer_size(env, csd0);
+	if (csd1)
+		pps_size = get_nio_buffer_size(env, csd1);
 
 	size_t extradata_size = sps_size + pps_size;
 	uint8_t *extradata = av_mallocz(extradata_size + AV_INPUT_BUFFER_PADDING_SIZE);
-	memcpy(extradata, get_nio_buffer(env, csd0, &array_ref, &array), extradata_size);
-	release_nio_buffer(env, array_ref, array);
-	memcpy(extradata + sps_size, get_nio_buffer(env, csd1, &array_ref, &array), extradata_size);
-	release_nio_buffer(env, array_ref, array);
+	if (csd0) {
+		memcpy(extradata, get_nio_buffer(env, csd0, &array_ref, &array), extradata_size);
+		release_nio_buffer(env, array_ref, array);
+	}
+	if (csd1) {
+		memcpy(extradata + sps_size, get_nio_buffer(env, csd1, &array_ref, &array), extradata_size);
+		release_nio_buffer(env, array_ref, array);
+	}
 
 	for (int i = 0; i < extradata_size; i++) {
 		printf("extradata[%d] = %x\n", i, extradata[i]);
