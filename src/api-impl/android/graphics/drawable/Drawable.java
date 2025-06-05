@@ -24,6 +24,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.DisplayMetrics;
 import android.util.LayoutDirection;
 import android.util.TypedValue;
 
@@ -326,6 +327,11 @@ public class Drawable {
 
 	public int getLayoutDirection() {
 		return LayoutDirection.LTR;
+	}
+
+	static int resolveDensity(Resources r, int parentDensity) {
+		final int densityDpi = r == null ? parentDensity : r.getDisplayMetrics().densityDpi;
+		return densityDpi == 0 ? DisplayMetrics.DENSITY_DEFAULT : densityDpi;
 	}
 
 	protected static native long native_paintable_from_path(String path);

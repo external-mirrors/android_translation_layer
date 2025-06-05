@@ -228,6 +228,7 @@ srcs = [
 	'android/graphics/SweepGradient.java',
 	'android/graphics/Typeface.java',
 	'android/graphics/Xfermode.java',
+	'android/graphics/drawable/AdaptiveIconDrawable.java',
 	'android/graphics/drawable/Animatable.java',
 	'android/graphics/drawable/AnimationDrawable.java',
 	'android/graphics/drawable/BitmapDrawable.java',
