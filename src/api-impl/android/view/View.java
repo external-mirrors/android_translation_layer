@@ -867,33 +867,45 @@ public class View implements Drawable.Callback {
 
 	public static final Property<View, Float> TRANSLATION_X = new Property<View, Float>(Float.class, "translationX") {
 		@Override
-		public Float get(View object) {
-			return 0.f;
+		public Float get(View view) {
+			return view.getTranslationX();
+		}
+		@Override
+		public void set(View view, Float value) {
+			view.setTranslationX(value);
 		}
 	};
 
 	public static final Property<View, Float> TRANSLATION_Y = new Property<View, Float>(Float.class, "translationY") {
 		@Override
-		public Float get(View object) {
-			return 0.f;
+		public Float get(View view) {
+			return view.getTranslationY();
+		}
+		@Override
+		public void set(View view, Float value) {
+			view.setTranslationY(value);
 		}
 	};
 
 	public static final Property<View, Float> TRANSLATION_Z = new Property<View, Float>(Float.class, "translationZ") {
 		@Override
-		public Float get(View object) {
-			return 0.f;
+		public Float get(View view) {
+			return view.getTranslationZ();
+		}
+		@Override
+		public void set(View view, Float value) {
+			view.setTranslationZ(value);
 		}
 	};
 
 	public static final Property<View, Float> ALPHA = new Property<View, Float>(Float.class, "alpha") {
 		@Override
-		public Float get(View object) {
-			return object.getAlpha();
+		public Float get(View view) {
+			return view.getAlpha();
 		}
 		@Override
-		public void set(View object, Float value) {
-			object.setAlpha(value);
+		public void set(View view, Float value) {
+			view.setAlpha(value);
 		}
 	};
 
