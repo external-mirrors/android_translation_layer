@@ -48,11 +48,10 @@ static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *
 		*natural = (*env)->CallIntMethod(env, layout->view, handle_cache.view.getMeasuredWidth);
 		*minimum = heightMeasureSpec && !widthMeasureSpec ? *natural
 				: (*env)->CallIntMethod(env, layout->view, handle_cache.view.getSuggestedMinimumWidth);
-	}
-	if (orientation == GTK_ORIENTATION_VERTICAL) {
+	} else if (orientation == GTK_ORIENTATION_VERTICAL) {
 		*natural = (*env)->CallIntMethod(env, layout->view, handle_cache.view.getMeasuredHeight);
 		*minimum = widthMeasureSpec && !heightMeasureSpec ? *natural
-				:(*env)->CallIntMethod(env, layout->view, handle_cache.view.getSuggestedMinimumHeight);
+				: (*env)->CallIntMethod(env, layout->view, handle_cache.view.getSuggestedMinimumHeight);
 	}
 	if (*natural < *minimum)
 		*natural = *minimum;

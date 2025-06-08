@@ -177,6 +177,8 @@ public class Dialog implements Window.Callback, DialogInterface {
 
 	public void setCancelMessage(Message msg) {}
 
+	public void setDismissMessage(Message msg) {}
+
 	public boolean onTouchEvent(MotionEvent event) {
 		return false;
 	}
