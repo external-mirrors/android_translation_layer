@@ -356,6 +356,10 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 		mRenderer = renderer;
 		mGLThread = new GLThread(mThisWeakRef);
 		mGLThread.start();
+
+		/* HACK: surfaceCreated can get called before setRenderer (???) */
+		if(hack_surface_created)
+			mGLThread.surfaceCreated();
 	}
 
 	/**
@@ -518,8 +522,14 @@ public class GLSurfaceView extends SurfaceView implements SurfaceHolder.Callback
 	 * This method is part of the SurfaceHolder.Callback interface, and is
 	 * not normally called or subclassed by clients of GLSurfaceView.
 	 */
+	boolean hack_surface_created = false;
 	public void surfaceCreated(SurfaceHolder holder) {
-		mGLThread.surfaceCreated();
+		if(mGLThread != null) {
+			mGLThread.surfaceCreated();
+		} else {
+			/* HACK: this can get called before setRenderer (???) */
+			hack_surface_created = true;
+		}
 	}
 
 	/**
