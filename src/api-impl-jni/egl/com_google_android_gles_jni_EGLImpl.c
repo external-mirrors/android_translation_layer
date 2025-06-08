@@ -114,9 +114,11 @@ JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1egl
 {
 	struct ANativeWindow *native_window = g_hash_table_lookup(egl_surface_hashtable, _PTR(surface));
 
-	bool ret = eglDestroySurface(_PTR(display), _PTR(surface));
-	/* ANativeWindow_fromSurface starts the refcounter at 1, so this will destroy the native window */
-	ANativeWindow_release(native_window);
+	EGLBoolean ret = eglDestroySurface(_PTR(display), _PTR(surface));
+	if (ret) {
+		/* ANativeWindow_fromSurface starts the refcounter at 1, so this will destroy the native window */
+		ANativeWindow_release(native_window);
+	}
 
 	return ret;
 }
