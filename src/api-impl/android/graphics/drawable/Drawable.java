@@ -94,6 +94,10 @@ public class Drawable {
 			onBoundsChange(mBounds);
 	}
 
+	public void setBounds(Rect bounds) {
+		setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom);
+	}
+
 	public final Rect getBounds() {
 		return mBounds;
 	}
@@ -169,10 +173,6 @@ public class Drawable {
 	public final int getLevel() {return 0;}
 	public final boolean setLevel(int level) {return false;}
 
-	public void setBounds(Rect bounds) {
-		setBounds(bounds.left, bounds.top, bounds.right, bounds.bottom);
-	}
-
 	public void setColorFilter(int color, PorterDuff.Mode mode) {
 		setColorFilter(new PorterDuffColorFilter(color, mode));
 	}
@@ -229,36 +229,51 @@ public class Drawable {
 	}
 
 	public static Drawable createFromXmlInner(Resources resources, XmlPullParser parser, AttributeSet attrs, Theme theme) throws XmlPullParserException, IOException {
-		if ("selector".equals(parser.getName())) {
-			StateListDrawable drawable = new StateListDrawable();
-			drawable.inflate(resources, parser, attrs, theme);
-			return drawable;
-		} else if ("shape".equals(parser.getName())) {
-			GradientDrawable drawable = new GradientDrawable();
-			drawable.inflate(resources, parser, attrs, theme);
-			return drawable;
-		} else if ("bitmap".equals(parser.getName())) {
-			BitmapDrawable drawable = new BitmapDrawable();
-			drawable.inflate(resources, parser, attrs, theme);
-			return drawable;
-		} else if ("transition".equals(parser.getName())) {
-			return new Drawable();
-		} else if ("ripple".equals(parser.getName())) {
-			// FIXME: the non-pressed state of RippleDrawable should be equivalent to this
-			return new ColorDrawable(0);
-		} else if ("vector".equals(parser.getName())) {
-			VectorDrawable drawable = new VectorDrawable();
-			drawable.inflate(resources, parser, attrs, theme);
-			return drawable;
-		} else if ("layer-list".equals(parser.getName())) {
-			LayerDrawable drawable = new LayerDrawable();
-			drawable.inflate(resources, parser, attrs, theme);
-			return drawable;
-		} else if ("nine-patch".equals(parser.getName())) {
-			return new NinePatchDrawable(resources, null, null, null, null);
-		} else if ("animation-list".equals(parser.getName())) {
-			return new AnimationDrawable();
+		switch (parser.getName()) {
+			case "selector": {
+				StateListDrawable drawable = new StateListDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			}
+			case "shape": {
+				GradientDrawable drawable = new GradientDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			} case "bitmap": {
+				BitmapDrawable drawable = new BitmapDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			}
+			case "transition": {
+				return new Drawable();
+			}
+			case "ripple": {
+				// FIXME: the non-pressed state of RippleDrawable should be equivalent to this
+				return new ColorDrawable(0);
+			}
+			case "vector": {
+				VectorDrawable drawable = new VectorDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			}
+			case "layer-list": {
+				LayerDrawable drawable = new LayerDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			}
+			case "nine-patch": {
+				return new NinePatchDrawable(resources, null, null, null, null);
+			}
+			case "animation-list": {
+				return new AnimationDrawable();
+			}
+			case "adaptive-icon": {
+				AdaptiveIconDrawable drawable = new AdaptiveIconDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
+			}
 		}
+
 		return null;
 	}
 
