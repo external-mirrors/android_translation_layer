@@ -348,12 +348,13 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
 				continue;
 			}
 
-			int insetWidth = (int)(bounds.width() / (DEFAULT_VIEW_PORT_SCALE * 2));
+			/*int insetWidth = (int)(bounds.width() / (DEFAULT_VIEW_PORT_SCALE * 2));
 			int insetHeight = (int)(bounds.height() / (DEFAULT_VIEW_PORT_SCALE * 2));
 			final Rect outRect = mTmpOutRect;
 			outRect.set(cX - insetWidth, cY - insetHeight, cX + insetWidth, cY + insetHeight);
 
-			d.setBounds(outRect);
+			d.setBounds(outRect);*/
+			d.setBounds(bounds);
 		}
 	}
 
@@ -376,7 +377,7 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
 
 	@Override
 	public void draw(Canvas canvas) {
-		if (mLayersBitmap == null) {
+	/*	if (mLayersBitmap == null) {
 			return;
 		}
 		if (mLayersShader == null) {
@@ -397,6 +398,16 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
 			canvas.drawPath(mMaskScaleOnly, mPaint);
 			canvas.translate(-bounds.left, -bounds.top);
 		}
+	*/
+		Rect bounds = getBounds();
+		canvas.translate(bounds.left, bounds.top);
+		if (mLayerState.mChildren[BACKGROUND_ID].mDrawable != null) {
+			mLayerState.mChildren[BACKGROUND_ID].mDrawable.draw(canvas);
+		}
+		if (mLayerState.mChildren[FOREGROUND_ID].mDrawable != null) {
+			mLayerState.mChildren[FOREGROUND_ID].mDrawable.draw(canvas);
+		}
+		canvas.translate(-bounds.left, -bounds.top);
 	}
 
 	@Override
