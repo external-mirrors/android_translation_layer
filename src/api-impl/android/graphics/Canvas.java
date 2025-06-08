@@ -407,10 +407,6 @@ public class Canvas {
 		gsk_canvas.drawPath(path, paint);
 	}
 
-	public boolean clipPath(Path path) {
-		return false;
-	}
-
 	public void restoreToCount(int count) {
 		gsk_canvas.snapshot = bitmap.getSnapshot();
 		gsk_canvas.restoreToCount(count);
@@ -435,7 +431,8 @@ public class Canvas {
 	}
 
 	public void translate(float dx, float dy) {
-		Log.w("Canvas", "STUB: translate");
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.translate(dx, dy);
 	}
 
 	public void drawCircle(float cx, float cy, float radius, Paint paint) {
@@ -449,16 +446,9 @@ public class Canvas {
 		return rect;
 	}
 
-	public boolean clipRect(Rect rect, Region.Op op) {
-		return false;
-	}
-
 	public void concat(Matrix matrix) {
-		Log.w("Canvas", "STUB: concat");
-	}
-
-	public boolean clipPath(Path path, Region.Op op) {
-		return false;
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.concat(matrix);
 	}
 
 	public int getWidth() {
@@ -489,19 +479,36 @@ public class Canvas {
 		Log.w("Canvas", "STUB: drawOval");
 	}
 
-	public boolean clipRect(int left, int top, int right, int bottom) {
-		return false;
-	}
-
 	public void drawColor(int color, PorterDuff.Mode mode) {
 		Log.w("Canvas", "STUB: drawColor("+String.format("0x%08x", color)+", "+mode+")");
 	}
 
-	public boolean clipRect(Rect rect) {
+	public boolean clipRect(int left, int top, int right, int bottom) {
+		Log.w("Canvas", "STUB: clipRect");
 		return false;
 	}
 
 	public boolean clipRect(float left, float top, float right, float bottom) {
+		return false;
+	}
+
+	public boolean clipRect(Rect rect) {
+		Log.w("Canvas", "STUB: clipRect");
+		return false;
+	}
+
+	public boolean clipRect(Rect rect, Region.Op op) {
+		Log.w("Canvas", "STUB: clipRect");
+		return false;
+	}
+
+	public boolean clipPath(Path path) {
+		Log.w("Canvas", "STUB: clipPath");
+		return false;
+	}
+
+	public boolean clipPath(Path path, Region.Op op) {
+		Log.w("Canvas", "STUB: clipPath");
 		return false;
 	}
 
@@ -510,14 +517,17 @@ public class Canvas {
 	}
 
 	public boolean clipRect(RectF rect) {
+		Log.w("Canvas", "STUB: clipRect");
 		return false;
 	}
 
 	public boolean clipRect(float left, float top, float right, float bottom, Region.Op op) {
+		Log.w("Canvas", "STUB: clipRect");
 		return false;
 	}
 
 	public boolean clipRect(RectF rect, Region.Op op) {
+		Log.w("Canvas", "STUB: clipRect");
 		return false;
 	}
 
