@@ -599,6 +599,7 @@ srcs = [
 	'android/widget/FilterQueryProvider.java',
 	'android/widget/FrameLayout.java',
 	'android/widget/Gallery.java',
+	'android/widget/GridLayout.java',
 	'android/widget/GridView.java',
 	'android/widget/HeaderViewListAdapter.java',
 	'android/widget/HeterogeneousExpandableList.java',
