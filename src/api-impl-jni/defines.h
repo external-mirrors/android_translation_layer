@@ -3,7 +3,7 @@
 
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-#define DEG2RAD(deg) (deg * M_PI / 180)
+#define DEG2RAD(deg) ((deg) * M_PI / 180)
 
 #define __likely__(x) __builtin_expect(x, 1)
 #define __unlikely__(x) __builtin_expect(x, 0)

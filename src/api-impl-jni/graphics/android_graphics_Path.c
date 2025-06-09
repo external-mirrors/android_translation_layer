@@ -51,6 +51,44 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1line_1to(JNIEnv *env, 
 	gsk_path_builder_line_to(_PTR(builder_ptr), x, y);
 }
 
+/* translated to gsk_path_builder_svg_arc_to, maybe there are more performant ways to implement this? */
+void Java_android_graphics_Path_native_1arc_1to(JNIEnv *env, jclass this, jlong builder_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom,
+                                                jfloat start_angle_deg, jfloat sweep_angle_deg, jboolean force_move_to)
+{
+	GskPathBuilder *builder = _PTR(builder_ptr);
+
+	/* compute ellipse center and radii */
+	const graphene_point_t center = GRAPHENE_POINT_INIT((left + right) / 2.0,
+	                                                    (top  + bottom) / 2.0);
+	const double rx = fabs(right - left) / 2.0;
+	const double ry = fabs(bottom - top) / 2.0;
+
+	/* compute points on the ellipse from angles */
+	const double start_angle = DEG2RAD(start_angle_deg);
+	const double end_angle   = DEG2RAD(start_angle_deg + sweep_angle_deg);
+
+	graphene_point_t p1;
+	graphene_point_t p2;
+	graphene_point_init(&p1,
+	                     center.x + rx * cos(start_angle),
+	                     center.y + ry * sin(start_angle));
+	graphene_point_init(&p2,
+	                     center.x + rx * cos(end_angle),
+	                     center.y + ry * sin(end_angle));
+
+	/* handle force_move_to */
+	if (force_move_to)
+		gsk_path_builder_move_to(builder, p1.x, p1.y);
+	else if (!graphene_point_equal(gsk_path_builder_get_current_point(builder), &p1))
+		gsk_path_builder_line_to(builder, p1.x, p1.y);
+
+	/* compute flags */
+	const gboolean large_arc_flag = (fabs(sweep_angle_deg) >= 180.0);
+	const gboolean sweep_flag     = (sweep_angle_deg > 0.0);
+
+	gsk_path_builder_svg_arc_to(builder, rx, ry, 0.0, large_arc_flag, sweep_flag, p2.x, p2.y);
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1cubic_1to(JNIEnv *env, jclass this, jlong builder_ptr, jfloat x1, jfloat y1, jfloat x2, jfloat y2, jfloat x3, jfloat y3)
 {
 	gsk_path_builder_cubic_to(_PTR(builder_ptr), x1, y1, x2, y2, x3, y3);
@@ -113,6 +151,17 @@ static gboolean path_foreach_transform(GskPathOperation op, const graphene_point
 			break;
 	}
 	return TRUE;
+}
+
+void Java_android_graphics_Path_native_1add_1arc(JNIEnv *env, jclass this, jlong builder_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom,
+                                                 jfloat start_angle_deg, jfloat sweep_angle_deg)
+{
+	GskPathBuilder *builder = _PTR(builder_ptr);
+	GskPath *path;
+	GskPathBuilder *arc_builder = gsk_path_builder_new();
+	Java_android_graphics_Path_native_1arc_1to(env, this, _INTPTR(arc_builder), left, top, right, bottom, start_angle_deg, sweep_angle_deg, true);
+	path = gsk_path_builder_free_to_path(arc_builder);
+	gsk_path_builder_add_path(builder, path);
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1path(JNIEnv *env, jclass this, jlong builder_ptr, jlong path_ptr, jlong matrix_ptr)

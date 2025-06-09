@@ -81,6 +81,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1quad_1to
 
 /*
  * Class:     android_graphics_Path
+ * Method:    native_arc_to
+ * Signature: (JFFFFFFZ)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1arc_1to
+  (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat, jboolean);
+
+/*
+ * Class:     android_graphics_Path
  * Method:    native_rel_move_to
  * Signature: (JFF)V
  */
@@ -110,6 +118,14 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1cubic_1to
  */
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1rel_1quad_1to
   (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     android_graphics_Path
+ * Method:    native_add_arc
+ * Signature: (JFFFFFF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1arc
+  (JNIEnv *, jclass, jlong, jfloat, jfloat, jfloat, jfloat, jfloat, jfloat);
 
 /*
  * Class:     android_graphics_Path
