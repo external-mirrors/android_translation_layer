@@ -75,6 +75,12 @@ JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1style(JNIEnv *en
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1width(JNIEnv *env, jclass clazz, jlong paint_ptr, jfloat width)
 {
 	struct AndroidPaint *paint = _PTR(paint_ptr);
+	/* TODO: width of 0 means "single pixel width, no matter what",
+	 * meanwile width of 1 should care about scaling;
+	 * The problem is, 0 is not a valid value for gsk_stroke_set_line_width,
+	 * so at least change it to 1 for now */
+	if(width == 0)
+		width = 1;
 	gsk_stroke_set_line_width(paint->gsk_stroke, width);
 }
 
