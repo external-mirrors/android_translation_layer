@@ -2118,8 +2118,13 @@ public class PackageManager {
 	 * false.
 	 */
 	public boolean hasSystemFeature(String name) {
-		Slog.e(TAG, "!!!!!!! hasSystemFeature: case >" + name + "< is not implemented yet");
-		return false; // FIXME
+		switch (name) {
+			case "android.hardware.touchscreen.multitouch.distinct":
+				return true;
+			default:
+				Slog.e(TAG, "!!!!!!! hasSystemFeature: case >" + name + "< is not implemented yet");
+				return false;
+		}
 	}
 
 	/**
