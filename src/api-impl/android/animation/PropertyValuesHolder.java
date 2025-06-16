@@ -18,6 +18,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_float = values;
 		propertyValuesHolder.property_name = propertyName;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -25,6 +26,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_object = values;
 		propertyValuesHolder.property_name = propertyName;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -32,6 +34,7 @@ public class PropertyValuesHolder {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
 		propertyValuesHolder.values_int = values;
 		propertyValuesHolder.property_name = propertyName;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -40,6 +43,7 @@ public class PropertyValuesHolder {
 		propertyValuesHolder.values_float = values;
 		propertyValuesHolder.property_name = property.getName();
 		propertyValuesHolder.property = property;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -48,6 +52,7 @@ public class PropertyValuesHolder {
 		propertyValuesHolder.values_object = values;
 		propertyValuesHolder.property_name = property.getName();
 		propertyValuesHolder.property = property;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -56,6 +61,7 @@ public class PropertyValuesHolder {
 		propertyValuesHolder.values_int = values;
 		propertyValuesHolder.property_name = property.getName();
 		propertyValuesHolder.property = property;
+		propertyValuesHolder.value = values[0];
 		return propertyValuesHolder;
 	}
 
@@ -110,7 +116,15 @@ public class PropertyValuesHolder {
 	}
 
 	public PropertyValuesHolder clone() {
-		return null;
+		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
+		propertyValuesHolder.property = property;
+		propertyValuesHolder.property_name = property_name;
+		propertyValuesHolder.setter = setter;
+		propertyValuesHolder.value = value;
+		propertyValuesHolder.values_float = values_float;
+		propertyValuesHolder.values_int = values_int;
+		propertyValuesHolder.values_object = values_object;
+		return propertyValuesHolder;
 	}
 
 	public void setupSetterAndGetter(Object target) {

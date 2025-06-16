@@ -576,7 +576,7 @@ public final class ObjectAnimator extends ValueAnimator {
 			// mValueType may change due to setter/getter setup; do this before calling super.init(),
 			// which uses mValueType to set up the default type evaluator.
 			final Object target = getTarget();
-			if (target != null) {
+			if (target != null && mValues != null) {
 				final int numValues = mValues.length;
 				for (int i = 0; i < numValues; ++i) {
 					mValues[i].setupSetterAndGetter(target);
@@ -668,9 +668,11 @@ public final class ObjectAnimator extends ValueAnimator {
 	void animateValue(float fraction) {
 		final Object target = getTarget();
 		super.animateValue(fraction);
-		int numValues = mValues.length;
-		for (int i = 0; i < numValues; ++i) {
-			mValues[i].setAnimatedValue(target);
+		if (mValues != null) {
+			int numValues = mValues.length;
+			for (int i = 0; i < numValues; ++i) {
+				mValues[i].setAnimatedValue(target);
+			}
 		}
 	}
 
