@@ -2636,7 +2636,20 @@ public class PackageParser {
 				continue;
 			}
 
-			if (parser.getName().equals("meta-data")) {
+			if (parser.getName().equals("intent-filter")) {
+				ActivityIntentInfo intent = new ActivityIntentInfo(a);
+				if (!parseIntent(res, parser, attrs, true /*allowGlobs*/, true /*allowAutoVerify*/,
+						intent, outError)) {
+					return null;
+				}
+				if (intent.countActions() == 0) {
+					Slog.w(TAG, "No actions in intent filter at "
+							+ mArchiveSourcePath + " "
+							+ parser.getPositionDescription());
+				} else {
+					a.intents.add(intent);
+				}
+			} else if (parser.getName().equals("meta-data")) {
 				if ((a.metaData = parseMetaData(res, parser, attrs, a.metaData,
 								outError)) == null) {
 					return null;
