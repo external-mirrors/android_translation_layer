@@ -12,4 +12,8 @@ public class PreferenceManager {
 	public static void setDefaultValues(Context context, int i, boolean b) {
 		System.out.println("android.preference.PrefereceManager.setDefaultValues: STUB");
 	}
+
+	public static void setDefaultValues(Context context, String s, int i, int i2, boolean b) {
+		System.out.println("android.preference.PrefereceManager.setDefaultValues: STUB");
+	}
 }

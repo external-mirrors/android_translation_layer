@@ -832,4 +832,12 @@ public class Process {
 	}
 
 	public static final native boolean is64Bit();
+
+	public static long getStartUptimeMillis() {
+		return 1000;
+	};
+
+	public static long getStartElapsedRealtime() {
+		return 1000;
+	};
 }

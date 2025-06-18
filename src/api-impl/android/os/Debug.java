@@ -1,4 +1,7 @@
 package android.os;
+
+import dalvik.system.VMDebug;
+
 public final class Debug {
 	public static class MemoryInfo {
 	}
@@ -25,5 +28,9 @@ public final class Debug {
 
 	public static boolean waitingForDebugger() {
 		return false;
+	}
+
+	public static long threadCpuTimeNanos() {
+		return VMDebug.threadCpuTimeNanos();
 	}
 }

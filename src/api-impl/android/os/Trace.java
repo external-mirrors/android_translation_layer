@@ -196,7 +196,7 @@ public final class Trace {
 	 * @hide
 	 */
 	public static void setAppTracingAllowed(boolean allowed) {
-		nativeSetAppTracingAllowed(allowed);
+		// nativeSetAppTracingAllowed(allowed);
 
 		// Setting whether app tracing is allowed may change the tags, so we update the cached
 		// tags here.

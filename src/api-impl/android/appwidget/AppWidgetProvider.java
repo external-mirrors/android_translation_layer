@@ -1,4 +1,6 @@
 package android.appwidget;
 
-public class AppWidgetProvider {
+import android.content.BroadcastReceiver;
+
+public abstract class AppWidgetProvider extends BroadcastReceiver {
 }

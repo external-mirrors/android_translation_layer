@@ -339,6 +339,8 @@ public class Paint {
 
 	public boolean hasGlyph(String text) { return false; }
 
+	public MaskFilter setMaskFilter(MaskFilter filter) { return filter; }
+
 	private static native long native_create();
 	private static native long native_clone(long paint);
 	private static native void native_recycle(long paint);

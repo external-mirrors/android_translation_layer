@@ -1720,6 +1720,10 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
 		mAnimationHandler = animationHandler;
 	}
 
+	public static long getFrameDelay() {
+		return AnimationHandler.getFrameDelay();
+	}
+
 	/**
 	 * Listener interface for the system-wide scaling factor for Animator-based animations.
 	 *

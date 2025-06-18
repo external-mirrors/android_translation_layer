@@ -26,6 +26,8 @@ public class Window {
 		public boolean onMenuOpened(int featureId, Menu menu);
 	}
 
+	public static interface OnFrameMetricsAvailableListener {}
+
 	public long native_window;
 	private ViewGroup decorView;
 

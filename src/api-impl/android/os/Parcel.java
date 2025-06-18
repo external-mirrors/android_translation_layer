@@ -80,4 +80,8 @@ public class Parcel {
 	public Parcelable readParcelable(ClassLoader loader) {
 		return null;
 	}
+
+	public void writeStrongBinder(IBinder binder) {}
+
+	public void readException() {}
 }

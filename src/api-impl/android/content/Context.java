@@ -786,4 +786,14 @@ public class Context extends Object {
 		/* FIXME: should be a different context, and return different storage locations */
 		return this;
 	}
+
+	public boolean deleteSharedPreferences(String name) {
+		getSharedPrefsFile(name).delete();
+		sharedPrefs.remove(name);
+		return true;
+	}
+
+	public String getPackageResourcePath() {
+		return native_get_apk_path();
+	}
 }

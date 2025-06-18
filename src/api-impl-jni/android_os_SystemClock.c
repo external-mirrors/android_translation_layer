@@ -24,3 +24,10 @@ JNIEXPORT jlong JNICALL Java_android_os_SystemClock_elapsedRealtimeNanos(JNIEnv 
 	clock_gettime(CLOCK_BOOTTIME, &t);
 	return t.tv_sec * 1000000000 + t.tv_nsec;
 }
+
+JNIEXPORT jlong JNICALL Java_android_os_SystemClock_currentThreadTimeMillis(JNIEnv *env, jclass this)
+{
+	struct timespec now;
+	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &now);
+	return now.tv_sec * 1000 + lround(now.tv_nsec / 1e6);
+}

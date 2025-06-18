@@ -2,6 +2,8 @@ package android.net;
 
 import android.os.Handler;
 
+class ProxyInfo {}
+
 public class ConnectivityManager {
 
 	public class NetworkCallback {
@@ -44,5 +46,7 @@ public class ConnectivityManager {
 	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
 
 	public void registerDefaultNetworkCallback(NetworkCallback cb) {}
+
+	public ProxyInfo getDefaultProxy() { return null; }
 
 }

@@ -1499,6 +1499,10 @@ public class Resources {
 		private final AssetManager mAssets;
 
 		public void rebase() {}
+
+		public Drawable getDrawable(int resId) {
+			return Resources.this.getDrawable(resId, this);
+		}
 	}
 
 	static class ThemeKey implements Cloneable {

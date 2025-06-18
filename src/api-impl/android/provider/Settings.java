@@ -95,6 +95,10 @@ public class Settings {
 			}
 		}
 
+		public static float getFloat(ContentResolver cr, String key) {
+			return getFloat(cr, key, -1);
+		}
+
 		public static String getString(ContentResolver cr, String key) {
 			switch (key) {
 				default:

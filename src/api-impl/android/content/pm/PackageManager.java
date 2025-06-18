@@ -1348,7 +1348,7 @@ public class PackageManager {
 	public static final String EXTRA_REQUEST_PERMISSION_PERMISSION_LIST = "android.content.pm.extra.PERMISSION_LIST";
 
 	public PackageManager() {
-		package_info = PackageParser.generatePackageInfo(Context.pkg, new int[0], 0, 0, 0, new HashSet<>(), new PackageUserState());
+		package_info = PackageParser.generatePackageInfo(Context.pkg, new int[0], PackageManager.GET_META_DATA, 0, 0, new HashSet<>(), new PackageUserState());
 	}
 
 	/**
@@ -2763,7 +2763,7 @@ public class PackageManager {
 	 * @param info The application to get the label of.
 	 */
 	public CharSequence getApplicationLabel(ApplicationInfo info) {
-		return null;
+		return info.loadLabel(this);
 	}
 
 	/**
