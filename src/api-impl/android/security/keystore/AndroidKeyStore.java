@@ -10,6 +10,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
@@ -19,12 +20,12 @@ import android.util.Slog;
 
 public class AndroidKeyStore extends KeyStoreSpi {
 
-	HashMap<String, String> map = new HashMap<>();
+	static HashMap<String, Key> map = new HashMap<>();
 
 	@Override
 	public Key engineGetKey(String alias, char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'engineGetKey'");
+		System.out.println("engineGetKey alias=" + alias + " password=" + Arrays.toString(password));
+		return map.get(alias);
 	}
 
 	@Override

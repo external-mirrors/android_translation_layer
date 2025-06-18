@@ -373,6 +373,8 @@ srcs = [
 	'android/provider/Settings.java',
 	'android/provider/UserDictionary.java',
 	'android/security/keystore/AndroidKeyStore.java',
+	'android/security/keystore/KeyGenerator.java',
+	'android/security/keystore/KeyGenParameterSpec.java',
 	'android/service/media/MediaBrowserService.java',
 	'android/speech/tts/TextToSpeech.java',
 	'android/telecom/ConnectionService.java',
