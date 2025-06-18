@@ -12,6 +12,7 @@ import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
@@ -61,4 +62,8 @@ public class BitmapDrawable extends Drawable {
 	}
 
 	public void setTileModeX(Shader.TileMode mode) {}
+
+	public Paint getPaint() {
+		return new Paint();
+	}
 }

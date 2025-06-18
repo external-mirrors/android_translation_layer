@@ -179,4 +179,8 @@ public class Color {
 		}
 		return 0;
 	}
+
+	public static int HSVToColor(int alpha, float[] hsv) {
+		return (alpha << 24) | (HSVToColor(hsv) & 0xffffff);
+	}
 }

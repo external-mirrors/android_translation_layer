@@ -14,6 +14,10 @@ public class ImageSpan extends DynamicDrawableSpan {
 		drawable = d;
 	}
 
+	public ImageSpan(Drawable d, int verticalAlignment) {
+		drawable = d;
+	}
+
 	public Drawable getDrawable() {
 		return drawable;
 	}

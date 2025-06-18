@@ -224,6 +224,10 @@ public class Path {
 		transform(matrix);
 	}
 
+	public void setLastPoint(float x, float y) {
+		Log.w("Path", "STUB: setLastPoint");
+	}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

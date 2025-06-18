@@ -1,4 +1,4 @@
 package android.text.style;
 
-public class ClickableSpan {
+public class ClickableSpan extends CharacterStyle {
 }

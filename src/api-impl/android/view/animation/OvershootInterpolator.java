@@ -1,6 +1,17 @@
 package android.view.animation;
 
-public class OvershootInterpolator {
+import android.animation.TimeInterpolator;
 
-	public OvershootInterpolator(float overshoot) {}
+public class OvershootInterpolator implements TimeInterpolator {
+
+	private float overshoot;
+
+	public OvershootInterpolator(float overshoot) {
+		this.overshoot = overshoot;
+	}
+
+	@Override
+	public float getInterpolation(float input) {
+		return (input-1) * (input-1) * ((overshoot + 1) * (input-1) + overshoot) + 1;
+	}
 }

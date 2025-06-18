@@ -100,6 +100,10 @@ public class PropertyValuesHolder {
 	public void setEvaluator(TypeEvaluator value) {}
 
 	public void calculateValue(float fraction) {
+		if (fraction < 0f)
+			fraction = 0f;
+		if (fraction > 1f)
+			fraction = 1f;
 		if (values_object != null) {
 			value = values_object[(int) (fraction * (values_object.length - 1) + 0.5f)];
 		} else if (values_float != null) {

@@ -123,7 +123,7 @@ public class TextView extends View {
 	public void setTextColor(ColorStateList colors) {
 		if (colors != null) {
 			this.colors = colors;
-			setTextColor(colors.getDefaultColor()); // TODO: do this properly
+			native_setTextColor(colors.getDefaultColor()); // TODO: do this properly
 		}
 	}
 	public void setTypeface(Typeface tf, int style) {

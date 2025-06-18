@@ -15,4 +15,8 @@ public class TextureView extends View {
 
 	public interface SurfaceTextureListener {}
 
+	public void setSurfaceTextureListener(SurfaceTextureListener surfaceTextureListener) {}
+
+	public void setOpaque(boolean opaque) {}
+
 }

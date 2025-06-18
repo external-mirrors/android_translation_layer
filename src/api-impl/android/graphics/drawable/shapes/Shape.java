@@ -7,4 +7,6 @@ public class Shape {
 	protected RectF rect() {
 		return new RectF();
 	}
+
+	public void resize(float width, float height) {}
 }

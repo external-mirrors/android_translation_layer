@@ -1,6 +1,6 @@
 package android.text.style;
 
-public class URLSpan {
+public class URLSpan extends CharacterStyle {
 
 	private String url;
 
