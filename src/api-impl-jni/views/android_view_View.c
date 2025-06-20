@@ -446,6 +446,8 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setLayoutParams(JNIEnv *en
 		android_layout_set_params(ATL_ANDROID_LAYOUT(layout_manager), width, height);
 
 	wrapper_widget_set_layout_params(WRAPPER_WIDGET(widget), width, height);
+
+	atl_ensure_widget_snapshotability(widget);
 }
 
 #pragma GCC diagnostic push
@@ -473,7 +475,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setPadding(JNIEnv *env, jo
 JNIEXPORT void JNICALL Java_android_view_View_native_1setVisibility(JNIEnv *env, jobject this, jlong widget_ptr, jint visibility, jfloat alpha) {
 	GtkWidget *widget = gtk_widget_get_parent(GTK_WIDGET(_PTR(widget_ptr)));
 
-	gtk_widget_set_visible(widget, visibility != android_view_View_GONE);
+	atl_safe_gtk_widget_set_visible(widget, visibility != android_view_View_GONE);
 	gtk_widget_set_opacity(widget, (visibility != android_view_View_INVISIBLE) * alpha);
 	gtk_widget_set_sensitive(widget, visibility != android_view_View_INVISIBLE && alpha != 0.0f);
 }
@@ -481,7 +483,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setVisibility(JNIEnv *env,
 /** JavaWidget:
  * Minimal gtk widget class which does nothing.
  * Drawing will be overwritten by WrapperWidget.
- * If it holds children, they will be layouted by AndroidLayout
+ * If it holds children, they will be laid out by AndroidLayout
  */
 struct _JavaWidget {GtkWidget parent_instance;};
 G_DECLARE_FINAL_TYPE(JavaWidget, java_widget, JAVA, WIDGET, GtkWidget)
@@ -511,7 +513,7 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 
 	jclass class = _CLASS(this);
 	jstring nameObj = (*env)->CallObjectMethod(env, class,
-			_METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
+	                                           _METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
 	const char *name = (*env)->GetStringUTFChars(env, nameObj, NULL);
 	gtk_widget_set_name(widget, name);
 	(*env)->ReleaseStringUTFChars(env, nameObj, name);
@@ -595,7 +597,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobjec
 		wrapper->real_width = width;
 		wrapper->real_height = height;
 		if (!wrapper->needs_allocation)
-			gtk_widget_queue_allocate(widget);
+			atl_safe_gtk_widget_queue_allocate(widget);
 	}
 	if (wrapper->needs_allocation) {
 		allocation.width = width;
@@ -607,7 +609,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobjec
 JNIEXPORT void JNICALL Java_android_view_View_native_1requestLayout(JNIEnv *env, jobject this, jlong widget_ptr) {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 
-	gtk_widget_queue_resize(widget);
+	atl_safe_gtk_widget_queue_resize(widget);
 }
 
 /* we kinda need per-widget css */
@@ -711,7 +713,7 @@ JNIEXPORT jboolean JNICALL Java_android_view_View_native_1getMatrix(JNIEnv *env,
 
 JNIEXPORT void JNICALL Java_android_view_View_native_1queueAllocate(JNIEnv *env, jobject this, jlong widget_ptr)
 {
-	gtk_widget_queue_allocate(GTK_WIDGET(_PTR(widget_ptr)));
+	atl_safe_gtk_widget_queue_allocate(GTK_WIDGET(_PTR(widget_ptr)));
 }
 
 JNIEXPORT void JNICALL Java_android_view_View_native_1drawBackground(JNIEnv *env, jobject this, jlong widget_ptr, jlong snapshot_ptr)

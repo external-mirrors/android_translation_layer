@@ -2,6 +2,8 @@
 #include <dlfcn.h>
 #include <pthread.h>
 
+#include <gtk/gtk.h>
+
 #include "util.h"
 #include "src/api-impl-jni/defines.h"
 
@@ -278,4 +280,93 @@ int get_nio_buffer_size(JNIEnv *env, jobject buffer)
 	int position = (*env)->GetIntField(env, buffer, _FIELD_ID(class, "position", "I"));
 
 	return limit - position;
+}
+
+
+/* Calling these functions while snapshotting will cause Gtk to not snapshot the affected widgets.
+ * Below are "safe" wrappers which will postpone the calls if inside a snapshot.
+ * Specifically, gtk_widget_add_tick_callback will make sure the calls are made in the next
+ * Update phase. */
+
+/* callbacks */
+static gboolean queue_set_text(GtkWidget *label, GdkFrameClock *frame_clock, gpointer str)
+{
+	gtk_label_set_text(GTK_LABEL(label), str);
+	/* we always call strdup so we always want to free */
+	free(str);
+	return G_SOURCE_REMOVE;
+}
+
+static gboolean queue_queue_allocate(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
+{
+	gtk_widget_queue_allocate(widget);
+	return G_SOURCE_REMOVE;
+}
+
+static gboolean queue_queue_resize(GtkWidget *widget, GdkFrameClock *frame_clock, gpointer user_data)
+{
+	gtk_widget_queue_resize(widget);
+	return G_SOURCE_REMOVE;
+}
+
+/* Some functions call gtk_widget_queue_allocate or similar internally.
+ * To prevent that from breaking the snapshotting process, when called at the wrong time,
+ * we have to follow those functions with this pile of hacks that will unset the problematic flags. */
+extern int snapshot_in_progress;
+void atl_ensure_widget_snapshotability(GtkWidget *widget)
+{
+	if(snapshot_in_progress) {
+		GtkAllocation allocation;
+		G_GNUC_BEGIN_IGNORE_DEPRECATIONS
+		/* we probably don't need to use this deprecated function but it sure is convenient */
+		gtk_widget_get_allocation(widget, &allocation);
+		G_GNUC_END_IGNORE_DEPRECATIONS
+		/* this clears resize request, which seems to be necessary in some cases */
+		gtk_widget_get_request_mode(widget);
+		gtk_widget_size_allocate(widget, &allocation, gtk_widget_get_baseline(widget));
+		gtk_widget_add_tick_callback(widget, queue_queue_allocate, NULL, NULL);
+
+		/* the problematic flags get set all the way up the hierarchy */
+		GtkWidget *parent = gtk_widget_get_parent(widget);
+		if (parent) {
+			atl_ensure_widget_snapshotability(parent);
+		}
+	}
+}
+
+void atl_safe_gtk_label_set_text(GtkLabel* label, const char* str)
+{
+	if(!snapshot_in_progress) {
+		gtk_label_set_text(label, str);
+	} else {
+		/* strdup since the string may not exist by the time the callback runs */
+		gtk_widget_add_tick_callback(GTK_WIDGET(label), queue_set_text, (gpointer)strdup(str), NULL);
+	}
+}
+
+void atl_safe_gtk_widget_set_visible(GtkWidget *widget, gboolean visible)
+{
+	gtk_widget_set_visible(widget, visible);
+	GtkWidget *parent = gtk_widget_get_parent(widget);
+	if (parent) {
+		atl_ensure_widget_snapshotability(parent);
+	}
+}
+
+void atl_safe_gtk_widget_queue_allocate(GtkWidget *widget)
+{
+	if(!snapshot_in_progress) {
+		gtk_widget_queue_allocate(widget);
+	} else {
+		gtk_widget_add_tick_callback(widget, queue_queue_allocate, NULL, NULL);
+	}
+}
+
+void atl_safe_gtk_widget_queue_resize(GtkWidget *widget)
+{
+	if(!snapshot_in_progress) {
+		gtk_widget_queue_resize(widget);
+	} else {
+		gtk_widget_add_tick_callback(widget, queue_queue_resize, NULL, NULL);
+	}
 }

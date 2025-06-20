@@ -1,6 +1,8 @@
 #ifndef _UTILS_H_
 #define _UTILS_H_
 
+#include <gtk/gtk.h>
+
 #include <jni.h>
 
 #include "defines.h"
@@ -185,5 +187,11 @@ int android_log_printf(android_LogPriority prio, const char *tag, const char *fm
 void *get_nio_buffer(JNIEnv *env, jobject buffer, jarray *array_ref, jbyte **array);
 void release_nio_buffer(JNIEnv *env, jarray array_ref, jbyte *array);
 int get_nio_buffer_size(JNIEnv *env, jobject buffer);
+
+void atl_ensure_widget_snapshotability(GtkWidget *widget);
+void atl_safe_gtk_label_set_text(GtkLabel* label, const char* str);
+void atl_safe_gtk_widget_set_visible(GtkWidget *widget, gboolean visible);
+void atl_safe_gtk_widget_queue_allocate(GtkWidget *widget);
+void atl_safe_gtk_widget_queue_resize(GtkWidget *widget);
 
 #endif

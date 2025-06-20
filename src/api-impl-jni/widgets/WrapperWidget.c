@@ -168,7 +168,7 @@ void wrapper_widget_allocate(GtkWidget *widget, int width, int height, int basel
 			layout->real_width = width;
 			layout->real_height = height;
 			if (!layout->needs_allocation)
-				gtk_widget_queue_allocate(wrapper->child);
+				atl_safe_gtk_widget_queue_allocate(wrapper->child);
 		}
 		if (layout->needs_allocation)
 			gtk_widget_size_allocate(wrapper->child, &allocation, baseline);
@@ -181,8 +181,12 @@ void wrapper_widget_allocate(GtkWidget *widget, int width, int height, int basel
 		gtk_widget_size_allocate(wrapper->background, &allocation, baseline);
 }
 
+/* this is used to avoid queing layout changes in the middle of snapshotting */
+int snapshot_in_progress = 0;
 static void wrapper_widget_snapshot(GtkWidget *widget, GdkSnapshot *snapshot)
 {
+	snapshot_in_progress++;
+
 	WrapperWidget *wrapper = WRAPPER_WIDGET(widget);
 	if (wrapper->real_height > 0 && wrapper->real_width > 0) {
 		gtk_snapshot_push_clip(snapshot, &GRAPHENE_RECT_INIT(0, 0, wrapper->real_width, wrapper->real_height));
@@ -204,6 +208,8 @@ static void wrapper_widget_snapshot(GtkWidget *widget, GdkSnapshot *snapshot)
 	if (wrapper->real_height > 0 && wrapper->real_width > 0) {
 		gtk_snapshot_pop(snapshot);
 	}
+
+	snapshot_in_progress--;
 }
 
 static void wrapper_widget_class_init(WrapperWidgetClass *class)
@@ -257,8 +263,9 @@ void wrapper_widget_queue_draw(WrapperWidget *wrapper)
 
 	if(wrapper->child)
 		gtk_widget_queue_draw(wrapper->child);
-	if (wrapper->computeScroll_method)
-		gtk_widget_queue_allocate(GTK_WIDGET(wrapper));
+	if (wrapper->computeScroll_method) {
+		atl_safe_gtk_widget_queue_allocate(GTK_WIDGET(wrapper));
+	}
 }
 
 static bool on_click(GtkGestureClick *gesture, int n_press, double x, double y, jobject this)

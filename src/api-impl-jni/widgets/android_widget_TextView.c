@@ -43,7 +43,7 @@ JNIEXPORT jlong JNICALL Java_android_widget_TextView_native_1constructor(JNIEnv 
 JNIEXPORT void JNICALL Java_android_widget_TextView_native_1setText(JNIEnv *env, jobject this, jobject charseq)
 {
 	const char *text = charseq ? (*env)->GetStringUTFChars(env, charseq, NULL) : NULL;
-	gtk_label_set_text(box_get_label(env, _PTR(_GET_LONG_FIELD(this, "widget"))), text ?: "");
+	atl_safe_gtk_label_set_text(box_get_label(env, _PTR(_GET_LONG_FIELD(this, "widget"))), text ?: "");
 	if(text)
 		(*env)->ReleaseStringUTFChars(env, charseq, text);
 }

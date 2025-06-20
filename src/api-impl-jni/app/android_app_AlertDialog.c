@@ -65,7 +65,7 @@ static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item
 	GtkWidget *label = gtk_list_item_get_child(list_item);
 	ListEntry *entry = gtk_list_item_get_item(list_item);
 
-	gtk_label_set_text(GTK_LABEL(label), entry->text);
+	atl_safe_gtk_label_set_text(GTK_LABEL(label), entry->text);
 }
 
 static void activate_cb(GtkListView *list, guint position, struct click_callback_data *d)
