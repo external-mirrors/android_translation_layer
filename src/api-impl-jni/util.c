@@ -162,6 +162,7 @@ void set_up_handle_cache(JNIEnv *env)
 
 	handle_cache.application.class = _REF((*env)->FindClass(env, "android/app/Application"));
 	handle_cache.application.get_app_icon_path = _METHOD(handle_cache.application.class, "get_app_icon_path", "()Ljava/lang/String;");
+	handle_cache.application.get_app_icon_paintable = _METHOD(handle_cache.application.class, "get_app_icon_paintable", "()J");
 
 	handle_cache.looper.class = _REF((*env)->FindClass(env, "android/os/Looper"));
 	handle_cache.looper.loop = _STATIC_METHOD(handle_cache.looper.class, "loop", "()V");

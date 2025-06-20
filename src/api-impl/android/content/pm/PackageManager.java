@@ -2613,7 +2613,7 @@ public class PackageManager {
 	 * @see #getApplicationIcon(String)
 	 */
 	public Drawable getApplicationIcon(ApplicationInfo info) {
-		return null;
+		return Context.this_application.getDrawable(info.icon);
 	}
 
 	/**

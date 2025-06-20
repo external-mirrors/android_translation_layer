@@ -107,6 +107,7 @@ struct handle_cache {
 	struct {
 		jclass class;
 		jmethodID get_app_icon_path;
+		jmethodID get_app_icon_paintable;
 	} application;
 	struct {
 		jclass class;

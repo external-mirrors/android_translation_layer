@@ -1,6 +1,7 @@
 // for dladdr
 #define _GNU_SOURCE
 
+#include <cairo-svg.h>
 #include <gdk/wayland/gdkwayland.h>
 #include <gtk/gtk.h>
 #include <libportal/portal.h>
@@ -174,6 +175,13 @@ static void dynamic_launcher_ready_callback(GObject *portal, GAsyncResult *res, 
 		exit(1);
 	}
 	exit(0);
+}
+
+static cairo_status_t cairo_write_func_gstring(void *closure, const unsigned char *data, unsigned int length)
+{
+	GString *str = closure;
+	g_string_append_len(str, (gchar *)data, length);
+	return CAIRO_STATUS_SUCCESS;
 }
 
 // this is exported by the shim bionic linker
@@ -561,17 +569,40 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			(*env)->ExceptionDescribe(env);
 
 		GVariant *icon_serialized = NULL;
-		if (app_icon_path && !d->install_internal) {
-			extract_from_apk(app_icon_path, app_icon_path);
-			char *app_icon_path_full = g_strdup_printf("%s/%s", app_data_dir, app_icon_path);
-			GMappedFile *icon_file = g_mapped_file_new(app_icon_path_full, FALSE, NULL);
-			GBytes *icon_bytes = g_mapped_file_get_bytes(icon_file);
-			GIcon *icon = g_bytes_icon_new(icon_bytes);
-			icon_serialized = g_icon_serialize(icon);
-			g_object_unref(icon);
-			g_bytes_unref(icon_bytes);
-			g_mapped_file_unref(icon_file);
-			g_free(app_icon_path_full);
+		if (!d->install_internal) {
+			if (app_icon_path) {
+				/* we can import the icon as-is */
+				extract_from_apk(app_icon_path, app_icon_path);
+				char *app_icon_path_full = g_strdup_printf("%s/%s", app_data_dir, app_icon_path);
+				GMappedFile *icon_file = g_mapped_file_new(app_icon_path_full, FALSE, NULL);
+				GBytes *icon_bytes = g_mapped_file_get_bytes(icon_file);
+				GIcon *icon = g_bytes_icon_new(icon_bytes);
+				icon_serialized = g_icon_serialize(icon);
+				g_object_unref(icon);
+				g_bytes_unref(icon_bytes);
+				g_mapped_file_unref(icon_file);
+				g_free(app_icon_path_full);
+			} else {
+				/* the icon is a generalized Drawable, let's render it into an SVG */
+				_SET_STATIC_BOOL_FIELD((*env)->FindClass(env, "android/graphics/drawable/VectorDrawable"), "direct_draw_override", true);
+				GdkPaintable *icon_paintable = _PTR((*env)->CallLongMethod(env, application_object, handle_cache.application.get_app_icon_paintable));
+				GString *svg_string = g_string_new("");
+				cairo_surface_t *svg_surface = cairo_svg_surface_create_for_stream(cairo_write_func_gstring, svg_string, 108, 108);
+				cairo_t *cr = cairo_create(svg_surface);
+				GdkSnapshot *snapshot = gtk_snapshot_new();
+				gdk_paintable_snapshot(icon_paintable, snapshot, 108, 108);
+				GskRenderNode *node = gtk_snapshot_to_node(snapshot);
+				gsk_render_node_draw(node, cr);
+				gsk_render_node_unref(node);
+				g_object_unref(snapshot);
+				cairo_destroy(cr);
+				cairo_surface_destroy(svg_surface);
+				GBytes *icon_bytes = g_string_free_to_bytes(svg_string);
+				GIcon *icon = g_bytes_icon_new(icon_bytes);
+				icon_serialized = g_icon_serialize(icon);
+				g_object_unref(icon);
+				g_bytes_unref(icon_bytes);
+			}
 		}
 
 		gchar *dest_name = g_strdup_printf("%s.apk", package_name);

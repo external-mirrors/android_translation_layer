@@ -2,6 +2,7 @@ package android.app;
 
 import android.os.Bundle;
 import android.content.res.Configuration;
+import android.R;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.pm.PackageParser;
@@ -10,7 +11,22 @@ public class Application extends ContextWrapper {
 	public long native_window;
 
 	private String get_app_icon_path() {
-		return getString(pkg.applicationInfo.icon);
+		String icon_path = null;
+		try {
+			icon_path = getString(pkg.applicationInfo.icon);
+		} catch (android.content.res.Resources.NotFoundException e) {
+			e.printStackTrace();
+		}
+		if (icon_path == null) {
+			icon_path = getString(R.mipmap.sym_def_app_icon);
+		} else if (icon_path.endsWith(".xml")) {
+			icon_path = null;
+		}
+		return icon_path;
+	}
+
+	private long get_app_icon_paintable() {
+		return getPackageManager().getApplicationIcon(pkg.applicationInfo).paintable;
 	}
 
 	String get_app_label() {
