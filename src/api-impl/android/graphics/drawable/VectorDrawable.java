@@ -811,6 +811,9 @@ class PathParser {
 public class VectorDrawable extends Drawable {
 	private static final String LOGTAG = VectorDrawable.class.getSimpleName();
 
+	/* don't use an intermediary bitmap (for making an SVG) */
+	static boolean direct_draw_override = false;
+
 	private static final String SHAPE_CLIP_PATH = "clip-path";
 	private static final String SHAPE_GROUP = "group";
 	private static final String SHAPE_PATH = "path";
@@ -939,16 +942,20 @@ public class VectorDrawable extends Drawable {
 		// we offset to (0, 0);
 		mTmpBounds.offsetTo(0, 0);
 
-		mVectorState.createCachedBitmapIfNeeded(scaledWidth, scaledHeight);
-		if (!mAllowCaching) {
-			mVectorState.updateCachedBitmap(scaledWidth, scaledHeight);
+		if (direct_draw_override) {
+			mVectorState.mVPathRenderer.draw(canvas, scaledWidth, scaledHeight, null);
 		} else {
-			if (!mVectorState.canReuseCache()) {
+			mVectorState.createCachedBitmapIfNeeded(scaledWidth, scaledHeight);
+			if (!mAllowCaching) {
 				mVectorState.updateCachedBitmap(scaledWidth, scaledHeight);
-				mVectorState.updateCacheStates();
+			} else {
+				if (!mVectorState.canReuseCache()) {
+					mVectorState.updateCachedBitmap(scaledWidth, scaledHeight);
+					mVectorState.updateCacheStates();
+				}
 			}
+			mVectorState.drawCachedBitmapWithRootAlpha(canvas, colorFilter, mTmpBounds);
 		}
-		mVectorState.drawCachedBitmapWithRootAlpha(canvas, colorFilter, mTmpBounds);
 		canvas.restoreToCount(saveCount);
 	}
 
