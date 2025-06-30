@@ -664,9 +664,11 @@ PFN_vkVoidFunction bionic_vkGetInstanceProcAddr(VkInstance instance, const char 
 
 // FIXME 2: this BLATANTLY belongs elsewhere
 
-typedef XrResult(*xr_func)();
+typedef XrResult(*xr_func)(...);
 
-// avoid hard dependency on libopenxr_loader for the three functions that we only ever call when running a VR app
+/* avoid hard dependency on libopenxr_loader for the three functions that we only ever call when running a VR app */
+/* NOTE: our use of __builtin_va_arg_pack means this only works as long as we don't need to call a function
+ * that takes an integer type shorter than int or a floating point type shorter than double */
 static void *openxr_loader_handle = NULL;
 static inline __attribute__((__always_inline__)) XrResult xr_lazy_call(char *func_name, ...) {
 	if(!openxr_loader_handle) {
