@@ -269,7 +269,10 @@ struct wl_display *wayland_server_start()
 		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(gdk_display);
 		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display, NULL);
 	} else if (GDK_IS_X11_DISPLAY(gdk_display)) {
+		#pragma GCC diagnostic push
+		#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 		Display *x11_display = gdk_x11_display_get_xdisplay(gdk_display);
+		#pragma GCC diagnostic pop
 		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, x11_display, NULL);
 	}
 	gl_context_gtk = gdk_surface_create_gl_context(gtk_native_get_surface(GTK_NATIVE(window)), NULL);
