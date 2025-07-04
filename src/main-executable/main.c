@@ -780,7 +780,12 @@ int main(int argc, char **argv)
 	callback_data->extra_jvm_options = NULL;
 	callback_data->extra_string_keys = NULL;
 
-	app = gtk_application_new("com.example.demo_application", G_APPLICATION_NON_UNIQUE | G_APPLICATION_HANDLES_OPEN | G_APPLICATION_CAN_OVERRIDE_APP_ID);
+	bool has_app_id = false;
+	for (int i = 1; i < argc; i++) {
+		if (strncmp(argv[i], "--gapplication-app-id", sizeof("--gapplication-app-id")-1) == 0)
+			has_app_id = true;
+	}
+	app = gtk_application_new("com.example.demo_application", (has_app_id ? 0 : G_APPLICATION_NON_UNIQUE) | G_APPLICATION_HANDLES_OPEN | G_APPLICATION_CAN_OVERRIDE_APP_ID);
 
 	// cmdline related setup
 	init_cmd_parameters(G_APPLICATION(app), callback_data);
@@ -789,8 +794,8 @@ int main(int argc, char **argv)
 	g_signal_connect(app, "activate", G_CALLBACK(activate), callback_data);
 	g_signal_connect(app, "open", G_CALLBACK(open), callback_data);
 	status = g_application_run(G_APPLICATION(app), argc, argv);
-	g_object_unref(app);
 	remove_ongoing_notifications();
+	g_object_unref(app);
 
 	return status;
 }

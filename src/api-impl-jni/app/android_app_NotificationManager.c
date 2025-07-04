@@ -1,5 +1,5 @@
 #include <gtk/gtk.h>
-#include <libportal/portal.h>
+#include <gio/gdesktopappinfo.h>
 
 #include "../defines.h"
 #include "../util.h"
@@ -11,86 +11,136 @@
 #define MPRIS_BUS_NAME_PREFIX "org.mpris.MediaPlayer2."
 #define MPRIS_OBJECT_NAME "/org/mpris/MediaPlayer2"
 
-static XdpPortal *portal = NULL;
+/* ongoing notifications to be removed when the app is closed */
 static GHashTable *ongoing_notifications = NULL;
 
-JNIEXPORT jlong JNICALL Java_android_app_NotificationManager_nativeInitBuilder(JNIEnv *env, jobject this)
-{
-	return _INTPTR(g_variant_builder_new(G_VARIANT_TYPE("aa{sv}")));
-}
+/* We queue up notification updates in pending_notifications to make sure that there is at least 200ms
+   delay between consecutive updates. This prevents dynamic notification updated from arriving in wrong
+   order at the desktop environment */
+static GHashTable *pending_notifications = NULL;
+static GMutex pending_notifications_mutex = {0};
+static GSource *send_notifcation_timer = NULL;
 
-static GVariant *serialize_intent(JNIEnv *env, jint type, jstring action_jstr, jstring className_jstr)
+static gboolean send_notifcation_func(GSource *send_notifcation_timer, GSourceFunc callback, gpointer user_data)
 {
-	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
-	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
-	GVariant *intent = g_variant_new("(iss)", type, action ?: "", className ?: "");
-	if (action_jstr) (*env)->ReleaseStringUTFChars(env, action_jstr, action);
-	if (className_jstr) (*env)->ReleaseStringUTFChars(env, className_jstr, className);
-	return intent;
-}
+	printf("Sending notifications\n");
+	GApplication *app = g_application_get_default();
+	GHashTableIter iter;
+	gpointer key, value;
+	gboolean notification_sent = FALSE;
 
-JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction(JNIEnv *env, jobject this, jlong builder_ptr, jstring name_jstr, jint type, jstring action, jstring className)
-{
-	GVariantBuilder *builder = _PTR(builder_ptr);
-	g_variant_builder_open(builder, G_VARIANT_TYPE("a{sv}"));
-	if (name_jstr) {
-		const char *name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
-		g_variant_builder_add(builder, "{sv}", "label", g_variant_new_string(name));
-		(*env)->ReleaseStringUTFChars(env, name_jstr, name);
+	g_mutex_lock(&pending_notifications_mutex);
+	g_hash_table_iter_init(&iter, pending_notifications);
+	while (g_hash_table_iter_next(&iter, &key, &value)){
+		char *id_string = g_strdup_printf("%d", GPOINTER_TO_INT(key));
+		if (value)
+			g_application_send_notification(app, id_string, value);
+		else
+			g_application_withdraw_notification(app, id_string);
+		g_free(id_string);
+		g_hash_table_iter_remove(&iter);
+		notification_sent = TRUE;
 	}
-	g_variant_builder_add(builder, "{sv}", "action", g_variant_new_string("button-action"));
-	g_variant_builder_add(builder, "{sv}", "target", serialize_intent(env, type, action, className));
-	g_variant_builder_close(builder);
+	g_mutex_unlock(&pending_notifications_mutex);
+
+	if (notification_sent)
+		g_source_set_ready_time(send_notifcation_timer, g_source_get_time(send_notifcation_timer) + 200000L); // 200ms
+	else
+		g_source_set_ready_time(send_notifcation_timer, -1);
+
+	return G_SOURCE_CONTINUE;
+}
+static GSourceFuncs send_notifcation_funcs = {
+	.dispatch = send_notifcation_func,
+};
+static void unref_nullsafe(void *data) {
+	if (data)
+		g_object_unref(data);
 }
 
-static void notification_action_invoked(XdpPortal *portal, gchar *id_str, gchar *action, GVariant *parameter, gpointer user_data)
+static void notification_action(GSimpleAction *action, GVariant* parameter, gpointer user_data)
 {
-	int id = atoi(id_str);
+	printf("notification_action\n");
 	int type;
 	const char *actionName;
 	const char *className;
-	GVariant *target;
+	const char *data;
 	JNIEnv *env = get_jni_env();
 
-	GVariantIter *iter = g_variant_iter_new(parameter);
-	g_variant_iter_next(iter, "v", &target);
-	g_variant_get(target, "(iss)", &type, &actionName, &className);
-	jmethodID notificationActionCallback = _STATIC_METHOD((*env)->FindClass(env, "android/app/NotificationManager"), "notificationActionCallback", "(IILjava/lang/String;Ljava/lang/String;)V");
-	(*env)->CallStaticVoidMethod(env, (*env)->FindClass(env, "android/app/NotificationManager"), notificationActionCallback, id, type, _JSTRING(actionName), _JSTRING(className));
-	g_variant_iter_free(iter);
-	g_variant_unref(target);
+	g_variant_get(parameter, "(isss)", &type, &actionName, &className, &data);
+	jmethodID notificationActionCallback = _STATIC_METHOD((*env)->FindClass(env, "android/app/NotificationManager"), "notificationActionCallback", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
+	(*env)->CallStaticVoidMethod(env, (*env)->FindClass(env, "android/app/NotificationManager"), notificationActionCallback, type, _JSTRING(actionName), _JSTRING(className), _JSTRING(data));
 }
 
-// gnome session locks up when we send notification update before last update was processed
-static int callback_pending = 0;
-static void natification_callback(GObject* source_object, GAsyncResult* res, gpointer data)
-{
-	callback_pending = 0;
-}
-
-JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotification(JNIEnv *env, jobject this, jlong builder_ptr, jint id, jstring title_jstr, jstring text_jstr, jstring icon_jstr, jboolean ongoing, jint type, jstring action, jstring className)
-{
-	if (callback_pending) {
-		return;
-	}
-	if (!portal) {
-		portal = xdp_portal_new();
-		g_signal_connect(portal, "notification-action-invoked", G_CALLBACK(notification_action_invoked), NULL);
+static void queue_notification(int id, GNotification *notification) {
+	g_mutex_lock(&pending_notifications_mutex);
+	if (!pending_notifications) {
+		pending_notifications = g_hash_table_new_full(NULL, NULL, NULL, unref_nullsafe);
+		send_notifcation_timer = g_source_new(&send_notifcation_funcs, sizeof(GSource));
+		g_source_attach(send_notifcation_timer, NULL);
+		GApplication *app = g_application_get_default();
+		gchar *desktop_id = g_strdup_printf("%s.desktop", g_application_get_application_id(app));
+		GDesktopAppInfo *info = g_desktop_app_info_new(desktop_id);
+		if (!info)  // some desktop environments don't allow XDG-portal notifications without a desktop file
+			setenv("GNOTIFICATION_BACKEND", "freedesktop", 0);
+		else
+			g_object_unref(info);
+		g_free(desktop_id);
+		GSimpleAction *action = g_simple_action_new("notificationaction", g_variant_type_new("(isss)"));
+		g_signal_connect(action, "activate", G_CALLBACK(notification_action), app);
+		g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(action));
+		g_object_unref(action);
 		ongoing_notifications = g_hash_table_new(NULL, NULL);
 	}
+	g_hash_table_insert(pending_notifications, GINT_TO_POINTER(id), notification);
+	g_mutex_unlock(&pending_notifications_mutex);
+	if (g_source_get_ready_time(send_notifcation_timer) == -1) {
+		g_source_set_ready_time(send_notifcation_timer, 0);  // immediately
+	}
+}
 
-	GVariantBuilder *builder = _PTR(builder_ptr);
-	GVariant *buttons = g_variant_builder_end(builder);
+JNIEXPORT jlong JNICALL Java_android_app_NotificationManager_nativeInitBuilder(JNIEnv *env, jobject this)
+{
+	return _INTPTR(g_notification_new(""));
+}
 
-	g_variant_builder_init(builder, G_VARIANT_TYPE("a{sv}"));
+static GVariant *serialize_intent(JNIEnv *env, jint type, jstring action_jstr, jstring className_jstr, jstring data_jstr)
+{
+	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
+	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
+	const char *data = data_jstr ? (*env)->GetStringUTFChars(env, data_jstr, NULL) : NULL;
+	GVariant *intent = g_variant_new("(isss)", type, action ?: "", className ?: "", data ?: "");
+	if (action_jstr) (*env)->ReleaseStringUTFChars(env, action_jstr, action);
+	if (className_jstr) (*env)->ReleaseStringUTFChars(env, className_jstr, className);
+	if (data_jstr) (*env)->ReleaseStringUTFChars(env, data_jstr, data);
+	return intent;
+}
+
+JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction(JNIEnv *env, jobject this, jlong builder_ptr, jstring name_jstr, jint type, jstring action, jstring className, jstring data)
+{
+	GNotification *notification = _PTR(builder_ptr);
+	const char *name = "";
+	if (name_jstr) {
+		name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
+	}
+	g_notification_add_button_with_target_value(notification, name, "app.notificationaction", serialize_intent(env, type, action, className, data));
+	if (name_jstr) {
+		(*env)->ReleaseStringUTFChars(env, name_jstr, name);
+	}
+}
+
+JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotification(JNIEnv *env, jobject this, jlong builder_ptr, jint id, jstring title_jstr, jstring text_jstr, jstring icon_jstr, jboolean ongoing, jint type, jstring action, jstring className, jstring data)
+{
+	GNotification *notification = _PTR(builder_ptr);
+
 	if (title_jstr) {
 		const char *title = (*env)->GetStringUTFChars(env, title_jstr, NULL);
-		g_variant_builder_add(builder, "{sv}", "title", g_variant_new_string(title));
+		g_notification_set_title(notification, title);
 		(*env)->ReleaseStringUTFChars(env, title_jstr, title);
 	}
 	if (text_jstr) {
 		const char *text = (*env)->GetStringUTFChars(env, text_jstr, NULL);
-		g_variant_builder_add(builder, "{sv}", "body", g_variant_new_string(text));
+		g_notification_set_body(notification, text);
 		(*env)->ReleaseStringUTFChars(env, text_jstr, text);
 	}
 	if (icon_jstr) {
@@ -100,41 +150,28 @@ JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotificati
 		GMappedFile *icon_file = g_mapped_file_new(icon_path_full, FALSE, NULL);
 		GBytes *icon_bytes = g_mapped_file_get_bytes(icon_file);
 		GIcon *icon = g_bytes_icon_new(icon_bytes);
-		GVariant *icon_serialized = g_icon_serialize(icon);
-		g_variant_builder_add(builder, "{sv}", "icon", icon_serialized);
-		g_variant_unref(icon_serialized);
+		g_notification_set_icon(notification, icon);
 		g_object_unref(icon);
 		g_bytes_unref(icon_bytes);
 		g_mapped_file_unref(icon_file);
 		g_free(icon_path_full);
 		(*env)->ReleaseStringUTFChars(env, icon_jstr, icon_path);
 	}
-	g_variant_builder_add(builder, "{sv}", "default-action", g_variant_new_string("default-action"));
-	g_variant_builder_add(builder, "{sv}", "default-action-target", serialize_intent(env, type, action, className));
-	g_variant_builder_add(builder, "{sv}", "buttons", buttons);
-	GVariant *variant = g_variant_builder_end(builder);
-	g_variant_builder_unref(builder);
-	char *id_string = g_strdup_printf("%d", id);
-	xdp_portal_remove_notification(portal, id_string);
-	callback_pending = 1;
-	xdp_portal_add_notification(portal, id_string, variant, XDP_NOTIFICATION_FLAG_NONE, NULL, natification_callback, NULL);
-	g_free(id_string);
+	g_notification_set_default_action_and_target_value(notification, "app.notificationaction", serialize_intent(env, type, action, className, data));
+	queue_notification(id, notification);
 	if (ongoing)
 		g_hash_table_add(ongoing_notifications, GINT_TO_POINTER(id));
 }
 
 JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeCancel(JNIEnv *env, jobject this, jint id)
 {
-	char *id_string = g_strdup_printf("%d", id);
-	if (portal)
-		xdp_portal_remove_notification(portal, id_string);
-	g_free(id_string);
+	queue_notification(id, NULL);
 }
 
 static void remove_ongoing_notification(gpointer key, gpointer value, gpointer user_data)
 {
 	char *id_string = g_strdup_printf("%d", GPOINTER_TO_INT(key));
-	xdp_portal_remove_notification(portal, id_string);
+	g_application_withdraw_notification(g_application_get_default(), id_string);
 	g_free(id_string);
 }
 

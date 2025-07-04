@@ -18,18 +18,18 @@ JNIEXPORT jlong JNICALL Java_android_app_NotificationManager_nativeInitBuilder
 /*
  * Class:     android_app_NotificationManager
  * Method:    nativeAddAction
- * Signature: (JLjava/lang/String;ILjava/lang/String;Ljava/lang/String;)V
+ * Signature: (JLjava/lang/String;ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction
-  (JNIEnv *, jobject, jlong, jstring, jint, jstring, jstring);
+  (JNIEnv *, jobject, jlong, jstring, jint, jstring, jstring, jstring);
 
 /*
  * Class:     android_app_NotificationManager
  * Method:    nativeShowNotification
- * Signature: (JILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/String;Ljava/lang/String;)V
+ * Signature: (JILjava/lang/String;Ljava/lang/String;Ljava/lang/String;ZILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V
  */
 JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotification
-  (JNIEnv *, jobject, jlong, jint, jstring, jstring, jstring, jboolean, jint, jstring, jstring);
+  (JNIEnv *, jobject, jlong, jint, jstring, jstring, jstring, jboolean, jint, jstring, jstring, jstring);
 
 /*
  * Class:     android_app_NotificationManager
