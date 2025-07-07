@@ -103,6 +103,8 @@ struct handle_cache {
 		jclass class;
 		jmethodID get_package_name;
 		jmethodID sendBroadcast;
+		jmethodID startActivity;
+		jmethodID startService;
 	} context;
 	struct {
 		jclass class;
@@ -128,6 +130,8 @@ struct handle_cache {
 		jmethodID constructor;
 		jmethodID putExtraCharSequence;
 		jmethodID putExtraByteArray;
+		jmethodID getDataString;
+		jmethodID setClassName;
 	} intent;
 	struct {
 		jclass class;
@@ -143,6 +147,10 @@ struct handle_cache {
 		jclass class;
 		jmethodID drawText;
 	} canvas;
+	struct {
+		jclass class;
+		jmethodID parse;
+	} uri;
 };
 
 extern struct handle_cache handle_cache;
@@ -194,5 +202,10 @@ void atl_safe_gtk_label_set_text(GtkLabel* label, const char* str);
 void atl_safe_gtk_widget_set_visible(GtkWidget *widget, gboolean visible);
 void atl_safe_gtk_widget_queue_allocate(GtkWidget *widget);
 void atl_safe_gtk_widget_queue_resize(GtkWidget *widget);
+
+#define INTENT_G_VARIANT_TYPE_STRING "(sss)"  // (action, className, data)
+GVariant *intent_serialize(JNIEnv *env, jobject intent);
+jobject intent_deserialize(JNIEnv *env, GVariant *variant);
+const char *intent_actionname_from_type(int type);
 
 #endif

@@ -12,6 +12,7 @@
 
 #include "back_button.h"
 #include "libc_bio_path_overrides.h"
+#include "actions.h"
 
 #include <dlfcn.h>
 #include <errno.h>
@@ -714,6 +715,19 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 	}
+
+	const char *app_id = g_application_get_application_id(G_APPLICATION(app));
+	if (strcmp(app_id, "com.example.demo_application")) {
+		// This would normally happen automatically, if the GApplication is not contructed with G_APPLICATION_NON_UNIQUE
+		g_dbus_connection_call(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
+		                       "org.freedesktop.DBus",
+		                       "/org/freedesktop/DBus",
+		                       "org.freedesktop.DBus",
+		                       "RequestName",
+		                       g_variant_new("(su)", app_id, G_BUS_NAME_OWNER_FLAGS_NONE),
+		                       G_VARIANT_TYPE("(u)"),
+		                       0, -1, NULL, NULL, NULL);
+	}
 }
 
 static void activate(GtkApplication *app, struct jni_callback_data *d)
@@ -780,12 +794,7 @@ int main(int argc, char **argv)
 	callback_data->extra_jvm_options = NULL;
 	callback_data->extra_string_keys = NULL;
 
-	bool has_app_id = false;
-	for (int i = 1; i < argc; i++) {
-		if (strncmp(argv[i], "--gapplication-app-id", sizeof("--gapplication-app-id")-1) == 0)
-			has_app_id = true;
-	}
-	app = gtk_application_new("com.example.demo_application", (has_app_id ? 0 : G_APPLICATION_NON_UNIQUE) | G_APPLICATION_HANDLES_OPEN | G_APPLICATION_CAN_OVERRIDE_APP_ID);
+	app = gtk_application_new("com.example.demo_application", G_APPLICATION_NON_UNIQUE | G_APPLICATION_HANDLES_OPEN | G_APPLICATION_CAN_OVERRIDE_APP_ID);
 
 	// cmdline related setup
 	init_cmd_parameters(G_APPLICATION(app), callback_data);
@@ -793,6 +802,7 @@ int main(int argc, char **argv)
 
 	g_signal_connect(app, "activate", G_CALLBACK(activate), callback_data);
 	g_signal_connect(app, "open", G_CALLBACK(open), callback_data);
+	g_action_map_add_action_entries(G_ACTION_MAP(app), action_entries, action_entries_count, NULL);
 	status = g_application_run(G_APPLICATION(app), argc, argv);
 	remove_ongoing_notifications();
 	g_object_unref(app);

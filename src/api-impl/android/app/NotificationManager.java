@@ -4,10 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import android.app.Notification.MediaStyle;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 
@@ -30,28 +28,20 @@ public class NotificationManager {
 		long builder = nativeInitBuilder();
 		for (Notification.Action action : notification.actions) {
 			int intentType = -1;
-			String actionName = null;
-			String className = null;
-			String data = null;
+			Intent intent = null;
 			if (action.intent != null) {
 				intentType = action.intent.type;
-				actionName = action.intent.intent.getAction();
-				className = action.intent.intent.getComponent() != null ? action.intent.intent.getComponent().getClassName() : null;
-				data = action.intent.intent.getData() != null ? action.intent.intent.getData().toString() : null;
+				intent = action.intent.intent;
 			}
-			nativeAddAction(builder, action.title, intentType, actionName, className, data);
+			nativeAddAction(builder, action.title, intentType, intent);
 		}
 		int intentType = -1;
-		String actionName = null;
-		String className = null;
-		String data = null;
+		Intent intent = null;
 		if (notification.intent != null) {
 			intentType = notification.intent.type;
-			actionName = notification.intent.intent.getAction();
-			className = notification.intent.intent.getComponent() != null ? notification.intent.intent.getComponent().getClassName() : null;
-			data = notification.intent.intent.getData() != null ? notification.intent.intent.getData().toString() : null;
+			intent = notification.intent.intent;
 		}
-		nativeShowNotification(builder, id, notification.title, notification.text, notification.iconPath, notification.ongoing, intentType, actionName, className, data);
+		nativeShowNotification(builder, id, notification.title, notification.text, notification.iconPath, notification.ongoing, intentType, intent);
 	}
 
 	public void notify(int id, Notification notification) {
@@ -78,29 +68,11 @@ public class NotificationManager {
 		cancel(null, id);
 	}
 
-	protected static void notificationActionCallback(int intentType, String action, String className, String data) {
-		Context context = Context.this_application;
-		action = "".equals(action) ? null : action;
-		className = "".equals(className) ? null : className;
-		data = "".equals(data) ? null : data;
-		Intent intent = new Intent(action, data != null ? Uri.parse(data) : null);
-		if (className != null) {
-			intent.setComponent(new ComponentName(context, className));
-		}
-		if (intentType == 0) { // type Activity
-			context.startActivity(intent);
-		} else if (intentType == 1) { // type Service
-			context.startService(intent);
-		} else if (intentType == 2) { // type Broadcast
-			context.sendBroadcast(intent);
-		}
-	}
-
 	public void createNotificationChannel(NotificationChannel channel) {}
 
 	protected native long nativeInitBuilder();
-	protected native void nativeAddAction(long builder, String title, int intentType, String action, String className, String data);
-	protected native void nativeShowNotification(long builder, int id, String title, String text, String iconPath, boolean ongoing, int intentType, String action, String className, String data);
+	protected native void nativeAddAction(long builder, String title, int intentType, Intent intent);
+	protected native void nativeShowNotification(long builder, int id, String title, String text, String iconPath, boolean ongoing, int intentType, Intent intent);
 	protected native void nativeShowMPRIS(String packageName, String identiy);
 	protected native void nativeCancel(int id);
 	protected native void nativeCancelMPRIS();

@@ -159,6 +159,8 @@ void set_up_handle_cache(JNIEnv *env)
 	if((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.context.sendBroadcast = _METHOD(handle_cache.context.class, "sendBroadcast", "(Landroid/content/Intent;)V");
+	handle_cache.context.startActivity = _METHOD(handle_cache.context.class, "startActivity", "(Landroid/content/Intent;)V");
+	handle_cache.context.startService = _METHOD(handle_cache.context.class, "startService", "(Landroid/content/Intent;)Landroid/content/ComponentName;");
 
 	handle_cache.application.class = _REF((*env)->FindClass(env, "android/app/Application"));
 	handle_cache.application.get_app_icon_path = _METHOD(handle_cache.application.class, "get_app_icon_path", "()Ljava/lang/String;");
@@ -179,6 +181,8 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.intent.constructor = _METHOD(handle_cache.intent.class, "<init>", "()V");
 	handle_cache.intent.putExtraCharSequence = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;Ljava/lang/CharSequence;)Landroid/content/Intent;");
 	handle_cache.intent.putExtraByteArray = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;[B)Landroid/content/Intent;");
+	handle_cache.intent.getDataString = _METHOD(handle_cache.intent.class, "getDataString", "()Ljava/lang/String;");
+	handle_cache.intent.setClassName = _METHOD(handle_cache.intent.class, "setClassName", "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;");
 
 	handle_cache.instrumentation.class = _REF((*env)->FindClass(env, "android/app/Instrumentation"));
 
@@ -188,6 +192,9 @@ void set_up_handle_cache(JNIEnv *env)
 
 	handle_cache.canvas.class = _REF((*env)->FindClass(env, "android/graphics/Canvas"));
 	handle_cache.canvas.drawText = _METHOD(handle_cache.canvas.class, "drawText", "(Ljava/lang/CharSequence;IIFFLandroid/graphics/Paint;)V");
+
+	handle_cache.uri.class = _REF((*env)->FindClass(env, "android/net/Uri"));
+	handle_cache.uri.parse = _STATIC_METHOD(handle_cache.uri.class, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
 }
 
 void extract_from_apk(const char *path, const char *target) {
@@ -369,5 +376,58 @@ void atl_safe_gtk_widget_queue_resize(GtkWidget *widget)
 		gtk_widget_queue_resize(widget);
 	} else {
 		gtk_widget_add_tick_callback(widget, queue_queue_resize, NULL, NULL);
+	}
+}
+
+GVariant *intent_serialize(JNIEnv *env, jobject intent) {
+	jstring action_jstr = _GET_OBJ_FIELD(intent, "action", "Ljava/lang/String;");
+	jobject component = _GET_OBJ_FIELD(intent, "component", "Landroid/content/ComponentName;");
+	jstring className_jstr = component ? _GET_OBJ_FIELD(component, "mClass", "Ljava/lang/String;") : NULL;
+	jstring data_jstr = (*env)->CallObjectMethod(env, intent, handle_cache.intent.getDataString);
+
+	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
+	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
+	const char *data = data_jstr ? (*env)->GetStringUTFChars(env, data_jstr, NULL) : NULL;
+	GVariant *variant = g_variant_new(INTENT_G_VARIANT_TYPE_STRING, action ?: "", className ?: "", data ?: "");
+	if (action_jstr)
+		(*env)->ReleaseStringUTFChars(env, action_jstr, action);
+	if (className_jstr)
+		(*env)->ReleaseStringUTFChars(env, className_jstr, className);
+	if (data_jstr)
+		(*env)->ReleaseStringUTFChars(env, data_jstr, data);
+	return variant;
+}
+
+jobject intent_deserialize(JNIEnv *env, GVariant *variant) {
+	const char *action;
+	const char *className;
+	const char *data;
+	g_variant_get(variant, INTENT_G_VARIANT_TYPE_STRING, &action, &className, &data);
+	if (action && action[0] == '\0')
+		action = NULL;
+	if (className && className[0] == '\0')
+		className = NULL;
+	if (data && data[0] == '\0')
+		data = NULL;
+
+	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING(action));
+	if (className)
+		(*env)->CallObjectMethod(env, intent, handle_cache.intent.setClassName, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), _JSTRING(className));
+	if (data)
+		_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", (*env)->CallStaticObjectMethod(env, handle_cache.uri.class, handle_cache.uri.parse, _JSTRING(data)));
+	return intent;
+}
+
+const char *intent_actionname_from_type(int type) {
+	switch (type) {
+		case 0:
+			return "app.startActivity";
+		case 1:
+			return "app.startService";
+		case 2:
+			return "app.sendBroadcast";
+		default:
+			return NULL;
 	}
 }

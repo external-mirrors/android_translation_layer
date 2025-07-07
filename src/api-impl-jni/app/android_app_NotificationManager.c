@@ -16,14 +16,15 @@ static GHashTable *ongoing_notifications = NULL;
 
 /* We queue up notification updates in pending_notifications to make sure that there is at least 200ms
    delay between consecutive updates. This prevents dynamic notification updated from arriving in wrong
-   order at the desktop environment */
+   order at the desktop environment.
+   Normally 20ms should be enough to prevent notification update order issues, but we use a 10x larger value
+   to be safe and 200ms should be more than enough as notification update interval. */
 static GHashTable *pending_notifications = NULL;
 static GMutex pending_notifications_mutex = {0};
 static GSource *send_notifcation_timer = NULL;
 
 static gboolean send_notifcation_func(GSource *send_notifcation_timer, GSourceFunc callback, gpointer user_data)
 {
-	printf("Sending notifications\n");
 	GApplication *app = g_application_get_default();
 	GHashTableIter iter;
 	gpointer key, value;
@@ -58,20 +59,6 @@ static void unref_nullsafe(void *data) {
 		g_object_unref(data);
 }
 
-static void notification_action(GSimpleAction *action, GVariant* parameter, gpointer user_data)
-{
-	printf("notification_action\n");
-	int type;
-	const char *actionName;
-	const char *className;
-	const char *data;
-	JNIEnv *env = get_jni_env();
-
-	g_variant_get(parameter, "(isss)", &type, &actionName, &className, &data);
-	jmethodID notificationActionCallback = _STATIC_METHOD((*env)->FindClass(env, "android/app/NotificationManager"), "notificationActionCallback", "(ILjava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
-	(*env)->CallStaticVoidMethod(env, (*env)->FindClass(env, "android/app/NotificationManager"), notificationActionCallback, type, _JSTRING(actionName), _JSTRING(className), _JSTRING(data));
-}
-
 static void queue_notification(int id, GNotification *notification) {
 	g_mutex_lock(&pending_notifications_mutex);
 	if (!pending_notifications) {
@@ -81,22 +68,21 @@ static void queue_notification(int id, GNotification *notification) {
 		GApplication *app = g_application_get_default();
 		gchar *desktop_id = g_strdup_printf("%s.desktop", g_application_get_application_id(app));
 		GDesktopAppInfo *info = g_desktop_app_info_new(desktop_id);
-		if (!info)  // some desktop environments don't allow XDG-portal notifications without a desktop file
+		/* Some desktop environments don't allow XDG-portal notifications without a desktop file.
+		   There is no public API to force a specific backend, so we have to set the environment variable.
+		   The GNOTIFICATION_BACKEND variable will be read by GIO the first time the notification backend is used.
+		   This method should be future proof unless the freedesktop backend is removed. */
+		if (!info)
 			setenv("GNOTIFICATION_BACKEND", "freedesktop", 0);
 		else
 			g_object_unref(info);
 		g_free(desktop_id);
-		GSimpleAction *action = g_simple_action_new("notificationaction", g_variant_type_new("(isss)"));
-		g_signal_connect(action, "activate", G_CALLBACK(notification_action), app);
-		g_action_map_add_action(G_ACTION_MAP(app), G_ACTION(action));
-		g_object_unref(action);
 		ongoing_notifications = g_hash_table_new(NULL, NULL);
 	}
 	g_hash_table_insert(pending_notifications, GINT_TO_POINTER(id), notification);
 	g_mutex_unlock(&pending_notifications_mutex);
-	if (g_source_get_ready_time(send_notifcation_timer) == -1) {
-		g_source_set_ready_time(send_notifcation_timer, 0);  // immediately
-	}
+	if (g_source_get_ready_time(send_notifcation_timer) == -1)
+		g_source_set_ready_time(send_notifcation_timer, 0); // immediately
 }
 
 JNIEXPORT jlong JNICALL Java_android_app_NotificationManager_nativeInitBuilder(JNIEnv *env, jobject this)
@@ -104,32 +90,18 @@ JNIEXPORT jlong JNICALL Java_android_app_NotificationManager_nativeInitBuilder(J
 	return _INTPTR(g_notification_new(""));
 }
 
-static GVariant *serialize_intent(JNIEnv *env, jint type, jstring action_jstr, jstring className_jstr, jstring data_jstr)
-{
-	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
-	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
-	const char *data = data_jstr ? (*env)->GetStringUTFChars(env, data_jstr, NULL) : NULL;
-	GVariant *intent = g_variant_new("(isss)", type, action ?: "", className ?: "", data ?: "");
-	if (action_jstr) (*env)->ReleaseStringUTFChars(env, action_jstr, action);
-	if (className_jstr) (*env)->ReleaseStringUTFChars(env, className_jstr, className);
-	if (data_jstr) (*env)->ReleaseStringUTFChars(env, data_jstr, data);
-	return intent;
-}
-
-JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction(JNIEnv *env, jobject this, jlong builder_ptr, jstring name_jstr, jint type, jstring action, jstring className, jstring data)
+JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction(JNIEnv *env, jobject this, jlong builder_ptr, jstring name_jstr, jint type, jobject intent)
 {
 	GNotification *notification = _PTR(builder_ptr);
 	const char *name = "";
-	if (name_jstr) {
+	if (name_jstr)
 		name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
-	}
-	g_notification_add_button_with_target_value(notification, name, "app.notificationaction", serialize_intent(env, type, action, className, data));
-	if (name_jstr) {
+	g_notification_add_button_with_target_value(notification, name, intent_actionname_from_type(type), intent_serialize(env, intent));
+	if (name_jstr)
 		(*env)->ReleaseStringUTFChars(env, name_jstr, name);
-	}
 }
 
-JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotification(JNIEnv *env, jobject this, jlong builder_ptr, jint id, jstring title_jstr, jstring text_jstr, jstring icon_jstr, jboolean ongoing, jint type, jstring action, jstring className, jstring data)
+JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotification(JNIEnv *env, jobject this, jlong builder_ptr, jint id, jstring title_jstr, jstring text_jstr, jstring icon_jstr, jboolean ongoing, jint type, jobject intent)
 {
 	GNotification *notification = _PTR(builder_ptr);
 
@@ -157,7 +129,7 @@ JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotificati
 		g_free(icon_path_full);
 		(*env)->ReleaseStringUTFChars(env, icon_jstr, icon_path);
 	}
-	g_notification_set_default_action_and_target_value(notification, "app.notificationaction", serialize_intent(env, type, action, className, data));
+	g_notification_set_default_action_and_target_value(notification, intent_actionname_from_type(type), intent_serialize(env, intent));
 	queue_notification(id, notification);
 	if (ongoing)
 		g_hash_table_add(ongoing_notifications, GINT_TO_POINTER(id));
