@@ -456,6 +456,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	// some apps need the apk path since they directly read their apk
 	apk_path = strdup(apk_classpath);
 
+	(*env)->GetJavaVM(env, &jvm);
 	set_up_handle_cache(env);
 
 	/* -- misc -- */
