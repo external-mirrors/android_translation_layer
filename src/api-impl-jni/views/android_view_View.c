@@ -158,6 +158,8 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 	}
 
 	uintptr_t id = (uintptr_t)gdk_event_get_event_sequence(event);
+	if (id > MAX_POINTERS-1)  // sequence id is a real pointer for drag and drop events
+		return false;
 
 	/* FIXME: this will clash with touchscreen */
 	if(id == 0)

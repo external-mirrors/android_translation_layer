@@ -236,6 +236,31 @@ static void parse_string_extras(JNIEnv *env, char **extra_string_keys, jobject i
 	g_regex_unref(regex);
 }
 
+/* Drag and drop callback to simulate ACTION_SEND intents */
+static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, double y, gpointer user_data)
+{
+	const char *data = g_value_get_string(value);
+	if (!data || !*data) {
+		return FALSE;
+	}
+
+	JNIEnv *env = get_jni_env();
+	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("android.intent.action.SEND"));
+	_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", (*env)->CallStaticObjectMethod(env, handle_cache.uri.class, handle_cache.uri.parse, _JSTRING(data)));
+
+	jobject activity = (*env)->CallStaticObjectMethod(env, handle_cache.context.class, handle_cache.context.resolveActivityInternal, intent);
+	if ((*env)->ExceptionCheck(env)) {
+		(*env)->ExceptionDescribe(env);
+	}
+	if (!activity) {
+		printf("failed to resolve activity to handle URI: %s\n", data);
+		return FALSE;
+	}
+	activity_start(env, activity);
+	return TRUE;
+}
+
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
 // TODO: pass all files to classpath
@@ -668,6 +693,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(header_bar), back_button);
 	gtk_window_set_titlebar(GTK_WINDOW(window), header_bar);
+	GtkDropTarget *drop_target = gtk_drop_target_new(G_TYPE_STRING, GDK_ACTION_COPY);
+	g_signal_connect(drop_target, "drop", G_CALLBACK(on_drop), NULL);
+	gtk_widget_add_controller(window, GTK_EVENT_CONTROLLER(drop_target));
 	gtk_window_present(GTK_WINDOW(window));
 
 	// set package name as application id for window icon on Wayland. Needs a {package_name}.desktop file defining the icon

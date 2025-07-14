@@ -99,6 +99,7 @@ void set_up_handle_cache(JNIEnv *env)
 		(*env)->ExceptionDescribe(env);
 	handle_cache.context.sendBroadcast = _METHOD(handle_cache.context.class, "sendBroadcast", "(Landroid/content/Intent;)V");
 	handle_cache.context.startActivity = _METHOD(handle_cache.context.class, "startActivity", "(Landroid/content/Intent;)V");
+	handle_cache.context.resolveActivityInternal = _STATIC_METHOD(handle_cache.context.class, "resolveActivityInternal", "(Landroid/content/Intent;)Landroid/app/Activity;");
 	handle_cache.context.startService = _METHOD(handle_cache.context.class, "startService", "(Landroid/content/Intent;)Landroid/content/ComponentName;");
 
 	handle_cache.application.class = _REF((*env)->FindClass(env, "android/app/Application"));

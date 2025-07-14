@@ -97,6 +97,7 @@ struct handle_cache {
 		jmethodID get_package_name;
 		jmethodID sendBroadcast;
 		jmethodID startActivity;
+		jmethodID resolveActivityInternal;
 		jmethodID startService;
 	} context;
 	struct {

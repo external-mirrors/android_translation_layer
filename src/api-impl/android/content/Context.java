@@ -547,6 +547,30 @@ public class Context extends Object {
 		return true;
 	}
 
+	/* For use from native code */
+	static Activity resolveActivityInternal(Intent intent) throws ReflectiveOperationException {
+		String className = null;
+		if (intent.getComponent() != null) {
+			className = intent.getComponent().getClassName();
+		} else {
+			int best_score = -5;
+			for (PackageParser.Activity activity: pkg.activities) {
+				for (PackageParser.IntentInfo intentInfo: activity.intents) {
+					int score = intentInfo.match(intent.getAction(), intent.getType(), intent.getScheme(), intent.getData(), intent.getCategories(), "Context");
+					if (score > best_score && score > 0) {
+						className = activity.className;
+						best_score = score;
+					}
+				}
+			}
+		}
+		if (className != null) {
+			return Activity.internalCreateActivity(className, this_application.native_window, intent);
+		} else {
+			return null;
+		}
+	}
+
 	public void startActivity(Intent intent) {
 		Slog.i(TAG, "startActivity(" + intent + ") called");
 		if (intent.getAction() != null && intent.getAction().equals("android.intent.action.CHOOSER")) {
