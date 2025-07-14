@@ -20,18 +20,18 @@ import android.util.Slog;
 
 public class AndroidKeyStore extends KeyStoreSpi {
 
+	private final static String TAG = "AndroidKeyStore";
 	static HashMap<String, Key> map = new HashMap<>();
 
 	@Override
 	public Key engineGetKey(String alias, char[] password) throws NoSuchAlgorithmException, UnrecoverableKeyException {
-		System.out.println("engineGetKey alias=" + alias + " password=" + Arrays.toString(password));
+		Slog.i(TAG, "engineGetKey alias=" + alias + " password=" + Arrays.toString(password));
 		return map.get(alias);
 	}
 
 	@Override
 	public Certificate[] engineGetCertificateChain(String alias) {
-		// TODO Auto-generated method stub
-		System.out.println("engineGetCertificateChain(" + alias + ") called");
+		Slog.i(TAG, "engineGetCertificateChain(" + alias + ") called");
 		return new Certificate[0];
 	}
 
@@ -74,14 +74,14 @@ public class AndroidKeyStore extends KeyStoreSpi {
 
 	@Override
 	public Enumeration<String> engineAliases() {
-		Slog.i("AndroidKeyStore", "engineAliases() called");
+		Slog.i(TAG, "engineAliases() called");
 		return Collections.emptyEnumeration();
 	}
 
 	@Override
 	public boolean engineContainsAlias(String alias) {
 		// TODO Auto-generated method stub
-		System.out.println("engineContainsAlias(" + alias + ") called");
+		Slog.i(TAG, "engineContainsAlias(" + alias + ") called");
 		return map.containsKey(alias);
 	}
 
