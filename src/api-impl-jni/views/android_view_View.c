@@ -307,8 +307,14 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 		gtk_widget_add_controller(widget, controller);
 		g_object_set_data(G_OBJECT(widget), "on_intercept_touch_listener", controller);
 	}
-	if (!wrapper->needs_allocation && (wrapper->layout_width || wrapper->layout_height))
-		gtk_widget_size_allocate(GTK_WIDGET(wrapper), &(GtkAllocation){.x = 0, .y = 0, .width = wrapper->layout_width, .height = wrapper->layout_height}, 0);
+
+
+	if(!wrapper->needs_allocation && wrapper->layout_width == -1 && wrapper->layout_height == -1)
+		printf("[%p] in _setOnTouchListener: [%d, %d]\n", wrapper->child, wrapper->real_width, wrapper->real_height);
+
+	if (!wrapper->needs_allocation && (wrapper->real_width || wrapper->real_height))
+		gtk_widget_size_allocate(GTK_WIDGET(wrapper), &(GtkAllocation){.x = 0, .y = 0, .width = wrapper->real_width, .height = wrapper->real_height}, 0);
+
 	wrapper->needs_allocation = true;
 	gtk_widget_set_overflow(GTK_WIDGET(wrapper), GTK_OVERFLOW_HIDDEN);
 }
@@ -409,8 +415,6 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setLayoutParams(JNIEnv *en
 	}
 
 	if (weight > 0.f) {
-		printf(":::-: setting weight: %f\n", weight);
-
 		hexpand = TRUE;
 		vexpand = TRUE;
 	}
@@ -582,9 +586,10 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1measure(JNIEnv *env, jobje
 			width = width_spec_size;
 	}
 
+	printf("[%p] in Java_android_view_View_native_1measure, calling setMeasuredDimension with [%d,%d]\n", _PTR(widget_ptr), width, height);
 	(*env)->CallVoidMethod(env, this, handle_cache.view.setMeasuredDimension, width, height);
 }
-
+void _gdb_force_java_stack_trace(void);
 JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobject this, jlong widget_ptr, jint l, jint t, jint r, jint b) {
 	GtkWidget *widget = gtk_widget_get_parent(GTK_WIDGET(_PTR(widget_ptr)));
 
@@ -604,6 +609,10 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobjec
 	if (wrapper->needs_allocation) {
 		allocation.width = width;
 		allocation.height = height;
+	}
+	if(width == 540 && height == 0) {
+		printf("[%p] in Java_android_view_View_native_1layout, calling gtk_widget_size_allocate with [%d,%d]\n", _PTR(widget_ptr), width, height);
+		//_gdb_force_java_stack_trace();
 	}
 	gtk_widget_size_allocate(widget, &allocation, -1);
 }
@@ -840,4 +849,10 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *e
 		cookie = gtk_application_inhibit(application, window, flags, "keep-screen-on");
 		g_object_set_data(G_OBJECT(widget), "keep-screen-on-cookie", GINT_TO_POINTER(cookie));
 	}
+}
+
+JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window(JNIEnv *env, jobject this, jlong widget_ptr)
+{
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	return g_object_get_data(G_OBJECT(gtk_widget_get_root(widget)), "jobject");
 }

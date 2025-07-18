@@ -361,6 +361,14 @@ JNIEXPORT void JNICALL Java_android_view_View_nativeSetFullscreen
 
 /*
  * Class:     android_view_View
+ * Method:    native_get_window
+ * Signature: (J)Landroid/view/Window;
+ */
+JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_view_View
  * Method:    nativeInvalidate
  * Signature: (J)V
  */

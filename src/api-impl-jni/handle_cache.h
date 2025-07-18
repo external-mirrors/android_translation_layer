@@ -145,6 +145,10 @@ struct handle_cache {
 		jclass class;
 		jmethodID parse;
 	} uri;
+	struct {
+		jclass class;
+		jmethodID dispatchOnGlobalLayout;
+	} view_tree_observer;
 };
 
 extern struct handle_cache handle_cache;

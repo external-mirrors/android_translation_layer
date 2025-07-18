@@ -43,6 +43,14 @@ JNIEXPORT void JNICALL Java_android_view_Window_take_1input_1queue
 JNIEXPORT void JNICALL Java_android_view_Window_set_1layout
   (JNIEnv *, jobject, jlong, jint, jint);
 
+/*
+ * Class:     android_view_Window
+ * Method:    set_jobject
+ * Signature: (JLandroid/view/Window;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_Window_set_1jobject
+  (JNIEnv *, jclass, jlong, jobject);
+
 #ifdef __cplusplus
 }
 #endif

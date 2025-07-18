@@ -135,4 +135,7 @@ void set_up_handle_cache(JNIEnv *env)
 
 	handle_cache.uri.class = _REF((*env)->FindClass(env, "android/net/Uri"));
 	handle_cache.uri.parse = _STATIC_METHOD(handle_cache.uri.class, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
+
+	handle_cache.view_tree_observer.class = _REF((*env)->FindClass(env, "android/view/ViewTreeObserver"));
+	handle_cache.view_tree_observer.dispatchOnGlobalLayout = _METHOD(handle_cache.view_tree_observer.class, "dispatchOnGlobalLayout", "()V");
 }

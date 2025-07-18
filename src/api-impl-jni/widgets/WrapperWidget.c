@@ -10,7 +10,7 @@
 
 G_DEFINE_TYPE(WrapperWidget, wrapper_widget, GTK_TYPE_WIDGET)
 
-typedef enum { ATL_ID = 1, ATL_ID_NAME, ATL_CLASS_NAME, ATL_SUPER_CLASS_NAMES, N_PROPERTIES } WrapperWidgetProperty;
+typedef enum { ATL_ID = 1, ATL_ID_NAME, ATL_CLASS_NAME, ATL_SUPER_CLASS_NAMES, ATL_REAL_WIDTH, ATL_REAL_HEIGHT, ATL_HAS_CUSTOM_DRAW, N_PROPERTIES } WrapperWidgetProperty;
 static GParamSpec *wrapper_widget_properties[N_PROPERTIES] = { NULL, };
 
 static void wrapper_widget_set_property (GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
@@ -30,6 +30,10 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 	JNIEnv *env = get_jni_env();
 
 	jobject jobj = self->jobj;
+	if(!jobj) { /* FIXME */
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+		return;
+	}
 	jclass class = _CLASS(jobj);
 
 	switch ((WrapperWidgetProperty) property_id)
@@ -84,6 +88,24 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 			break;
 		}
 
+
+		case ATL_REAL_WIDTH:
+		{
+			g_value_set_int(value, self->real_width);
+			break;
+		}
+
+		case ATL_REAL_HEIGHT:
+		{
+			g_value_set_int(value, self->real_height);
+			break;
+		}
+
+		case ATL_HAS_CUSTOM_DRAW:
+		{
+			g_value_set_boolean(value, self->draw_method != NULL);
+			break;
+		}
 
 		default:
 			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
@@ -232,6 +254,9 @@ static void wrapper_widget_class_init(WrapperWidgetClass *class)
 	wrapper_widget_properties[ATL_ID_NAME] = g_param_spec_string("ATL-id-name", "ATL: ID name", "Name of the ID of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_CLASS_NAME] = g_param_spec_string("ATL-class-name", "ATL: Class name", "Name of the class of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_SUPER_CLASS_NAMES] = g_param_spec_string("ATL-superclasses-names", "ATL: Super classes names", "Names of all the superclasses of the component class", "", G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_REAL_WIDTH] = g_param_spec_int("ATL-real-width", "ATL: real width", "Real width of the widget", 0, INT32_MAX, 0, G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_REAL_HEIGHT] = g_param_spec_int("ATL-real-height", "ATL: real height", "Real height of the widget", 0, INT32_MAX, 0, G_PARAM_READABLE);
+	wrapper_widget_properties[ATL_HAS_CUSTOM_DRAW] = g_param_spec_boolean("ATL-has-custom-draw", "ATL: has custom draw", "Indicates if the widget implements it's own drawing", FALSE, G_PARAM_READABLE);
 
 	g_object_class_install_properties (object_class, N_PROPERTIES, wrapper_widget_properties);
 }

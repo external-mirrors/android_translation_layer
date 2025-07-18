@@ -31,7 +31,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 		this.context = context;
 		nativePtr = nativeInit();
 		window = new Window(context, this);
-		window.native_window = nativePtr;
+		window.set_native_window(nativePtr);
 	}
 
 	public Dialog(Context context) {

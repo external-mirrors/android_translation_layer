@@ -830,8 +830,12 @@ public class LinearLayout extends ViewGroup {
 		mTotalLength += paddingTop + paddingBottom;
 		int heightSize = mTotalLength;
 		// Check against our minimum height
+		System.out.printf("[0x%x] in measureVetrical calling Math.max(%d, %d)\n", this.widget, heightSize, getSuggestedMinimumHeight());
 		heightSize = Math.max(heightSize, getSuggestedMinimumHeight());
 		// Reconcile our calculated size with the heightMeasureSpec
+		System.out.printf("[0x%x] in measureVetrical calling resolveSizeAndState(%d, %d, %d)\n", this.widget, heightSize, heightMeasureSpec, 0);
+		if (heightMeasureSpec == 0x80000000)
+			try { throw new Exception("stack trace"); } catch(Exception e) {e.printStackTrace();}
 		int heightSizeAndState = resolveSizeAndState(heightSize, heightMeasureSpec, 0);
 		heightSize = heightSizeAndState & MEASURED_SIZE_MASK;
 		// Either expand children with weight to take up available space or

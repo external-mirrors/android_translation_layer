@@ -1,4 +1,4 @@
-project('android_translation_layer', ['c', 'java'], default_options: ['b_lundef=false'])
+project('android_translation_layer', ['c', 'java'], default_options: ['c_std=gnu23', 'b_lundef=false'])
 
 gnome = import('gnome')
 fs = import('fs')
@@ -145,6 +145,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/views/AndroidLayout.c',
                                                                   	'src/api-impl-jni/views/android_view_View.c',
                                                                   	'src/api-impl-jni/views/android_view_ViewGroup.c',
+                                                                  	'src/api-impl-jni/views/android_view_ViewTreeObserver.c',
                                                                   	'src/api-impl-jni/views/android_view_WindowManagerImpl.c',
                                                                   	'src/api-impl-jni/widgets/WrapperWidget.c',
                                                                   	'src/api-impl-jni/widgets/android_view_SurfaceView.c',
@@ -197,6 +198,7 @@ executable('android-translation-layer', [
                                         	'src/main-executable/actions.c',
                                         	'src/main-executable/back_button.c',
                                         	'src/main-executable/bionic_compat.c',
+                                        	'src/main-executable/inspector_page.c',
                                         	'src/main-executable/libc_bio_path_overrides.c',
                                         	resources
                                         ],

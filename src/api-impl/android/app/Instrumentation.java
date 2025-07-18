@@ -139,7 +139,7 @@ public class Instrumentation {
 	                            Intent intent, ActivityInfo info, CharSequence title, Activity parent,
 	                            String id, Object lastNonConfigurationInstance) throws InstantiationException, IllegalAccessException {
 		Activity activity = (Activity)clazz.newInstance();
-		activity.getWindow().native_window = Context.this_application.native_window;
+		activity.getWindow().set_native_window(Context.this_application.native_window);
 		Slog.i(TAG, "activity.getWindow().native_window >"+activity.getWindow().native_window+"<");
 		return activity;
 	}
@@ -168,7 +168,7 @@ public class Instrumentation {
 				Constructor<? extends Activity> constructor = cls.getConstructor();
 				final Activity activity = constructor.newInstance();
 				activity.intent = intent;
-				activity.getWindow().native_window = Context.this_application.native_window;
+				activity.getWindow().set_native_window(Context.this_application.native_window);
 				runOnMainSync(new Runnable() {
 					@Override
 					public void run() {

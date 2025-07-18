@@ -828,15 +828,18 @@ public class View implements Drawable.Callback {
 	private Context context;
 	private Map<Integer,Object> tags = new HashMap<>();
 	private Object tag;
-	int gravity = -1;  // fallback gravity for layout childs
+	int gravity = -1;  // fallback gravity for layout children
 
 	int measuredWidth = 0;
 	int measuredHeight = 0;
 
-	private int left;
-	private int top;
-	private int right;
-	private int bottom;
+	private int left = 0;
+	private int top = 0;
+	private int right = 0;
+	private int bottom = 0;
+
+	private float translationX = 0;
+	private float translationY = 0;
 
 	private int scrollX = 0;
 	private int scrollY = 0;
@@ -1067,13 +1070,23 @@ public class View implements Drawable.Callback {
 		native_setLayoutParams(widget, params.width, params.height, gravity, params.weight, leftMargin, topMargin, rightMargin, bottomMargin);
 
 		layout_params = params;
+
+		System.out.printf("[0x%x] [%s] in setLayoutParams [%d, %d]\n", this.widget, getIdName(), params.width, params.height);
+		if(params.width == -1 && params.height == 0)
+			try {throw new Exception("stack trace");} catch(Exception e) {e.printStackTrace();}
+
 	}
 
 	public ViewGroup.LayoutParams getLayoutParams() {
+		if(layout_params != null)
+			System.out.printf("[0x%x] [%s] in getLayoutParams [%d, %d]\n", this.widget, getIdName(), layout_params.width, layout_params.height);
 		return layout_params;
 	}
 
 	protected final void setMeasuredDimension(int measuredWidth, int measuredHeight) {
+		if("net.osmand.plus:id/list".equals(getIdName()))
+			try { throw new Exception("stack trace"); } catch (Exception e) { e.printStackTrace(); }
+		System.out.printf("[0x%x] [%s]  in setMeasuredDimension [%d, %d]\n", this.widget, getIdName(), measuredWidth, measuredHeight);
 		this.measuredWidth = measuredWidth;
 		this.measuredHeight = measuredHeight;
 	}
@@ -1199,8 +1212,17 @@ public class View implements Drawable.Callback {
 
 	public void setSelected(boolean selected) {}
 
+	public native Window native_get_window(long widget);
 	public ViewTreeObserver getViewTreeObserver() {
-		return new ViewTreeObserver();
+		Window window = native_get_window(widget);
+		if (window != null) {
+			if (window.view_tree_observer == null)
+				window.view_tree_observer = new ViewTreeObserver(window);
+			return window.view_tree_observer;
+		} else {
+			/* FIXME: better handling of unrooted widgets? */
+			return new ViewTreeObserver(null);
+		}
 	}
 
 	protected void onFinishInflate() {}
@@ -1464,10 +1486,12 @@ public class View implements Drawable.Callback {
     }
 
 	public final int getMeasuredWidth() {
+		System.out.printf("[0x%x] [%s] in getMeasuredWidth width: %d\n", this.widget, getIdName(), this.measuredWidth);
 		return this.measuredWidth & MEASURED_SIZE_MASK;
 	}
 
 	public final int getMeasuredHeight() {
+		System.out.printf("[0x%x] [%s] in getMeasuredHeight height: %d\n", this.widget, getIdName(), this.measuredHeight);
 		return this.measuredHeight & MEASURED_SIZE_MASK;
 	}
 
@@ -1659,13 +1683,31 @@ public class View implements Drawable.Callback {
 		return viewPropertyAnimator;
 	}
 
-	public float getTranslationX() {return 0.f;}
-	public float getTranslationY() {return 0.f;}
-	public void setTranslationX(float translationX) {}
+	public float getTranslationX() {
+		return translationX;
+	}
+
+	public float getTranslationY() {
+		return translationY;
+	}
+
+	/* this is probably slower than on AOSP, becuse it's supposed to bypass the layout phase
+	 * and just schedule redraw (which we technically could do, but it wouldn't change the hitbox,
+	 * which it's supposed to) */
+	public void setTranslationX(float translationX) {
+		this.translationX = translationX;
+		ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)getLayoutParams();
+		lp.leftMargin += translationX;
+		setLayoutParams(lp);
+		requestLayout();
+	}
+
 	public void setTranslationY(float translationY) {
-		// CoordinatorLayout abuses this method to trigger a layout pass
-		if (getClass().getName().equals("androidx.coordinatorlayout.widget.CoordinatorLayout"))
-			native_queueAllocate(widget);
+		this.translationY = translationY;
+		ViewGroup.MarginLayoutParams lp = (ViewGroup.MarginLayoutParams)getLayoutParams();
+		lp.topMargin += translationY;
+		setLayoutParams(lp);
+		requestLayout();
 	}
 
 	public void setX(float x) {
@@ -1915,7 +1957,7 @@ public class View implements Drawable.Callback {
 		keepScreenOn = screenOn;
 	}
 
-	protected void onAttachedToWindow () {
+	protected void onAttachedToWindow() {
 		attachedToWindow = true;
 		if (onAttachStateChangeListener != null) {
 			onAttachStateChangeListener.onViewAttachedToWindow(this);
@@ -1972,12 +2014,16 @@ public class View implements Drawable.Callback {
 	}
 
 	public void forceLayout() {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				requestLayout();
-			}
-		});
+		if(Looper.myLooper() == Looper.getMainLooper()) {
+			requestLayout();
+		} else {
+				new Handler(Looper.getMainLooper()).post(new Runnable() {
+				@Override
+				public void run() {
+					requestLayout();
+				}
+			});
+		}
 	}
 
 	private OnAttachStateChangeListener onAttachStateChangeListener;
@@ -2103,8 +2149,6 @@ public class View implements Drawable.Callback {
 
 	public int getTextAlignment() {return 0;}
 
-	public float getY() {return 0.f;}
-
 	public View findViewWithTag(Object tag) {
 		if (Objects.equals(tag, this.tag))
 			return this;
@@ -2198,7 +2242,12 @@ public class View implements Drawable.Callback {
 
 	public boolean isDirty() { return false; }
 
-	public float getX() { return getLeft(); }
+	public float getX() {
+		return getLeft();
+	}
+	public float getY() {
+		return getTop();
+	}
 
 	public boolean getGlobalVisibleRect(Rect visibleRect, Point globalOffset) {
 		boolean result = native_getGlobalVisibleRect(widget, visibleRect);

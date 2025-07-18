@@ -247,6 +247,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public static int getChildMeasureSpec(int spec, int padding, int childDimension) {
+		System.out.printf("[static] in getChildMeasureSpec(%d, %d, %d)\n", spec, padding, childDimension);
 		int specMode = MeasureSpec.getMode(spec);
 		int specSize = MeasureSpec.getSize(spec);
 		int size = Math.max(0, specSize - padding);
@@ -307,6 +308,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 				break;
 		}
 		// noinspection ResourceType
+		System.out.printf("[static] in getChildMeasureSpec, calling MeasureSpec.makeMeasureSpec(%d, %d)\n", resultSize, resultMode);
 		return MeasureSpec.makeMeasureSpec(resultSize, resultMode);
 	}
 

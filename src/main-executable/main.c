@@ -10,9 +10,10 @@
 #include "../api-impl-jni/util.h"
 #include "../api-impl-jni/app/android_app_Activity.h"
 
+#include "actions.h"
 #include "back_button.h"
 #include "libc_bio_path_overrides.h"
-#include "actions.h"
+#include "inspector_page.h"
 
 #include <dlfcn.h>
 #include <errno.h>
@@ -486,6 +487,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 	/* -- misc -- */
 
+	if (g_io_extension_point_lookup ("gtk-inspector-page"))
+		g_io_extension_point_implement ("gtk-inspector-page", ATL_INSPECTOR_PAGE_TYPE, "android-translation-layer", 10);
+
 	window = gtk_application_window_new(app);
 
 	const char *disable_decoration_env = getenv("ATL_DISABLE_WINDOW_DECORATIONS");
@@ -528,7 +532,10 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	(*env)->CallVoidMethod(env, application_object, _METHOD(handle_cache.application.class, "onCreate", "()V"));
+	jmethodID on_create_method = _METHOD(handle_cache.application.class, "onCreate", "()V");
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+	(*env)->CallVoidMethod(env, application_object, on_create_method);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 

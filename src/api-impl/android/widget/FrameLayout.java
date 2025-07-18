@@ -196,6 +196,7 @@ public class FrameLayout extends ViewGroup {
 	}
 
 	void layoutChildren(int left, int top, int right, int bottom, boolean forceLeftGravity) {
+		System.out.printf("[0x%x] in layoutChildren %d %d %d %d\n", this.widget, left, top, right, bottom);
 		final int count = getChildCount();
 		final int parentLeft = getPaddingLeftWithForeground();
 		final int parentRight = right - left - getPaddingRightWithForeground();
@@ -244,6 +245,7 @@ public class FrameLayout extends ViewGroup {
 					default:
 						childTop = parentTop + lp.topMargin;
 				}
+				System.out.printf("[0x%x] [%s] in layoutChildren calling child[0x%x].layout*(%d, %d, %d, %d)\n", this.widget, getIdName(), child.widget, childLeft, childTop, width, height);
 				child.layout(childLeft, childTop, childLeft + width, childTop + height);
 			}
 		}

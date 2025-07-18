@@ -18,6 +18,8 @@ static int make_measure_spec(int layout_size, int for_size)
 		return -1;
 }
 
+extern int snapshot_in_progress;
+
 static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *widget, GtkOrientation orientation, int for_size, int *minimum, int *natural, int *minimum_baseline, int *natural_baseline)
 {
 	int widthMeasureSpec = 0;
@@ -25,12 +27,16 @@ static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *
 	AndroidLayout *layout = ATL_ANDROID_LAYOUT(layout_manager);
 	JNIEnv *env = get_jni_env();
 
+	/* if we're inside a shanpshot, this must be getting called purely to make Gtk call gtk_widget_clear_resize_queued */
+	if(snapshot_in_progress)
+		return;
+
 	// If the parent widget is also an AndroidLayout, the measurement will already have happened in Java
 	if ((layout->width || layout->height) && !ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(gtk_widget_get_parent(gtk_widget_get_parent(widget))))) {
 		widthMeasureSpec = make_measure_spec(layout->width, orientation == GTK_ORIENTATION_VERTICAL ? for_size : -1);
 		heightMeasureSpec = make_measure_spec(layout->height, orientation == GTK_ORIENTATION_HORIZONTAL ? for_size : -1);
 
-		// if layout params say match_parent, but GTK doesnt specify the dimension, fallback to old specification if available
+		// if layout params say match_parent, but GTK doesn't specify the dimension, fall back to old specification if available
 		if (widthMeasureSpec == -1)
 			widthMeasureSpec = _GET_INT_FIELD(layout->view, "oldWidthMeasureSpec");
 		if (heightMeasureSpec == -1)

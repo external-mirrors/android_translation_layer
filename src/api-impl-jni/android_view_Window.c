@@ -53,3 +53,8 @@ JNIEXPORT void JNICALL Java_android_view_Window_set_1layout(JNIEnv *env, jobject
 	if (width > 0 && height > 0)
 		gtk_window_set_default_size(gtk_window, width, height);
 }
+
+JNIEXPORT void JNICALL Java_android_view_Window_set_1jobject(JNIEnv *env, jclass this, jlong window, jobject window_jobj)
+{
+	g_object_set_data(G_OBJECT(window), "jobject", _WEAK_REF(window_jobj));
+}
