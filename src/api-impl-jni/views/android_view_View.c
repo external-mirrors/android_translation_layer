@@ -599,7 +599,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobjec
 		wrapper->real_width = width;
 		wrapper->real_height = height;
 		if (!wrapper->needs_allocation)
-			atl_safe_gtk_widget_queue_allocate(widget);
+			gtk_widget_queue_allocate(widget);
 	}
 	if (wrapper->needs_allocation) {
 		allocation.width = width;

@@ -194,7 +194,7 @@ void atl_ensure_widget_snapshotability(GtkWidget *widget)
 		/* this clears resize request, which seems to be necessary in some cases */
 		gtk_widget_get_request_mode(widget);
 		gtk_widget_size_allocate(widget, &allocation, gtk_widget_get_baseline(widget));
-		gtk_widget_add_tick_callback(widget, queue_queue_allocate, NULL, NULL);
+		// maybe we should schedule a call to queue_queue_allocate, but that causes problems in composeUI apps.
 
 		/* the problematic flags get set all the way up the hierarchy */
 		GtkWidget *parent = gtk_widget_get_parent(widget);
