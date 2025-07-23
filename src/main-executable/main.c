@@ -270,6 +270,19 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		printf(">- [%s]\n", g_file_get_path(files[i]));
 	}
 */
+	if (window) {  // this is not the first launch, but a DBus request to open an URI in the running app
+		printf("opening uri over DBus %p\n", files[0]);
+		char *uri = g_file_get_uri(files[0]);
+		JNIEnv *env = get_jni_env();
+		printf("opening uri over DBus: %s\n", uri);
+		jobject activity = (*env)->CallStaticObjectMethod(env, handle_cache.activity.class,
+		                                                  _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
+		                                                  _JSTRING(d->apk_main_activity_class), _INTPTR(window), _JSTRING(uri));
+		if ((*env)->ExceptionCheck(env))
+			(*env)->ExceptionDescribe(env);
+		activity_start(env, activity);
+		return;
+	}
 	char *dex_install_dir;
 	char *api_impl_jar;
 	char *test_runner_jar = NULL;
@@ -653,6 +666,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 		GString *desktop_entry = g_string_new("[Desktop Entry]\n"
 		                                      "Type=Application\n"
+		                                      "DBusActivatable=true\n"
 		                                      "Exec=env ");
 		if (getenv("RUN_FROM_BUILDDIR")) {
 			printf("WARNING: RUN_FROM_BUILDDIR set and --install given: using current directory in desktop entry\n");
