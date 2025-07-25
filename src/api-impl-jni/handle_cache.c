@@ -17,6 +17,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.activity.onStop = _METHOD(handle_cache.activity.class, "onStop", "()V");
 	handle_cache.activity.onPause = _METHOD(handle_cache.activity.class, "onPause", "()V");
 	handle_cache.activity.onBackPressed = _METHOD(handle_cache.activity.class, "onBackPressed", "()V");
+	handle_cache.activity.onNewIntent = _METHOD(handle_cache.activity.class, "onNewIntent", "(Landroid/content/Intent;)V");
 
 	handle_cache.attribute_set.class = _REF((*env)->FindClass(env, "android/util/AttributeSet"));
 	if((*env)->ExceptionCheck(env))

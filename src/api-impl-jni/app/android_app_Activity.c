@@ -151,6 +151,9 @@ static jobject activity_not_created = NULL;
 
 void activity_start(JNIEnv *env, jobject activity_object)
 {
+	if (activity_current)
+		activity_unfocus(env, activity_current);
+	activity_current = NULL;
 	/* -- run the activity's onCreate -- */
 	(*env)->CallVoidMethod(env, activity_object, handle_cache.activity.onCreate, NULL);
 	if((*env)->ExceptionCheck(env))
@@ -196,6 +199,35 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeFinish(JNIEnv *env, jobje
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeStartActivity(JNIEnv *env, jclass class, jobject activity)
 {
 	activity_start(env, activity);
+}
+
+JNIEXPORT void JNICALL Java_android_app_Activity_nativeResumeActivity(JNIEnv *env, jclass class, jclass activity_class, jobject intent)
+{
+	GList *l;
+	GList *activities_to_close = NULL;
+	for (l = activity_backlog; l != NULL; l = l->next) {
+		if ((*env)->IsSameObject(env, activity_class, _CLASS(l->data))) {
+			if (l != activity_backlog) {
+				activities_to_close = activity_backlog;
+				activity_backlog = l;
+				l->prev->next = NULL;
+				l->prev = NULL;
+			}
+
+			/* -- run the activity's onNewIntent -- */
+			(*env)->CallVoidMethod(env, l->data, handle_cache.activity.onNewIntent, intent);
+			if((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+			break;
+		}
+	}
+	activity_update_current(env);
+
+	for (l = activities_to_close; l != NULL; l = l->next) {
+		activity_close(env, l->data);
+		_UNREF(l->data);
+	}
+	g_list_free(activities_to_close);
 }
 
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeOpenURI(JNIEnv *env, jclass class, jstring uriString)

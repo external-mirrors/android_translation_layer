@@ -13,6 +13,7 @@ struct handle_cache {
 		jmethodID onStop;
 		jmethodID onPause;
 		jmethodID onBackPressed;
+		jmethodID onNewIntent;
 	} activity;
 	struct {
 		jclass class;

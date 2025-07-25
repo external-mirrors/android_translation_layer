@@ -586,6 +586,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	private native void nativeFinish(long native_window);
 	public static native void nativeStartActivity(Activity activity);
+	public static native void nativeResumeActivity(Class<? extends Activity> activityClass, Intent intent);
 	public static native void nativeOpenURI(String uri);
 	public native void nativeFileChooser(int action, String type, String title, int requestCode);
 	public void reportFullyDrawn() {}

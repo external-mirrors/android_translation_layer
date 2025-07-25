@@ -622,8 +622,12 @@ public class Context extends Object {
 			@Override
 			public void run() {
 				try {
-					Activity activity = Activity.internalCreateActivity(className_, this_application.native_window, intent_);
-					Activity.nativeStartActivity(activity);
+					if ((intent_.getFlags() & Intent.FLAG_ACTIVITY_CLEAR_TOP) != 0 && intent_.getComponent() != null) {
+						Activity.nativeResumeActivity(Class.forName(intent_.getComponent().getClassName()).asSubclass(Activity.class), intent_);
+					} else {
+						Activity activity = Activity.internalCreateActivity(className_, this_application.native_window, intent_);
+						Activity.nativeStartActivity(activity);
+					}
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
