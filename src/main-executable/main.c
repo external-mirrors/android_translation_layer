@@ -175,6 +175,12 @@ static void dynamic_launcher_ready_callback(GObject *portal, GAsyncResult *res, 
 		printf("failed to install dynamic launcher: %s\n", err->message);
 		exit(1);
 	}
+	// run update-desktop-database to add the new x-scheme-handler entries to ~/.local/share/applications/mimeinfo.cache
+	char *update_desktop_database = g_strdup_printf("update-desktop-database %s/applications", g_get_user_data_dir());
+	printf("running: `%s`\n", update_desktop_database);
+	system(update_desktop_database);
+	g_free(update_desktop_database);
+
 	exit(0);
 }
 
