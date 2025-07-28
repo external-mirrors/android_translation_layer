@@ -60,6 +60,11 @@ public abstract class Service extends ContextWrapper {
 		System.out.println("Service.stopSelf() called");
 	}
 
+	public boolean stopSelfResult(int startId) {
+		System.out.println("Service.stopSelfResult(" + startId + ") called");
+		return true;
+	}
+
 	public void attachBaseContext(Context newBase) {
 		System.out.println("Service.attachBaseContext(" + newBase + ") called");
 	}

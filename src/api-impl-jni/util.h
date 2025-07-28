@@ -57,7 +57,7 @@ void atl_safe_gtk_widget_set_visible(GtkWidget *widget, gboolean visible);
 void atl_safe_gtk_widget_queue_allocate(GtkWidget *widget);
 void atl_safe_gtk_widget_queue_resize(GtkWidget *widget);
 
-#define INTENT_G_VARIANT_TYPE_STRING "(sss)"  // (action, className, data)
+#define INTENT_G_VARIANT_TYPE_STRING "(sssa{sv}s)"  // (action, className, data, extras, sender_package)
 GVariant *intent_serialize(JNIEnv *env, jobject intent);
 jobject intent_deserialize(JNIEnv *env, GVariant *variant);
 const char *intent_actionname_from_type(int type);

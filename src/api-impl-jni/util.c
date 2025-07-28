@@ -249,11 +249,37 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 	jobject component = _GET_OBJ_FIELD(intent, "component", "Landroid/content/ComponentName;");
 	jstring className_jstr = component ? _GET_OBJ_FIELD(component, "mClass", "Ljava/lang/String;") : NULL;
 	jstring data_jstr = (*env)->CallObjectMethod(env, intent, handle_cache.intent.getDataString);
+	jstring sender_package_jstr = (*env)->CallObjectMethod(env, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), handle_cache.context.get_package_name);
+
+	GVariantBuilder extras_builder;
+	g_variant_builder_init(&extras_builder, G_VARIANT_TYPE_VARDICT);
+	jobject extras = _GET_OBJ_FIELD(intent, "extras", "Landroid/os/Bundle;");
+	jobject extras_key_set = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.keySet);
+	jobjectArray extras_keys = (*env)->CallObjectMethod(env, extras_key_set, handle_cache.set.toArray);
+	jsize extras_keys_length = (*env)->GetArrayLength(env, extras_keys);
+	for (jint i = 0; i < extras_keys_length; i++) {
+		jstring key_jstr = (*env)->GetObjectArrayElement(env, extras_keys, i);
+		jobject value_jobj = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.get, key_jstr);
+		if (!(*env)->IsSameObject(env, _CLASS(key_jstr), _CLASS(value_jobj))) {
+			printf("skipping non-string extra: %s\n", (*env)->GetStringUTFChars(env, key_jstr, NULL));
+			continue;
+		}
+		const char *key = (*env)->GetStringUTFChars(env, key_jstr, NULL);
+		const char *value = (*env)->GetStringUTFChars(env, value_jobj, NULL);
+		g_variant_builder_add(&extras_builder, "{sv}", key, g_variant_new_string(value));
+		(*env)->ReleaseStringUTFChars(env, key_jstr, key);
+		(*env)->ReleaseStringUTFChars(env, value_jobj, value);
+		(*env)->DeleteLocalRef(env, key_jstr);
+		(*env)->DeleteLocalRef(env, value_jobj);
+	}
 
 	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
 	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
 	const char *data = data_jstr ? (*env)->GetStringUTFChars(env, data_jstr, NULL) : NULL;
-	GVariant *variant = g_variant_new(INTENT_G_VARIANT_TYPE_STRING, action ?: "", className ?: "", data ?: "");
+	const char *sender_package = sender_package_jstr ? (*env)->GetStringUTFChars(env, sender_package_jstr, NULL) : NULL;
+	GVariant *variant = g_variant_new(INTENT_G_VARIANT_TYPE_STRING, action ?: "", className ?: "", data ?: "", &extras_builder, sender_package);
+	if (sender_package_jstr)
+		(*env)->ReleaseStringUTFChars(env, sender_package_jstr, sender_package);
 	if (action_jstr)
 		(*env)->ReleaseStringUTFChars(env, action_jstr, action);
 	if (className_jstr)
@@ -267,7 +293,8 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant) {
 	const char *action;
 	const char *className;
 	const char *data;
-	g_variant_get(variant, INTENT_G_VARIANT_TYPE_STRING, &action, &className, &data);
+	GVariantIter *extras;
+	g_variant_get(variant, INTENT_G_VARIANT_TYPE_STRING, &action, &className, &data, &extras, NULL);
 	if (action && action[0] == '\0')
 		action = NULL;
 	if (className && className[0] == '\0')
@@ -281,6 +308,24 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant) {
 		(*env)->CallObjectMethod(env, intent, handle_cache.intent.setClassName, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), _JSTRING(className));
 	if (data)
 		_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", (*env)->CallStaticObjectMethod(env, handle_cache.uri.class, handle_cache.uri.parse, _JSTRING(data)));
+	const char *key;
+	GVariant *value;
+	while (g_variant_iter_loop(extras, "{sv}", &key, &value)) {
+		if (g_variant_is_of_type(value, G_VARIANT_TYPE_STRING)) {
+			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING(key), _JSTRING(g_variant_get_string(value, NULL)));
+		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_INT32)) {
+			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraInt, _JSTRING(key), g_variant_get_int32(value));
+		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_INT64)) {
+			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraLong, _JSTRING(key), g_variant_get_int64(value));
+		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_BYTESTRING)) {
+			gsize size;
+			const int8_t *message = g_variant_get_fixed_array(value, &size, 1);
+			jbyteArray bytesMessage = (*env)->NewByteArray(env, size);
+			(*env)->SetByteArrayRegion(env, bytesMessage, 0, size, message);
+			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraByteArray, _JSTRING(key), bytesMessage);
+		}
+	}
+	g_variant_iter_free(extras);
 	return intent;
 }
 

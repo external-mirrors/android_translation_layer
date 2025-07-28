@@ -122,6 +122,8 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.intent.constructor = _METHOD(handle_cache.intent.class, "<init>", "()V");
 	handle_cache.intent.putExtraCharSequence = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;Ljava/lang/CharSequence;)Landroid/content/Intent;");
 	handle_cache.intent.putExtraByteArray = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;[B)Landroid/content/Intent;");
+	handle_cache.intent.putExtraInt = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;I)Landroid/content/Intent;");
+	handle_cache.intent.putExtraLong = _METHOD(handle_cache.intent.class, "putExtra", "(Ljava/lang/String;J)Landroid/content/Intent;");
 	handle_cache.intent.getDataString = _METHOD(handle_cache.intent.class, "getDataString", "()Ljava/lang/String;");
 	handle_cache.intent.setClassName = _METHOD(handle_cache.intent.class, "setClassName", "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;");
 
@@ -136,4 +138,11 @@ void set_up_handle_cache(JNIEnv *env)
 
 	handle_cache.uri.class = _REF((*env)->FindClass(env, "android/net/Uri"));
 	handle_cache.uri.parse = _STATIC_METHOD(handle_cache.uri.class, "parse", "(Ljava/lang/String;)Landroid/net/Uri;");
+
+	handle_cache.bundle.class = _REF((*env)->FindClass(env, "android/os/Bundle"));
+	handle_cache.bundle.get = _METHOD(handle_cache.bundle.class, "get", "(Ljava/lang/String;)Ljava/lang/Object;");
+	handle_cache.bundle.keySet = _METHOD(handle_cache.bundle.class, "keySet", "()Ljava/util/Set;");
+
+	handle_cache.set.class = _REF((*env)->FindClass(env, "java/util/Set"));
+	handle_cache.set.toArray = _METHOD(handle_cache.set.class, "toArray", "()[Ljava/lang/Object;");
 }

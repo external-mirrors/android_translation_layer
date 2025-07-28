@@ -39,8 +39,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
+import android.os.Messenger;
 import android.os.ParcelFileDescriptor;
 import android.os.PowerManager;
+import android.os.RemoteException;
 import android.os.UserManager;
 import android.os.Vibrator;
 import android.telephony.TelephonyManager;
@@ -151,6 +154,7 @@ public class Context extends Object {
 	private static native void nativeOpenFile(int fd);
 	private static native void nativeExportUnifiedPush(String packageName);
 	private static native void nativeRegisterUnifiedPush(String token, String application);
+	private static native void nativeStartExternalService(String packageName, Intent service);
 
 	static Application createApplication(long native_window) throws Exception {
 		Application application;
@@ -467,15 +471,47 @@ public class Context extends Object {
 	public ComponentName startService(Intent intent) {
 		ComponentName component = intent.getComponent();
 		if (component == null) {
-			Slog.w(TAG, "startService: component is null for intent: " + intent);
+			int priority = Integer.MIN_VALUE;
+			for (PackageParser.Service service: pkg.services) {
+				for (PackageParser.IntentInfo intentInfo: service.intents) {
+					if (intentInfo.matchAction(intent.getAction()) && intentInfo.priority > priority) {
+						component = new ComponentName(pkg.packageName, service.className);
+						priority = intentInfo.priority;
+						break;
+					}
+				}
+			}
+		}
+		if (intent.getAction() != null && intent.getAction().startsWith("com.google.android.c2dm")) {
+			nativeStartExternalService("com.google.android.c2dm", intent);
+			// Newer applications use a Messenger instead of a BroadcastReceiver for the return Intent.
+			// To support new and old apps with a common interface, we wrap the Messenger in a BroadcastReceiver
+			final Messenger messenger = (Messenger)intent.getParcelableExtra("google.messenger");
+			if (messenger != null) {
+				receiverMap.put(new IntentFilter("com.google.android.c2dm.intent.REGISTRATION"), new BroadcastReceiver() {
+					@Override
+					public void onReceive(Context context, Intent resultIntent) {
+						try {
+							messenger.send(Message.obtain(null, 0, resultIntent));
+						} catch (RemoteException e) {
+							e.printStackTrace();
+						}
+					}
+				});
+			}
 			return null;
 		}
+		if (component == null) {
+			Slog.w(TAG, "startService: no matching service found for intent: " + intent);
+			return null;
+		}
+		final String className = component.getClassName();
 
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
 				try {
-					Class<? extends Service> cls = Class.forName(component.getClassName()).asSubclass(Service.class);
+					Class<? extends Service> cls = Class.forName(className).asSubclass(Service.class);
 					if (!runningServices.containsKey(cls)) {
 						Service service = cls.getConstructor().newInstance();
 						service.attachBaseContext(new Context());

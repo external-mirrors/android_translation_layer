@@ -2220,6 +2220,8 @@ public class PackageParser {
 
 		outInfo.logo = sa.getResourceId(
 				com.android.internal.R.styleable.AndroidManifestIntentFilter_logo, 0);
+		outInfo.priority = sa.getInt(
+				com.android.internal.R.styleable.AndroidManifestIntentFilter_priority, 0);
 		sa.recycle();
 		int outerDepth = parser.getDepth();
 		int type;
@@ -3881,6 +3883,7 @@ public class PackageParser {
 		public int icon;
 		public int logo;
 		public int preferred;
+		public int priority;
 	}
 
 	public final static class ActivityIntentInfo extends IntentInfo {
