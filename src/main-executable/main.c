@@ -532,15 +532,15 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 	prepare_main_looper(env);
 
+	/* extract native libraries from apk*/
+	if (!getenv("ATL_SKIP_NATIVES_EXTRACTION"))
+		extract_from_apk("lib/" NATIVE_ARCH "/", "lib/");
+
 	// construct Application
 	application_object = (*env)->CallStaticObjectMethod(env, handle_cache.context.class,
 	                                                    _STATIC_METHOD(handle_cache.context.class, "createApplication", "(J)Landroid/app/Application;"), window);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-
-	/* extract native libraries from apk*/
-	if (!getenv("ATL_SKIP_NATIVES_EXTRACTION"))
-		extract_from_apk("lib/" NATIVE_ARCH "/", "lib/");
 
 	jclass content_provider = (*env)->FindClass(env, "android/content/ContentProvider");
 	(*env)->CallStaticVoidMethod(env, content_provider, _STATIC_METHOD(content_provider, "createContentProviders", "()V"));

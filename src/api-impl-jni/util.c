@@ -59,9 +59,10 @@ void _gdb_force_java_stack_trace(void)
 	(*env)->ExceptionClear(env);
 }
 
+extern char *apk_path;
 void extract_from_apk(const char *path, const char *target) {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallStaticVoidMethod(env, handle_cache.asset_manager.class, handle_cache.asset_manager.extractFromAPK, _JSTRING(path), _JSTRING(target));
+	(*env)->CallStaticVoidMethod(env, handle_cache.asset_manager.class, handle_cache.asset_manager.extractFromAPK, _JSTRING(apk_path), _JSTRING(path), _JSTRING(target));
 }
 
 /* logging with fallback to stderr */

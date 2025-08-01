@@ -612,14 +612,14 @@ public final class AssetManager {
 
 	private native final int addAssetPathNative(String path);
 
-	public static void extractFromAPK(String path, String target) throws IOException {
+	public static void extractFromAPK(String apk_path, String path, String target) throws IOException {
 		if (path.endsWith("/")) { // directory
-			try (JarFile apk = new JarFile(Context.this_application.getPackageCodePath())) {
+			try (JarFile apk = new JarFile(apk_path)) {
 				Enumeration<JarEntry> entries = apk.entries();
 				while (entries.hasMoreElements()) {
 					JarEntry entry = entries.nextElement();
 					if (entry.getName().startsWith(path)) {
-						extractFromAPK(entry.getName(), entry.getName().replace(path, target));
+						extractFromAPK(apk_path, entry.getName(), entry.getName().replace(path, target));
 					}
 				}
 			}
