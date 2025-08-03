@@ -680,6 +680,7 @@ public class Process {
 	public static final void killProcess(int pid) {
 		if(pid == Process.myPid()) {
 			System.out.println("the app called killProcess on itself");
+			try { throw new Exception("stack trace"); } catch (Exception e) { e.printStackTrace(); }
 			System.exit(0);
 		}
 
