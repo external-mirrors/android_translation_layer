@@ -270,12 +270,6 @@ static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, do
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
 // TODO: pass all files to classpath
-/*
-	printf("nfiles: %d\n", nfiles);
-	for(int i = 0; i < nfiles; i++) {
-		printf(">- [%s]\n", g_file_get_path(files[i]));
-	}
-*/
 	if (window) {  // this is not the first launch, but a DBus request to open an URI in the running app
 		printf("opening uri over DBus %p\n", files[0]);
 		char *uri = g_file_get_uri(files[0]);
@@ -301,18 +295,33 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	jobject activity_object;
 	jobject application_object;
 
-	char *apk_classpath = g_file_get_path(files[0]);
+	char *apk_classpath = calloc(1024, 1);
+	char *apk_first_path = g_file_get_path(files[0]);
 	char *apk_name = g_file_get_basename(files[0]);
 
-	if (apk_classpath == NULL) {
-		printf("error: the specified file path doesn't seem to be valid\n");
-		exit(1);
+
+	printf("nfiles: %d\n", nfiles);
+	for(int i = 0; i < nfiles; i++) {
+		char *apk = g_file_get_path(files[i]);
+		printf(">- [%s]\n", apk);
+
+		strcat(apk_classpath, apk);
+		if (i < nfiles-1)
+			strcat(apk_classpath, ":");
+
+		if (apk == NULL) {
+			printf("error: the specified file path doesn't seem to be valid\n");
+			exit(1);
+		}
+
+		if (access(apk, F_OK) < 0) {
+			printf("error: the specified file path (%s) doesn't seem to exist (%m)\n", apk);
+			exit(1);
+		}
+
 	}
 
-	if (access(apk_classpath, F_OK) < 0) {
-		printf("error: the specified file path (%s) doesn't seem to exist (%m)\n", apk_classpath);
-		exit(1);
-	}
+	fprintf(stderr, "classpath = %s\n", apk_classpath);
 
 	Dl_info libart_so_dl_info;
 	// JNI_CreateJavaVM chosen arbitrarily, what matters is that it's a symbol exported by by libart.so
@@ -498,7 +507,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	(*env)->CallVoidMethod(env, java_runtime, loadLibrary_with_classloader, _JSTRING("translation_layer_main"), class_loader);
 
 	// some apps need the apk path since they directly read their apk
-	apk_path = strdup(apk_classpath);
+	apk_path = strdup(apk_first_path);
 
 	(*env)->GetJavaVM(env, &jvm);
 	set_up_handle_cache(env);
