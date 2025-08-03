@@ -733,6 +733,7 @@ XrResult bionic_xrCreateSession(XrInstance instance, XrSessionCreateInfo *create
 		egl_bind.config = android_bind->config;
 		egl_bind.context = android_bind->context;
 		createInfo->next = &egl_bind;
+		PrintConfigAttributes(egl_bind.display, egl_bind.config);
 	} else {
 		fprintf(stderr, "xrCreateSession: The graphics binding type = %d\n", android_bind->type);
 	}
