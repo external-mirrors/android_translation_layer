@@ -39,9 +39,6 @@ void _AssetManager_unlock(struct AssetManager ** asset_manager)
 	AssetManager_lock(asset_manager); \
 	__attribute__((__cleanup__(_AssetManager_unlock))) struct AssetManager *_RESERVED_am = asset_manager;
 
-#define ASSET_DIR "assets/"
-char *get_app_data_dir();
-
 JNIEXPORT jlong JNICALL Java_android_content_res_AssetManager_openAsset(JNIEnv *env, jobject this, jstring _file_name, jint mode)
 {
 	const char *file_name = _CSTRING(_file_name);
@@ -601,42 +598,36 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_setConfiguration(
 	AssetManager_setConfiguration(asset_manager, &config);
 }
 
-JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_list(JNIEnv *env, jobject this, jstring _path)
+JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_list(JNIEnv *env, jobject this, jstring path_jstr)
 {
-	DIR *d;
-	struct dirent *dir;
+	const char *path = "";
 
-	const char* path_rel = _CSTRING(_path);
-	char *app_data_dir = get_app_data_dir();
-	char *path_abs = malloc(strlen(app_data_dir) + strlen(ASSET_DIR) + strlen(path_rel) + 1);
+	path = (*env)->GetStringUTFChars(env, path_jstr, NULL);
+	if (!path_jstr)
+		return NULL;
 
-	strcpy(path_abs, app_data_dir);
-	strcat(path_abs, ASSET_DIR);
-	strcat(path_abs, path_rel);
+	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
+	AM_SCOPEDLOCK(asset_manager)
 
-	d = opendir(path_abs);
-
-	GArray *assets = g_array_new(false, false, sizeof(const char *));
-	int i = 0;
-	if (d)
-	{
-		while ((dir = readdir(d)) != NULL)
-		{
-			char *asset_path = malloc (strlen(dir->d_name) + 1);
-			strcpy(asset_path, dir->d_name);
-			g_array_append_val (assets, asset_path);
-		}
-		closedir(d);
+	struct AssetDir *asset_dir = AssetManager_openDir(asset_manager, path);
+	(*env)->ReleaseStringUTFChars(env, path_jstr, path);
+	if (!asset_dir) {
+		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/io/FileNotFoundException"), path);
+		return NULL;
 	}
 
-	jobjectArray array = (*env)->NewObjectArray(env, assets->len, (*env)->FindClass(env, "java/lang/String"), NULL);
-	for (i = 0; i < assets->len; i++)
-	{
-		const char *asset = g_array_index(assets, const char *, i);
+	const size_t file_count = AssetDir_getFileCount(asset_dir);
+
+	jobjectArray array = (*env)->NewObjectArray(env, file_count, (*env)->FindClass(env, "java/lang/String"), NULL);
+	if (!array)
+		return NULL;
+
+	for (size_t i = 0; i < file_count; i++) {
+		const char *asset = AssetDir_getFileName(asset_dir, i);
+		jstring asset_jstr = (*env)->NewStringUTF(env, asset);
 		(*env)->SetObjectArrayElement(env, array, i, (*env)->NewStringUTF(env, asset));
+		(*env)->DeleteLocalRef(env, asset_jstr);
 	}
-
-	g_array_free(assets, TRUE);
 
 	return array;
 }
