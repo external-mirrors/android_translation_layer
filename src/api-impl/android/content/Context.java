@@ -64,6 +64,7 @@ import java.security.Provider;
 import java.security.Security;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Context extends Object {
 	private final static String TAG = "Context";
@@ -99,7 +100,7 @@ public class Context extends Object {
 	File cache_dir = null;
 	File nobackup_dir = null;
 
-	private static Map<IntentFilter, BroadcastReceiver> receiverMap = new HashMap<IntentFilter, BroadcastReceiver>();
+	private static Map<IntentFilter, BroadcastReceiver> receiverMap = new ConcurrentHashMap<IntentFilter, BroadcastReceiver>();
 
 	static {
 		assets = new AssetManager();
@@ -265,6 +266,8 @@ public class Context extends Object {
 	}
 
 	public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
+		if (receiver == null)
+			return null;
 		receiverMap.put(filter, receiver);
 		return new Intent();
 	}
@@ -714,7 +717,9 @@ public class Context extends Object {
 
 	public void unbindService(ServiceConnection serviceConnection) {}
 
-	public void unregisterReceiver(BroadcastReceiver receiver) {}
+	public void unregisterReceiver(BroadcastReceiver receiver) {
+		while (receiverMap.values().remove(receiver));
+	}
 
 	public Context createPackageContext(String dummy, int dummy2) {
 		return this; // FIXME?

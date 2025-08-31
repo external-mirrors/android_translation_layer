@@ -1388,13 +1388,13 @@ public class PackageManager {
 	public PackageInfo getPackageInfo(String packageName, int flags) throws NameNotFoundException {
 		if (packageName.equals(Context.pkg.packageName)) {
 			return PackageParser.generatePackageInfo(Context.pkg, new int[0], flags, 0, 0, new HashSet<>(), new PackageUserState());
-		} else if (packageName.equals("atl")) {
+		} else if (packageName.equals("atl") || packageName.equals("android")) {
 			PackageInfo info = new PackageInfo();
 			info.packageName = packageName;
-			info.signatures = new Signature[0];
+			info.signatures = new Signature[] { new Signature(new byte[0]) };
 			return info;
 		} else {
-			throw new NameNotFoundException();
+			throw new NameNotFoundException(packageName);
 		}
 	}
 

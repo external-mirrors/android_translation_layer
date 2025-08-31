@@ -234,7 +234,7 @@ public class Intent implements Parcelable {
 	}
 
 	public boolean getBooleanExtra(String name, boolean defaultValue) {
-		return defaultValue;
+		return extras.getBoolean(name, defaultValue);
 	}
 
 	public Intent setAction(String action) {

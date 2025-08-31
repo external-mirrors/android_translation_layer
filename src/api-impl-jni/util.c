@@ -243,6 +243,8 @@ void atl_safe_gtk_widget_queue_resize(GtkWidget *widget)
 }
 
 GVariant *intent_serialize(JNIEnv *env, jobject intent) {
+	if (!intent)
+		return NULL;
 	jstring action_jstr = _GET_OBJ_FIELD(intent, "action", "Ljava/lang/String;");
 	jobject component = _GET_OBJ_FIELD(intent, "component", "Landroid/content/ComponentName;");
 	jstring className_jstr = component ? _GET_OBJ_FIELD(component, "mClass", "Ljava/lang/String;") : NULL;

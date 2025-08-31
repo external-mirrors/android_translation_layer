@@ -18,10 +18,10 @@ public class DateUtils {
 	}
 
 	public static String formatElapsedTime(long elapsedMillis) {
-		final long days = elapsedMillis / (24 * 60 * 60L);
-		final long hours = elapsedMillis / (60 * 60L) % 24L;
-		final long minutes = elapsedMillis / 60L % 60L;
-		final long seconds = elapsedMillis % 60L;
+		final long days = elapsedMillis / (24 * 60 * 60L * 1000L);
+		final long hours = elapsedMillis / (60 * 60L * 1000L) % 24L;
+		final long minutes = elapsedMillis / (60L * 1000L) % 60L;
+		final long seconds = elapsedMillis / 1000L % 60L;
 
 		if (elapsedMillis < 0) {
 			return "0:00";

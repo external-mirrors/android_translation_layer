@@ -389,6 +389,7 @@ srcs = [
 	'android/telephony/SubscriptionManager.java',
 	'android/telephony/TelephonyManager.java',
 	'android/text/AutoText.java',
+	'android/text/BidiFormatter.java',
 	'android/text/BoringLayout.java',
 	'android/text/ClipboardManager.java',
 	'android/text/Editable.java',

@@ -512,8 +512,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		this.intent = newIntent;
 	}
 
-	public void unregisterReceiver(BroadcastReceiver receiver) {}
-
 	public Intent getParentActivityIntent() {
 		return null;
 	}
