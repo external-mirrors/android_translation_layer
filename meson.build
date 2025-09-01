@@ -9,19 +9,12 @@ add_project_dependencies(incdir_dep, language: 'c')
 cc = meson.get_compiler('c')
 dir_base = meson.current_source_dir()
 builddir_base = meson.current_build_dir()
-# FIXME: make art install a pkgconfig file
-libart_dep = [
-	cc.find_library('art', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ]),
-     	cc.find_library('nativebridge', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ])
-]
+libart_dep = dependency('art-standalone')
 libdl_bio_dep = [
 	cc.find_library('dl_bio')
 ]
 libc_bio_dep = [
 	cc.find_library('c_bio')
-]
-libandroidfw_dep = [
-	cc.find_library('androidfw', dirs : [ '/usr' / get_option('libdir') / 'art', '/usr/local' / get_option('libdir') / 'art', get_option('prefix') / get_option('libdir') / 'art' ]),
 ]
 if fs.is_file('/usr' / get_option('libdir') / 'java/core-all_classes.jar')
   bootclasspath_dir = '/usr' / get_option('libdir') / 'java'
@@ -179,7 +172,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
                                                                   	dependency('libportal'), dependency('sqlite3'), dependency('libavcodec', version: '>=59'), dependency('libdrm'),
                                                                   	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
-                                                                  	libandroidfw_dep, wayland_protos_dep
+                                                                        libart_dep, wayland_protos_dep
                                                                   ],
                                                                   link_with: [ libandroid_so ],
                                                                   link_args: [
