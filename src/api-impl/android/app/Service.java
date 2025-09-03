@@ -7,6 +7,8 @@ import android.os.IBinder;
 
 public abstract class Service extends ContextWrapper {
 
+	private int notification_id;
+
 	/* HACK for InputMethodService */
 	public Service(Context baseContext) {
 		super(baseContext);
@@ -33,14 +35,17 @@ public abstract class Service extends ContextWrapper {
 
 	public void startForeground(int id, Notification notification) {
 		System.out.println("startForeground(" + id + ", " + notification + ") called");
+		this.notification_id = id;
 	}
 
 	public void stopForeground(boolean remove) {
 		System.out.println("stopForeground(" + remove + ") called");
+		if (remove)
+			new NotificationManager().cancel(notification_id);
 	}
 
 	public void stopForeground(int remove) {
-		System.out.println("stopForeground(" + remove + ") called");
+		stopForeground(remove == 1);
 	}
 
 	public Application getApplication() {
