@@ -17,13 +17,13 @@ public class DateUtils {
 		return d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth() && d1.getDate() == d2.getDate();
 	}
 
-	public static String formatElapsedTime(long elapsedMillis) {
-		final long days = elapsedMillis / (24 * 60 * 60L * 1000L);
-		final long hours = elapsedMillis / (60 * 60L * 1000L) % 24L;
-		final long minutes = elapsedMillis / (60L * 1000L) % 60L;
-		final long seconds = elapsedMillis / 1000L % 60L;
+	public static String formatElapsedTime(long elapsedSeconds) {
+		final long days = elapsedSeconds / (24 * 60 * 60L);
+		final long hours = elapsedSeconds / (60 * 60L) % 24L;
+		final long minutes = elapsedSeconds / (60L) % 60L;
+		final long seconds = elapsedSeconds % 60L;
 
-		if (elapsedMillis < 0) {
+		if (elapsedSeconds < 0) {
 			return "0:00";
 		} else if (days > 0) {
 			return String.format("%d:%02d:%02d:%02d", days, hours, minutes, seconds);
