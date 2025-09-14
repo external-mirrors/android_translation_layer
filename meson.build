@@ -16,15 +16,7 @@ libdl_bio_dep = [
 libc_bio_dep = [
 	cc.find_library('c_bio')
 ]
-if fs.is_file('/usr' / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath_dir = '/usr' / get_option('libdir') / 'java'
-elif fs.is_file('/usr/local' / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath_dir = '/usr/local' / get_option('libdir') / 'java'
-elif fs.is_file(get_option('prefix') / get_option('libdir') / 'java/core-all_classes.jar')
-  bootclasspath_dir = get_option('prefix') / get_option('libdir') / 'java'
-else
-  error('bootclasspath "core-all_classes.jar" not found')
-endif
+bootclasspath_dir = libart_dep.get_variable(pkgconfig: 'libdir') / 'java'
 
 bootclasspath = bootclasspath_dir / 'core-all_classes.jar' + ':' + bootclasspath_dir / 'core-junit_classes.jar' + ':' + bootclasspath_dir / 'junit-runner_classes.jar'
 
