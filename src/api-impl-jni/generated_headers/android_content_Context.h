@@ -52,10 +52,10 @@ JNIEXPORT void JNICALL Java_android_content_Context_nativeRegisterUnifiedPush
 /*
  * Class:     android_content_Context
  * Method:    nativeStartExternalService
- * Signature: (Ljava/lang/String;Landroid/content/Intent;)V
+ * Signature: (Landroid/content/Intent;)V
  */
 JNIEXPORT void JNICALL Java_android_content_Context_nativeStartExternalService
-  (JNIEnv *, jclass, jstring, jobject);
+  (JNIEnv *, jclass, jobject);
 
 #ifdef __cplusplus
 }

@@ -176,9 +176,10 @@ JNIEXPORT void JNICALL Java_android_content_Context_nativeRegisterUnifiedPush(JN
 	(*env)->ReleaseStringUTFChars(env, application_jstr, application);
 }
 
-JNIEXPORT void JNICALL Java_android_content_Context_nativeStartExternalService(JNIEnv *env, jclass this, jstring package_jstr, jobject intent)
+JNIEXPORT void JNICALL Java_android_content_Context_nativeStartExternalService(JNIEnv *env, jclass this, jobject intent)
 {
 	GVariant *variant = intent_serialize(env, intent);
+	jstring package_jstr = _GET_OBJ_FIELD(intent, "packageName", "Ljava/lang/String;");
 	const char *package = (*env)->GetStringUTFChars(env, package_jstr, NULL);
 	char *object_path = g_strdup_printf("/%s", package);
 	g_strdelimit(object_path, ".", '/');

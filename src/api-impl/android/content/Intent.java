@@ -25,6 +25,7 @@ public class Intent implements Parcelable {
 	private Uri data;
 	private int flags;
 	private String type;
+	private String packageName;
 
 	public Intent() {}
 	public Intent(Intent o) {
@@ -63,7 +64,8 @@ public class Intent implements Parcelable {
 	}
 
 	public Intent setPackage(String packageName) {
-		return this; //??
+		this.packageName = packageName;
+		return this;
 	}
 
 	public Intent setType(String type) {
@@ -328,7 +330,7 @@ public class Intent implements Parcelable {
 	}
 
 	public String getPackage() {
-		return component == null ? null : component.getPackageName();
+		return packageName;
 	}
 
 	public String getScheme() {

@@ -154,7 +154,7 @@ public class Context extends Object {
 	private static native void nativeOpenFile(int fd);
 	private static native void nativeExportUnifiedPush(String packageName);
 	private static native void nativeRegisterUnifiedPush(String token, String application);
-	private static native void nativeStartExternalService(String packageName, Intent service);
+	private static native void nativeStartExternalService(Intent service);
 
 	static Application createApplication(long native_window) throws Exception {
 		Application application;
@@ -482,23 +482,24 @@ public class Context extends Object {
 				}
 			}
 		}
-		if (intent.getAction() != null && intent.getAction().startsWith("com.google.android.c2dm")) {
-			nativeStartExternalService("com.google.android.c2dm", intent);
-			// Newer applications use a Messenger instead of a BroadcastReceiver for the return Intent.
-			// To support new and old apps with a common interface, we wrap the Messenger in a BroadcastReceiver
+		// Newer applications use a Messenger instead of a BroadcastReceiver for the GCM token return Intent.
+		// To support new and old apps with a common interface, we wrap the Messenger in a BroadcastReceiver
+		if ("com.google.android.c2dm.intent.REGISTER".equals(intent.getAction()) && intent.getParcelableExtra("google.messenger") instanceof Messenger) {
 			final Messenger messenger = (Messenger)intent.getParcelableExtra("google.messenger");
-			if (messenger != null) {
-				receiverMap.put(new IntentFilter("com.google.android.c2dm.intent.REGISTRATION"), new BroadcastReceiver() {
-					@Override
-					public void onReceive(Context context, Intent resultIntent) {
-						try {
-							messenger.send(Message.obtain(null, 0, resultIntent));
-						} catch (RemoteException e) {
-							e.printStackTrace();
-						}
+			receiverMap.put(new IntentFilter("com.google.android.c2dm.intent.REGISTRATION"), new BroadcastReceiver() {
+				@Override
+				public void onReceive(Context context, Intent resultIntent) {
+					try {
+						messenger.send(Message.obtain(null, 0, resultIntent));
+					} catch (RemoteException e) {
+						e.printStackTrace();
 					}
-				});
-			}
+				}
+			});
+		}
+		if (intent.getPackage() != null && !intent.getPackage().equals(getPackageName())) {
+			// External package. Try to start using DBus Action
+			nativeStartExternalService(intent);
 			return null;
 		}
 		if (component == null) {
