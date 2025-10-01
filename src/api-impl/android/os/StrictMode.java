@@ -15,6 +15,8 @@ public final class StrictMode {
 		return new ThreadPolicy();
 	}
 
+	public static void noteSlowCall(String tag) {}
+
 	public interface OnThreadViolationListener {
 	}
 

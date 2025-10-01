@@ -19,7 +19,7 @@ package android.animation;
 /**
  * This evaluator can be used to perform type interpolation between <code>float</code> values.
  */
-public class FloatEvaluator /*implements TypeEvaluator<Number>*/ {
+public class FloatEvaluator implements TypeEvaluator<Number> {
 
 	/**
 	 * This function returns the result of linearly interpolating the start and end values, with

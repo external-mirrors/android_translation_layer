@@ -13,4 +13,7 @@ public class RatingBar extends AbsSeekBar {
 		super(context, attributeSet);
 	}
 	
+	public void setRating(float rating) {
+		setProgress((int)rating);
+	}
 }

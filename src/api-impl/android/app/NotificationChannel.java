@@ -19,4 +19,5 @@ public class NotificationChannel {
 	public int getLightColor() { return 0; }
 	public boolean shouldVibrate() { return false; }
 	public Uri getSound() { return null; }
+	public void setDescription(String description) {}
 }

@@ -2,6 +2,7 @@ package android.widget;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 
@@ -75,4 +76,8 @@ public abstract class CompoundButton extends Button implements Checkable {
 
 	@Override
 	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {}
+
+	public PorterDuff.Mode getButtonTintMode() {
+		return null;
+	}
 }

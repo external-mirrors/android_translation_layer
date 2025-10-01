@@ -25,4 +25,12 @@ public class AccessibilityManager {
 		return false;
 	}
 
+	public boolean removeAccessibilityStateChangeListener(AccessibilityStateChangeListener listener) {
+		return false;
+	}
+
+	public boolean removeTouchExplorationStateChangeListener(TouchExplorationStateChangeListener listener) {
+		return false;
+	}
+
 }

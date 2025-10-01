@@ -1612,7 +1612,12 @@ public class PackageManager {
 	 */
 	public ActivityInfo getActivityInfo(ComponentName component,
 					    int flags) throws NameNotFoundException {
-		return new ActivityInfo();
+		ActivityInfo info = new ActivityInfo();
+		/* Breeze Weather tries to override the night mode setting, but we don't implement configuration overriding yet.
+		 * AppCompatDelegateImpl.updateAppConfiguration() checks if the setting is correctly overridden and otherwise recreates the activity.
+		 * To prevent infinite recreation, we set the CONFIG_UI_MODE flag, indicating that the activity can handle night mode change without recreation. */
+		info.configChanges = ActivityInfo.CONFIG_UI_MODE;
+		return info;
 	}
 
 	/**

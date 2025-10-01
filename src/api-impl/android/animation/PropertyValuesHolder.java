@@ -13,6 +13,7 @@ public class PropertyValuesHolder {
 	private String property_name;
 	private Method setter;
 	Property property;
+	private TypeEvaluator<Object> evaluator;
 
 	public static PropertyValuesHolder ofFloat(String propertyName, float... values) {
 		PropertyValuesHolder propertyValuesHolder = new PropertyValuesHolder();
@@ -27,6 +28,7 @@ public class PropertyValuesHolder {
 		propertyValuesHolder.values_object = values;
 		propertyValuesHolder.property_name = propertyName;
 		propertyValuesHolder.value = values[0];
+		propertyValuesHolder.evaluator = evaluator;
 		return propertyValuesHolder;
 	}
 
@@ -53,6 +55,7 @@ public class PropertyValuesHolder {
 		propertyValuesHolder.property_name = property.getName();
 		propertyValuesHolder.property = property;
 		propertyValuesHolder.value = values[0];
+		propertyValuesHolder.evaluator = evaluator;
 		return propertyValuesHolder;
 	}
 
@@ -97,14 +100,20 @@ public class PropertyValuesHolder {
 		return value;
 	}
 
-	public void setEvaluator(TypeEvaluator value) {}
+	public void setEvaluator(TypeEvaluator<Object> evaluator) {
+		this.evaluator = evaluator;
+	}
 
 	public void calculateValue(float fraction) {
 		if (fraction < 0f)
 			fraction = 0f;
 		if (fraction > 1f)
 			fraction = 1f;
-		if (values_object != null) {
+		if (values_object != null && evaluator != null) {
+			int i = (int) (fraction * (values_object.length - 1));
+			float f = fraction * (values_object.length - 1) - i;
+			value = evaluator.evaluate(f, values_object[i], values_object[i >= values_object.length - 1 ? i : i+1]);
+		} else if (values_object != null) {
 			value = values_object[(int) (fraction * (values_object.length - 1) + 0.5f)];
 		} else if (values_float != null) {
 			int i = (int) (fraction * (values_float.length - 1));

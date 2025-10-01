@@ -90,4 +90,10 @@ public class NotificationManager {
 	public boolean areNotificationsEnabled() {
 		return true;
 	}
+
+	public void deleteNotificationChannel(String channelId) {}
+
+	public void createNotificationChannelGroups(List<NotificationChannelGroup> groups) {}
+
+	public void createNotificationChannels(List<NotificationChannel> channels) {}
 }

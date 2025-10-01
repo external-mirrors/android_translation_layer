@@ -160,4 +160,6 @@ public class Window {
 	public void setReturnTransition(Transition transition) {}
 
 	public void setEnterTransition(Transition transition) {}
+
+	public void setGravity(int gravity) {}
 }

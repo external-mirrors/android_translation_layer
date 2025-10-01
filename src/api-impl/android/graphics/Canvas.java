@@ -475,6 +475,10 @@ public class Canvas {
 		return save();
 	}
 
+	public int saveLayer(float left, float top, float right, float bottom, Paint paint) {
+		return save();
+	}
+
 	public void drawOval(RectF oval, Paint paint) {
 		Log.w("Canvas", "STUB: drawOval");
 	}
@@ -542,4 +546,8 @@ public class Canvas {
 	}
 
 	public void drawPaint(Paint paint) {}
+
+	public void drawPicture(Picture picture) {
+		Log.w("Canvas", "STUB: drawPicture");
+	}
 }

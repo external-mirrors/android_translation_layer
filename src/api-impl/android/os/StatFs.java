@@ -45,6 +45,9 @@ public class StatFs {
 	 * @throws IllegalArgumentException if the file system access fails
 	 */
 	private static StructStatVfs doStat(String path) {
+		/* applications use this method to query free space on the data partition. /home should be most equivalent on Linux Desktop */
+		if ("/data".equals(path))
+			path = "/home";
 		try {
 			return Os.statvfs(path);
 		} catch (ErrnoException e) {
