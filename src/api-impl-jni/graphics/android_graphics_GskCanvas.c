@@ -154,3 +154,16 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1concat(JNIEnv *en
 	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
 	gtk_snapshot_transform_matrix(snapshot, matrix);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1clipRect(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom)
+{
+	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	gtk_snapshot_push_clip(snapshot, &GRAPHENE_RECT_INIT(left, top, right - left, bottom - top));
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1pop(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jint count)
+{
+	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	while (count--)
+		gtk_snapshot_pop(snapshot);
+}

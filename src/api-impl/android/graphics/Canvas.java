@@ -488,22 +488,20 @@ public class Canvas {
 	}
 
 	public boolean clipRect(int left, int top, int right, int bottom) {
-		Log.w("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect((float)left, top, right, bottom);
 	}
 
 	public boolean clipRect(float left, float top, float right, float bottom) {
-		return false;
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		return gsk_canvas.clipRect(left, top, right, bottom);
 	}
 
 	public boolean clipRect(Rect rect) {
-		Log.w("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect((float)rect.left, rect.top, rect.right, rect.bottom);
 	}
 
 	public boolean clipRect(Rect rect, Region.Op op) {
-		Log.w("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect((float)rect.left, rect.top, rect.right, rect.bottom);
 	}
 
 	public boolean clipPath(Path path) {
@@ -521,18 +519,15 @@ public class Canvas {
 	}
 
 	public boolean clipRect(RectF rect) {
-		Log.v("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect(rect.left, rect.top, rect.right, rect.bottom);
 	}
 
 	public boolean clipRect(float left, float top, float right, float bottom, Region.Op op) {
-		Log.v("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect(left, top, right, bottom);
 	}
 
 	public boolean clipRect(RectF rect, Region.Op op) {
-		Log.v("Canvas", "STUB: clipRect");
-		return false;
+		return clipRect(rect.left, rect.top, rect.right, rect.bottom);
 	}
 
 	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {

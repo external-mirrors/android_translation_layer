@@ -1,5 +1,7 @@
 package android.graphics;
 
+import java.util.Arrays;
+
 /**
  * GskCanvas:
  *   - implements Canvas for onscreen rendering inside GTKs snapshot function
@@ -7,6 +9,7 @@ package android.graphics;
 public class GskCanvas extends Canvas {
 	public long snapshot;
 	private int save_count = 1;
+	private int[] push_history = null;
 
 	private static Paint default_paint = new Paint();
 
@@ -22,6 +25,10 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void restore() {
+		if (push_history != null && push_history.length > save_count && push_history[save_count] > 0) {
+			native_pop(snapshot, push_history[save_count]);
+			push_history[save_count] = 0;
+		}
 		save_count--;
 		native_restore(snapshot);
 	}
@@ -146,6 +153,17 @@ public class GskCanvas extends Canvas {
 		drawText(text.toString().substring(start, end), x, y, paint);
 	}
 
+	@Override
+	public boolean clipRect(float left, float top, float right, float bottom) {
+		native_clipRect(snapshot, left, top, right, bottom);
+		if (push_history == null)
+			push_history = new int[save_count+1];
+		else if (push_history.length <= save_count)
+			push_history = Arrays.copyOf(push_history, save_count+1);
+		push_history[save_count]++;
+		return right > left && bottom > top;
+	}
+
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
 	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, long paint);
 	protected native void native_drawPath(long snapshot, long path, long paint);
@@ -159,4 +177,6 @@ public class GskCanvas extends Canvas {
 	protected native void native_drawRoundRect(long snapshot, float left, float top, float right, float bottom, float rx, float ry, long paint);
 	protected native void native_scale(long snapshot, float sx, float sy);
 	protected native void native_concat(long snapshot, long matrix);
+	protected native void native_clipRect(long snapshot, float left, float top, float right, float bottom);
+	protected native void native_pop(long snapshot, int pop_count);
 }

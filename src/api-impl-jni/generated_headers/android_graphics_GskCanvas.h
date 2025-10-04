@@ -113,6 +113,22 @@ JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1scale
 JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1concat
   (JNIEnv *, jobject, jlong, jlong);
 
+/*
+ * Class:     android_graphics_GskCanvas
+ * Method:    native_clipRect
+ * Signature: (JFFFF)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1clipRect
+  (JNIEnv *, jobject, jlong, jfloat, jfloat, jfloat, jfloat);
+
+/*
+ * Class:     android_graphics_GskCanvas
+ * Method:    native_pop
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_GskCanvas_native_1pop
+  (JNIEnv *, jobject, jlong, jint);
+
 #ifdef __cplusplus
 }
 #endif
