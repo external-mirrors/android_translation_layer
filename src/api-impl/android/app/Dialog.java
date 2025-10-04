@@ -1,7 +1,10 @@
 package android.app;
 
+import android.R;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -31,6 +34,12 @@ public class Dialog implements Window.Callback, DialogInterface {
 		this.context = context;
 		nativePtr = nativeInit();
 		window = new Window(context, this);
+		TypedArray ta = context.obtainStyledAttributes(new int[] {R.attr.windowBackground});
+		Drawable background = ta.getDrawable(0);
+		if (background != null)
+			window.setBackgroundDrawable(background);
+		ta.recycle();
+
 		window.native_window = nativePtr;
 	}
 
