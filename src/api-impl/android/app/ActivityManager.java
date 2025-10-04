@@ -1,12 +1,14 @@
 package android.app;
 
+import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Bitmap;
-import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.os.Process;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Collections;
 
@@ -14,6 +16,13 @@ public class ActivityManager {
 
 	public static class RunningAppProcessInfo{
 		public int importance;
+		public int pid;
+		public String processName;
+
+		private RunningAppProcessInfo(int pid, String processName) {
+			this.pid = pid;
+			this.processName = processName;
+		} 
 	}
 
 	public static class TaskDescription {
@@ -21,7 +30,7 @@ public class ActivityManager {
 	}
 
 	public List<RunningAppProcessInfo> getRunningAppProcesses() {
-		return null;
+		return Arrays.asList(new RunningAppProcessInfo(Process.myPid(), Context.this_application.getPackageName()));
 	}
 
 	public boolean isLowRamDevice() {return false;}

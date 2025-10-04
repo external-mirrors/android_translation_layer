@@ -94,13 +94,13 @@ public class AndroidKeyStore extends KeyStoreSpi {
 	@Override
 	public boolean engineIsKeyEntry(String alias) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'engineIsKeyEntry'");
+		return map.containsKey(alias);
 	}
 
 	@Override
 	public boolean engineIsCertificateEntry(String alias) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'engineIsCertificateEntry'");
+		return false;
 	}
 
 	@Override

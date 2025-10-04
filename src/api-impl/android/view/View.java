@@ -2221,4 +2221,6 @@ public class View implements Drawable.Callback {
 	public WindowInsets computeSystemWindowInsets(WindowInsets insets, Rect contentInsets) { return insets; }
 
 	public boolean isDuplicateParentStateEnabled() { return false; }
+
+	public void setBackgroundTintMode(PorterDuff.Mode tintMode) {}
 }

@@ -1,13 +1,51 @@
 package android.app;
 
+import android.os.Handler;
+import android.os.Looper;
+import android.os.SystemClock;
+import android.text.format.DateUtils;
+import android.util.Slog;
+
 public class AlarmManager {
-	public void cancel(PendingIntent operation) {}
+	private static final String TAG = "AlarmManager";
 
-	public void setInexactRepeating(int type, long triggerTime, long interval, PendingIntent operation) {}
+	public void cancel(PendingIntent operation) {
+		Slog.i(TAG, "cancel(" + operation + ") called");
+	}
 
-	public void setExact(int type, long triggerTime, PendingIntent operation) {}
+	public void setInexactRepeating(int type, long triggerTime, long interval, PendingIntent operation) {
+		Slog.i(TAG, "setInexactRepeating(" + type + ", " + triggerTime + ", " + interval + ", " + operation + ") called");
+		long delay = triggerTime - ((type == 2 || type == 3) ? SystemClock.elapsedRealtime() : System.currentTimeMillis());
+		Slog.i(TAG, "setInexactRepeating() delay: " + DateUtils.formatElapsedTime(delay) + " interval: " + DateUtils.formatElapsedTime(interval));
+		Handler handler = new Handler(Looper.getMainLooper());
+		handler.postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				Slog.i(TAG, "delivering repeating alarm: " + operation);
+				operation.send();
+				handler.postDelayed(this, interval);
+			}
+		}, delay);
+	}
 
-	public void set(int type, long triggerTime, PendingIntent operation) {}
+	public void setExact(int type, long triggerTime, PendingIntent operation) {
+		Slog.i(TAG, "setExact(" + type + ", " + triggerTime + ", " + operation + ") called");
+		long delay = triggerTime - ((type == 2 || type == 3) ? SystemClock.elapsedRealtime() : System.currentTimeMillis());
+		Slog.i(TAG, "setExact() delay: " + DateUtils.formatElapsedTime(delay));
+		new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+			@Override
+			public void run() {
+				Slog.i(TAG, "delivering alarm: " + operation);
+				operation.send();
+			}
+		}, delay);
+	}
 
-	public void setExactAndAllowWhileIdle(int type, long triggerAtMillis, PendingIntent operation) {}
+	public void set(int type, long triggerTime, PendingIntent operation) {
+		setExact(type, triggerTime, operation);
+	}
+
+	public void setExactAndAllowWhileIdle(int type, long triggerAtMillis, PendingIntent operation) {
+		setExact(type, triggerAtMillis, operation);
+	}
 }

@@ -5,20 +5,63 @@ import android.os.PersistableBundle;
 
 public class JobInfo {
 
+	private ComponentName service;
+	long initialBackoffMillis;
+	int backoffPolicy;
+	private PersistableBundle extras;
+	long periodicMillis;
+	private int id;
+	boolean running;
+	long minLatencyMillis;
+
 	public JobInfo() {}
 
+	public ComponentName getService() {
+		return service;
+	}
+
+	public PersistableBundle getExtras() {
+		return extras;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public String toString() {
+		return "JobInfo{"
+				+ "jobService=" + service
+				+ ", initialBackoffMillis=" + initialBackoffMillis
+				+ ", backoffPolicy=" + backoffPolicy
+				+ ", extras=" + extras
+				+ ", periodicMillis=" + periodicMillis
+				+ ", id=" + id
+				+ '}';
+	}
+
 	public static final class Builder {
-		public Builder(int jobId, ComponentName jobService) {}
+
+		private JobInfo jobInfo;
+
+		public Builder(int jobId, ComponentName jobService) {
+			jobInfo = new JobInfo();
+			jobInfo.id = jobId;
+			jobInfo.service = jobService;
+		}
 
 		public Builder setBackoffCriteria(long initialBackoffMillis, int backoffPolicy) {
+			jobInfo.initialBackoffMillis = initialBackoffMillis;
+			jobInfo.backoffPolicy = backoffPolicy;
 			return this;
 		}
 
 		public Builder setExtras(PersistableBundle extras) {
+			jobInfo.extras = extras;
 			return this;
 		}
 
 		public Builder setMinimumLatency(long minLatencyMillis) {
+			jobInfo.minLatencyMillis = minLatencyMillis;
 			return this;
 		}
 
@@ -27,6 +70,7 @@ public class JobInfo {
 		}
 
 		public Builder setPeriodic(long dummy) {
+			jobInfo.periodicMillis = dummy;
 			return this;
 		}
 
@@ -55,7 +99,7 @@ public class JobInfo {
 		}
 
 		public JobInfo build() {
-			return new JobInfo();
+			return jobInfo;
 		}
 	}
 }

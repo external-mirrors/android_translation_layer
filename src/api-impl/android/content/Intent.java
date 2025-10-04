@@ -26,6 +26,7 @@ public class Intent implements Parcelable {
 	private int flags;
 	private String type;
 	private String packageName;
+	private Intent selector;
 
 	public Intent() {}
 	public Intent(Intent o) {
@@ -402,11 +403,17 @@ public class Intent implements Parcelable {
 		return null;
 	}
 
-	public void setSelector(Intent selector) {}
+	public void setSelector(Intent selector) {
+		this.selector = selector;
+	}
 
 	public void setClipData(ClipData clip) {}
 
 	public String resolveType(Context context) {
 		return type;
+	}
+
+	public Intent getSelector() {
+		return selector;
 	}
 }
