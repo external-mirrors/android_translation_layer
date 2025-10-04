@@ -126,11 +126,9 @@ public abstract class DrawableWrapper extends Drawable implements Drawable.Callb
 		return mDrawable;
 	}
 
-	/*@Override
 	public void inflate(@NonNull Resources r, @NonNull XmlPullParser parser,
 			    @NonNull AttributeSet attrs, @Nullable Theme theme)
 	    throws XmlPullParserException, IOException {
-		super.inflate(r, parser, attrs, theme);
 
 		final DrawableWrapperState state = mState;
 		if (state == null) {
@@ -142,14 +140,14 @@ public abstract class DrawableWrapper extends Drawable implements Drawable.Callb
 		final int densityDpi = r.getDisplayMetrics().densityDpi;
 		final int targetDensity = densityDpi == 0 ? DisplayMetrics.DENSITY_DEFAULT : densityDpi;
 		state.setDensity(targetDensity);
-		state.mSrcDensityOverride = mSrcDensityOverride;
+		// state.mSrcDensityOverride = mSrcDensityOverride;
 
 		final TypedArray a = obtainAttributes(r, theme, attrs, R.styleable.DrawableWrapper);
 		updateStateFromTypedArray(a);
 		a.recycle();
 
 		inflateChildDrawable(r, parser, attrs, theme);
-	}*/
+	}
 
 	/*@Override
 	public void applyTheme(@NonNull Theme t) {
@@ -451,7 +449,7 @@ public abstract class DrawableWrapper extends Drawable implements Drawable.Callb
 	 * child element will take precedence over any other child elements or
 	 * explicit drawable attribute.
 	 */
-	/* void inflateChildDrawable(@NonNull Resources r, @NonNull XmlPullParser parser,
+	void inflateChildDrawable(@NonNull Resources r, @NonNull XmlPullParser parser,
 					  @NonNull AttributeSet attrs, @Nullable Theme theme)
 	    throws XmlPullParserException, IOException {
 		// Seek to the first child element.
@@ -460,15 +458,14 @@ public abstract class DrawableWrapper extends Drawable implements Drawable.Callb
 		final int outerDepth = parser.getDepth();
 		while ((type = parser.next()) != XmlPullParser.END_DOCUMENT && (type != XmlPullParser.END_TAG || parser.getDepth() > outerDepth)) {
 			if (type == XmlPullParser.START_TAG) {
-				dr = Drawable.createFromXmlInnerForDensity(r, parser, attrs,
-									   mState.mSrcDensityOverride, theme);
+				dr = Drawable.createFromXmlInner(r, parser, attrs, theme);
 			}
 		}
 
 		if (dr != null) {
 			setDrawable(dr);
 		}
-	}*/
+	}
 
 	abstract static class DrawableWrapperState extends Drawable.ConstantState {
 		private int[] mThemeAttrs;

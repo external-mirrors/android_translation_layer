@@ -1,7 +1,7 @@
 package android.graphics.drawable;
 
+import android.content.res.Resources;
 import android.graphics.Rect;
-import android.graphics.drawable.DrawableWrapper;
 
 public class InsetDrawable extends DrawableWrapper {
 
@@ -13,5 +13,22 @@ public class InsetDrawable extends DrawableWrapper {
 		super(drawable);
 	}
 
+	InsetDrawable() {
+		super(new InsetState(null, null), null);
+	}
+
 	public boolean getPadding(Rect padding) { return false; }
+
+	static final class InsetState extends DrawableWrapper.DrawableWrapperState {
+
+		InsetState(DrawableWrapperState orig, Resources res) {
+			super(orig, res);
+		}
+
+		@Override
+		public Drawable newDrawable(Resources res) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'newDrawable'");
+		}
+	}
 }
