@@ -11,14 +11,6 @@ extern "C" {
 #define android_graphics_Region_MAX_POOL_SIZE 10L
 /*
  * Class:     android_graphics_Region
- * Method:    isEmpty
- * Signature: ()Z
- */
-JNIEXPORT jboolean JNICALL Java_android_graphics_Region_isEmpty
-  (JNIEnv *, jobject);
-
-/*
- * Class:     android_graphics_Region
  * Method:    isRect
  * Signature: ()Z
  */

@@ -23,7 +23,7 @@ public class NetworkInfo {
 	}
 
 	public int getType() {
-		return 0x8; // TYPE_DUMMY
+		return state == State.CONNECTED ? /*TYPE_WIFI*/0x1 : 0x0;
 	}
 
 	public boolean isConnected() {

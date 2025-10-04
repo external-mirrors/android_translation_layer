@@ -86,7 +86,8 @@ public class Region {
 	 * Set the region to the specified rectangle
 	 */
 	public boolean set(Rect r) {
-		return nativeSetRect(mNativeRegion, r.left, r.top, r.right, r.bottom);
+		// return nativeSetRect(mNativeRegion, r.left, r.top, r.right, r.bottom);
+		return false;
 	}
 
 	/**
@@ -107,7 +108,9 @@ public class Region {
 	/**
 	 * Return true if this region is empty
 	 */
-	public native boolean isEmpty();
+	public /*native*/ boolean isEmpty() {
+		return false;
+	}
 
 	/**
 	 * Return true if the region contains a single rectangle
@@ -124,7 +127,7 @@ public class Region {
 	 */
 	public Rect getBounds() {
 		Rect r = new Rect();
-		nativeGetBounds(mNativeRegion, r);
+		// nativeGetBounds(mNativeRegion, r);
 		return r;
 	}
 
@@ -264,8 +267,9 @@ public class Region {
 	 * regions. Return true if the result is not empty.
 	 */
 	public boolean op(Region region1, Region region2, Op op) {
-		return nativeOp(mNativeRegion, region1.mNativeRegion,
-				region2.mNativeRegion, op.nativeInt);
+		// return nativeOp(mNativeRegion, region1.mNativeRegion,
+		// 		region2.mNativeRegion, op.nativeInt);
+		return false;
 	}
 	public String toString() {
 		return nativeToString(mNativeRegion);

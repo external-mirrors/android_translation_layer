@@ -12,6 +12,7 @@ import org.xmlpull.v1.XmlPullParser;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 
 public class Intent implements Parcelable {
@@ -415,5 +416,12 @@ public class Intent implements Parcelable {
 
 	public Intent getSelector() {
 		return selector;
+	}
+
+	public boolean filterEquals(Intent other) {
+		return Objects.equals(this.action, other.action)
+		    && Objects.equals(this.component, other.component)
+		    && Objects.equals(this.data, other.data)
+		    && Objects.equals(this.type, other.type);
 	}
 }

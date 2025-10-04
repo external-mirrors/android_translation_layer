@@ -313,3 +313,10 @@ JNIEXPORT jboolean JNICALL Java_android_app_Activity_isInMultiWindowMode(JNIEnv 
 {
 	return !gtk_window_is_maximized(window);
 }
+
+JNIEXPORT jboolean JNICALL Java_android_app_Activity_isTaskRoot(JNIEnv *env, jobject this)
+{
+	jobject root_activity = activity_backlog ? g_list_last(activity_backlog)->data : NULL;
+	// NULL means that we are currently creating the root activity, so no other activity can exist yet
+	return root_activity == NULL || (*env)->IsSameObject(env, this, root_activity);
+}

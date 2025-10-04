@@ -521,17 +521,17 @@ public class Canvas {
 	}
 
 	public boolean clipRect(RectF rect) {
-		Log.w("Canvas", "STUB: clipRect");
+		Log.v("Canvas", "STUB: clipRect");
 		return false;
 	}
 
 	public boolean clipRect(float left, float top, float right, float bottom, Region.Op op) {
-		Log.w("Canvas", "STUB: clipRect");
+		Log.v("Canvas", "STUB: clipRect");
 		return false;
 	}
 
 	public boolean clipRect(RectF rect, Region.Op op) {
-		Log.w("Canvas", "STUB: clipRect");
+		Log.v("Canvas", "STUB: clipRect");
 		return false;
 	}
 
@@ -549,5 +549,9 @@ public class Canvas {
 
 	public void drawPicture(Picture picture) {
 		Log.w("Canvas", "STUB: drawPicture");
+	}
+
+	public void drawPoint(float x, float y, Paint paint) {
+		Log.w("Canvas", "STUB: drawPoint");
 	}
 }

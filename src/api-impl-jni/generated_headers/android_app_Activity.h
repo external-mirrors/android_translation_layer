@@ -15,6 +15,14 @@ extern "C" {
 #define android_app_Activity_RESULT_OK -1L
 /*
  * Class:     android_app_Activity
+ * Method:    isTaskRoot
+ * Signature: ()Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_app_Activity_isTaskRoot
+  (JNIEnv *, jobject);
+
+/*
+ * Class:     android_app_Activity
  * Method:    nativeFinish
  * Signature: (J)V
  */

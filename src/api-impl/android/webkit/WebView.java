@@ -96,6 +96,8 @@ public class WebView extends ViewGroup {
 		loadDataWithBaseURL("about:blank", data, mimeType, encoding, "about:blank");
 	}
 
+	public void evaluateJavascript(String script, ValueCallback resultCallback) {}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	private native void native_loadDataWithBaseURL(long widget, String baseUrl, String data, String mimeType, String encoding);

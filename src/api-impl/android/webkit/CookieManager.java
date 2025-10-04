@@ -23,4 +23,10 @@ public class CookieManager {
 	public void removeSessionCookies(ValueCallback callback) {}
 
 	public void flush() {}
+
+	public String getCookie(String url) {
+		return "";
+	}
+
+	public void setCookie(String url, String value) {}
 }

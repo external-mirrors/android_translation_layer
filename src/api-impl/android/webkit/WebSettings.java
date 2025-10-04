@@ -54,4 +54,6 @@ public class WebSettings {
 	public void setBlockNetworkLoads(boolean block) {}
 
 	public void setMixedContentMode(int mode) {}
+
+	public void setBlockNetworkImage(boolean block) {}
 }

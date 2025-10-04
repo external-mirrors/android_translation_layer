@@ -250,6 +250,7 @@ void wrapper_widget_set_child(WrapperWidget *parent, GtkWidget *child) // TODO: 
 static guint queue_queue_redraw(GtkWidget *widget)
 {
 	gtk_widget_queue_draw(widget);
+	g_object_unref(widget);
 	return G_SOURCE_REMOVE;
 }
 
@@ -258,7 +259,7 @@ void wrapper_widget_queue_draw(WrapperWidget *wrapper)
 	if (wrapper->draw_method) {
 		/* schedule the call to gtk_widget_queue_draw for a future event loop pass in case we're currently inside the snapshot */
 		/* GTK+ uses G_PRIORITY_HIGH_IDLE + 10 for resizing operations, and G_PRIORITY_HIGH_IDLE + 20 for redrawing operations. */
-		g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_queue_redraw), &wrapper->parent_instance, NULL);
+		g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_queue_redraw), g_object_ref(wrapper), NULL);
 	}
 
 	if(wrapper->child)

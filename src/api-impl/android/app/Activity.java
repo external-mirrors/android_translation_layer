@@ -568,9 +568,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	public void overridePendingTransition(int enterAnim, int exitAnim) {}
 
-	public boolean isTaskRoot() {
-		return false;
-	}
+	public native boolean isTaskRoot();
 
 	public void postponeEnterTransition() {}
 

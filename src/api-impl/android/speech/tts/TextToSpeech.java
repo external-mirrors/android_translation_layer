@@ -20,7 +20,15 @@ public class TextToSpeech {
 		return ERROR;
 	}
 
+	public int setOnUtteranceProgressListener(UtteranceProgressListener listener) {
+		return ERROR;
+	}
+
 	public void shutdown() {
+	}
+
+	public int stop() {
+		return ERROR;
 	}
 
 	public static interface OnInitListener {
