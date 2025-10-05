@@ -68,13 +68,17 @@ JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChild(JNIEnv *env
 G_DECLARE_FINAL_TYPE(JavaWidget, java_widget, JAVA, WIDGET, GtkWidget)
 bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, gpointer event, int action);
 
-static bool dispatch_motionevent_if_JavaWidget(GtkWidget *widget, GtkPropagationPhase phase, jobject motion_event)
+static bool dispatch_motionevent_if_JavaWidget(GtkWidget *widget, GtkPropagationPhase phase, jobject motion_event, GtkWidget *toplevel)
 {
 	if(!JAVA_IS_WIDGET(widget))
 		return false;
 	JNIEnv *env = get_jni_env();
 
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
+	if (widget == toplevel && wrapper->custom_dispatch_touch) {
+		// don't self propagate if the widget already had its chance to handle the event
+		return false;
+	}
 	int action = _GET_INT_FIELD(motion_event, "action");
 	return view_dispatch_motionevent(env, wrapper, phase, motion_event, motion_event, action);
 }
@@ -116,7 +120,7 @@ bool atl_propagate_synthetic_motionevent(GtkWidget *widget, jobject motionevent,
 		if (!gtk_widget_is_sensitive(widget)) {
 			handled_event = true;
 		} else if (gtk_widget_get_realized(widget))
-			handled_event = dispatch_motionevent_if_JavaWidget(widget, GTK_PHASE_CAPTURE, motionevent);
+			handled_event = dispatch_motionevent_if_JavaWidget(widget, GTK_PHASE_CAPTURE, motionevent, toplevel);
 
 		handled_event |= !gtk_widget_get_realized(widget);
 
@@ -146,7 +150,7 @@ bool atl_propagate_synthetic_motionevent(GtkWidget *widget, jobject motionevent,
 			if (!gtk_widget_is_sensitive(widget))
 				handled_event = true;
 			else if (gtk_widget_get_realized(widget))
-			handled_event = dispatch_motionevent_if_JavaWidget(widget, GTK_PHASE_BUBBLE, motionevent);
+			handled_event = dispatch_motionevent_if_JavaWidget(widget, GTK_PHASE_BUBBLE, motionevent, toplevel);
 
 			handled_event |= !gtk_widget_get_realized(widget);
 
