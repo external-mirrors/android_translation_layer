@@ -341,6 +341,10 @@ public class Paint {
 
 	public MaskFilter setMaskFilter(MaskFilter filter) { return filter; }
 
+	public boolean isFakeBoldText() {
+		return false;
+	}
+
 	private static native long native_create();
 	private static native long native_clone(long paint);
 	private static native void native_recycle(long paint);

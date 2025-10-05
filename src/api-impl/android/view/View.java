@@ -2223,4 +2223,12 @@ public class View implements Drawable.Callback {
 	public boolean isDuplicateParentStateEnabled() { return false; }
 
 	public void setBackgroundTintMode(PorterDuff.Mode tintMode) {}
+
+	public void setNextFocusLeftId(int id) {}
+
+	public void setNextFocusRightId(int id) {}
+
+	public void setNextFocusDownId(int id) {}
+
+	public void setNextFocusUpId(int id) {}
 }

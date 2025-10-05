@@ -191,4 +191,6 @@ public class Dialog implements Window.Callback, DialogInterface {
 	public boolean onTouchEvent(MotionEvent event) {
 		return false;
 	}
+
+	public void setOnKeyListener(OnKeyListener onKeyListener) {}
 }

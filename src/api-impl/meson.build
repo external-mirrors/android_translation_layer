@@ -293,6 +293,7 @@ srcs = [
 	'android/media/Ringtone.java',
 	'android/media/RingtoneManager.java',
 	'android/media/SoundPool.java',
+	'android/media/ThumbnailUtils.java',
 	'android/media/audiofx/AudioEffect.java',
 	'android/media/projection/MediaProjectionManager.java',
 	'android/media/session/MediaController.java',

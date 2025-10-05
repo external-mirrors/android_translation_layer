@@ -354,6 +354,8 @@ public class Drawable {
 		return densityDpi == 0 ? DisplayMetrics.DENSITY_DEFAULT : densityDpi;
 	}
 
+	public void setFilterBitmap(boolean filter) {}
+
 	protected static native long native_paintable_from_path(String path);
 	protected native long native_constructor();
 	protected native void native_invalidate(long paintable);

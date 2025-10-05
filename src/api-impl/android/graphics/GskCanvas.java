@@ -145,7 +145,8 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void concat(Matrix matrix) {
-		native_concat(snapshot, matrix.native_instance);
+		if (matrix != null)
+			native_concat(snapshot, matrix.native_instance);
 	}
 
 	@Override

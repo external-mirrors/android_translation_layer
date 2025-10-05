@@ -3644,4 +3644,8 @@ public class ListView extends AbsListView {
 		}
 		return null;
 	}
+
+	public void setItemsCanFocus(boolean itemsCanFocus) {
+		mItemsCanFocus = itemsCanFocus;
+	}
 }

@@ -496,7 +496,9 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		public LayoutParams(Context context, AttributeSet attrs) {
 			TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ViewGroup_Layout);
 			setBaseAttributes(a, R.styleable.ViewGroup_Layout_layout_width, R.styleable.ViewGroup_Layout_layout_height);
-			this.gravity = attrs.getAttributeIntValue("http://schemas.android.com/apk/res/android", "layout_gravity", -1);
+			a.recycle();
+			a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.layout_gravity });
+			gravity = a.getInt(0, -1);
 			a.recycle();
 		}
 

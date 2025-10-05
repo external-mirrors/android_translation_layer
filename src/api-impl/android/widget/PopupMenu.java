@@ -561,6 +561,12 @@ public class PopupMenu {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'isActionViewExpanded'");
 		}
+
+		@Override
+		public MenuItem setIntent(Intent intent) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'setIntent'");
+		}
 	}
 
 }

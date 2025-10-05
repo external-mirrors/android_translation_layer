@@ -29,12 +29,19 @@ public class DrawableContainer extends Drawable {
 		this.state = state;
 	}
 
-	public static class DrawableContainerState {
+	@Override
+	public ConstantState getConstantState() {
+		return state;
+	}
+
+	public static class DrawableContainerState extends ConstantState {
 
 		private Drawable drawables[] = new Drawable[10];
 		private int childCount = 0;
+		private DrawableContainer owner;
 
 		public DrawableContainerState(DrawableContainerState orig, DrawableContainer owner, Resources res) {
+			this.owner = owner;
 		}
 
 		public int getCapacity() {
@@ -61,6 +68,21 @@ public class DrawableContainer extends Drawable {
 				Drawable[] newDrawables = new Drawable[newSize];
 				System.arraycopy(drawables, 0, newDrawables, 0, oldSize);
 				drawables = newDrawables;
+		}
+
+		@Override
+		public Drawable newDrawable(Resources res) {
+			return owner;
+		}
+
+		@Override
+		public Drawable newDrawable() {
+			return owner;
+		}
+
+		@Override
+		public int getChangingConfigurations() {
+			return owner.getChangingConfigurations();
 		}
 	}
 

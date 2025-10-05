@@ -386,6 +386,10 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		Dialog dialog = dialogs.get(id);
 		if (dialog == null)
 			dialogs.put(id, dialog = onCreateDialog(id));
+		if (dialog == null) {
+			Slog.w(TAG, "Dialog " + id + " was not created");
+			return;
+		}
 		onPrepareDialog(id, dialog);
 		dialog.show();
 	}

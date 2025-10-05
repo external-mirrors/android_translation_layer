@@ -1,5 +1,6 @@
 package android.view;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 
 public interface MenuItem {
@@ -76,4 +77,6 @@ public interface MenuItem {
 	public boolean expandActionView();
 
 	public boolean isActionViewExpanded();
+
+	public MenuItem setIntent(Intent intent);
 }

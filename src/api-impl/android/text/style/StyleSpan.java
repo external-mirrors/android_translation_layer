@@ -2,6 +2,14 @@ package android.text.style;
 
 public class StyleSpan {
 
-	public StyleSpan(int style) {}
+	private int style;
+
+	public StyleSpan(int style) {
+		this.style = style;
+	}
+
+	public int getStyle() {
+		return style;
+	}
 
 }
