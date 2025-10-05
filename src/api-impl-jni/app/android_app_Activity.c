@@ -201,10 +201,11 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeStartActivity(JNIEnv *env
 	activity_start(env, activity);
 }
 
-JNIEXPORT void JNICALL Java_android_app_Activity_nativeResumeActivity(JNIEnv *env, jclass class, jclass activity_class, jobject intent)
+JNIEXPORT jboolean JNICALL Java_android_app_Activity_nativeResumeActivity(JNIEnv *env, jclass class, jclass activity_class, jobject intent)
 {
 	GList *l;
 	GList *activities_to_close = NULL;
+	jboolean found = JNI_FALSE;
 	for (l = activity_backlog; l != NULL; l = l->next) {
 		if ((*env)->IsSameObject(env, activity_class, _CLASS(l->data))) {
 			if (l != activity_backlog) {
@@ -218,6 +219,7 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeResumeActivity(JNIEnv *en
 			(*env)->CallVoidMethod(env, l->data, handle_cache.activity.onNewIntent, intent);
 			if((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
+			found = JNI_TRUE;
 			break;
 		}
 	}
@@ -228,6 +230,8 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeResumeActivity(JNIEnv *en
 		_UNREF(l->data);
 	}
 	g_list_free(activities_to_close);
+
+	return found;
 }
 
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeOpenURI(JNIEnv *env, jclass class, jstring uriString)
