@@ -122,6 +122,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/media/android_media_MediaPlayer.c',
                                                                   	'src/api-impl-jni/media/android_media_session_MediaSession.c',
                                                                   	'src/api-impl-jni/net/android_net_ConnectivityManager.c',
+                                                                  	'src/api-impl-jni/os/android_os_Parcel.c',
                                                                   	'src/api-impl-jni/os/android_os_Process.c',
                                                                   	'src/api-impl-jni/sensors/android_hardware_SensorManager.c',
                                                                   	'src/api-impl-jni/text/android_text_Layout.c',

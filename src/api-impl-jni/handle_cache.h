@@ -127,6 +127,7 @@ struct handle_cache {
 		jmethodID putExtraByteArray;
 		jmethodID putExtraInt;
 		jmethodID putExtraLong;
+		jmethodID putExtraParcelable;
 		jmethodID getDataString;
 		jmethodID setClassName;
 	} intent;
@@ -157,6 +158,12 @@ struct handle_cache {
 		jclass class;
 		jmethodID toArray;
 	} set;
+	struct {
+		jclass class;
+		jmethodID constructor;
+		jmethodID writeParcelable;
+		jmethodID readParcelable;
+	} parcel;
 };
 
 extern struct handle_cache handle_cache;

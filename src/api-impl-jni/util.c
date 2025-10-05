@@ -257,18 +257,27 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 	jobject extras_key_set = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.keySet);
 	jobjectArray extras_keys = (*env)->CallObjectMethod(env, extras_key_set, handle_cache.set.toArray);
 	jsize extras_keys_length = (*env)->GetArrayLength(env, extras_keys);
+	jclass parcelable_class = (*env)->FindClass(env, "android/os/Parcelable");
 	for (jint i = 0; i < extras_keys_length; i++) {
 		jstring key_jstr = (*env)->GetObjectArrayElement(env, extras_keys, i);
 		jobject value_jobj = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.get, key_jstr);
-		if (!(*env)->IsSameObject(env, _CLASS(key_jstr), _CLASS(value_jobj))) {
-			printf("skipping non-string extra: %s\n", (*env)->GetStringUTFChars(env, key_jstr, NULL));
-			continue;
-		}
 		const char *key = (*env)->GetStringUTFChars(env, key_jstr, NULL);
-		const char *value = (*env)->GetStringUTFChars(env, value_jobj, NULL);
-		g_variant_builder_add(&extras_builder, "{sv}", key, g_variant_new_string(value));
+		if ((*env)->IsInstanceOf(env, value_jobj, _CLASS(key_jstr))) {
+			const char *value = (*env)->GetStringUTFChars(env, value_jobj, NULL);
+			g_variant_builder_add(&extras_builder, "{sv}", key, g_variant_new_string(value));
+			(*env)->ReleaseStringUTFChars(env, value_jobj, value);
+		} else if ((*env)->IsInstanceOf(env, value_jobj, parcelable_class)) {
+			GVariantBuilder parcel_builder;
+			g_variant_builder_init_static(&parcel_builder, G_VARIANT_TYPE_TUPLE);
+			jobject parcel = (*env)->NewObject(env, handle_cache.parcel.class, handle_cache.parcel.constructor, _INTPTR(&parcel_builder), 0);
+			(*env)->CallVoidMethod(env, parcel, handle_cache.parcel.writeParcelable, value_jobj, 0);
+			GVariant *parcel_variant = g_variant_builder_end(&parcel_builder);
+			g_variant_builder_add(&extras_builder, "{sv}", key, parcel_variant);
+			(*env)->DeleteLocalRef(env, parcel);
+		} else {
+			printf("intent_serialize: skipping non-string, non-parcelable extra: %s\n", key);
+		}
 		(*env)->ReleaseStringUTFChars(env, key_jstr, key);
-		(*env)->ReleaseStringUTFChars(env, value_jobj, value);
 		(*env)->DeleteLocalRef(env, key_jstr);
 		(*env)->DeleteLocalRef(env, value_jobj);
 	}
@@ -323,6 +332,20 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant) {
 			jbyteArray bytesMessage = (*env)->NewByteArray(env, size);
 			(*env)->SetByteArrayRegion(env, bytesMessage, 0, size, message);
 			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraByteArray, _JSTRING(key), bytesMessage);
+		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_TUPLE)) {
+			GVariantIter parcel_iter;
+			g_variant_iter_init(&parcel_iter, value);
+			jobject parcel = (*env)->NewObject(env, handle_cache.parcel.class, handle_cache.parcel.constructor, 0, _INTPTR(&parcel_iter));
+			jmethodID getClassLoader = _METHOD((*env)->FindClass(env, "java/lang/Class"), "getClassLoader", "()Ljava/lang/ClassLoader;");
+			jobject class_loader = (*env)->CallObjectMethod(env, handle_cache.parcel.class, getClassLoader);
+			jobject parcelable = (*env)->CallObjectMethod(env, parcel, handle_cache.parcel.readParcelable, class_loader);
+			if ((*env)->ExceptionCheck(env)) {
+				(*env)->ExceptionDescribe(env);
+				(*env)->ExceptionClear(env);
+			}
+			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraParcelable, _JSTRING(key), parcelable);
+			(*env)->DeleteLocalRef(env, parcelable);
+			(*env)->DeleteLocalRef(env, parcel);
 		}
 	}
 	g_variant_iter_free(extras);

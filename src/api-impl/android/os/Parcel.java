@@ -5,8 +5,16 @@ import java.util.List;
 
 public class Parcel {
 
+	private long builder;
+	private long iter;
+
+	Parcel(long builder, long iter) {
+		this.builder = builder;
+		this.iter = iter;
+	}
+
 	public static Parcel obtain() {
-		return new Parcel();
+		return new Parcel(0, 0);
 	}
 
 	public void writeBundle(Bundle bundle) {}
@@ -25,6 +33,7 @@ public class Parcel {
 
 	public void writeString(String s) {
 		System.out.println("Parcel.writeString(" + s + ")");
+		native_writeString(builder, s);
 	}
 
 	public void writeLong(long l) {
@@ -33,6 +42,7 @@ public class Parcel {
 
 	public void writeInt(int i) {
 		System.out.println("Parcel.writeInt(" + i + ")");
+		native_writeInt(builder, i);
 	}
 
 	public byte[] marshall() {
@@ -45,6 +55,8 @@ public class Parcel {
 
 	public void writeParcelable(Parcelable p, int flags) {
 		System.out.println("Parcel.writeParcelable(" + p + ", " + flags + ")");
+		native_writeString(builder, p.getClass().getName());
+		p.writeToParcel(this, flags);
 	}
 
 	public void writeInterfaceToken(String s) {
@@ -66,7 +78,7 @@ public class Parcel {
 	public void unmarshall(byte[] data, int offset, int length) {}
 
 	public String readString() {
-		return "fixme: Parcel.readString()";
+		return native_readString(iter);
 	}
 
 	public byte readByte() {
@@ -77,11 +89,40 @@ public class Parcel {
 		return new ArrayList<String>();
 	}
 
-	public Parcelable readParcelable(ClassLoader loader) {
-		return null;
+	public Parcelable readParcelable(ClassLoader loader) throws ReflectiveOperationException {
+		String className = native_readString(iter);
+		@SuppressWarnings("unchecked")
+		Parcelable.Creator<Parcelable> creator = loader.loadClass(className + "$Creator").asSubclass(Parcelable.Creator.class).getConstructor().newInstance();
+		return creator.createFromParcel(this);
 	}
 
 	public void writeStrongBinder(IBinder binder) {}
 
 	public void readException() {}
+
+	public int readInt() {
+		return native_readInt(iter);
+	}
+
+	public void writeStringArray(String[] strings) {
+		System.out.println("Parcel.writeStringArray(" + strings + ")");
+		native_writeInt(builder, strings.length);
+		for (String s : strings) {
+			native_writeString(builder, s);
+		}
+	}
+
+	public String[] createStringArray() {
+		int len = native_readInt(iter);
+		String[] strings = new String[len];
+		for (int i = 0; i < len; i++) {
+			strings[i] = native_readString(iter);
+		}
+		return strings;
+	}
+
+	protected static native void native_writeInt(long builder, int i);
+	protected static native void native_writeString(long builder, String s);
+	protected static native int native_readInt(long iter);
+	protected static native String native_readString(long iter);
 }
