@@ -629,7 +629,7 @@ public class PackageParser {
 
 			Certificate[] certs = null;
 
-			if ((flags & PARSE_IS_SYSTEM) != 0) {
+			if ((flags & PARSE_IS_SYSTEM) != 0 || System.getenv("ATL_VALIDATE_CERTS") == null) {
 				// If this package comes from the system image, then we
 				// can trust it...  we'll just use the AndroidManifest.xml
 				// to retrieve its signatures, not validating all of the
