@@ -268,7 +268,7 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 			(*env)->ReleaseStringUTFChars(env, value_jobj, value);
 		} else if ((*env)->IsInstanceOf(env, value_jobj, parcelable_class)) {
 			GVariantBuilder parcel_builder;
-			g_variant_builder_init_static(&parcel_builder, G_VARIANT_TYPE_TUPLE);
+			g_variant_builder_init(&parcel_builder, G_VARIANT_TYPE_TUPLE);
 			jobject parcel = (*env)->NewObject(env, handle_cache.parcel.class, handle_cache.parcel.constructor, _INTPTR(&parcel_builder), 0);
 			(*env)->CallVoidMethod(env, parcel, handle_cache.parcel.writeParcelable, value_jobj, 0);
 			GVariant *parcel_variant = g_variant_builder_end(&parcel_builder);
