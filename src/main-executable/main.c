@@ -73,8 +73,6 @@ char *construct_classpath(char *prefix, char **cp_array, size_t len)
 		}
 	}
 
-	printf("construct_classpath: returning >%s<\n", result);
-
 	return result;
 }
 
