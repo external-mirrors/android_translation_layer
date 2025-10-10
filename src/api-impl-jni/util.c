@@ -249,7 +249,6 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 	jobject component = _GET_OBJ_FIELD(intent, "component", "Landroid/content/ComponentName;");
 	jstring className_jstr = component ? _GET_OBJ_FIELD(component, "mClass", "Ljava/lang/String;") : NULL;
 	jstring data_jstr = (*env)->CallObjectMethod(env, intent, handle_cache.intent.getDataString);
-	jstring sender_package_jstr = (*env)->CallObjectMethod(env, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), handle_cache.context.get_package_name);
 
 	GVariantBuilder extras_builder;
 	g_variant_builder_init(&extras_builder, G_VARIANT_TYPE_VARDICT);
@@ -285,10 +284,8 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 	const char *action = action_jstr ? (*env)->GetStringUTFChars(env, action_jstr, NULL) : NULL;
 	const char *className = className_jstr ? (*env)->GetStringUTFChars(env, className_jstr, NULL) : NULL;
 	const char *data = data_jstr ? (*env)->GetStringUTFChars(env, data_jstr, NULL) : NULL;
-	const char *sender_package = sender_package_jstr ? (*env)->GetStringUTFChars(env, sender_package_jstr, NULL) : NULL;
-	GVariant *variant = g_variant_new(INTENT_G_VARIANT_TYPE_STRING, action ?: "", className ?: "", data ?: "", &extras_builder, sender_package);
-	if (sender_package_jstr)
-		(*env)->ReleaseStringUTFChars(env, sender_package_jstr, sender_package);
+	const char *dbus_name = g_application_get_application_id(g_application_get_default());
+	GVariant *variant = g_variant_new(INTENT_G_VARIANT_TYPE_STRING, action ?: "", className ?: "", data ?: "", &extras_builder, dbus_name);
 	if (action_jstr)
 		(*env)->ReleaseStringUTFChars(env, action_jstr, action);
 	if (className_jstr)
