@@ -1400,10 +1400,10 @@ public class View implements Drawable.Callback {
 
 	public final void measure(int widthMeasureSpec, int heightMeasureSpec) {
 		if (layoutRequested || widthMeasureSpec != oldWidthMeasureSpec || heightMeasureSpec != oldHeightMeasureSpec) {
+			layoutRequested = false;
 			oldWidthMeasureSpec = widthMeasureSpec;
 			oldHeightMeasureSpec = heightMeasureSpec;
 			onMeasure(widthMeasureSpec, heightMeasureSpec);
-			layoutRequested = false;
 		}
 	}
 
