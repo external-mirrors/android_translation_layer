@@ -841,8 +841,6 @@ public class View implements Drawable.Callback {
 	private int scrollX = 0;
 	private int scrollY = 0;
 
-	private boolean attachedToWindow = false;
-
 	public long widget; // pointer
 
 	private int oldWidthMeasureSpec = -1;
@@ -1836,7 +1834,10 @@ public class View implements Drawable.Callback {
 
 	public void setPaddingRelative(int start, int top, int end, int bottom) {}
 
-	public boolean isAttachedToWindow() {return attachedToWindow;}
+	private native boolean nativeIsAttachedToWindow(long widget);
+	public boolean isAttachedToWindow() {
+		return nativeIsAttachedToWindow(widget);
+	}
 
 	public void requestApplyInsets() {}
 
@@ -1910,34 +1911,13 @@ public class View implements Drawable.Callback {
 	private boolean keepScreenOn = false;
 	private static native void native_keep_screen_on(long widget, boolean keepScreenOn);
 	public void setKeepScreenOn(boolean screenOn) {
-		if (attachedToWindow && keepScreenOn != screenOn)
+		if (isAttachedToWindow() && keepScreenOn != screenOn)
 			native_keep_screen_on(widget, screenOn);
 		keepScreenOn = screenOn;
 	}
 
-	protected void onAttachedToWindow () {
-		attachedToWindow = true;
-		if (onAttachStateChangeListener != null) {
-			onAttachStateChangeListener.onViewAttachedToWindow(this);
-		}
-		if (keepScreenOn)
-			native_keep_screen_on(widget, true);
-	}
-	protected void onDetachedFromWindow() {
-		if (onAttachStateChangeListener != null) {
-			onAttachStateChangeListener.onViewDetachedFromWindow(this);
-		}
-		if (keepScreenOn)
-			native_keep_screen_on(widget, false);
-	}
-
-	void detachFromWindowInternal() {
-		onDetachedFromWindow();
-		attachedToWindow = false;
-	}
-	public void attachToWindowInternal() {
-		onAttachedToWindow();
-	}
+	protected void onAttachedToWindow() {}
+	protected void onDetachedFromWindow() {}
 
 	public void setLayerType(int layerType, Paint paint) {}
 

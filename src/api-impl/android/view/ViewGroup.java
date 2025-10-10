@@ -77,8 +77,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			index = children.size();
 		children.add(index, child);
 		native_addView(widget, child.widget, index, params);
-		if (isAttachedToWindow())
-			child.onAttachedToWindow();
 		if (onHierarchyChangeListener != null)
 			onHierarchyChangeListener.onChildViewAdded(this, child);
 
@@ -111,8 +109,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		child.parent = null;
 		children.remove(child);
 		native_removeView(widget, child.widget);
-		if (isAttachedToWindow())
-			child.detachFromWindowInternal();
 		if (onHierarchyChangeListener != null) {
 			onHierarchyChangeListener.onChildViewRemoved(this, child);
 		}
@@ -136,8 +132,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			child.parent = null;
 			it.remove();
 			native_removeView(widget, child.widget);
-			if (isAttachedToWindow())
-				child.detachFromWindowInternal();
 			if (onHierarchyChangeListener != null) {
 				onHierarchyChangeListener.onChildViewRemoved(this, child);
 			}
@@ -169,8 +163,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			return;
 		child.parent = null;
 		native_removeView(widget, child.widget);
-		if (isAttachedToWindow())
-			child.detachFromWindowInternal();
 		if (onHierarchyChangeListener != null) {
 			onHierarchyChangeListener.onChildViewRemoved(this, child);
 		}
@@ -362,22 +354,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	protected void setChildrenDrawingOrderEnabled(boolean enabled) {}
 
 	public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
-
-	@Override
-	protected void onAttachedToWindow() {
-		super.onAttachedToWindow();
-		for (View child: children) {
-			child.onAttachedToWindow();
-		}
-	}
-
-	@Override
-	protected void detachFromWindowInternal() {
-		super.detachFromWindowInternal();
-		for (View child: children) {
-			child.detachFromWindowInternal();
-		}
-	}
 
 	protected boolean isChildrenDrawingOrderEnabled() { return false; }
 

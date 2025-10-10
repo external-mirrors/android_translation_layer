@@ -74,7 +74,6 @@ public class PopupWindow {
 		contentView = view;
 		if (contentView != null) {
 			contentView.setBackground(getBackground());
-			contentView.attachToWindowInternal();
 		}
 		native_setContentView(popover, view == null ? 0 : view.widget);
 	}

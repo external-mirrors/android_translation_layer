@@ -505,6 +505,13 @@ static void java_widget_class_init(JavaWidgetClass *class) {
 }
 G_DEFINE_TYPE(JavaWidget, java_widget, GTK_TYPE_WIDGET)
 
+static void java_method_cb(WrapperWidget *wrapper, jmethodID method) {
+	JNIEnv *env = get_jni_env();
+	(*env)->CallVoidMethod(env, wrapper->jobj, method);
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+}
+
 JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
 	WrapperWidget *wrapper = g_object_ref(WRAPPER_WIDGET(wrapper_widget_new()));
@@ -526,6 +533,11 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 		g_signal_connect(controller, "scroll", G_CALLBACK(scroll_cb), wrapper->jobj);
 		gtk_widget_add_controller(widget, controller);
 	}
+
+	if (_METHOD(class, "onAttachedToWindow", "()V") != handle_cache.view.onAttachedToWindow)
+		g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
+	if (_METHOD(class, "onDetachedFromWindow", "()V") != handle_cache.view.onDetachedFromWindow)
+		g_signal_connect(wrapper, "unmap", G_CALLBACK(java_method_cb), handle_cache.view.onDetachedFromWindow);
 
 	return _INTPTR(widget);
 }
@@ -840,4 +852,10 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *e
 		cookie = gtk_application_inhibit(application, window, flags, "keep-screen-on");
 		g_object_set_data(G_OBJECT(widget), "keep-screen-on-cookie", GINT_TO_POINTER(cookie));
 	}
+}
+
+JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsAttachedToWindow(JNIEnv *env, jobject this, jlong widget_ptr)
+{
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	return gtk_widget_get_mapped(widget);
 }

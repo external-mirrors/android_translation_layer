@@ -417,6 +417,14 @@ JNIEXPORT jboolean JNICALL Java_android_view_View_native_1getMatrix
 
 /*
  * Class:     android_view_View
+ * Method:    nativeIsAttachedToWindow
+ * Signature: (J)Z
+ */
+JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsAttachedToWindow
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_view_View
  * Method:    native_keep_screen_on
  * Signature: (JZ)V
  */
