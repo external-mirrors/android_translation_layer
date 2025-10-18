@@ -96,7 +96,9 @@ JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeAddAction(JNIE
 	const char *name = "";
 	if (name_jstr)
 		name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
-	g_notification_add_button_with_target_value(notification, name, intent_actionname_from_type(type), intent_serialize(env, intent));
+        const char *action = intent_actionname_from_type(type);
+        if (action)
+                g_notification_add_button_with_target_value(notification, name, action, intent_serialize(env, intent));
 	if (name_jstr)
 		(*env)->ReleaseStringUTFChars(env, name_jstr, name);
 }
@@ -129,7 +131,9 @@ JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotificati
 		g_free(icon_path_full);
 		(*env)->ReleaseStringUTFChars(env, icon_jstr, icon_path);
 	}
-	g_notification_set_default_action_and_target_value(notification, intent_actionname_from_type(type), intent_serialize(env, intent));
+        const char *action = intent_actionname_from_type(type);
+        if (action)
+                g_notification_set_default_action_and_target_value(notification, action, intent_serialize(env, intent));
 	queue_notification(id, notification);
 	if (ongoing)
 		g_hash_table_add(ongoing_notifications, GINT_TO_POINTER(id));
