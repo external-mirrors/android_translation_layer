@@ -53,7 +53,8 @@ JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1start(JNIEnv 
 	PangoLayoutIter *pango_iter = pango_layout_get_iter(pango_layout);
 	while (line--)
 		pango_layout_iter_next_line(pango_iter);
-	return pango_layout_iter_get_index(pango_iter);
+	int byte_index = pango_layout_iter_get_index(pango_iter);
+	return g_utf8_strlen(pango_layout_get_text(pango_layout), byte_index);
 }
 
 JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1end(JNIEnv *env, jobject object, jlong layout, jint line)
@@ -63,7 +64,8 @@ JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1end(JNIEnv *e
 	while (line--)
 		pango_layout_iter_next_line(pango_iter);
 	pango_layout_iter_next_line(pango_iter);
-	return pango_layout_iter_get_index(pango_iter);
+	int byte_index = pango_layout_iter_get_index(pango_iter);
+	return g_utf8_strlen(pango_layout_get_text(pango_layout), byte_index);
 }
 
 static void get_line_extends(PangoLayout *pango_layout, int line, PangoRectangle *logical_rect) {
