@@ -1587,7 +1587,10 @@ public class PackageManager {
 	 */
 	public ApplicationInfo getApplicationInfo(String packageName,
 						  int flags) throws NameNotFoundException {
-		return package_info.applicationInfo;
+		if (package_info.packageName.equals(packageName))
+			return package_info.applicationInfo;
+		else
+			throw new NameNotFoundException(packageName);
 	}
 
 	/**
