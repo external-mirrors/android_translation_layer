@@ -13,6 +13,8 @@ public final class DisplayManager {
 	public void registerDisplayListener(DisplayListener listener, Handler handler) {
 	}
 
+	public void unregisterDisplayListener(DisplayListener listener) {}
+
 	public Display[] getDisplays() {
 		return new Display[0];
 	}

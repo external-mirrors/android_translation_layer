@@ -54,6 +54,7 @@ import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
+import android.view.accessibility.CaptioningManager;
 import android.view.inputmethod.InputMethodManager;
 import java.io.File;
 import java.io.FileInputStream;
@@ -257,6 +258,8 @@ public class Context extends Object {
 				return new AppOpsManager();
 			case "user":
 				return new UserManager();
+			case "captioning":
+				return new CaptioningManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;

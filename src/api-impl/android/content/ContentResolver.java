@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 
 import android.accounts.Account;
+import android.content.res.AssetFileDescriptor;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.MatrixCursor;
@@ -34,6 +35,18 @@ public class ContentResolver {
 			ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
 			if (provider != null)
 				return provider.openFile(uri, mode);
+			else
+				return null;
+		}
+	}
+
+	public AssetFileDescriptor openAssetFileDescriptor(Uri uri, String mode) throws FileNotFoundException {
+		if ("file".equals(uri.getScheme())) {
+			return new AssetFileDescriptor(ParcelFileDescriptor.open(new File(uri.getPath()), ParcelFileDescriptor.parseMode(mode)), 0, AssetFileDescriptor.UNKNOWN_LENGTH);
+		} else {
+			ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
+			if (provider != null)
+				return provider.openAssetFile(uri, mode);
 			else
 				return null;
 		}

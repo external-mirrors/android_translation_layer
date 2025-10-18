@@ -424,4 +424,8 @@ public class Intent implements Parcelable {
 		    && Objects.equals(this.data, other.data)
 		    && Objects.equals(this.type, other.type);
 	}
+
+	public long[] getLongArrayExtra(String name) {
+		return extras.getLongArray(name);
+	}
 }

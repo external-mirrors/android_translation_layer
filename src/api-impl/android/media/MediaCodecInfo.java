@@ -23,10 +23,23 @@ public class MediaCodecInfo {
 	}
 
 	public CodecCapabilities getCapabilitiesForType(String type) {
-		return null;
+		return new CodecCapabilities();
 	}
 
-	public static class CodecCapabilities {}
+	public static class CodecCapabilities {
+
+		public CodecProfileLevel[] profileLevels;
+
+		public boolean isFeatureSupported(String feature) {
+			System.out.println("CodecCapabilities.isFeatureSupported("+feature+")");
+			return false;
+		}
+
+		public boolean isFeatureRequired(String feature) {
+			System.out.println("CodecCapabilities.isFeatureRequired("+feature+")");
+			return false;
+		}
+	}
 
 	public static class CodecProfileLevel {}
 }

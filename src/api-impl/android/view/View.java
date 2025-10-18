@@ -4,8 +4,10 @@ import android.R;
 import android.animation.StateListAnimator;
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.GskCanvas;
 import android.graphics.Matrix;
@@ -1765,6 +1767,8 @@ public class View implements Drawable.Callback {
 	protected void onAnimationEnd() {}
 
 	public void startAnimation(Animation animation) {
+		if (animation == null)
+			return;
 		onAnimationStart();
 		animation.start();
 		onAnimationEnd();
@@ -2211,4 +2215,16 @@ public class View implements Drawable.Callback {
 	public void setNextFocusDownId(int id) {}
 
 	public void setNextFocusUpId(int id) {}
+
+	public void setHasTransientState(boolean hasTransientState) {}
+
+	protected void onConfigurationChanged(Configuration newConfig) {}
+
+	public boolean isDrawingCacheEnabled() { return false; }
+
+	public void setDrawingCacheEnabled(boolean enabled) {}
+
+	public void buildDrawingCache(boolean autoScale) {}
+
+	public Bitmap getDrawingCache() { return null; }
 }

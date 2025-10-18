@@ -407,7 +407,7 @@ public class RelativeLayout extends ViewGroup {
 			myWidth = DEFAULT_WIDTH;
 		}
 		View[] views = mSortedHorizontalChildren;
-		int count = views.length;
+		int count = views == null ? 0 : views.length;
 		for (int i = 0; i < count; i++) {
 			View child = views[i];
 			if (child.getVisibility() != GONE) {
@@ -421,7 +421,7 @@ public class RelativeLayout extends ViewGroup {
 			}
 		}
 		views = mSortedVerticalChildren;
-		count = views.length;
+		count = views == null ? 0 : views.length;
 		final int targetSdkVersion = getContext().getApplicationInfo().targetSdkVersion;
 		for (int i = 0; i < count; i++) {
 			final View child = views[i];

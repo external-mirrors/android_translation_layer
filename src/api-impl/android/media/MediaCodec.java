@@ -78,8 +78,16 @@ public class MediaCodec {
 		return inputBuffers;
 	}
 
+	public ByteBuffer getInputBuffer(int index) {
+		return inputBuffers[index];
+	}
+
 	public ByteBuffer[] getOutputBuffers() {
 		return outputBuffers;
+	}
+
+	public ByteBuffer getOutputBuffer(int index) {
+		return outputBuffers[index];
 	}
 
 	public int dequeueOutputBuffer(BufferInfo info, long timeoutUs) {
@@ -104,6 +112,11 @@ public class MediaCodec {
 
 	public void releaseOutputBuffer(int index, boolean render) {
 		native_releaseOutputBuffer(native_codec, outputBuffers[index], render);
+		freeOutputBuffers.add(index);
+	}
+
+	public void releaseOutputBuffer(int index, long presentationTimeUs) {
+		native_releaseOutputBuffer(native_codec, outputBuffers[index], true);
 		freeOutputBuffers.add(index);
 	}
 
@@ -154,6 +167,8 @@ public class MediaCodec {
 	public void setVideoScalingMode(int mode) {
 		System.out.println("MediaCodec.setVideoScalingMode(" + mode + "): codecName=" + codecName);
 	}
+
+	public void stop() {}
 
 	public void release() {
 		System.out.println("MediaCodec.release(): codecName=" + codecName);

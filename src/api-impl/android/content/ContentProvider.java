@@ -6,6 +6,7 @@ import java.util.Map;
 
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -54,6 +55,8 @@ public abstract class ContentProvider {
 	public abstract String getType(Uri uri);
 
 	public abstract ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException;
+
+	public abstract AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException;
 
 	public void attachInfo(Context context, ProviderInfo provider) {}
 

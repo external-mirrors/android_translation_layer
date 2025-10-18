@@ -2,6 +2,8 @@ package android.media;
 
 public class MediaCodecList {
 
+	public MediaCodecList(int kind) {}
+
 	public static int getCodecCount() {
 		return 6;
 	}
@@ -23,6 +25,13 @@ public class MediaCodecList {
 		default:
 			return null;
 		}
+	}
+
+	public MediaCodecInfo[] getCodecInfos() {
+		MediaCodecInfo[] infos = new MediaCodecInfo[getCodecCount()];
+		for (int i=0; i<infos.length; i++)
+			infos[i] = getCodecInfoAt(i);
+		return infos;
 	}
 
 }

@@ -1,6 +1,7 @@
 package android.media;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.net.Uri;
 
 public class MediaMetadataRetriever {
@@ -33,5 +34,13 @@ public class MediaMetadataRetriever {
 			default:
 				return null;
 		}
+	}
+
+	public Bitmap getFrameAtTime(long time) {
+		return null;
+	}
+
+	public Bitmap getFrameAtTime() {
+		return null;
 	}
 }

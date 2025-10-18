@@ -20,4 +20,8 @@ public class PathMeasure {
 	public boolean getPosTan(float distance, float[] pos, float[] tan) {
 		return false;
 	}
+
+	public boolean nextContour() {
+		return false;
+	}
 }
