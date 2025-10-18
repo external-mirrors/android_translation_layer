@@ -38,7 +38,7 @@ public class EditText extends TextView {
 
 	@Override
 	public void setText(CharSequence text) {
-		native_setText(widget, String.valueOf(text));
+		native_setText(widget, text == null ? "" : text.toString());
 	}
 	@Override
 	public void setTextSize(float size) {}
