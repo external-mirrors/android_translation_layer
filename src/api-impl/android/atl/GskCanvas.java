@@ -165,6 +165,11 @@ public class GskCanvas extends Canvas {
 		return right > left && bottom > top;
 	}
 
+	@Override
+	public int getSaveCount() {
+		return save_count;
+	}
+
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
 	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, long paint);
 	protected native void native_drawPath(long snapshot, long path, long paint);

@@ -34,6 +34,11 @@ public class Canvas {
 		gsk_canvas.restore();
 	}
 
+	public int getSaveCount() {
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		return gsk_canvas.getSaveCount();
+	}
+
 	// ---
 
 	/**

@@ -439,4 +439,6 @@ public class TextView extends View {
 	public void setHeight(int height) {}
 
 	public void setFreezesText(boolean freezesText) {}
+
+	public void setLetterSpacing(float letterSpacing) {}
 }
