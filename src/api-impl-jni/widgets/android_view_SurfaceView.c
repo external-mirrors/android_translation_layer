@@ -38,7 +38,14 @@ static void surface_view_widget_snapshot(GtkWidget *widget, GdkSnapshot *snapsho
 	SurfaceViewWidget *surface_view_widget = SURFACE_VIEW_WIDGET(widget);
 	if (surface_view_widget->texture) {
 		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, gtk_widget_get_width(widget), gtk_widget_get_height(widget));
+		if (surface_view_widget->needs_flip) {
+			gtk_snapshot_save(snapshot);
+			gtk_snapshot_translate(snapshot, &GRAPHENE_POINT_INIT(0, gtk_widget_get_height(widget)));
+			gtk_snapshot_scale(snapshot, 1, -1);
+		}
 		gtk_snapshot_append_texture(snapshot, surface_view_widget->texture, &bounds);
+		if (surface_view_widget->needs_flip)
+			gtk_snapshot_restore(snapshot);
 	}
 	if (surface_view_widget->frame_callback) {
 		surface_view_widget->frame_callback(surface_view_widget);
@@ -83,11 +90,12 @@ GtkWidget *surface_view_widget_new(void)
 	return g_object_new(surface_view_widget_get_type(), NULL);
 }
 
-void surface_view_widget_set_texture(SurfaceViewWidget *surface_view_widget, GdkTexture *texture)
+void surface_view_widget_set_texture(SurfaceViewWidget *surface_view_widget, GdkTexture *texture, gboolean needs_flip)
 {
 	if (surface_view_widget->texture)
 		g_object_unref(surface_view_widget->texture);
 	surface_view_widget->texture = texture;
+	surface_view_widget->needs_flip = needs_flip;
 	gtk_widget_queue_draw(GTK_WIDGET(surface_view_widget));
 }
 
@@ -186,5 +194,5 @@ JNIEXPORT void JNICALL Java_android_view_SurfaceView_native_1postSnapshot(JNIEnv
 	gsk_renderer_unrealize(renderer);
 	g_object_unref(renderer);
 
-	surface_view_widget_set_texture(surface_view_widget, texture);
+	surface_view_widget_set_texture(surface_view_widget, texture, FALSE);
 }

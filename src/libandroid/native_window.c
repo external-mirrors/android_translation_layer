@@ -20,7 +20,6 @@
 #include <stdlib.h>
 
 #include <EGL/egl.h>
-#include <EGL/eglext.h>
 
 #include <wayland-client.h>
 #include <wayland-egl.h>
@@ -55,7 +54,6 @@
 #include "../api-impl-jni/defines.h"
 
 #include "native_window.h"
-#include "wayland_server.h"
 
 /**
  * Transforms that can be applied to buffers as they are displayed to a window.
@@ -251,8 +249,6 @@ static void on_resize(GtkWidget *self, gint width, gint height, ANativeWindow *n
 	}
 }
 
-static struct wl_display *wl_display_client = NULL;
-
 extern GThread *main_thread_id;
 ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 {
@@ -268,11 +264,6 @@ ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 	static struct wl_subcompositor *wl_subcompositor = NULL;
 	static struct wl_registry_listener wl_registry_listener = {
 		.global = wl_registry_global_handler,
-		.global_remove = wl_registry_global_remove_handler
-	};
-	static struct wl_compositor *wl_compositor = NULL;
-	static struct wl_registry_listener wl_registry_listener_compositor = {
-		.global = wl_registry_global_handler_compositor,
 		.global_remove = wl_registry_global_remove_handler
 	};
 
@@ -300,28 +291,13 @@ ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 	struct ANativeWindow *native_window = calloc(1, sizeof(struct ANativeWindow));
 	native_window->refcount = 1; // probably, 0 doesn't work
 	native_window->surface_view_widget = surface_view_widget;
+	native_window->width = width;
+	native_window->height = height;
 
 	GdkDisplay *display = gtk_root_get_display(GTK_ROOT(window));
 
 	if (!getenv("ATL_DIRECT_EGL")) {
-		if (!wl_compositor) {
-			if (!wl_display_client)
-				wl_display_client = wayland_server_start();
-			struct wl_registry *registry = wl_display_get_registry(wl_display_client);
-			wl_registry_add_listener(registry, &wl_registry_listener_compositor, &wl_compositor);
-			wl_display_roundtrip(wl_display_client);
-			printf("XXX: wl_compositor: %p\n", wl_compositor);
-		}
-		struct wl_surface *wayland_surface = wl_compositor_create_surface(wl_compositor);
-		// transfer the SurfaceViewWidget pointer to the wayland server abusing the set_buffer_scale and set_buffer_transform methods
-		g_object_ref(surface_view_widget);
-		wl_surface_set_buffer_scale(wayland_surface, _INTPTR(surface_view_widget));
-		wl_surface_set_buffer_transform(wayland_surface, _INTPTR(surface_view_widget) >> 32);
-		struct wl_egl_window *egl_window = wl_egl_window_create(wayland_surface, width, height);
-		native_window->egl_window = (EGLNativeWindowType)egl_window;
-		native_window->wayland_display = wl_display_client;
-		native_window->wayland_surface = wayland_surface;
-		printf("EGL::: wayland_surface: %p\n", wayland_surface);
+		// nothing to do
 	} else if (GDK_IS_WAYLAND_DISPLAY(display)) {
 		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(display);
 		struct wl_compositor *wl_compositor = gdk_wayland_display_get_wl_compositor(display);
@@ -412,208 +388,6 @@ ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 ANativeWindow *ANativeWindow_fromSurfaceTexture(JNIEnv *env, jobject surfaceTexture)
 {
 	return NULL;
-}
-
-// temporary for debugging
-static void PrintConfigAttributes(EGLDisplay display, EGLConfig config)
-{
-	EGLint value;
-	printf("-------------------------------------------------------------------------------\n");
-	eglGetConfigAttrib(display, config, EGL_CONFIG_ID, &value);
-	printf("EGL_CONFIG_ID %d\n", value);
-
-	eglGetConfigAttrib(display, config, EGL_BUFFER_SIZE, &value);
-	printf("EGL_BUFFER_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_RED_SIZE, &value);
-	printf("EGL_RED_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_GREEN_SIZE, &value);
-	printf("EGL_GREEN_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_BLUE_SIZE, &value);
-	printf("EGL_BLUE_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_ALPHA_SIZE, &value);
-	printf("EGL_ALPHA_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_DEPTH_SIZE, &value);
-	printf("EGL_DEPTH_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_STENCIL_SIZE, &value);
-	printf("EGL_STENCIL_SIZE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_SAMPLE_BUFFERS, &value);
-	printf("EGL_SAMPLE_BUFFERS %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_SAMPLES, &value);
-	printf("EGL_SAMPLES %d\n", value);
-
-	eglGetConfigAttrib(display, config, EGL_CONFIG_CAVEAT, &value);
-	switch (value) {
-		case EGL_NONE:
-			printf("EGL_CONFIG_CAVEAT EGL_NONE\n");
-			break;
-		case EGL_SLOW_CONFIG:
-			printf("EGL_CONFIG_CAVEAT EGL_SLOW_CONFIG\n");
-			break;
-	}
-
-	eglGetConfigAttrib(display, config, EGL_MAX_PBUFFER_WIDTH, &value);
-	printf("EGL_MAX_PBUFFER_WIDTH %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_MAX_PBUFFER_HEIGHT, &value);
-	printf("EGL_MAX_PBUFFER_HEIGHT %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_MAX_PBUFFER_PIXELS, &value);
-	printf("EGL_MAX_PBUFFER_PIXELS %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_NATIVE_RENDERABLE, &value);
-	printf("EGL_NATIVE_RENDERABLE %s \n", (value ? "true" : "false"));
-	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_ID, &value);
-	printf("EGL_NATIVE_VISUAL_ID %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_NATIVE_VISUAL_TYPE, &value);
-	printf("EGL_NATIVE_VISUAL_TYPE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_RENDERABLE_TYPE, &value);
-	printf("EGL_RENDERABLE_TYPE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_SURFACE_TYPE, &value);
-	printf("EGL_SURFACE_TYPE %d\n", value);
-	eglGetConfigAttrib(display, config, EGL_TRANSPARENT_TYPE, &value);
-	printf("EGL_TRANSPARENT_TYPE %d\n", value);
-	printf("-------------------------------------------------------------------------------\n");
-}
-
-// FIXME: this possibly belongs elsewhere
-
-extern GtkWindow *window; // TODO: how do we get rid of this? the app won't pass anyhting useful to eglGetDisplay
-
-// this is an extension that only android implements, we can hopefully get away with just stubbing it
-EGLBoolean bionic_eglPresentationTimeANDROID(EGLDisplay dpy, EGLSurface surface, EGLnsecsANDROID time)
-{
-	return EGL_TRUE;
-}
-
-void (*bionic_eglGetProcAddress(char const *procname))(void)
-{
-	if (__unlikely__(!strcmp(procname, "eglPresentationTimeANDROID")))
-		return (void (*)(void))bionic_eglPresentationTimeANDROID;
-
-	return eglGetProcAddress(procname);
-}
-
-EGLDisplay bionic_eglGetDisplay(EGLNativeDisplayType native_display)
-{
-	/*
-	 * On android, at least SDL passes 0 (EGL_DISPLAY_DEFAULT) to eglGetDisplay and uses the resulting display.
-	 * We obviously want to make the app use the correct display, which may happen to be a different one
-	 * than the "default" display (especially on Wayland)
-	 */
-	GdkDisplay *display = gtk_root_get_display(GTK_ROOT(window));
-
-	if (!getenv("ATL_DIRECT_EGL")) {
-		if (!wl_display_client)
-			wl_display_client = wayland_server_start();
-		EGLDisplay egl_display = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display_client, NULL);
-		return egl_display;
-	} else if (GDK_IS_WAYLAND_DISPLAY(display)) {
-		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(display);
-		return eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display, NULL);
-	} else if (GDK_IS_X11_DISPLAY(display)) {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-		Display *x11_display = gdk_x11_display_get_xdisplay(display);
-#pragma GCC diagnostic pop
-		return eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, x11_display, NULL);
-	} else {
-		return NULL;
-	}
-}
-
-GHashTable *egl_surface_hashtable;
-
-EGLBoolean bionic_eglChooseConfig(EGLDisplay display, EGLint *attrib_list, EGLConfig *configs, EGLint config_size, EGLint *num_config)
-{
-	GdkDisplay *gdk_display = gtk_root_get_display(GTK_ROOT(window));
-
-	if (GDK_IS_X11_DISPLAY(gdk_display)) {
-		/* X11 supports pbuffers just fine */
-		return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
-	} else {
-		bool has_pbuffer_bit = false;
-		int attrib_list_size = 0;
-		for (EGLint *attr = attrib_list; *attr != EGL_NONE; attr += 2) {
-			if (*attr == EGL_SURFACE_TYPE && (*(attr + 1) & EGL_PBUFFER_BIT) && *(attr + 1) != EGL_DONT_CARE) {
-				has_pbuffer_bit = true;
-			}
-			attrib_list_size += 2;
-		}
-		attrib_list_size += 1; // for EGL_NONE
-		if (has_pbuffer_bit) {
-			/* copy the list in case it's mapped read-only */
-			EGLint *new_attrib_list = malloc(sizeof(EGLint) * attrib_list_size);
-			memcpy(new_attrib_list, attrib_list, sizeof(EGLint) * attrib_list_size);
-			for (EGLint *attr = new_attrib_list; *attr != EGL_NONE; attr += 2) {
-				if (*attr == EGL_SURFACE_TYPE && *(attr + 1) != EGL_DONT_CARE) {
-					*(attr + 1) &= ~EGL_PBUFFER_BIT;
-					*(attr + 1) |= EGL_WINDOW_BIT;
-				}
-			}
-			EGLBoolean ret = eglChooseConfig(display, new_attrib_list, configs, config_size, num_config);
-			free(new_attrib_list);
-			return ret;
-		} else {
-			return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
-		}
-	}
-}
-
-EGLSurface bionic_eglCreatePbufferSurface(EGLDisplay display, EGLConfig config, EGLint const *attrib_list)
-{
-	GdkDisplay *gdk_display = gtk_root_get_display(GTK_ROOT(window));
-
-	if (GDK_IS_X11_DISPLAY(gdk_display)) {
-		/* X11 supports pbuffers just fine */
-		return eglCreatePbufferSurface(display, config, attrib_list);
-	} else {
-		struct wl_compositor *wl_compositor = gdk_wayland_display_get_wl_compositor(gdk_display);
-		struct wl_surface *wayland_surface = wl_compositor_create_surface(wl_compositor);
-		EGLint width = 0;
-		EGLint height = 0;
-		EGLint *new_attrib_list = NULL;
-		if (attrib_list) {
-			size_t attrib_list_len = 0;
-			for (EGLint *attr = (EGLint *)attrib_list; *attr != EGL_NONE; attr++)
-				attrib_list_len++;
-			new_attrib_list = malloc(attrib_list_len);
-			EGLint *new_attr_pos = new_attrib_list;
-			for (EGLint *attr = (EGLint *)attrib_list; *attr != EGL_NONE; attr += 2) {
-				if (*attr == EGL_WIDTH) {
-					width = *(attr + 1);
-				} else if (*attr == EGL_HEIGHT) {
-					height = *(attr + 1);
-				} else {
-					*new_attr_pos = *attr;
-					*(new_attr_pos + 1) = *(attr + 1);
-					new_attr_pos += 2;
-				}
-			}
-			*new_attr_pos = EGL_NONE;
-		}
-		struct wl_egl_window *egl_window = wl_egl_window_create(wayland_surface, width, height);
-		EGLSurface surface = eglCreateWindowSurface(display, config, (EGLNativeWindowType)egl_window, new_attrib_list);
-		return surface;
-	}
-}
-
-EGLSurface bionic_eglCreateWindowSurface(EGLDisplay display, EGLConfig config, struct ANativeWindow *native_window, EGLint const *attrib_list)
-{
-	// better than crashing (TODO: check if apps try to use the NULL value anyway)
-	if (!native_window)
-		return NULL;
-
-	if (!egl_surface_hashtable)
-		egl_surface_hashtable = g_hash_table_new(NULL, NULL);
-
-	PrintConfigAttributes(display, config);
-	EGLSurface surface = eglCreateWindowSurface(display, config, native_window->egl_window, attrib_list);
-
-	printf("EGL::: native_window->egl_window: %ld\n", native_window->egl_window);
-	printf("EGL::: eglGetError: %d\n", eglGetError());
-
-	printf("EGL::: ret: %p\n", surface);
-
-	g_hash_table_insert(egl_surface_hashtable, surface, native_window);
-
-	return surface;
 }
 
 // FIXME 1.5: this most likely belongs elsewhere

@@ -106,25 +106,17 @@ JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1egl
 
 JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglMakeCurrent(JNIEnv *env, jobject this, jlong display, jlong draw_surface, jlong read_surface, jlong context)
 {
-	return eglMakeCurrent(_PTR(display), _PTR(draw_surface), _PTR(read_surface), _PTR(context));
+	return bionic_eglMakeCurrent(_PTR(display), _PTR(draw_surface), _PTR(read_surface), _PTR(context));
 }
 
 JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglSwapBuffers(JNIEnv *env, jobject this, jlong display, jlong surface)
 {
-	return eglSwapBuffers(_PTR(display), _PTR(surface));
+	return bionic_eglSwapBuffers(_PTR(display), _PTR(surface));
 }
 
 JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglDestroySurface(JNIEnv *env, jobject this, jlong display, jlong surface)
 {
-	struct ANativeWindow *native_window = g_hash_table_lookup(egl_surface_hashtable, _PTR(surface));
-
-	EGLBoolean ret = eglDestroySurface(_PTR(display), _PTR(surface));
-	if (ret) {
-		/* ANativeWindow_fromSurface starts the refcounter at 1, so this will destroy the native window */
-		ANativeWindow_release(native_window);
-	}
-
-	return ret;
+	return bionic_eglDestroySurface(_PTR(display), _PTR(surface));
 }
 
 JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglDestroyContext(JNIEnv *env, jobject this, jlong display, jlong context)

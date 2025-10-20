@@ -4,6 +4,8 @@
 #include <jni.h>
 #include <stdint.h>
 
+#include "../libandroid/native_window.h"
+
 #include "generated_headers/android_opengl_GLES20.h"
 
 JNIEXPORT jstring JNICALL Java_android_opengl_GLES20_glGetString(JNIEnv *env, jclass, jint name)
@@ -363,7 +365,7 @@ JNIEXPORT void JNICALL Java_android_opengl_GLES20_glGenFramebuffers__I_3II(JNIEn
 
 JNIEXPORT void JNICALL Java_android_opengl_GLES20_glBindFramebuffer(JNIEnv *env, jclass this, jint target, jint framebuffer)
 {
-	glBindFramebuffer((GLenum)target, (GLuint)framebuffer);
+	bionic_glBindFramebuffer((GLenum)target, (GLuint)framebuffer);
 }
 
 JNIEXPORT void JNICALL Java_android_opengl_GLES20_glFramebufferTexture2D(JNIEnv *env, jclass this, jint target, jint attachment, jint textarget, jint texture, jint level)
