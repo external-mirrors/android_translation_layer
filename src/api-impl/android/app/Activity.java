@@ -405,7 +405,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public void finish() {
-		runOnUiThread(new Runnable() {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
 				if (window != null && window.native_window != 0) {
