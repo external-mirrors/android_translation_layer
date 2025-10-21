@@ -17,6 +17,7 @@
 package com.android.server.am;
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
@@ -76,5 +77,11 @@ public class DumpHeapProvider extends ContentProvider {
 				throw new FileNotFoundException("Invalid path for " + uri);
 			}
 		}
+	}
+
+	@Override
+	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'openAssetFile'");
 	}
 }

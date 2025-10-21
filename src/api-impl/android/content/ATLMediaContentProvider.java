@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -142,4 +143,10 @@ public class ATLMediaContentProvider extends ContentProvider {
 	}
 
 	private native void native_open_media_folder();
+
+	@Override
+	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'openAssetFile'");
+	}
 }

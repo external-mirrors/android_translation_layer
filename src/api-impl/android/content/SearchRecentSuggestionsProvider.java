@@ -1,5 +1,8 @@
 package android.content;
 
+import java.io.FileNotFoundException;
+
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
@@ -35,5 +38,10 @@ public class SearchRecentSuggestionsProvider extends ContentProvider {
 	@Override
 	public ParcelFileDescriptor openFile(Uri uri, String mode) {
 		throw new UnsupportedOperationException("Unimplemented method 'openFile'");
+	}
+
+	@Override
+	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+		throw new UnsupportedOperationException("Unimplemented method 'openAssetFile'");
 	}
 }
