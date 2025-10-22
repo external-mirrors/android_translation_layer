@@ -117,13 +117,13 @@ JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1stroke_1join(JNI
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1size(JNIEnv *env, jclass clazz, jlong paint_ptr, jfloat size)
 {
 	struct AndroidPaint *paint = _PTR(paint_ptr);
-	pango_font_description_set_size(paint->font, size * .8f * PANGO_SCALE);
+	pango_font_description_set_absolute_size(paint->font, roundf(size * PANGO_SCALE));
 }
 
 JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1text_1size(JNIEnv *env, jclass clazz, jlong paint_ptr)
 {
 	struct AndroidPaint *paint = _PTR(paint_ptr);
-	return pango_font_description_get_size(paint->font) / .8f / PANGO_SCALE;
+	return (jfloat)pango_font_description_get_size(paint->font) / PANGO_SCALE;
 }
 
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter(JNIEnv *env, jclass clazz, jlong paint_ptr, jint mode, jint color)

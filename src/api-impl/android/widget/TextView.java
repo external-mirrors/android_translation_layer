@@ -30,6 +30,7 @@ import android.view.View;
 public class TextView extends View {
 	private ColorStateList colors = new ColorStateList(new int[][] {new int[0]}, new int[1]);
 	private CharSequence text = "";
+	private TextPaint paint = new TextPaint();
 
 	public TextView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
@@ -158,7 +159,7 @@ public class TextView extends View {
 	public static ColorStateList getTextColors(Context context, TypedArray attrs) { return new ColorStateList(new int[][] {new int[0]}, new int[1]); }
 
 	public TextPaint getPaint() {
-		return new TextPaint();
+		return paint;
 	}
 
 	public void addTextChangedListener(TextWatcher watcher) {}
