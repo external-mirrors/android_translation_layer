@@ -63,6 +63,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void addView(View child, int index, LayoutParams params) {
 		addViewInternal(child, index, params);
+		requestLayout();
 	}
 
 	protected void addViewInternal(View child, int index, LayoutParams params) {
@@ -79,8 +80,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		native_addView(widget, child.widget, index, params);
 		if (onHierarchyChangeListener != null)
 			onHierarchyChangeListener.onChildViewAdded(this, child);
-
-		requestLayout();
 	}
 
 	/* We never call this ourselves */
@@ -97,6 +96,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params, boolean preventRequestLayout) {
 		addViewInternal(child, index, params);
+		if (!preventRequestLayout)
+			requestLayout();
 		return true;
 	}
 
@@ -116,6 +117,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void removeView(View child) {
 		removeViewInternal(child);
+		requestLayout();
 	}
 
 	public void removeViewInLayout(View child) {
@@ -136,6 +138,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 				onHierarchyChangeListener.onChildViewRemoved(this, child);
 			}
 		}
+		requestLayout();
 	}
 
 	public void detachViewFromParent(int index) {
