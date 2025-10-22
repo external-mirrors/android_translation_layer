@@ -1536,11 +1536,15 @@ public class View implements Drawable.Callback {
 	public boolean removeCallbacks(Runnable action) {return false;}
 
 	public void requestLayout() {
-		layoutRequested = true;
-		if (parent instanceof View && !parent.isLayoutRequested()) {
-			((View)parent).requestLayout();
-		}
 		native_requestLayout(widget);
+		View view = this;
+		while (!view.layoutRequested) {
+			view.layoutRequested = true;
+			if (view.parent instanceof View)
+				view = (View)view.parent;
+			else
+				break;
+		}
 	};
 
 	public void setOverScrollMode(int mode) {}
