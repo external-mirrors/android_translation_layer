@@ -34,6 +34,7 @@ import android.util.SparseArray;
 import android.view.animation.Animation;
 
 import java.lang.CharSequence;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -817,6 +818,42 @@ public class View implements Drawable.Callback {
 
 			sb.append(size);
 			return sb.toString();
+		}
+	}
+
+	/* Copyright (C) 2006 The Android Open Source Project */
+	public static class DragShadowBuilder {
+		private final WeakReference<View> mView;
+
+		public DragShadowBuilder(View view) {
+			mView = new WeakReference<View>(view);
+		}
+
+		public DragShadowBuilder() {
+			mView = new WeakReference<View>(null);
+		}
+
+		final public View getView() {
+			return mView.get();
+		}
+
+		public void onProvideShadowMetrics(Point outShadowSize, Point outShadowTouchPoint) {
+			final View view = mView.get();
+			if (view != null) {
+				outShadowSize.set(view.getWidth(), view.getHeight());
+				outShadowTouchPoint.set(outShadowSize.x / 2, outShadowSize.y / 2);
+			} else {
+				Slog.e("View", "Asked for drag thumb metrics but no view");
+			}
+		}
+
+		public void onDrawShadow(Canvas canvas) {
+			final View view = mView.get();
+			if (view != null) {
+				view.draw(canvas);
+			} else {
+				Slog.e("View", "Asked to draw drag shadow but no view");
+			}
 		}
 	}
 
@@ -1960,12 +1997,16 @@ public class View implements Drawable.Callback {
 	}
 
 	public void forceLayout() {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				requestLayout();
-			}
-		});
+		if(Looper.myLooper() == Looper.getMainLooper()) {
+			requestLayout();
+		} else {
+			new Handler(Looper.getMainLooper()).post(new Runnable() {
+				@Override
+				public void run() {
+					requestLayout();
+				}
+			});
+		}
 	}
 
 	private OnAttachStateChangeListener onAttachStateChangeListener;

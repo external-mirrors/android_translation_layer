@@ -56,7 +56,10 @@ public abstract class ContentProvider {
 
 	public abstract ParcelFileDescriptor openFile(Uri uri, String mode) throws FileNotFoundException;
 
-	public abstract AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException;
+	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
+		ParcelFileDescriptor fd = openFile(uri, mode);
+		return fd != null ? new AssetFileDescriptor(fd, 0, -1) : null;
+	}
 
 	public void attachInfo(Context context, ProviderInfo provider) {}
 

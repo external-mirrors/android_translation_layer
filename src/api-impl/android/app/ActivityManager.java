@@ -3,6 +3,8 @@ package android.app;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.os.Process;
@@ -22,10 +24,11 @@ public class ActivityManager {
 		private RunningAppProcessInfo(int pid, String processName) {
 			this.pid = pid;
 			this.processName = processName;
-		} 
+		}
 	}
 
 	public static class TaskDescription {
+		public TaskDescription(String name) {}
 		public TaskDescription(String name, Bitmap icon, int color) {}
 	}
 
@@ -95,4 +98,7 @@ public class ActivityManager {
 	}
 
 	public static boolean isUserAMonkey() {return false;}
+
+	public void moveTaskToFront(int taskId, int flags, Bundle options) {
+	}
 }

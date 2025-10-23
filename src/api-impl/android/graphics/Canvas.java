@@ -64,7 +64,7 @@ public class Canvas {
 	 * @param paint  The paint used to draw the rect
 	 */
 	public void drawRect(float left, float top, float right, float bottom, Paint paint) {
-		if (paint != null && paint.getXfermode() instanceof PorterDuffXfermode && ((PorterDuffXfermode)paint.getXfermode()).mode == PorterDuff.Mode.CLEAR) {
+		if (paint != null && paint.getXfermode() instanceof PorterDuffXfermode && ((PorterDuffXfermode)paint.getXfermode()).porterDuffMode == PorterDuff.Mode.CLEAR.nativeInt) {
 			bitmap.eraseColor(0);
 			return;
 		}

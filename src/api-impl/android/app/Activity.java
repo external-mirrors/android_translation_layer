@@ -624,6 +624,23 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return 0;
 	}
 
+	public int getTaskId() {
+		/* we don't support multiple activity stacks, so this is probably fine? */
+		return System.identityHashCode(this_application);
+	}
+
+	boolean moveTaskToBack(boolean nonroot) {
+		return true;
+	}
+
+	void setFinishOnTouchOutside(boolean finish) {
+	}
+
+	public void finishActivity(int requestCode) {
+		/* TODO: track started activities so we can finish the right one here */
+		Slog.w(TAG, "finishActivity: stub");
+	}
+
 	public void finishAfterTransition() {
 		finish();
 	}

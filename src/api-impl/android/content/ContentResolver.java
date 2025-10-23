@@ -14,6 +14,8 @@ import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
 
 public class ContentResolver {
+	public static final String SCHEME_CONTENT = "content";
+
 	public static final String SYNC_EXTRAS_IGNORE_SETTINGS = "ignore_settings";
 
 	public final void registerContentObserver(Uri uri, boolean notifyForDescendants, ContentObserver observer) {
@@ -40,6 +42,10 @@ public class ContentResolver {
 		}
 	}
 
+	public ParcelFileDescriptor openFileDescriptor(Uri uri, String mode, CancellationSignal signal) throws FileNotFoundException {
+		return openFileDescriptor(uri, mode);
+	}
+
 	public AssetFileDescriptor openAssetFileDescriptor(Uri uri, String mode) throws FileNotFoundException {
 		if ("file".equals(uri.getScheme())) {
 			return new AssetFileDescriptor(ParcelFileDescriptor.open(new File(uri.getPath()), ParcelFileDescriptor.parseMode(mode)), 0, AssetFileDescriptor.UNKNOWN_LENGTH);
@@ -50,6 +56,19 @@ public class ContentResolver {
 			else
 				return null;
 		}
+	}
+
+	public AssetFileDescriptor openAssetFileDescriptor(Uri uri, String mode, CancellationSignal signal) throws FileNotFoundException {
+		return openAssetFileDescriptor(uri, mode);
+	}
+
+	public final AssetFileDescriptor openTypedAssetFileDescriptor(Uri uri, String mimeType, Bundle opts) throws FileNotFoundException {
+		/* FIXME */
+		return openAssetFileDescriptor(uri, "r");
+	}
+
+	public final AssetFileDescriptor openTypedAssetFileDescriptor(Uri uri, String mimeType, Bundle opts, CancellationSignal cancellationSignal) throws FileNotFoundException {
+		return openTypedAssetFileDescriptor(uri, mimeType, opts);
 	}
 
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {

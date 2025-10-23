@@ -23,8 +23,6 @@ import android.os.RemoteException;
 import android.util.Log;
 import java.util.ArrayList;
 
-class ClipDescription {}
-
 /**
  * Interface to the clipboard service, for placing and retrieving text in
  * the global clipboard.

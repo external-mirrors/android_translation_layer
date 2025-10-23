@@ -74,14 +74,16 @@ public class Context extends Object {
 	private final static String TAG = "Context";
 
 	public static final int MODE_PRIVATE = 0;
-	public static final String LOCATION_SERVICE = "location";
+	public static final String ACTIVITY_SERVICE = "activity";
 	public static final String AUDIO_SERVICE = "audio";
+	public static final String CLIPBOARD_SERVICE = "clipboard";
 	public static final String DISPLAY_SERVICE = "display";
-	public static final String MEDIA_ROUTER_SERVICE = "media_router";
-	public static final String WINDOW_SERVICE = "window";
 	public static final String INPUT_METHOD_SERVICE = "input";
+	public static final String LOCATION_SERVICE = "location";
+	public static final String MEDIA_ROUTER_SERVICE = "media_router";
 	public static final String POWER_SERVICE = "power";
 	public static final String VIBRATOR_SERVICE = "vibrator";
+	public static final String WINDOW_SERVICE = "window";
 
 	public static Vibrator vibrator;
 
@@ -556,7 +558,7 @@ public class Context extends Object {
 
 	public void unregisterComponentCallbacks(ComponentCallbacks callbacks) {}
 
-	public boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int dummy3) {
+	public boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int flags) {
 		if (intent.getComponent() == null) {
 			for (PackageParser.Service s : pkg.services) {
 				for (PackageParser.IntentInfo ii : s.intents) {
@@ -568,7 +570,7 @@ public class Context extends Object {
 			}
 		}
 		if (intent.getComponent() == null) {
-			Slog.w(TAG, "Context.bindService: intent.getComponent() is null");
+			Slog.w(TAG, "Context.bindService("+intent+", "+serviceConnection+", "+flags+"): intent.getComponent() is null");
 			return false;
 		}
 
