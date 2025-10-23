@@ -610,6 +610,12 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobjec
 		allocation.width = width;
 		allocation.height = height;
 	}
+
+	if (wrapper->jobj) {
+		allocation.x += _GET_FLOAT_FIELD(wrapper->jobj, "translationX");
+		allocation.y += _GET_FLOAT_FIELD(wrapper->jobj, "translationY");
+	}
+
 	gtk_widget_size_allocate(widget, &allocation, -1);
 }
 

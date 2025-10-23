@@ -872,10 +872,13 @@ public class View implements Drawable.Callback {
 	int measuredWidth = 0;
 	int measuredHeight = 0;
 
-	private int left;
-	private int top;
-	private int right;
-	private int bottom;
+	private int left = 0;
+	private int top = 0;
+	private int right = 0;
+	private int bottom = 0;
+
+	private float translationX = 0;
+	private float translationY = 0;
 
 	private int scrollX = 0;
 	private int scrollY = 0;
@@ -1711,13 +1714,24 @@ public class View implements Drawable.Callback {
 		return viewPropertyAnimator;
 	}
 
-	public float getTranslationX() {return 0.f;}
-	public float getTranslationY() {return 0.f;}
-	public void setTranslationX(float translationX) {}
+	public float getTranslationX() {
+		return translationX;
+	}
+
+	public float getTranslationY() {
+		return translationY;
+	}
+
+	public void setTranslationX(float translationX) {
+		this.translationX = translationX;
+		if (parent instanceof View)
+			((View)parent).native_queueAllocate(((View)parent).widget);
+	}
+
 	public void setTranslationY(float translationY) {
-		// CoordinatorLayout abuses this method to trigger a layout pass
-		if (getClass().getName().equals("androidx.coordinatorlayout.widget.CoordinatorLayout"))
-			native_queueAllocate(widget);
+		this.translationY = translationY;
+		if (parent instanceof View)
+			((View)parent).native_queueAllocate(((View)parent).widget);
 	}
 
 	public void setX(float x) {
@@ -2159,8 +2173,6 @@ public class View implements Drawable.Callback {
 
 	public int getTextAlignment() {return 0;}
 
-	public float getY() {return 0.f;}
-
 	public View findViewWithTag(Object tag) {
 		if (Objects.equals(tag, this.tag))
 			return this;
@@ -2254,7 +2266,12 @@ public class View implements Drawable.Callback {
 
 	public boolean isDirty() { return false; }
 
-	public float getX() { return getLeft(); }
+	public float getX() {
+		return getLeft() + getTranslationX();
+	}
+	public float getY() {
+		return getTop() + getTranslationY();
+	}
 
 	public boolean getGlobalVisibleRect(Rect visibleRect, Point globalOffset) {
 		boolean result = native_getGlobalVisibleRect(widget, visibleRect);
