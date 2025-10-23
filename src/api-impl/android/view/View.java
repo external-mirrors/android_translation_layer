@@ -867,7 +867,7 @@ public class View implements Drawable.Callback {
 	private Context context;
 	private Map<Integer,Object> tags = new HashMap<>();
 	private Object tag;
-	int gravity = -1;  // fallback gravity for layout childs
+	int gravity = -1;  // fallback gravity for layout children
 
 	int measuredWidth = 0;
 	int measuredHeight = 0;
@@ -879,6 +879,8 @@ public class View implements Drawable.Callback {
 
 	private int scrollX = 0;
 	private int scrollY = 0;
+
+	ViewTreeObserver floating_observer = null;
 
 	public long widget; // pointer
 
@@ -1236,8 +1238,17 @@ public class View implements Drawable.Callback {
 
 	public void setSelected(boolean selected) {}
 
+	public native Window native_get_window(long widget);
 	public ViewTreeObserver getViewTreeObserver() {
-		return new ViewTreeObserver();
+		Window window = native_get_window(widget);
+		if (window != null) {
+			if (window.view_tree_observer == null)
+				window.view_tree_observer = new ViewTreeObserver(window);
+			return window.view_tree_observer;
+		} else {
+			floating_observer = new ViewTreeObserver(null);
+			return floating_observer;
+		}
 	}
 
 	protected void onFinishInflate() {}
@@ -1961,8 +1972,24 @@ public class View implements Drawable.Callback {
 		keepScreenOn = screenOn;
 	}
 
-	protected void onAttachedToWindow() {}
-	protected void onDetachedFromWindow() {}
+	protected void onAttachedToWindow() {
+		if (onAttachStateChangeListener != null) {
+			onAttachStateChangeListener.onViewAttachedToWindow(this);
+		}
+		if (keepScreenOn)
+			native_keep_screen_on(widget, true);
+		if(floating_observer != null) {
+			getViewTreeObserver().merge(floating_observer);
+			floating_observer = null;
+		}
+	}
+	protected void onDetachedFromWindow() {
+		if (onAttachStateChangeListener != null) {
+			onAttachStateChangeListener.onViewDetachedFromWindow(this);
+		}
+		if (keepScreenOn)
+			native_keep_screen_on(widget, false);
+	}
 
 	public void setLayerType(int layerType, Paint paint) {}
 
@@ -2274,4 +2301,8 @@ public class View implements Drawable.Callback {
 	public Bitmap getDrawingCache() { return null; }
 
 	public void announceForAccessibility(CharSequence text) {}
+
+	public WindowInsetsController getWindowInsetsController() {
+		return native_get_window(widget).getInsetsController();
+	}
 }

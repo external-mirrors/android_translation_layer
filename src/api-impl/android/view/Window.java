@@ -10,6 +10,8 @@ public class Window {
 	public static final int FEATURE_OPTIONS_PANEL = 0;
 	public static final int FEATURE_NO_TITLE = 1;
 
+	public ViewTreeObserver view_tree_observer = null;
+
 	public static interface Callback {
 		public void onContentChanged();
 
@@ -41,6 +43,11 @@ public class Window {
 		decorView.setId(android.R.id.content);
 	}
 
+	public void set_native_window(long native_window) {
+		this.native_window = native_window;
+		set_jobject(native_window, this);
+	}
+
 	public void addFlags(int flags) {}
 	public void setFlags(int flags, int mask) {}
 	public void clearFlags(int flags) {}
@@ -63,12 +70,6 @@ public class Window {
 	public View getDecorView() {
 		return decorView;
 	}
-
-	public native void set_widget_as_root(long native_window, long widget);
-	private native void set_title(long native_window, String title);
-
-	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);
-	public native void set_layout(long native_window, int width, int height);
 
 	public void takeInputQueue(InputQueue.Callback callback) {
 		take_input_queue(native_window, callback, new InputQueue());
@@ -161,4 +162,16 @@ public class Window {
 	public void setEnterTransition(Transition transition) {}
 
 	public void setGravity(int gravity) {}
+
+	public void setDecorFitsSystemWindows(boolean fits) {}
+
+	public WindowInsetsController getInsetsController() {
+		return new InsetsController();
+	}
+
+	public native void set_widget_as_root(long native_window, long widget);
+	private native void set_title(long native_window, String title);
+	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);
+	public native void set_layout(long native_window, int width, int height);
+	private static native void set_jobject(long ptr, Window obj);
 }

@@ -40,7 +40,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 			window.setBackgroundDrawable(background);
 		ta.recycle();
 
-		window.native_window = nativePtr;
+		window.set_native_window(nativePtr);
 	}
 
 	public Dialog(Context context) {

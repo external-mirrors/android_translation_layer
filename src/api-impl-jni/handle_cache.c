@@ -153,4 +153,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.parcel.constructor = _METHOD(handle_cache.parcel.class, "<init>", "(JJ)V");
 	handle_cache.parcel.writeParcelable = _METHOD(handle_cache.parcel.class, "writeParcelable", "(Landroid/os/Parcelable;I)V");
 	handle_cache.parcel.readParcelable = _METHOD(handle_cache.parcel.class, "readParcelable", "(Ljava/lang/ClassLoader;)Landroid/os/Parcelable;");
+
+	handle_cache.view_tree_observer.class = _REF((*env)->FindClass(env, "android/view/ViewTreeObserver"));
+	handle_cache.view_tree_observer.dispatchOnGlobalLayout = _METHOD(handle_cache.view_tree_observer.class, "dispatchOnGlobalLayout", "()V");
 }

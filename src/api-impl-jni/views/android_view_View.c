@@ -307,8 +307,10 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 		gtk_widget_add_controller(widget, controller);
 		g_object_set_data(G_OBJECT(widget), "on_intercept_touch_listener", controller);
 	}
-	if (!wrapper->needs_allocation && (wrapper->layout_width || wrapper->layout_height))
-		gtk_widget_size_allocate(GTK_WIDGET(wrapper), &(GtkAllocation){.x = 0, .y = 0, .width = wrapper->layout_width, .height = wrapper->layout_height}, 0);
+
+	if (!wrapper->needs_allocation && (wrapper->real_width || wrapper->real_height))
+		gtk_widget_size_allocate(GTK_WIDGET(wrapper), &(GtkAllocation){.x = 0, .y = 0, .width = wrapper->real_width, .height = wrapper->real_height}, 0);
+
 	wrapper->needs_allocation = true;
 	gtk_widget_set_overflow(GTK_WIDGET(wrapper), GTK_OVERFLOW_HIDDEN);
 }
@@ -340,11 +342,6 @@ JNIEXPORT jint JNICALL Java_android_view_View_getWidth(JNIEnv *env, jobject this
 {
 	GtkWidget *widget = GTK_WIDGET(_PTR(_GET_LONG_FIELD(this, "widget")));
 
-/* FIXME: is this needed in Gtk4?
-	GtkAllocation alloc;
-	gtk_widget_get_allocation(widget, &alloc);
-	printf("widget size is currently %dx%d\n", alloc.width, alloc.height);
-*/
 	if (ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(widget))) {
 		AndroidLayout *layout = ATL_ANDROID_LAYOUT(gtk_widget_get_layout_manager(widget));
 		return layout->real_width;
@@ -409,8 +406,6 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setLayoutParams(JNIEnv *en
 	}
 
 	if (weight > 0.f) {
-		printf(":::-: setting weight: %f\n", weight);
-
 		hexpand = TRUE;
 		vexpand = TRUE;
 	}
@@ -534,10 +529,8 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 		gtk_widget_add_controller(widget, controller);
 	}
 
-	if (_METHOD(class, "onAttachedToWindow", "()V") != handle_cache.view.onAttachedToWindow)
-		g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
-	if (_METHOD(class, "onDetachedFromWindow", "()V") != handle_cache.view.onDetachedFromWindow)
-		g_signal_connect(wrapper, "unmap", G_CALLBACK(java_method_cb), handle_cache.view.onDetachedFromWindow);
+	g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
+	g_signal_connect(wrapper, "unmap", G_CALLBACK(java_method_cb), handle_cache.view.onDetachedFromWindow);
 
 	return _INTPTR(widget);
 }
@@ -870,8 +863,15 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *e
 	}
 }
 
+
 JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsAttachedToWindow(JNIEnv *env, jobject this, jlong widget_ptr)
 {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 	return gtk_widget_get_mapped(widget);
+}
+
+JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window(JNIEnv *env, jobject this, jlong widget_ptr)
+{
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	return g_object_get_data(G_OBJECT(gtk_widget_get_root(widget)), "jobject");
 }

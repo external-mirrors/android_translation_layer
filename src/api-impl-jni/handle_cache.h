@@ -166,6 +166,10 @@ struct handle_cache {
 		jmethodID writeParcelable;
 		jmethodID readParcelable;
 	} parcel;
+	struct {
+		jclass class;
+		jmethodID dispatchOnGlobalLayout;
+	} view_tree_observer;
 };
 
 extern struct handle_cache handle_cache;

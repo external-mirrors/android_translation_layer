@@ -51,6 +51,11 @@ public final class ViewTreeObserver {
 
 	private boolean mAlive = true;
 
+	// accessed from native code
+	private long onGlobalLayout_signal_handle = 0;
+
+	private long window;
+
 	/**
 	 * Interface definition for a callback to be invoked when the view hierarchy is
 	 * attached to and detached from its window.
@@ -297,10 +302,9 @@ public final class ViewTreeObserver {
 		public void onComputeInternalInsets(InternalInsetsInfo inoutInfo);
 	}
 
-	/**
-	 * Creates a new ViewTreeObserver. This constructor should not be called
-	 */
-	ViewTreeObserver() {
+	ViewTreeObserver(Window window) {
+		if(window != null)
+			this.window = window.native_window;
 	}
 
 	/**
@@ -335,7 +339,10 @@ public final class ViewTreeObserver {
 			}
 		}
 
-		if (observer.mOnGlobalLayoutListeners != null) {
+		if (observer.mOnGlobalLayoutListeners != null && observer.mOnGlobalLayoutListeners.size() > 0) {
+			if(mOnGlobalLayoutListeners == null || mOnGlobalLayoutListeners.size() == 0)
+				native_set_have_global_layout_listeners(true);
+
 			if (mOnGlobalLayoutListeners != null) {
 				mOnGlobalLayoutListeners.addAll(observer.mOnGlobalLayoutListeners);
 			} else {
@@ -495,17 +502,11 @@ public final class ViewTreeObserver {
 			mOnGlobalLayoutListeners = new CopyOnWriteArray<OnGlobalLayoutListener>();
 		}
 
+		if (mOnGlobalLayoutListeners.size() == 0) {
+			native_set_have_global_layout_listeners(true);
+		}
+
 		mOnGlobalLayoutListeners.add(listener);
-
-		// hack: many Applications wait for the global layout before doing anything
-		// so we dispatch the event immediately
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
-			@Override
-			public void run() {
-				listener.onGlobalLayout();
-			}
-		});
-
 	}
 
 	/**
@@ -539,6 +540,9 @@ public final class ViewTreeObserver {
 			return;
 		}
 		mOnGlobalLayoutListeners.remove(victim);
+
+		if(mOnGlobalLayoutListeners.size() == 0)
+			native_set_have_global_layout_listeners(false);
 	}
 
 	/**
@@ -754,6 +758,9 @@ public final class ViewTreeObserver {
 	 * @hide
 	 */
 	private void kill() {
+		/* clear any callbacks */
+		if (mOnGlobalLayoutListeners != null && mOnGlobalLayoutListeners.size() > 0)
+			native_set_have_global_layout_listeners(false);
 		mAlive = false;
 	}
 
@@ -1038,4 +1045,6 @@ public final class ViewTreeObserver {
 			getArray().clear();
 		}
 	}
+
+	private native void native_set_have_global_layout_listeners(boolean have_listeners);
 }
