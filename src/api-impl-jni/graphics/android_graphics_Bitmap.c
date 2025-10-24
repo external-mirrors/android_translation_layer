@@ -19,14 +19,20 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JN
 JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height, jint stride, jint format)
 {
 	static GType renderer_type = 0;
+	/* GdkDisplay is not thread safe on X11. We can't even use the default
+	 * display from main thread, because a GTK render thread may run concurrently.*/
+	static GPrivate off_screen_display_thread_local = G_PRIVATE_INIT(g_object_unref);
 	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
 	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
 	GdkTexture *texture = NULL;
 	if (node) {
 		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
+		GdkDisplay *off_screen_display = g_private_get(&off_screen_display_thread_local);
+		if (!off_screen_display)
+			g_private_set(&off_screen_display_thread_local, off_screen_display = gdk_display_open(NULL));
 		if (!renderer_type) {
-			// Use same renderer type as for onscreen rendering.
-			GdkSurface *surface = gdk_surface_new_toplevel(gdk_display_get_default());
+			// Create and destroy a dummy surface to get the renderer type
+			GdkSurface *surface = gdk_surface_new_toplevel(off_screen_display);
 			GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
 			renderer_type = G_OBJECT_TYPE(renderer);
 			gsk_renderer_unrealize(renderer);
@@ -34,7 +40,7 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNI
 			gdk_surface_destroy(surface);
 		}
 		GskRenderer *renderer = g_object_new(renderer_type, NULL);
-		gsk_renderer_realize(renderer, NULL, NULL);
+		gsk_renderer_realize_for_display(renderer, off_screen_display, NULL);
 		texture = gsk_renderer_render_texture(renderer, node, &bounds);
 		gsk_render_node_unref(node);
 		gsk_renderer_unrealize(renderer);
