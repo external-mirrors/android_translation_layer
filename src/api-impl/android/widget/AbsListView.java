@@ -2992,6 +2992,7 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 						if (!mDataChanged && mAdapter.isEnabled(motionPosition)) {
 							mTouchMode = TOUCH_MODE_TAP;
 							setSelectedPositionInt(mMotionPosition);
+							setNextSelectedPositionInt(mMotionPosition);
 							layoutChildren();
 							child.setPressed(true);
 							positionSelector(mMotionPosition, child);
