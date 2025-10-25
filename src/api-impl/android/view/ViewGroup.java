@@ -143,6 +143,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void detachViewFromParent(int index) {
 		View child = children.remove(index);
+		child.native_setVisibility(child.widget, GONE, 0);
 		child.parent = null;
 		detachedChildren.add(child);
 	}
@@ -159,6 +160,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		if (index < 0)
 			index = children.size();
 		children.add(index, view);
+		view.native_setVisibility(view.widget, view.getVisibility(), view.getAlpha());
 	}
 
 	protected void removeDetachedView(View child, boolean animate) {
