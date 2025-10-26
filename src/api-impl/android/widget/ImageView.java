@@ -40,7 +40,13 @@ public class ImageView extends View {
 		if (a.hasValue(com.android.internal.R.styleable.ImageView_tint))
 			colorFilter = new PorterDuffColorFilter(a.getColor(com.android.internal.R.styleable.ImageView_tint, 0),
 					PorterDuff.Mode.values()[a.getInt(com.android.internal.R.styleable.ImageView_tintMode, PorterDuff.Mode.SRC_IN.nativeInt)]);
-		setImageDrawable(a.getDrawable(com.android.internal.R.styleable.ImageView_src));
+		drawable = a.getDrawable(com.android.internal.R.styleable.ImageView_src);
+		if (drawable != null) {
+			drawable.setCallback(this);
+			if (colorFilter != null)
+				drawable.setColorFilter(colorFilter);
+			native_setDrawable(widget, drawable.paintable);
+		}
 		if (a.hasValue(com.android.internal.R.styleable.ImageView_scaleType))
 			setScaleType(scaletype_from_int[a.getInt(com.android.internal.R.styleable.ImageView_scaleType, 3 /*CENTER*/)]);
 		a.recycle();
