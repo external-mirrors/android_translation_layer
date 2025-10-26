@@ -480,7 +480,7 @@ public class Canvas {
 	}
 
 	public void drawOval(RectF oval, Paint paint) {
-		Log.w("Canvas", "STUB: drawOval");
+		drawRoundRect(oval, oval.width()/2, oval.height()/2, paint);
 	}
 
 	public void drawColor(int color, PorterDuff.Mode mode) {

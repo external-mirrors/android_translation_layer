@@ -550,10 +550,10 @@ public class GradientDrawable extends Drawable {
 				}
 				break;
 			case OVAL:
-				/*canvas.drawOval(mRect, mFillPaint);
+				canvas.drawOval(mRect, mFillPaint);
 				if (haveStroke) {
 					canvas.drawOval(mRect, mStrokePaint);
-				}*/
+				}
 				break;
 			case LINE: {
 				RectF r = mRect;
