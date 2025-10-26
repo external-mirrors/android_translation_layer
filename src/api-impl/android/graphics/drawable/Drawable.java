@@ -248,8 +248,9 @@ public class Drawable {
 				return new Drawable();
 			}
 			case "ripple": {
-				// FIXME: the non-pressed state of RippleDrawable should be equivalent to this
-				return new ColorDrawable(0);
+				RippleDrawable drawable = new RippleDrawable();
+				drawable.inflate(resources, parser, attrs, theme);
+				return drawable;
 			}
 			case "vector": {
 				VectorDrawable drawable = new VectorDrawable();
@@ -355,6 +356,8 @@ public class Drawable {
 	}
 
 	public void setFilterBitmap(boolean filter) {}
+
+	public void setHotspotBounds(int left, int top, int right, int bottom) {}
 
 	protected static native long native_paintable_from_path(String path);
 	protected native long native_constructor();

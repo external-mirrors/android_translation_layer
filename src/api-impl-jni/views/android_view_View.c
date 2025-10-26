@@ -650,13 +650,29 @@ JNIEXPORT void JNICALL Java_android_view_View_setBackgroundColor(JNIEnv *env, jo
 	if (((color >> 24) & 0xFF) != 0)
 		widget_set_needs_allocation(widget);
 }
-#pragma GCC diagnostic pop
 
 JNIEXPORT void JNICALL Java_android_view_View_native_1setBackgroundDrawable(JNIEnv *env, jobject this, jlong widget_ptr, jlong paintable_ptr) {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 	GdkPaintable *paintable = GDK_PAINTABLE(_PTR(paintable_ptr));
 	wrapper_widget_set_background(WRAPPER_WIDGET(gtk_widget_get_parent(widget)), paintable);
+	GtkStyleContext *style_context = gtk_widget_get_style_context(widget);
+
+	GtkCssProvider *old_provider = g_object_get_data(G_OBJECT(widget), "background_paintable_style_provider");
+	if(old_provider)
+		gtk_style_context_remove_provider(style_context, GTK_STYLE_PROVIDER(old_provider));
+
+	GtkCssProvider *css_provider = gtk_css_provider_new();
+
+	char *css_string = g_markup_printf_escaped("* { background-image: none; }");
+	gtk_css_provider_load_from_string(css_provider, css_string);
+	g_free(css_string);
+
+	gtk_style_context_add_provider(style_context, GTK_STYLE_PROVIDER(css_provider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	g_object_set_data(G_OBJECT(widget), "background_paintable_style_provider", css_provider);
+	if (paintable)
+		widget_set_needs_allocation(widget);
 }
+#pragma GCC diagnostic pop
 
 JNIEXPORT jboolean JNICALL Java_android_view_View_native_1getGlobalVisibleRect(JNIEnv *env, jobject this, jlong widget_ptr, jobject rect) {
 	GtkWidget *widget = gtk_widget_get_parent(GTK_WIDGET(_PTR(widget_ptr)));

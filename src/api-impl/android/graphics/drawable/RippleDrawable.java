@@ -8,6 +8,8 @@ public class RippleDrawable extends LayerDrawable {
 		super(drawable == null ? new Drawable[] {} : new Drawable[] {drawable});
 	}
 
+	RippleDrawable() {}
+
 	public void setColor(ColorStateList colorStateList) {}
 
 	public void setRadius(int radius) {}
