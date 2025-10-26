@@ -33,6 +33,7 @@ import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -625,11 +626,11 @@ public final class AssetManager {
 			}
 		} else { // single file
 			Path file = Paths.get(android.os.Environment.getExternalStorageDirectory().getPath(), target);
-			if (!Files.exists(file)) {
+			if (!Files.exists(file) || Files.getLastModifiedTime(file).toMillis() < Files.getLastModifiedTime(Paths.get(apk_path)).toMillis()) {
 				try (InputStream inputStream = ClassLoader.getSystemClassLoader().getResourceAsStream(path)) {
 					if (inputStream != null) {
 						Files.createDirectories(file.getParent());
-						Files.copy(inputStream, file);
+						Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
 					}
 				}
 			}
