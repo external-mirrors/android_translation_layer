@@ -41,6 +41,7 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNI
 		}
 		GskRenderer *renderer = g_object_new(renderer_type, NULL);
 		gsk_renderer_realize_for_display(renderer, off_screen_display, NULL);
+		g_object_ref(gdk_display_get_default());  // workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/7848
 		texture = gsk_renderer_render_texture(renderer, node, &bounds);
 		gsk_render_node_unref(node);
 		gsk_renderer_unrealize(renderer);
