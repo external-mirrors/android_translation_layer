@@ -661,7 +661,7 @@ public class Context extends Object {
 		}
 		final String className_ = className;
 		final Intent intent_ = intent;
-		Runnable runnable = new Runnable() {
+		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
 				try {
@@ -676,12 +676,7 @@ public class Context extends Object {
 					e.printStackTrace();
 				}
 			}
-		};
-		if (Looper.myLooper() == Looper.getMainLooper()) {
-			runnable.run();
-		} else {
-			new Handler(Looper.getMainLooper()).post(runnable);
-		}
+		});
 	}
 
 	public void startActivity(Intent intent, Bundle options) {
