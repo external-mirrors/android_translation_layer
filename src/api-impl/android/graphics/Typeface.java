@@ -59,4 +59,8 @@ public class Typeface {
 	public static Typeface defaultFromStyle(int style) {
 		return create((String)null, style);
 	}
+
+	public static Typeface createFromFamiliesWithDefault(FontFamily[] families) {
+		return DEFAULT;
+	}
 }

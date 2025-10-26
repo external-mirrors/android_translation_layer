@@ -208,6 +208,7 @@ srcs = [
 	'android/graphics/ColorSpace.java',
 	'android/graphics/CornerPathEffect.java',
 	'android/graphics/DashPathEffect.java',
+	'android/graphics/FontFamily.java',
 	'android/graphics/GskCanvas.java',
 	'android/graphics/LightingColorFilter.java',
 	'android/graphics/LinearGradient.java',
