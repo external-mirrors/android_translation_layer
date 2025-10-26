@@ -854,6 +854,13 @@ int main(int argc, char **argv)
 	remove_ongoing_notifications();
 	g_object_unref(app);
 
+	if (jvm) {
+		JNIEnv *env = get_jni_env();
+		jobject system = (*env)->FindClass(env, "java/lang/System");
+		jmethodID exit = (*env)->GetStaticMethodID(env, system, "exit", "(I)V");
+		(*env)->CallStaticVoidMethod(env, system, exit, status);
+	}
+
 	return status;
 }
 
