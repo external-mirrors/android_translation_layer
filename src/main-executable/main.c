@@ -10,9 +10,9 @@
 #include "../api-impl-jni/util.h"
 #include "../api-impl-jni/app/android_app_Activity.h"
 
+#include "actions.h"
 #include "back_button.h"
 #include "libc_bio_path_overrides.h"
-#include "actions.h"
 
 #include <dlfcn.h>
 #include <errno.h>
@@ -123,9 +123,9 @@ JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, cha
 
 	int ret = JNI_CreateJavaVM(&jvm, (void **)&env, &args);
 	if (ret < 0) {
-		printf("Unable to Launch JVM\n");
+		fprintf(stderr, "Unable to Launch JVM\n");
 	} else {
-		printf("JVM launched successfully\n");
+		fprintf(stderr, "JVM launched successfully\n");
 	}
 
 	free(options);
@@ -159,7 +159,7 @@ static void dynamic_launcher_ready_callback(GObject *portal, GAsyncResult *res, 
 	struct dynamic_launcher_callback_data *data = user_data;
 	GVariant *result = xdp_portal_dynamic_launcher_prepare_install_finish(XDP_PORTAL(portal), res, NULL);
 	if (!result) {
-		printf("cancelled\n");
+		fprintf(stderr, "cancelled\n");
 		exit(0);
 	}
 	const char *token;
@@ -170,7 +170,7 @@ static void dynamic_launcher_ready_callback(GObject *portal, GAsyncResult *res, 
 	g_free(data->desktop_entry);
 	g_free(data);
 	if (err) {
-		printf("failed to install dynamic launcher: %s\n", err->message);
+		fprintf(stderr, "failed to install dynamic launcher: %s\n", err->message);
 		exit(1);
 	}
 	// run update-desktop-database to add the new x-scheme-handler entries to ~/.local/share/applications/mimeinfo.cache
@@ -258,7 +258,7 @@ static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, do
 		(*env)->ExceptionDescribe(env);
 	}
 	if (!activity) {
-		printf("failed to resolve activity to handle URI: %s\n", data);
+		fprintf(stderr, "failed to resolve activity to handle URI: %s\n", data);
 		return FALSE;
 	}
 	activity_start(env, activity);
@@ -275,10 +275,10 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	}
 */
 	if (window) {  // this is not the first launch, but a DBus request to open an URI in the running app
-		printf("opening uri over DBus %p\n", files[0]);
+		fprintf(stderr, "opening uri over DBus %p\n", files[0]);
 		char *uri = g_file_get_uri(files[0]);
 		JNIEnv *env = get_jni_env();
-		printf("opening uri over DBus: %s\n", uri);
+		fprintf(stderr, "opening uri over DBus: %s\n", uri);
 		jobject activity = (*env)->CallStaticObjectMethod(env, handle_cache.activity.class,
 		                                                  _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
 		                                                  _JSTRING(d->apk_main_activity_class), _INTPTR(window), _JSTRING(uri));
@@ -303,12 +303,12 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	char *apk_name = g_file_get_basename(files[0]);
 
 	if (apk_classpath == NULL) {
-		printf("error: the specified file path doesn't seem to be valid\n");
+		fprintf(stderr, "error: the specified file path doesn't seem to be valid\n");
 		exit(1);
 	}
 
 	if (access(apk_classpath, F_OK) < 0) {
-		printf("error: the specified file path (%s) doesn't seem to exist (%m)\n", apk_classpath);
+		fprintf(stderr, "error: the specified file path (%s) doesn't seem to exist (%m)\n", apk_classpath);
 		exit(1);
 	}
 
@@ -377,11 +377,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if (!ret) {
 			api_impl_jar = api_impl_install_dir;
 		} else {
-			printf("error: can't stat api-impl.jar; tried:\n"
-			       "\t\"" API_IMPL_JAR_PATH_LOCAL "\", got - %s\n"
-			       "\t\"%s\", got - %s\n",
-			       strerror(errno_localdir),
-			       api_impl_install_dir, strerror(errno_libdir));
+			fprintf(stderr, "error: can't stat api-impl.jar; tried:\n"
+			                "\t\"" API_IMPL_JAR_PATH_LOCAL "\", got - %s\n"
+			                "\t\"%s\", got - %s\n",
+			                strerror(errno_localdir),
+			                api_impl_install_dir, strerror(errno_libdir));
 			exit(1);
 		}
 	}
@@ -400,11 +400,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if (!ret) {
 			microg_apk = microg_install_dir;
 		} else {
-			printf("warning: can't stat com.google.android.gms.apk; tried:\n"
-			       "\t\"" MICROG_APK_PATH_LOCAL "\", got - %s\n"
-			       "\t\"%s\", got - %s\n",
-			       strerror(errno_localdir),
-			       microg_install_dir, strerror(errno_libdir));
+			fprintf(stderr, "warning: can't stat com.google.android.gms.apk; tried:\n"
+			                "\t\"" MICROG_APK_PATH_LOCAL "\", got - %s\n"
+			                "\t\"%s\", got - %s\n",
+			                strerror(errno_localdir),
+			                microg_install_dir, strerror(errno_libdir));
 		}
 	}
 
@@ -422,11 +422,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if (!ret) {
 			framework_res_apk = framework_res_install_dir;
 		} else {
-			printf("warning: can't stat framework-res.apk; tried:\n"
-			       "\t\"" FRAMEWORK_RES_PATH_LOCAL "\", got - %s\n"
-			       "\t\"%s\", got - %s\n",
-			       strerror(errno_localdir),
-			       framework_res_install_dir, strerror(errno_libdir));
+			fprintf(stderr, "warning: can't stat framework-res.apk; tried:\n"
+			                "\t\"" FRAMEWORK_RES_PATH_LOCAL "\", got - %s\n"
+			                "\t\"%s\", got - %s\n",
+			                strerror(errno_localdir),
+			                framework_res_install_dir, strerror(errno_libdir));
 		}
 	}
 
@@ -445,11 +445,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			if (!ret) {
 				test_runner_jar = test_runner_jar_install_dir;
 			} else {
-				printf("warning: can't stat test_runner.jar; tried:\n"
-				       "\t\"" TEST_RUNNER_JAR_PATH_LOCAL "\", got - %s\n"
-				       "\t\"%s\", got - %s\n",
-				       strerror(errno_localdir),
-				       test_runner_jar_install_dir, strerror(errno_libdir));
+				fprintf(stderr, "warning: can't stat test_runner.jar; tried:\n"
+				                "\t\"" TEST_RUNNER_JAR_PATH_LOCAL "\", got - %s\n"
+				                "\t\"%s\", got - %s\n",
+				                strerror(errno_localdir),
+				                test_runner_jar_install_dir, strerror(errno_libdir));
 			}
 		}
 	}
@@ -545,7 +545,10 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	(*env)->CallVoidMethod(env, application_object, _METHOD(handle_cache.application.class, "onCreate", "()V"));
+	jmethodID on_create_method = _METHOD(handle_cache.application.class, "onCreate", "()V");
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+	(*env)->CallVoidMethod(env, application_object, on_create_method);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -657,7 +660,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		GError *err = NULL;
 		g_file_copy(files[0], dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, &err);
 		if(err)
-			printf("error copying apk: %s\n", err->message);
+			fprintf(stderr, "error copying apk: %s\n", err->message);
 
 		if(d->install_internal)
 			exit(0);
@@ -740,7 +743,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		GError *error = NULL;
 		GList *icon_list = g_list_append(NULL, gdk_texture_new_from_filename(app_icon_path_full, &error));
 		if (error) {
-			printf("gdk_texture_new_from_filename: %s\n", error->message);
+			fprintf(stderr, "gdk_texture_new_from_filename: %s\n", error->message);
 			g_clear_error(&error);
 		}
 		icon_override(window, icon_list);
@@ -779,14 +782,14 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 static void activate(GtkApplication *app, struct jni_callback_data *d)
 {
-	printf("error: usage: ./android-translation-layer [app.apk] [-l path/to/activity]\n"
-	       "you can specify --help to see the list of options\n");
+	fprintf(stderr, "error: usage: ./android-translation-layer [app.apk] [-l path/to/activity]\n"
+	                "you can specify --help to see the list of options\n");
 	exit(1);
 }
 
 static gboolean option_uri_cb(const gchar* option_name, const gchar* value, gpointer data, GError** error)
 {
-	printf("option_uri_cb: %s %s, %p, %p\n", option_name, value, data, error);
+	fprintf(stderr, "option_uri_cb: %s %s, %p, %p\n", option_name, value, data, error);
 	uri_option = g_strdup(value);
 	return TRUE;
 }
