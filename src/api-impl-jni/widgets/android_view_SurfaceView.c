@@ -91,16 +91,25 @@ void surface_view_widget_set_texture(SurfaceViewWidget *surface_view_widget, Gdk
 
 // ---
 
-struct jni_callback_data { JavaVM *jvm; jobject this; jclass this_class;};
+struct jni_callback_data { JavaVM *jvm; jobject this; jclass this_class; gint resize_width; gint resize_height;};
 
-static void on_resize(GtkWidget* self, gint width, gint height, struct jni_callback_data *d)
-{
+static gboolean on_resize_delayed(struct jni_callback_data *d) {
 	JNIEnv *env;
 	(*d->jvm)->GetEnv(d->jvm, (void**)&env, JNI_VERSION_1_6);
 
 	// TODO: are there cases where returning RGBA_8888 is a bad idea?
 	// NOTE: we want to call the private method of android.view.SurfaceView, not the related method with this name in the API
-	(*env)->CallVoidMethod(env, d->this, handle_cache.surface_view.surfaceChanged, 1 /*RGBA_8888*/, width, height);
+	(*env)->CallVoidMethod(env, d->this, handle_cache.surface_view.surfaceChanged, 1 /*RGBA_8888*/, d->resize_width, d->resize_height);
+
+	return G_SOURCE_REMOVE;
+}
+
+static void on_resize(GtkWidget* self, gint width, gint height, struct jni_callback_data *d)
+{
+	d->resize_width = width;
+	d->resize_height = height;
+
+	g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(on_resize_delayed), d, NULL);
 }
 
 static void on_realize(GtkWidget* self, struct jni_callback_data *d)
