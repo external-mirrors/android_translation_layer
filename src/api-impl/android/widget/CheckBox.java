@@ -28,7 +28,9 @@ public class CheckBox extends CompoundButton {
 	public native boolean isChecked();
 
 	@Override
-	public native void setText(CharSequence text);
+	public void setText(CharSequence text) {
+		native_setText(widget, text == null ? "" : text.toString());
+	}
 
 	// following methods are overridden to prevent calling incompatible methods from superclasses
 	@Override
@@ -38,4 +40,6 @@ public class CheckBox extends CompoundButton {
 	@Override
 	public void setTextSize(float size) {}
 
+	@Override
+	public native void native_setText(long widget, String text);
 }

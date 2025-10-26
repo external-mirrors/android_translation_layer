@@ -233,11 +233,11 @@ JNIEXPORT jboolean JNICALL Java_android_widget_CheckBox_isChecked
 
 /*
  * Class:     android_widget_CheckBox
- * Method:    setText
- * Signature: (Ljava/lang/CharSequence;)V
+ * Method:    native_setText
+ * Signature: (JLjava/lang/String;)V
  */
-JNIEXPORT void JNICALL Java_android_widget_CheckBox_setText
-  (JNIEnv *, jobject, jobject);
+JNIEXPORT void JNICALL Java_android_widget_CheckBox_native_1setText
+  (JNIEnv *, jobject, jlong, jstring);
 
 #ifdef __cplusplus
 }

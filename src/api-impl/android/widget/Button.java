@@ -37,7 +37,7 @@ public class Button extends TextView {
 
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
-	public native final void native_setText(long widget, String text);
+	public native void native_setText(long widget, String text);
 	@Override
 	protected native void nativeSetOnClickListener(long widget);
 	protected native void native_setCompoundDrawables(long widget, long paintable);
