@@ -240,6 +240,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public LayoutTransition getLayoutTransition() {
+		if (transition == null)
+			transition = new LayoutTransition();
 		return transition;
 	}
 

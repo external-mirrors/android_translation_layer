@@ -2231,4 +2231,6 @@ public class View implements Drawable.Callback {
 	public void buildDrawingCache(boolean autoScale) {}
 
 	public Bitmap getDrawingCache() { return null; }
+
+	public void announceForAccessibility(CharSequence text) {}
 }
