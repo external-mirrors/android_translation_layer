@@ -405,6 +405,7 @@ srcs = [
 	'android/text/InputFilter.java',
 	'android/text/Layout.java',
 	'android/text/NoCopySpan.java',
+	'android/text/ParcelableSpan.java',
 	'android/text/Selection.java',
 	'android/text/SpanWatcher.java',
 	'android/text/Spannable.java',
