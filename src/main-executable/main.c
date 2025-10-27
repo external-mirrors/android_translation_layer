@@ -9,6 +9,7 @@
 #include "../api-impl-jni/defines.h"
 #include "../api-impl-jni/util.h"
 #include "../api-impl-jni/app/android_app_Activity.h"
+#include "../api-impl-jni/graphics/android_graphics_Bitmap.h"
 
 #include "actions.h"
 #include "back_button.h"
@@ -527,6 +528,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	GtkCssProvider * cssProvider = gtk_css_provider_new();
 	gtk_css_provider_load_from_resource(cssProvider, "/com/gitlab/android-translation-layer/android-translation-layer/default-stylesheet.css");
 	gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+
+	// create a pool of GdkDisplays for off-screen Bitmap rendering
+	init_off_screen_displays();
 
 	prepare_main_looper(env);
 

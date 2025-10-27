@@ -4,6 +4,7 @@
 #include "../util.h"
 
 #include "../generated_headers/android_graphics_Bitmap.h"
+#include "android_graphics_Bitmap.h"
 
 JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JNIEnv *env, jclass class, jlong texture_ptr)
 {
@@ -16,20 +17,28 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JN
 	return _INTPTR(snapshot);
 }
 
+/* GdkDisplay is not thread safe on X11. We can't even use the default
+ * display from main thread, because a GTK render thread may run concurrently.
+ * Creating GdkDisplays on the fly is also not thread safe in newer GTK versions.
+ * So we create a pool of pre-opened GdkDisplays.*/
+static GAsyncQueue *off_screen_displays = NULL;
+
+void init_off_screen_displays(void)
+{
+	off_screen_displays = g_async_queue_new_full(g_object_unref);
+	g_async_queue_push(off_screen_displays, gdk_display_open(NULL));
+	g_async_queue_push(off_screen_displays, gdk_display_open(NULL));
+}
+
 JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height, jint stride, jint format)
 {
 	static GType renderer_type = 0;
-	/* GdkDisplay is not thread safe on X11. We can't even use the default
-	 * display from main thread, because a GTK render thread may run concurrently.*/
-	static GPrivate off_screen_display_thread_local = G_PRIVATE_INIT(g_object_unref);
 	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
 	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
 	GdkTexture *texture = NULL;
 	if (node) {
 		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
-		GdkDisplay *off_screen_display = g_private_get(&off_screen_display_thread_local);
-		if (!off_screen_display)
-			g_private_set(&off_screen_display_thread_local, off_screen_display = gdk_display_open(NULL));
+		GdkDisplay *off_screen_display = g_async_queue_pop(off_screen_displays);
 		if (!renderer_type) {
 			// Create and destroy a dummy surface to get the renderer type
 			GdkSurface *surface = gdk_surface_new_toplevel(off_screen_display);
@@ -46,6 +55,7 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNI
 		gsk_render_node_unref(node);
 		gsk_renderer_unrealize(renderer);
 		g_object_unref(renderer);
+		g_async_queue_push(off_screen_displays, off_screen_display);
 	} else {
 		if (format == -1) {
 			format = GDK_MEMORY_R8G8B8A8;
