@@ -1,24 +1,36 @@
 package android.view;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.Animator;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
-import android.animation.ValueAnimator;
-import android.os.Handler;
 
 public class ViewPropertyAnimator {
 
 	private View view;
 	private Animator.AnimatorListener listener;
 	private long startDelay;
-	private long duration;
+	private long duration = 300;
+	private Runnable startAction;
+	private Runnable endAction;
+	private TimeInterpolator interpolator;
+	private List<PropertyValuesHolder> values = new ArrayList<>();
+	private ObjectAnimator animator;
 
 	public ViewPropertyAnimator(View view) {
 		this.view = view;
 	}
 
-	public void cancel() {}
+	public void cancel() {
+		if (animator != null)
+			animator.cancel();
+	}
 
 	public ViewPropertyAnimator setInterpolator(TimeInterpolator interpolator) {
+		this.interpolator = interpolator;
 		return this;
 	}
 
@@ -28,7 +40,7 @@ public class ViewPropertyAnimator {
 	}
 
 	public ViewPropertyAnimator alpha(float alpha) {
-		view.setAlpha(alpha);
+		values.add(PropertyValuesHolder.ofFloat(View.ALPHA, alpha));
 		return this;
 	}
 
@@ -42,58 +54,90 @@ public class ViewPropertyAnimator {
 		return this;
 	}
 
-	public ViewPropertyAnimator x(float rotation) {
+	public ViewPropertyAnimator x(float x) {
+		values.add(PropertyValuesHolder.ofFloat("x", x));
 		return this;
 	}
 
-	public ViewPropertyAnimator y(float rotation) {
+	public ViewPropertyAnimator y(float y) {
+		values.add(PropertyValuesHolder.ofFloat("y", y));
 		return this;
 	}
 
 	public ViewPropertyAnimator rotation(float rotation) {
+		values.add(PropertyValuesHolder.ofFloat("rotation", rotation));
 		return this;
 	}
 
 	public ViewPropertyAnimator translationX(float translationX) {
+		values.add(PropertyValuesHolder.ofFloat(View.TRANSLATION_X, translationX));
 		return this;
 	}
 
 	public ViewPropertyAnimator translationY(float translationY) {
+		values.add(PropertyValuesHolder.ofFloat(View.TRANSLATION_Y, translationY));
 		return this;
 	}
 
 	public ViewPropertyAnimator scaleX(float scaleX) {
+		values.add(PropertyValuesHolder.ofFloat(View.SCALE_X, scaleX));
 		return this;
 	}
 
 	public ViewPropertyAnimator scaleY(float scaleY) {
+		values.add(PropertyValuesHolder.ofFloat(View.SCALE_Y, scaleY));
 		return this;
 	}
 
 	public ViewPropertyAnimator translationXBy(float translationX) {
+		values.add(PropertyValuesHolder.ofFloat(View.TRANSLATION_X, view.getTranslationX() + translationX));
 		return this;
 	}
 
 	public ViewPropertyAnimator rotationBy(float rotation) {
+		values.add(PropertyValuesHolder.ofFloat("rotation", view.getRotation() + rotation));
 		return this;
 	}
 
 	public void start() {
-		new Handler().postDelayed(new Runnable() {
-
-			@Override
-			public void run() {
-				if (listener != null)
-					listener.onAnimationEnd(new ValueAnimator());
-			}
-		}, startDelay+duration);
+		if (animator != null)
+			animator.cancel();
+		animator = ObjectAnimator.ofPropertyValuesHolder(view, values.toArray(new PropertyValuesHolder[0]));
+		values.clear();
+		if (listener != null)
+			animator.addListener(listener);
+		if (startAction != null || endAction != null) {
+			animator.addListener(new Animator.AnimatorListener() {
+				@Override
+				public void onAnimationStart(Animator animation) {
+					if (startAction != null)
+						startAction.run();
+				}
+				@Override
+				public void onAnimationEnd(Animator animation) {
+					if (endAction != null)
+						endAction.run();
+				}
+				@Override
+				public void onAnimationCancel(Animator animation) {}
+				@Override
+				public void onAnimationRepeat(Animator animation) {}
+			});
+		}
+		animator.setDuration(duration);
+		animator.setStartDelay(startDelay);
+		if (interpolator != null)
+			animator.setInterpolator(interpolator);
+		animator.start();
 	}
 
 	public ViewPropertyAnimator withEndAction(Runnable runnable) {
+		this.endAction = runnable;
 		return this;
 	}
 
 	public ViewPropertyAnimator withStartAction(Runnable runnable) {
+		this.startAction = runnable;
 		return this;
 	}
 }

@@ -143,6 +143,13 @@ public class PropertyValuesHolder {
 	public void setupSetterAndGetter(Object target) {
 		if (property != null) {
 			setter = null;
+			if (values_int != null && values_int.length == 1) {
+				values_int = new int[] { (Integer)property.get(target), values_int[0] };
+			} else if (values_float != null && values_float.length == 1) {
+				values_float = new float[] { (Float)property.get(target), values_float[0] };
+			} else if (values_object != null && values_object.length == 1) {
+				values_object = new Object[] { property.get(target), values_object[0] };
+			}
 			return;
 		}
 		try {
@@ -155,8 +162,16 @@ public class PropertyValuesHolder {
 				clazz = values_object[0].getClass();
 			}
 			setter = target.getClass().getMethod("set" + property_name.substring(0, 1).toUpperCase() + property_name.substring(1), clazz);
-		} catch (NoSuchMethodException e) {
-			Log.e("PropertyValuesHolder", "failed to find setter", e);
+			Method getter = target.getClass().getMethod("get" + property_name.substring(0, 1).toUpperCase() + property_name.substring(1));
+			if (values_int != null && values_int.length == 1) {
+				values_int = new int[] { (Integer)getter.invoke(target), values_int[0] };
+			} else if (values_float != null && values_float.length == 1) {
+				values_float = new float[] { (Float)getter.invoke(target), values_float[0] };
+			} else if (values_object != null && values_object.length == 1) {
+				values_object = new Object[] { getter.invoke(target), values_object[0] };
+			}
+		} catch (ReflectiveOperationException e) {
+			Log.e("PropertyValuesHolder", "failed to setup setter and getter", e);
 		}
 	}
 
