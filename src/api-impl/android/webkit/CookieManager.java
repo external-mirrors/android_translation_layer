@@ -2,8 +2,6 @@ package android.webkit;
 
 import android.content.Context;
 
-class ValueCallback {}
-
 public class CookieManager {
 
 	public static CookieManager getInstance() {

@@ -588,6 +588,7 @@ srcs = [
 	'android/webkit/DownloadListener.java',
 	'android/webkit/MimeTypeMap.java',
 	'android/webkit/URLUtil.java',
+	'android/webkit/ValueCallback.java',
 	'android/webkit/ViewAnimator.java',
 	'android/webkit/WebChromeClient.java',
 	'android/webkit/WebResourceResponse.java',
