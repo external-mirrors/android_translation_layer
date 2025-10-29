@@ -21,6 +21,7 @@ public class Paint {
 	private Xfermode xfermode;
 	private Shader shader;
 	private Align align = Align.CENTER;
+	private ColorFilter color_filter;
 
 	public Paint() {
 		paint = native_create();
@@ -106,7 +107,12 @@ public class Paint {
 		} else {
 			native_set_color_filter(paint, -1, 0);
 		}
+		color_filter = colorFilter;
 		return colorFilter;
+	}
+
+	public Object getColorFilter() {
+		return color_filter;
 	}
 
 	public Shader setShader(Shader shader) {
@@ -183,6 +189,10 @@ public class Paint {
 	public /*native*/ void setHinting(int mode) {}
 
 	public /*native*/ void setDither(boolean dither) {}
+	public boolean isDither() {
+		return false;
+	}
+
 	public /*native*/ void setLinearText(boolean linearText) {}
 	public /*native*/ void setSubpixelText(boolean subpixelText) {}
 	public /*native*/ void setUnderlineText(boolean underlineText) {}
@@ -299,6 +309,11 @@ public class Paint {
 	public int breakText(CharSequence text, int start, int end, boolean measureForwards, float maxWidth, float[] measuredWidth) { return 10; }
 
 	public void clearShadowLayer() {}
+
+	public boolean hasShadowLayer() {
+		return false;
+	}
+
 
 	public FontMetrics getFontMetrics() {
 		return new FontMetrics();

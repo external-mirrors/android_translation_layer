@@ -150,14 +150,15 @@ public class Path {
 		native_add_rect(getBuilder(), left, top, right, bottom);
 	}
 
-	public void addRoundRect(RectF rect, float[] radii, Direction direction) {
-		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, radii, direction);
-	}
-
 	public void addRoundRect(float left,  float top, float right, float bottom,
 	                         float[] radii, Direction direction) {
 		Log.w("Path", "STUB: addRoundRect");
 	}
+
+	public void addRoundRect(RectF rect, float[] radii, Direction direction) {
+		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, radii, direction);
+	}
+
 
 	public void addRoundRect(RectF rect, float rx, float ry, Direction direction) {
 		addRoundRect(rect.left, rect.top, rect.right, rect.bottom, rx, ry, direction);
@@ -168,8 +169,13 @@ public class Path {
 		addRoundRect(left, top, right, bottom, new float[]{rx, ry, rx, ry, rx, ry, rx, ry}, direction);
 	}
 
-	public void addOval(RectF rect, Direction direction) {
+	public void addOval(float left, float top, float right, float bottom, Direction direction) {
 		Log.w("Path", "STUB: addOval");
+	}
+
+
+	public void addOval(RectF rect, Direction direction) {
+		addOval(rect.left, rect.top, rect.right, rect.bottom, direction);
 	}
 
 	public void addCircle(float x, float y, float radius, Direction direction) {

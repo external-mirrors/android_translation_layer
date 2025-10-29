@@ -16,6 +16,8 @@ import android.content.res.XmlResourceParser;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.BitmapFactory;
+import android.graphics.BlendMode;
+import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
@@ -35,6 +37,7 @@ public class Drawable {
 		public void unscheduleDrawable(Drawable drawable, Runnable runnable);
 	}
 
+	static final BlendMode DEFAULT_BLEND_MODE = BlendMode.SRC_IN;
 	static final PorterDuff.Mode DEFAULT_TINT_MODE = PorterDuff.Mode.SRC_IN;
 
 	private Rect mBounds = new Rect();
@@ -191,6 +194,25 @@ public class Drawable {
 		setTintList(ColorStateList.valueOf(tint));
 	}
 
+	public static BlendMode parseBlendMode(int value, BlendMode defaultMode) {
+		return defaultMode;
+	}
+
+	/* Copyright (C) 2006 The Android Open Source Project */
+	BlendModeColorFilter updateBlendModeFilter(BlendModeColorFilter blendFilter, ColorStateList tint, BlendMode blendMode) {
+		if (tint == null || blendMode == null) {
+		    return null;
+		}
+
+		final int color = tint.getColorForState(getState(), Color.TRANSPARENT);
+		if (blendFilter == null || blendFilter.getColor() != color
+			|| blendFilter.getMode() != blendMode) {
+		    return new BlendModeColorFilter(color, blendMode);
+		}
+		return blendFilter;
+	}
+
+	/* Copyright (C) 2006 The Android Open Source Project */
 	PorterDuffColorFilter updateTintFilter(PorterDuffColorFilter tintFilter, ColorStateList tint, PorterDuff.Mode tintMode) {
 		System.out.println("updateTintFilter("+tintFilter+", "+tint+", "+tintMode+")");
 		if (tint == null || tintMode == null) {
