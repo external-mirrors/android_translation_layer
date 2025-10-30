@@ -48,6 +48,14 @@ public class Paint {
 		return native_get_color(paint);
 	}
 
+	public void setAlpha(int a) {
+		native_set_alpha(paint, a);
+	}
+
+	public int getAlpha() {
+		return native_get_alpha(paint);
+	}
+
 	public void setAntiAlias(boolean aa) {
 	}
 
@@ -199,8 +207,6 @@ public class Paint {
 	public /*native*/ void setStrikeThruText(boolean strikeThruText) {}
 	public /*native*/ void setFakeBoldText(boolean fakeBoldText) {}
 
-	public /*native*/ int getAlpha() { return 0; }
-	public /*native*/ void setAlpha(int a) {}
 	public float getStrokeWidth() {
 		return native_get_stroke_width(paint);
 	}
@@ -365,6 +371,8 @@ public class Paint {
 	private static native void native_recycle(long paint);
 	private static native void native_set_color(long paint, int color);
 	private static native int native_get_color(long paint);
+	private static native void native_set_alpha(long paint, int alpha);
+	private static native int native_get_alpha(long paint);
 	private static native void native_set_style(long paint, int style);
 	private static native int native_get_style(long paint);
 	private static native void native_set_stroke_width(long paint, float width);

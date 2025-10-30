@@ -75,6 +75,22 @@ JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1color
 
 /*
  * Class:     android_graphics_Paint
+ * Method:    native_set_alpha
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1alpha
+  (JNIEnv *, jclass, jlong, jint);
+
+/*
+ * Class:     android_graphics_Paint
+ * Method:    native_get_alpha
+ * Signature: (J)I
+ */
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1alpha
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_graphics_Paint
  * Method:    native_set_style
  * Signature: (JI)V
  */
