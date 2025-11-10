@@ -198,6 +198,17 @@ JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1rect(JNIEnv *env,
 	gsk_path_builder_add_rect(_PTR(builder_ptr), &GRAPHENE_RECT_INIT(left, top, right-left, bottom-top));
 }
 
+JNIEXPORT void JNICALL Java_android_graphics_Path_native_1add_1round_1rect(JNIEnv *env, jclass this, jlong builder_ptr, jfloat left, jfloat top, jfloat right, jfloat bottom, jfloatArray radii_jobj)
+{
+	jfloat *radii = (*env)->GetFloatArrayElements(env, radii_jobj, NULL);
+	GskRoundedRect round_rect = {
+		.bounds = GRAPHENE_RECT_INIT(left, top, right - left, bottom - top),
+		.corner = {{radii[0], radii[1]}, {radii[2], radii[3]}, {radii[4], radii[5]}, {radii[6], radii[7]}},
+	};
+	(*env)->ReleaseFloatArrayElements(env, radii_jobj, radii, 0);
+	gsk_path_builder_add_rounded_rect(_PTR(builder_ptr), &round_rect);
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_Path_native_1get_1bounds(JNIEnv *env, jclass this, jlong path_ptr, jobject bounds)
 {
 	graphene_rect_t rect;
