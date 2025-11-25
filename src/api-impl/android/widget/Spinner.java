@@ -60,4 +60,8 @@ public class Spinner extends AbsSpinner {
 	@Override
 	void layout(int delta, boolean animate) {}
 
+	public int getDropDownWidth() { return 100; }
+
+	public void setDropDownHorizontalOffset(int offset) {};
+
 }

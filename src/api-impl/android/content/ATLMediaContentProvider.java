@@ -21,7 +21,7 @@ public class ATLMediaContentProvider extends ContentProvider {
 
 	// called from native
 	void setSelectedFile(String selectedFile) {
-		this.selectedFile = new File(selectedFile);
+		this.selectedFile = selectedFile == null ? null : new File(selectedFile);
 		this.waitingForFileChooser = false;
 		this.timestamp = System.currentTimeMillis();
 		synchronized(this) {

@@ -74,4 +74,12 @@ public class ViewConfiguration {
 	public boolean shouldShowMenuShortcutsWhenKeyboardPresent() {
 		return true;
 	}
+
+	public static int getKeyRepeatTimeout() {
+		return 1000;
+	}
+
+	public static int getKeyRepeatDelay() {
+		return 100;
+	}
 }

@@ -1,7 +1,10 @@
 package android.media;
 
 import android.content.Context;
+import android.net.Uri;
+
 import java.io.FileDescriptor;
+import java.util.Map;
 
 public class MediaPlayer {
 	private long gtk_media_stream;
@@ -30,6 +33,16 @@ public class MediaPlayer {
 
 	public void setDataSource(String path) {
 		gtk_media_stream = native_setDataSource(path);
+	}
+
+	public void setDataSource(Context context, Uri uri) {
+		System.out.println("setDataSource(" + uri + ") called");
+		setDataSource(uri.getPath());
+	}
+
+	public void setDataSource(Context context, Uri uri, Map<String, String> headers) {
+		System.out.println("setDataSource(" + uri + ") called");
+		setDataSource(uri.getPath());
 	}
 
 	public void setLooping(boolean dummy) {}
@@ -75,6 +88,8 @@ public class MediaPlayer {
 	public int getCurrentPosition() {
 		return native_getCurrentPosition(gtk_media_stream);
 	}
+
+	public int getAudioSessionId() { return 0; }
 
 	public static native void native_prepare(long gtk_media_stream);
 	public native long native_setDataSource(String path);

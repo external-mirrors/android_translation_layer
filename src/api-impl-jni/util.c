@@ -260,6 +260,8 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent) {
 	for (jint i = 0; i < extras_keys_length; i++) {
 		jstring key_jstr = (*env)->GetObjectArrayElement(env, extras_keys, i);
 		jobject value_jobj = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.get, key_jstr);
+		if (!key_jstr || !value_jobj)
+			continue;
 		const char *key = (*env)->GetStringUTFChars(env, key_jstr, NULL);
 		if ((*env)->IsInstanceOf(env, value_jobj, _CLASS(key_jstr))) {
 			const char *value = (*env)->GetStringUTFChars(env, value_jobj, NULL);

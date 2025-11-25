@@ -39,7 +39,18 @@ public class MediaCodecInfo {
 			System.out.println("CodecCapabilities.isFeatureRequired("+feature+")");
 			return false;
 		}
+
+		public AudioCapabilities getAudioCapabilities() {
+			return new AudioCapabilities();
+		}
 	}
 
 	public static class CodecProfileLevel {}
+
+	public static class AudioCapabilities {
+
+		public boolean isSampleRateSupported(int sampleRate) {
+			return true;
+		}
+	}
 }

@@ -27,7 +27,7 @@ public class ViewSwitcher extends ViewAnimator {
 	@Override
 	public View getCurrentView() {
 		View view = super.getCurrentView();
-		if (view == null) {
+		if (view == null && factory != null) {
 			view = factory.makeView();
 			addView(view);
 		}
@@ -36,7 +36,7 @@ public class ViewSwitcher extends ViewAnimator {
 
 	public View getNextView() {
 		View view = getChildAt(mWhichChild+1);
-		if (view == null) {
+		if (view == null && factory != null) {
 			view = factory.makeView();
 			addView(view);
 		}

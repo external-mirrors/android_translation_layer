@@ -4,6 +4,10 @@ import android.content.res.Resources;
 import android.util.Log;
 
 public class Canvas {
+
+	public static enum EdgeType {
+		BW;
+	}
 	public static final int HAS_ALPHA_LAYER_SAVE_FLAG = (1 << 2);
 
 	private Bitmap bitmap;
@@ -548,5 +552,9 @@ public class Canvas {
 
 	public void drawPoint(float x, float y, Paint paint) {
 		Log.w("Canvas", "STUB: drawPoint");
+	}
+
+	public boolean quickReject(float left, float top, float right, float bottom, EdgeType edgeType) {
+		return false;
 	}
 }

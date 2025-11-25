@@ -97,7 +97,7 @@ public class TextView extends View {
 	}
 
 	public void setText(CharSequence text, BufferType type) {
-		this.text = text;
+		this.text = text == null ? "" : text;
 		native_setText(text != null ? text.toString() : null);
 
 		if (text instanceof android.text.Spanned)
@@ -406,4 +406,6 @@ public class TextView extends View {
 	public void setBreakStrategy(int strategy) {}
 
 	public void clearComposingText() {}
+
+	public void setKeyListener(KeyListener keyListener) {}
 }

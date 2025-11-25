@@ -9,4 +9,8 @@ public class PhoneNumberUtils {
 	public static boolean isGlobalPhoneNumber(String phoneNumber) {
 		return phoneNumber != null && (phoneNumber.startsWith("+") || phoneNumber.startsWith("00"));
 	}
+
+	public static String stripSeparators(String phoneNumber) {
+		return phoneNumber.replaceAll("[ \t\n\r-]", "");
+	}
 }

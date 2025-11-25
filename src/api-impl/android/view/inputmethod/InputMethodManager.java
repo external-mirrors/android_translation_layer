@@ -31,4 +31,8 @@ public class InputMethodManager {
 
 	public void updateSelection(View view, int selStart, int selEnd, int candidatesStart, int candidatesEnd) {}
 
+	public InputMethodSubtype getCurrentInputMethodSubtype() {
+		return new InputMethodSubtype();
+	}
+
 }

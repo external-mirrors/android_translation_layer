@@ -1,5 +1,7 @@
 package android.media;
 
+import java.nio.ByteBuffer;
+
 public class AudioTrack {
 	public interface OnPlaybackPositionUpdateListener {
 		void onMarkerReached(AudioTrack track);
@@ -62,6 +64,10 @@ public class AudioTrack {
 		this.sessionId = sessionId;
 	}
 
+	public AudioTrack(AudioAttributes attributes, AudioFormat format, int bufferSizeInBytes, int mode, int sessionId) {
+		this(attributes.streamType, format.sampleRate, format.channelMask, format.encoding, bufferSizeInBytes, mode, sessionId);
+	}
+
 	public static native int getMinBufferSize(int sampleRateInHz, int channelConfig, int audioFormat);
 
 	public void setPlaybackPositionUpdateListener(OnPlaybackPositionUpdateListener listener) {
@@ -118,6 +124,12 @@ public class AudioTrack {
 		return ret * channels * 2; // 2 means PCM16
 	}
 
+	public int write(ByteBuffer audioData, int sizeInBytes, int writeMode) {
+		int ret = write(audioData.array(), audioData.arrayOffset() + audioData.position(), sizeInBytes);
+		audioData.position(audioData.position() + ret);
+		return ret;
+	}
+
 	public int getAudioSessionId() {
 		return sessionId;
 	}
@@ -142,6 +154,14 @@ public class AudioTrack {
 
 	public int getPlaybackHeadPosition() {
 		return playbackHeadPosition - native_getPlaybackHeadPosition();
+	}
+
+	public int setVolume(float volume) {
+		return 0;
+	}
+
+	public boolean getTimestamp(AudioTimestamp timestamp) {
+		return false;
 	}
 
 	private native int native_getPlaybackHeadPosition();
