@@ -77,11 +77,14 @@ public class Layout {
 	}
 
 	public static float getDesiredWidth(CharSequence source, int start, int end, TextPaint paint) {
-		return paint.measureText(source, start, end);
+		return getDesiredWidth(source.subSequence(start, end), paint);
 	}
 
 	public static float getDesiredWidth(CharSequence source, TextPaint paint) {
-		return paint.measureText(source, 0, source.length());
+		long layout = native_constructor(source != null ? source.toString() : "", paint.paint, -1);
+		float width = native_get_desired_width(layout);
+		native_free(layout);
+		return width;
 	}
 
 	public int getLineBaseline(int line) {
@@ -237,7 +240,7 @@ public class Layout {
 		return 0;
 	}
 
-	protected native long native_constructor(String text, long paint, int width);
+	protected static native long native_constructor(String text, long paint, int width);
 	protected native void native_set_width(long layout, int width);
 	protected native int native_get_width(long layout);
 	protected native int native_get_height(long layout);
@@ -257,4 +260,6 @@ public class Layout {
 	protected native int native_get_ellipsis_count(long layout, int line);
 	protected native void native_draw(long layout, long snapshot, long paint);
 	protected native void native_draw_custom_canvas(long layout, Canvas canvas, Paint paint);
+	protected static native float native_get_desired_width(long layout);
+	protected static native void native_free(long layout);
 }

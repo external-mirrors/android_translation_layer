@@ -13,7 +13,7 @@ extern "C" {
  * Signature: (Ljava/lang/String;JI)J
  */
 JNIEXPORT jlong JNICALL Java_android_text_Layout_native_1constructor
-  (JNIEnv *, jobject, jstring, jlong, jint);
+  (JNIEnv *, jclass, jstring, jlong, jint);
 
 /*
  * Class:     android_text_Layout
@@ -166,6 +166,22 @@ JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw
  */
 JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw_1custom_1canvas
   (JNIEnv *, jobject, jlong, jobject, jobject);
+
+/*
+ * Class:     android_text_Layout
+ * Method:    native_get_desired_width
+ * Signature: (J)F
+ */
+JNIEXPORT jfloat JNICALL Java_android_text_Layout_native_1get_1desired_1width
+  (JNIEnv *, jclass, jlong);
+
+/*
+ * Class:     android_text_Layout
+ * Method:    native_free
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_android_text_Layout_native_1free
+  (JNIEnv *, jclass, jlong);
 
 #ifdef __cplusplus
 }

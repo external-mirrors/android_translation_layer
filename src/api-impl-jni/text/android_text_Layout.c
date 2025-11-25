@@ -16,7 +16,7 @@ JNIEXPORT jlong JNICALL Java_android_text_Layout_native_1constructor(JNIEnv *env
 	const char *str = (*env)->GetStringUTFChars(env, text, NULL);
 	pango_layout_set_text(layout, str, -1);
 	(*env)->ReleaseStringUTFChars(env, text, str);
-	pango_layout_set_width(layout, width * PANGO_SCALE);
+	pango_layout_set_width(layout, width == -1 ? -1 : width * PANGO_SCALE);
 	return _INTPTR(layout);
 }
 
@@ -189,4 +189,18 @@ JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw_1custom_1canvas(JNI
 		(*env)->CallVoidMethod(env, canvas, handle_cache.canvas.drawText, text_jstr, (jint)0, end, (jfloat)0, y, paint);
 		(*env)->DeleteLocalRef(env, text_jstr);
 	} while (pango_layout_iter_next_line(pango_iter));
+}
+
+JNIEXPORT jfloat JNICALL Java_android_text_Layout_native_1get_1desired_1width(JNIEnv *env, jclass class, jlong layout)
+{
+	PangoLayout *pango_layout = _PTR(layout);
+	int width;
+	pango_layout_get_size(pango_layout, &width, NULL);
+	return (jfloat)width / PANGO_SCALE;
+}
+
+JNIEXPORT void JNICALL Java_android_text_Layout_native_1free(JNIEnv *env, jclass class, jlong layout)
+{
+	PangoLayout *pango_layout = _PTR(layout);
+	g_object_unref(pango_layout);
 }
