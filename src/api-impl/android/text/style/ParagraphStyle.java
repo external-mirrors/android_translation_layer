@@ -1,4 +1,4 @@
 package android.text.style;
 
-public class ParagraphStyle {
+public interface ParagraphStyle {
 }

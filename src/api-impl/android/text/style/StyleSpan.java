@@ -1,6 +1,6 @@
 package android.text.style;
 
-public class StyleSpan {
+public class StyleSpan extends MetricAffectingSpan {
 
 	private int style;
 

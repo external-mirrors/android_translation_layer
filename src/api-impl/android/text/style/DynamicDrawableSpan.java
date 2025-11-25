@@ -1,4 +1,4 @@
 package android.text.style;
 
-public class DynamicDrawableSpan {
+public class DynamicDrawableSpan extends ReplacementSpan {
 }
