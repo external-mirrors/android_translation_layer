@@ -4,7 +4,6 @@
 #include "../util.h"
 
 #include "../generated_headers/android_graphics_Bitmap.h"
-#include "android_graphics_Bitmap.h"
 
 JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JNIEnv *env, jclass class, jlong texture_ptr)
 {
@@ -17,45 +16,42 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1snapshot(JN
 	return _INTPTR(snapshot);
 }
 
-/* GdkDisplay is not thread safe on X11. We can't even use the default
- * display from main thread, because a GTK render thread may run concurrently.
- * Creating GdkDisplays on the fly is also not thread safe in newer GTK versions.
- * So we create a pool of pre-opened GdkDisplays.*/
-static GAsyncQueue *off_screen_displays = NULL;
-
-void init_off_screen_displays(void)
-{
-	off_screen_displays = g_async_queue_new_full(g_object_unref);
-	g_async_queue_push(off_screen_displays, gdk_display_open(NULL));
-	g_async_queue_push(off_screen_displays, gdk_display_open(NULL));
-}
+extern GThread *main_thread_id;
 
 JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNIEnv *env, jclass class, jlong snapshot_ptr, jint width, jint height, jint stride, jint format)
 {
 	static GType renderer_type = 0;
+	static GdkDisplay *off_screen_display;
 	GtkSnapshot *snapshot = _PTR(snapshot_ptr);
 	GskRenderNode *node = snapshot ? gtk_snapshot_free_to_node(snapshot) : NULL;
 	GdkTexture *texture = NULL;
 	if (node) {
 		graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
-		GdkDisplay *off_screen_display = g_async_queue_pop(off_screen_displays);
-		if (!renderer_type) {
-			// Create and destroy a dummy surface to get the renderer type
-			GdkSurface *surface = gdk_surface_new_toplevel(off_screen_display);
-			GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
-			renderer_type = G_OBJECT_TYPE(renderer);
-			gsk_renderer_unrealize(renderer);
-			g_object_unref(renderer);
-			gdk_surface_destroy(surface);
+		GskRenderer *renderer;
+		if (g_thread_self() == main_thread_id) {
+			GObject *default_display = G_OBJECT(gdk_display_get_default());
+			while (default_display->ref_count < 100)
+				g_object_ref(default_display);  // workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/7848
+			if (!off_screen_display) {
+				off_screen_display = gdk_display_open(NULL);
+				// Create and destroy a dummy surface to get the renderer type
+				GdkSurface *surface = gdk_surface_new_toplevel(off_screen_display);
+				GskRenderer *renderer = gsk_renderer_new_for_surface(surface);
+				renderer_type = G_OBJECT_TYPE(renderer);
+				gsk_renderer_unrealize(renderer);
+				g_object_unref(renderer);
+				gdk_surface_destroy(surface);
+			}
+			renderer = g_object_new(renderer_type, NULL);
+			gsk_renderer_realize_for_display(renderer, off_screen_display, NULL);
+		} else {
+			renderer = gsk_cairo_renderer_new();
+			gsk_renderer_realize(renderer, NULL, NULL);
 		}
-		GskRenderer *renderer = g_object_new(renderer_type, NULL);
-		gsk_renderer_realize_for_display(renderer, off_screen_display, NULL);
-		g_object_ref(gdk_display_get_default());  // workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/7848
 		texture = gsk_renderer_render_texture(renderer, node, &bounds);
 		gsk_render_node_unref(node);
 		gsk_renderer_unrealize(renderer);
 		g_object_unref(renderer);
-		g_async_queue_push(off_screen_displays, off_screen_display);
 	} else {
 		if (format == -1) {
 			format = GDK_MEMORY_R8G8B8A8;
