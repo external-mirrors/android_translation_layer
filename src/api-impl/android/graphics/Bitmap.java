@@ -128,9 +128,9 @@ public final class Bitmap {
 	}
 
 	public void eraseColor(int color) {
-		native_recycle(texture, snapshot);
-		snapshot = native_erase_color(color, width, height);
-		texture = 0;
+		Paint paint = new Paint();
+		paint.setColor(color);
+		new Canvas(this).drawRect(0, 0, width, height, paint);
 	}
 
 	public void recycle() {
@@ -235,7 +235,6 @@ public final class Bitmap {
 	private static native long native_create_texture(long snapshot, int width, int height, int stride, int format);
 	private static native int native_get_width(long texture);
 	private static native int native_get_height(long texture);
-	private static native long native_erase_color(int color, int width, int height);
 	private static native void native_recycle(long texture, long snapshot);
 	private static native long native_ref_texture(long texture);
 	private static native void native_get_pixels(long texture, int[] pixels, int offset, int stride, int x, int y, int width, int height);

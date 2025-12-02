@@ -41,14 +41,6 @@ JNIEXPORT jint JNICALL Java_android_graphics_Bitmap_native_1get_1height
 
 /*
  * Class:     android_graphics_Bitmap
- * Method:    native_erase_color
- * Signature: (III)J
- */
-JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1erase_1color
-  (JNIEnv *, jclass, jint, jint, jint);
-
-/*
- * Class:     android_graphics_Bitmap
  * Method:    native_recycle
  * Signature: (JJ)V
  */
