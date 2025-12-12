@@ -114,22 +114,35 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 
 	return ret;
 }
-static void gdk_event_get_widget_relative_position(GdkEvent *event, GtkWidget *widget, double *x, double *y)
+
+/* we get the position from the fields instead of getting it from Gtk, because Gtk will only update it once
+ * per frame while we need it to update immediately if it was adjusted by a previous touch event handler */
+static bool window_to_view_coords(WrapperWidget *wrapper, double *x, double *y)
 {
 	int ret;
-
-	graphene_point_t p;
 	double off_x;
 	double off_y;
 
-	gdk_event_get_position(event, x, y);
-	GtkWidget *window = GTK_WIDGET(gtk_widget_get_native(widget));
-	gtk_native_get_surface_transform(GTK_NATIVE(window), &off_x, &off_y);
-	ret = gtk_widget_compute_point(window, widget, &GRAPHENE_POINT_INIT(*x - off_x, *y - off_y), &p);
-	assert(ret);
+	JNIEnv *env = get_jni_env();
 
-	*x = p.x;
-	*y = p.y;
+	GtkWidget *window = GTK_WIDGET(gtk_widget_get_native(GTK_WIDGET(wrapper)));
+	gtk_native_get_surface_transform(GTK_NATIVE(window), &off_x, &off_y);
+
+	/* HACK: use gtk_widget_compute_point to recursively get the transform for the parent,
+	 * and only do the last step from parent to `wrapper` manually. This fixes OsmAnd,
+	 * but for a proper fix we'd need to use the Java fields for every step of the recursion. */
+	graphene_point_t p;
+	ret = gtk_widget_compute_point(window, gtk_widget_get_parent(GTK_WIDGET(wrapper)), &GRAPHENE_POINT_INIT(*x - off_x, *y - off_y), &p);
+	if(!ret)
+		return false;
+
+	float widget_left = _GET_INT_FIELD(wrapper->jobj, "left") + _GET_FLOAT_FIELD(wrapper->jobj, "translationX");
+	float widget_top = _GET_INT_FIELD(wrapper->jobj, "top") + _GET_FLOAT_FIELD(wrapper->jobj, "translationY");
+
+	*x = p.x - widget_left;
+	*y = p.y - widget_top;
+
+	return true;
 }
 
 void remove_pointer_fast(GPtrArray *pointer_indices, struct pointer *pointer)
@@ -149,6 +162,8 @@ static bool action_up_already_handled = false;
 // TODO: find a way to reconcile this with libandroid/input.c?
 static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *event, gpointer user_data)
 {
+	double raw_x;
+	double raw_y;
 	double x;
 	double y;
 
@@ -205,10 +220,10 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 		exit(1);
 	}
 
-	double raw_x;
-	double raw_y;
 	gdk_event_get_position(event, &raw_x, &raw_y);
-	gdk_event_get_widget_relative_position(event, widget, &x, &y);
+	x = raw_x;
+	y = raw_y;
+	assert(window_to_view_coords(wrapper, &x, &y));
 
 	if(!pointers[id].id) {
 		/* if this is a new sequence, add a slot for it */
