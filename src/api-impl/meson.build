@@ -372,6 +372,7 @@ srcs = [
 	'android/os/RemoteCallbackList.java',
 	'android/os/RemoteException.java',
 	'android/os/ResultReceiver.java',
+	'android/os/ServiceManager.java',
 	'android/os/StatFs.java',
 	'android/os/StrictMode.java',
 	'android/os/SystemClock.java',
