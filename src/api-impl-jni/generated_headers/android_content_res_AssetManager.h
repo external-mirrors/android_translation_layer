@@ -374,10 +374,10 @@ JNIEXPORT jintArray JNICALL Java_android_content_res_AssetManager_getArrayString
 /*
  * Class:     android_content_res_AssetManager
  * Method:    init
- * Signature: ()V
+ * Signature: (I)V
  */
 JNIEXPORT void JNICALL Java_android_content_res_AssetManager_init
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jint);
 
 /*
  * Class:     android_content_res_AssetManager

@@ -77,8 +77,9 @@ char *construct_classpath(char *prefix, char **cp_array, size_t len)
 }
 
 #define JDWP_ARG "-XjdwpOptions:transport=dt_socket,server=y,suspend=y,address="
+#define SDK_INT_ARG "-DBuild.VERSION.SDK_INT="
 
-JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, char *framework_res_apk, char *test_runner_jar, char *api_impl_natives_dir, char *app_lib_dir, char **extra_jvm_options)
+JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, char *framework_res_apk, char *test_runner_jar, char *api_impl_natives_dir, char *app_lib_dir, char *sdk_int, char **extra_jvm_options)
 {
 	JavaVM *jvm;
 	JNIEnv *env;
@@ -91,11 +92,14 @@ JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, cha
 	int option_counter = args.nOptions;
 
 	char jdwp_option_string[sizeof(JDWP_ARG) + 5] = JDWP_ARG; // 5 chars for port number, NULL byte is counted by sizeof
+	char sdk_int_option_string[sizeof(SDK_INT_ARG) + 2] = SDK_INT_ARG; // 2 chars for SDK_INT, NULL byte is counted by sizeof
 
 	const char *jdwp_port = getenv("JDWP_LISTEN");
 
 	if (jdwp_port)
 		args.nOptions += 2;
+	if (sdk_int)
+		args.nOptions += 1;
 	if (extra_jvm_options)
 		args.nOptions += g_strv_length(extra_jvm_options);
 	options = malloc(sizeof(JavaVMOption) * args.nOptions);
@@ -112,6 +116,11 @@ JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, cha
 		strncat(jdwp_option_string, jdwp_port, 5); // 5 chars is enough for a port number, and won't overflow our array
 		options[option_counter++].optionString = "-XjdwpProvider:internal";
 		options[option_counter++].optionString = jdwp_option_string;
+	}
+
+	if (sdk_int) {
+		strncat(sdk_int_option_string, sdk_int, 2); // 2 chars should be enough for the foreseeable future, and won't overflow our array
+		options[option_counter++].optionString = sdk_int_option_string;
 	}
 
 	while (extra_jvm_options && *extra_jvm_options) {
@@ -215,6 +224,7 @@ struct jni_callback_data {
 	char *prgname;
 	char **extra_jvm_options;
 	char **extra_string_keys;
+	char *sdk_int;
 };
 
 static char *uri_option = NULL;
@@ -472,7 +482,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	dl_parse_library_path(ld_path, ":");
 	g_free(ld_path);
 
-	JNIEnv *env = create_vm(api_impl_jar, apk_classpath, microg_apk, framework_res_apk, test_runner_jar, api_impl_natives_dir, app_lib_dir, d->extra_jvm_options);
+	JNIEnv *env = create_vm(api_impl_jar, apk_classpath, microg_apk, framework_res_apk, test_runner_jar, api_impl_natives_dir, app_lib_dir, d->sdk_int, d->extra_jvm_options);
 
 	free(app_lib_dir);
 
@@ -807,6 +817,7 @@ void init_cmd_parameters(GApplication *app, struct jni_callback_data *d)
 		{ "extra-jvm-option", 'X', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_jvm_options,         "pass an additional option directly to art (e.g -X \"-verbose:jni\")",                          "\"OPTION\""    },
 		{ "extra-string-key", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_string_keys,         "pass a string extra (-e key=value)",                                                           "\"KEY=VALUE\"" },
 		{ "uri",              'u', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, option_uri_cb, "open the given URI inside the application",                                               "URI"           },
+		{ "sdk-int",           0 , 0, G_OPTION_ARG_STRING,       &d->sdk_int,                   "pass a string extra (-e key=value)",                                                           "\"KEY=VALUE\"" },
 		{NULL}
 	};
 
@@ -843,6 +854,7 @@ int main(int argc, char **argv)
 	callback_data->prgname = argv[0];
 	callback_data->extra_jvm_options = NULL;
 	callback_data->extra_string_keys = NULL;
+	callback_data->sdk_int = NULL;
 
 	app = gtk_application_new("com.example.demo_application", G_APPLICATION_NON_UNIQUE | G_APPLICATION_HANDLES_OPEN | G_APPLICATION_CAN_OVERRIDE_APP_ID);
 

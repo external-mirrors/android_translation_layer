@@ -109,7 +109,13 @@ public class Build {
 	public static class VERSION {
 		static {
 			String SDK_INT_str = System.getProperty("Build.VERSION.SDK_INT");
-			SDK_INT = (SDK_INT_str != null) ? Integer.parseInt(SDK_INT_str) : Build.VERSION_CODES.GINGERBREAD;
+			int SDK_INT_tmp = (SDK_INT_str != null) ? Integer.parseInt(SDK_INT_str) : Build.VERSION_CODES.GINGERBREAD;
+
+			/* !!! forcing a RESOURCES_SDK_INT value different from SDK_INT can cause issues, including crashes */
+			String RESOURCES_SDK_INT_str = System.getProperty("Build.VERSION.RESOURCES_SDK_INT");
+
+			SDK_INT = SDK_INT_tmp;
+			RESOURCES_SDK_INT = (RESOURCES_SDK_INT_str != null) ? Integer.parseInt(RESOURCES_SDK_INT_str) : SDK_INT_tmp;
 		}
 
 		/**
@@ -151,7 +157,7 @@ public class Build {
 		 * also allow the previous SDK version + 1.
 		 * @hide
 		 */
-		public static final int RESOURCES_SDK_INT = SDK_INT + ("REL".equals(CODENAME) ? 0 : 1);
+		public static final int RESOURCES_SDK_INT;
 
 		public static final String SECURITY_PATCH = getString("ro.build.version.security_patch");
 	}

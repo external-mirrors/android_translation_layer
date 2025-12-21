@@ -131,12 +131,12 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_destroyAsset(JNIEnv
 	Asset_delete(asset);
 }
 
-JNIEXPORT void JNICALL Java_android_content_res_AssetManager_init(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_android_content_res_AssetManager_init(JNIEnv *env, jobject this, jint sdk_version)
 {
 	struct AssetManager *asset_manager = AssetManager_new();
 	const struct ResTable_config config = {
 		.density = /*ACONFIGURATION_DENSITY_MEDIUM*/ 160,
-		.sdkVersion = 24,
+		.sdkVersion = sdk_version,
 	};
 	AssetManager_setConfiguration(asset_manager, &config);
 	_SET_LONG_FIELD(this, "mObject", _INTPTR(asset_manager));

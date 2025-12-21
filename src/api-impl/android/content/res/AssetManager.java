@@ -109,7 +109,7 @@ public final class AssetManager {
 				mNumRefs = 0;
 				incRefsLocked(this.hashCode());
 			}
-			init();
+			init(android.os.Build.VERSION.RESOURCES_SDK_INT);
 			if (localLOGV)
 				Log.v(TAG, "New asset manager: " + this);
 			//            ensureSystemAssets()
@@ -157,7 +157,7 @@ public final class AssetManager {
 				incRefsLocked(this.hashCode());
 			}
 		}
-		init();
+		init(android.os.Build.VERSION.RESOURCES_SDK_INT);
 		if (localLOGV)
 			Log.v(TAG, "New asset manager: " + this);
 	}
@@ -776,7 +776,7 @@ public final class AssetManager {
 		return values;
 	}
 
-	private native final void init();
+	private native final void init(int sdk_version);
 	private /*native*/ final void destroy() {
 		Slog.w(TAG, "AssetManager.destroy(): STUB");
 	}

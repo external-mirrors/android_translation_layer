@@ -1246,6 +1246,11 @@ public class Resources {
 		 *              if not already defined in the theme.
 		 */
 		public void applyStyle(int resid, boolean force) {
+			if (debug) {
+				System.out.println("["+theme+"] applyStyle("+resid+", "+force+") called");
+				try { throw new Exception("[stack trace]"); } catch (Exception e) {e.printStackTrace();}
+			}
+
 			mAssets.applyThemeStyle(theme, resid, force);
 		}
 
@@ -1378,6 +1383,7 @@ public class Resources {
 			if (debug && set != null) {
 				int[] data = array.mData;
 
+				System.out.println("["+theme+"] in obtainStyledAttributes:");
 				System.out.println("Attributes:");
 				String s = "  Attrs:";
 				int i;
@@ -1712,7 +1718,7 @@ public class Resources {
 						 mConfiguration.smallestScreenWidthDp,
 						 mConfiguration.screenWidthDp, mConfiguration.screenHeightDp,
 						 mConfiguration.screenLayout, mConfiguration.uiMode,
-						 25);
+						 Build.VERSION.RESOURCES_SDK_INT);
 
 			if (DEBUG_CONFIG) {
 				Slog.i(TAG, "**** Updating config of " + this + ": final config is " + mConfiguration + " final compat is " + mCompatibilityInfo);
