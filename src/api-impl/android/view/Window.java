@@ -1,6 +1,8 @@
 package android.view;
 
+import android.R;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.transition.Transition;
 import android.view.SurfaceHolder;
@@ -36,11 +38,21 @@ public class Window {
 	private Window.Callback callback;
 	private Context context;
 
+	public boolean is_floating = false;
+
 	public Window(Context context, Window.Callback callback) {
 		this.callback = callback;
 		this.context = context;
 		decorView = new FrameLayout(context);
 		decorView.setId(android.R.id.content);
+
+		TypedArray a = context.obtainStyledAttributes(com.android.internal.R.styleable.Window);
+		/* windows are not floating by default - so a dialog without a dialog theme is not a dialog */
+		is_floating = a.getBoolean(R.styleable.Window_windowIsFloating, false);
+		Drawable background = a.getDrawable(R.styleable.Window_windowBackground);
+		if (background != null)
+			setBackgroundDrawable(background);
+		a.recycle();
 	}
 
 	public void set_native_window(long native_window) {

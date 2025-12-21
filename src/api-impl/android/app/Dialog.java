@@ -18,7 +18,7 @@ import android.view.Window;
 public class Dialog implements Window.Callback, DialogInterface {
 	protected long nativePtr;
 
-	protected native long nativeInit();
+	protected native long nativeInit(boolean is_floating);
 	private native void nativeSetTitle(long ptr, String title);
 	private native void nativeSetContentView(long ptr, long widget);
 	private native void nativeShow(long ptr);
@@ -32,13 +32,8 @@ public class Dialog implements Window.Callback, DialogInterface {
 
 	public Dialog(Context context, int themeResId) {
 		this.context = context;
-		nativePtr = nativeInit();
 		window = new Window(context, this);
-		TypedArray ta = context.obtainStyledAttributes(new int[] {R.attr.windowBackground});
-		Drawable background = ta.getDrawable(0);
-		if (background != null)
-			window.setBackgroundDrawable(background);
-		ta.recycle();
+		nativePtr = nativeInit(window.is_floating);
 
 		window.set_native_window(nativePtr);
 	}
