@@ -19,6 +19,7 @@ public class ActivityManager {
 	public static class RunningAppProcessInfo{
 		public int importance;
 		public int pid;
+		public int uid;
 		public String processName;
 
 		private RunningAppProcessInfo(int pid, String processName) {

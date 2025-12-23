@@ -280,6 +280,9 @@ public class TextView extends View {
 	public void setMinHeight(int minHeight) {}
 
 	public void setHorizontallyScrolling(boolean whether) {}
+	public boolean getHorizontallyScrolling() {
+		return false;
+	}
 
 	public static interface OnEditorActionListener {
 		public abstract boolean onEditorAction(TextView v, int actionId, KeyEvent event);
@@ -355,6 +358,10 @@ public class TextView extends View {
 
 	public void setLines(int lines) {}
 
+	public int getMinLines() {
+		return -1;
+	}
+
 	public void setMinLines(int lines) {}
 
 	public void setSelectAllOnFocus(boolean selectAllOnFocus) {}
@@ -398,6 +405,10 @@ public class TextView extends View {
 	public int getTotalPaddingLeft() {return 0;}
 
 	public int getTotalPaddingTop() {return 0;}
+
+	public int getTotalPaddingRight() {return 0;}
+
+	public int getTotalPaddingBottom() {return 0;}
 
 	public int getImeOptions() {return 0;}
 

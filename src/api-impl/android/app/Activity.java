@@ -644,6 +644,9 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	void setFinishOnTouchOutside(boolean finish) {
 	}
 
+	public void closeOptionsMenu() {
+	}
+
 	public void finishActivity(int requestCode) {
 		/* TODO: track started activities so we can finish the right one here */
 		Slog.w(TAG, "finishActivity: stub");

@@ -36,7 +36,7 @@ public class ImageView extends View {
 		super(context, attrs, defStyleAttr, defStyleRes);
 
 		haveCustomMeasure = false;
-		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.ImageView, defStyleAttr, 0);
+		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.ImageView, defStyleAttr, defStyleRes);
 		if (a.hasValue(com.android.internal.R.styleable.ImageView_tint))
 			colorFilter = new PorterDuffColorFilter(a.getColor(com.android.internal.R.styleable.ImageView_tint, 0),
 					PorterDuff.Mode.values()[a.getInt(com.android.internal.R.styleable.ImageView_tintMode, PorterDuff.Mode.SRC_IN.nativeInt)]);

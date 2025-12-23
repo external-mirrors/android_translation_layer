@@ -99,9 +99,9 @@ public abstract class BaseExpandableListAdapter implements ExpandableListAdapter
 	/**
 	 * {@inheritDoc}
 	 */
-	/*public boolean isEmpty() {
+	public boolean isEmpty() {
 		return getGroupCount() == 0;
-	}*/
+	}
 
 	/**
 	 * {@inheritDoc}

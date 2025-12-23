@@ -19,6 +19,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageParser;
 import android.content.pm.ShortcutManager;
 import android.content.res.AssetManager;
+import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -710,6 +711,10 @@ public class Context extends Object {
 
 	public final CharSequence getText(int resId) {
 		return getResources().getText(resId);
+	}
+
+	public final ColorStateList getColorStateList(int id) {
+		return getResources().getColorStateList(id);
 	}
 
 	public final Drawable getDrawable(int resId) {
