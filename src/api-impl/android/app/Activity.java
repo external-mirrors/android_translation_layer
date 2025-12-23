@@ -55,30 +55,34 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	boolean destroyed = false;
 
 	public static Activity internalCreateActivity(String className, long native_window, Intent intent) throws ReflectiveOperationException {
-		int themeResId = 0;
-		CharSequence label = null;
-		CharSequence app_label = null;
+		int theme_res = 0;
+		int label_res = 0;
+		int app_label_res = 0;
 		for (PackageParser.Activity activity: pkg.activities) {
 			if (className.equals(activity.className)) {
-				label = r.getText(activity.info.labelRes);
-				themeResId = activity.info.getThemeResource();
+				label_res = activity.info.labelRes;
+				theme_res = activity.info.getThemeResource();
 				break;
 			}
 		}
-		if (themeResId == 0)
-			themeResId = com.android.internal.R.style.Theme_DeviceDefault;
+
+		app_label_res = pkg.applicationInfo.labelRes;
+
+		if (theme_res == 0)
+			theme_res = com.android.internal.R.style.Theme_DeviceDefault;
+
 		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
 		Constructor<? extends Activity> constructor = cls.getConstructor();
 		Activity activity = constructor.newInstance();
 		activity.window.set_native_window(native_window);
 		activity.intent = intent;
 		activity.attachBaseContext(new Context());
-		activity.setTheme(themeResId);
-		app_label = r.getText(pkg.applicationInfo.labelRes);
-		if (label != null) {
-			activity.setTitle(label);
-		} else if (app_label != null) {
-			activity.setTitle(app_label);
+		activity.setTheme(theme_res);
+
+		if (label_res != 0) {
+			activity.setTitle(r.getText(label_res));
+		} else if (app_label_res != 0) {
+			activity.setTitle(r.getText(app_label_res));
 		}
 		return activity;
 	}
