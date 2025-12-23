@@ -65,6 +65,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 				break;
 			}
 		}
+		if (themeResId == 0)
+			themeResId = com.android.internal.R.style.Theme_DeviceDefault;
 		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
 		Constructor<? extends Activity> constructor = cls.getConstructor();
 		Activity activity = constructor.newInstance();
