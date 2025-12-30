@@ -380,7 +380,8 @@ ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 #pragma GCC diagnostic pop
 	}
 
-	native_window->resize_handler = g_signal_connect(surface_view_widget, "resize", G_CALLBACK(on_resize), native_window);
+	if (getenv("ATL_DIRECT_EGL") && native_window->resize_handler == 0)
+		native_window->resize_handler = g_signal_connect(surface_view_widget, "resize", G_CALLBACK(on_resize), native_window);
 
 	return native_window;
 }

@@ -246,6 +246,8 @@ EGLSurface bionic_eglCreateWindowSurface(EGLDisplay display, EGLConfig config, s
 	if (!egl_surface_hashtable)
 		egl_surface_hashtable = g_hash_table_new(NULL, NULL);
 
+	ANativeWindow_acquire(native_window);
+
 	PrintConfigAttributes(display, config);
 	EGLSurface surface;
 	if (getenv("ATL_DIRECT_EGL")) {
@@ -286,6 +288,9 @@ EGLSurface bionic_eglCreateWindowSurface(EGLDisplay display, EGLConfig config, s
 
 	g_hash_table_insert(egl_surface_hashtable, surface, native_window);
 
+	if (!surface)
+		ANativeWindow_release(native_window);
+
 	return surface;
 }
 
@@ -315,7 +320,6 @@ EGLBoolean bionic_eglDestroySurface(EGLDisplay display, EGLSurface surface)
 	}
 	if (ret) {
 		g_hash_table_remove(egl_surface_hashtable, surface);
-		/* ANativeWindow_fromSurface starts the refcounter at 1, so this will destroy the native window */
 		ANativeWindow_release(native_window);
 	}
 

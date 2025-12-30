@@ -80,6 +80,7 @@ JNIEXPORT jlong JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglCre
 	EGLint *attrib_list = get_int_array_crit(env, _attrib_list);
 	EGLSurface ret = bionic_eglCreateWindowSurface(_PTR(display), _PTR(config), native_window, attrib_list);
 	release_int_array_crit(env, _attrib_list, attrib_list);
+	ANativeWindow_release(native_window);
 	return _INTPTR(ret);
 }
 

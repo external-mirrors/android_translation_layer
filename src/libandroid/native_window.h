@@ -24,4 +24,5 @@ EGLDisplay bionic_eglGetDisplay(NativeDisplayType native_display);
 EGLBoolean bionic_eglMakeCurrent(EGLDisplay display, EGLSurface draw, EGLSurface read, EGLContext context);
 EGLBoolean bionic_eglSwapBuffers(EGLDisplay display, EGLSurface surface);
 void bionic_glBindFramebuffer(GLenum target, GLuint framebuffer);
+void ANativeWindow_acquire(struct ANativeWindow *native_window);
 void ANativeWindow_release(struct ANativeWindow *native_window);
