@@ -1,6 +1,10 @@
 package android.os;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 public class Parcel {
@@ -55,8 +59,21 @@ public class Parcel {
 
 	public void writeParcelable(Parcelable p, int flags) {
 		System.out.println("Parcel.writeParcelable(" + p + ", " + flags + ")");
-		native_writeString(builder, p.getClass().getName());
-		p.writeToParcel(this, flags);
+		native_writeString(builder, p != null ? p.getClass().getName() : null);
+		if (p != null)
+			p.writeToParcel(this, flags);
+	}
+
+	public void writeSerializable (Serializable s) {
+		System.out.println("Parcel.writeSerializable(" + s + ")");
+		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+			objectOutputStream.writeObject(s);
+			byte[] byteArray = byteArrayOutputStream.toByteArray();
+			native_writeString(builder, Base64.getEncoder().encodeToString(byteArray));
+		} catch(Exception exception) {
+			throw new RuntimeException("Parcel.writeSerializable failed", exception);
+		}
 	}
 
 	public void writeInterfaceToken(String s) {
@@ -91,6 +108,8 @@ public class Parcel {
 
 	public Parcelable readParcelable(ClassLoader loader) throws ReflectiveOperationException {
 		String className = native_readString(iter);
+		if (className == null)
+			return null;
 		@SuppressWarnings("unchecked")
 		Parcelable.Creator<Parcelable> creator = loader.loadClass(className + "$Creator").asSubclass(Parcelable.Creator.class).getConstructor().newInstance();
 		return creator.createFromParcel(this);
@@ -106,6 +125,8 @@ public class Parcel {
 
 	public void writeStringArray(String[] strings) {
 		System.out.println("Parcel.writeStringArray(" + strings + ")");
+		if (strings == null)
+			strings = new String[0];
 		native_writeInt(builder, strings.length);
 		for (String s : strings) {
 			native_writeString(builder, s);

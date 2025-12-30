@@ -11,11 +11,15 @@ JNIEXPORT void JNICALL Java_android_os_Parcel_native_1writeInt(JNIEnv *env, jcla
 		g_variant_builder_add(builder, "i", value);
 }
 
-JNIEXPORT void JNICALL Java_android_os_Parcel_native_1writeString(JNIEnv *env, jclass clazz, jlong builder_ptr, jstring value)
+JNIEXPORT void JNICALL Java_android_os_Parcel_native_1writeString(JNIEnv *env, jclass clazz, jlong builder_ptr, jstring value_jstr)
 {
 	GVariantBuilder *builder = (GVariantBuilder *)builder_ptr;
-	if (builder)
-		g_variant_builder_add(builder, "s", (*env)->GetStringUTFChars(env, value, NULL));
+	if (builder) {
+		const char *value = value_jstr ? (*env)->GetStringUTFChars(env, value_jstr, NULL) : NULL;
+		g_variant_builder_add(builder, "ms", value);
+		if (value_jstr)
+			(*env)->ReleaseStringUTFChars(env, value_jstr, value);
+	}
 }
 
 JNIEXPORT jint JNICALL Java_android_os_Parcel_native_1readInt(JNIEnv *env, jclass clazz, jlong iter_ptr)
@@ -32,6 +36,6 @@ JNIEXPORT jstring JNICALL Java_android_os_Parcel_native_1readString(JNIEnv *env,
 	GVariantIter *iter = (GVariantIter *)iter_ptr;
 	const char *s = NULL;
 	if (iter)
-		g_variant_iter_next(iter, "s", &s);
+		g_variant_iter_next(iter, "ms", &s);
 	return s ? _JSTRING(s) : NULL;
 }
