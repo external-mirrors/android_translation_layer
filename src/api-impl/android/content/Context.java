@@ -10,6 +10,7 @@ import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.app.SharedPreferencesImpl;
+import android.app.StatusBarManager;
 import android.app.UiModeManager;
 import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothManager;
@@ -26,6 +27,7 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.drawable.Drawable;
 import android.hardware.SensorManager;
+import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.input.InputManager;
 import android.hardware.usb.UsbManager;
@@ -262,6 +264,10 @@ public class Context extends Object {
 				return new UserManager();
 			case "captioning":
 				return new CaptioningManager();
+			case "statusbar":
+				return new StatusBarManager();
+			case "color_display":
+				return new ColorDisplayManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;

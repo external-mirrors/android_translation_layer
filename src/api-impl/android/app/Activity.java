@@ -17,6 +17,8 @@ import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.Slog;
 import android.view.ContextThemeWrapper;
+import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -296,6 +298,10 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	public Window getWindow() {
 		return this.window;
+	}
+
+	public Display getDisplay() {
+		return new Display();
 	}
 
 	public final void runOnUiThread(Runnable action) {
@@ -643,5 +649,9 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	public void finishAfterTransition() {
 		finish();
+	}
+
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		return false;
 	}
 }

@@ -10,6 +10,11 @@ public class MediaMetadata {
 		public MediaMetadata createFromParcel(Parcel source) {
 			return new MediaMetadata();
 		}
+
+		@Override
+		public MediaMetadata[] newArray(int size) {
+			return new MediaMetadata[size];
+		}
 	};
 
 	public void writeToParcel(Parcel dest, int flags) {}

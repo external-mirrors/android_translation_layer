@@ -14,6 +14,9 @@ public class ActivityThread {
 	public static String currentPackageName() {
 		return Context.this_application.getPackageName();
 	}
+	public static String currentProcessName() {
+		return Application.getProcessName();
+	}
 	public static Application currentApplication() {
 		return Context.this_application;
 	}

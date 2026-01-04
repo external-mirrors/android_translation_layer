@@ -68,4 +68,8 @@ public final class Display {
 	public void getRectSize(Rect rect) {
 		rect.set(0, 0, getWidth(), getHeight());
 	}
+
+	public DisplayCutout getCutout() {
+		return DisplayCutout.NO_CUTOUT;
+	}
 }
