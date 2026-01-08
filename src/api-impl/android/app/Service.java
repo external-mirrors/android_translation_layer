@@ -66,6 +66,7 @@ public abstract class Service extends ContextWrapper {
 	}
 
 	public void attachBaseContext(Context newBase) {
+		super.attachBaseContext(newBase);
 		System.out.println("Service.attachBaseContext(" + newBase + ") called");
 	}
 }
