@@ -547,10 +547,10 @@ public class Build {
 	}
 
 	private static String getString(String property) {
-		return UNKNOWN;
+		return SystemProperties.get(property, UNKNOWN);
 	}
 
 	private static long getLong(String property) {
-		return -1;
+		return SystemProperties.getLong(property, -1);
 	}
 }
