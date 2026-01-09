@@ -79,7 +79,7 @@ char *construct_classpath(char *prefix, char **cp_array, size_t len)
 #define JDWP_ARG "-XjdwpOptions:transport=dt_socket,server=y,suspend=y,address="
 #define SDK_INT_ARG "-DBuild.VERSION.SDK_INT="
 
-JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, char *framework_res_apk, char *test_runner_jar, char *api_impl_natives_dir, char *app_lib_dir, char *sdk_int, char **extra_jvm_options)
+JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *framework_res_apk, char *test_runner_jar, char *api_impl_natives_dir, char *app_lib_dir, char *sdk_int, char **extra_jvm_options)
 {
 	JavaVM *jvm;
 	JNIEnv *env;
@@ -110,7 +110,7 @@ JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *microg_apk, cha
 		options[0].optionString = construct_classpath("-Djava.library.path=", (char *[]){api_impl_natives_dir, app_lib_dir}, 2);
 	}
 
-	options[1].optionString = construct_classpath("-Djava.class.path=", (char *[]){api_impl_jar, apk_classpath, microg_apk, framework_res_apk, test_runner_jar}, 5);
+	options[1].optionString = construct_classpath("-Djava.class.path=", (char *[]){api_impl_jar, apk_classpath, framework_res_apk, test_runner_jar}, 4);
 	options[2].optionString = "-Xcheck:jni";
 	if (jdwp_port) {
 		strncat(jdwp_option_string, jdwp_port, 5); // 5 chars is enough for a port number, and won't overflow our array
@@ -201,18 +201,16 @@ static cairo_status_t cairo_write_func_gstring(void *closure, const unsigned cha
 // this is exported by the shim bionic linker
 void dl_parse_library_path(const char *path, char *delim);
 
-#define REL_DEX_INSTALL_PATH              "/../java/dex"
+#define REL_DEX_INSTALL_PATH              "../java/dex"
 
-#define REL_API_IMPL_JAR_INSTALL_PATH     "/android_translation_layer/api-impl.jar"
-#define REL_TEST_RUNNER_JAR_INSTALL_PATH  "/android_translation_layer/test_runner.jar"
-#define REL_API_IMPL_NATIVES_INSTALL_PATH "/android_translation_layer/natives"
-#define REL_MICROG_APK_INSTALL_PATH       "/microg/com.google.android.gms.apk"
-#define REL_FRAMEWORK_RES_INSTALL_PATH    "/android_translation_layer/framework-res.apk"
+#define REL_API_IMPL_JAR_INSTALL_PATH     "android_translation_layer/api-impl.jar"
+#define REL_API_IMPL_NATIVES_INSTALL_PATH "android_translation_layer/natives"
+#define REL_FRAMEWORK_RES_INSTALL_PATH    "android_translation_layer/framework-res.apk"
+#define REL_TEST_RUNNER_JAR_INSTALL_PATH  "android_translation_layer/test_runner.jar"
 
 #define API_IMPL_JAR_PATH_LOCAL           "./api-impl.jar"
+#define FRAMEWORK_RES_PATH_LOCAL          "./res/framework-res/framework-res.apk"
 #define TEST_RUNNER_JAR_PATH_LOCAL        "./test_runner.jar"
-#define MICROG_APK_PATH_LOCAL             "./com.google.android.gms.apk"
-#define FRAMEWORK_RES_PATH_LOCAL          "./res/framework-res.apk"
 
 struct jni_callback_data {
 	char *apk_main_activity_class;
@@ -275,6 +273,25 @@ static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, do
 	return TRUE;
 }
 
+char * find_jar_or_die(char *builddir_path, char *installed_path, char *install_prefix)
+{
+	char *path;
+
+	if (getenv("RUN_FROM_BUILDDIR")) {
+		path = strdup(builddir_path); // for running out of builddir; using strdup so we can always safely call free on this
+	} else {
+		path = g_strdup_printf("%s/%s", install_prefix, installed_path);
+	}
+
+	if (access(path, F_OK) < 0) {
+		fprintf(stderr, "error: can't stat %s (%s)\n",
+		                path, strerror(errno));
+		exit(1);
+	}
+
+	return path;
+}
+
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
 // TODO: pass all files to classpath
@@ -300,11 +317,8 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	char *dex_install_dir;
 	char *api_impl_jar;
 	char *test_runner_jar = NULL;
-	char *microg_apk = NULL;
 	char *framework_res_apk = NULL;
 	const char *package_name;
-	int errno_libdir;
-	int errno_localdir;
 	int ret;
 	jobject activity_object;
 	jobject application_object;
@@ -331,12 +345,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		// it's simpler if we can modify the string, so strdup it
 		char *libart_so_full_path = strdup(libart_so_dl_info.dli_fname);
 		*strrchr(libart_so_full_path, '/') = '\0'; // now we should have something like /usr/lib64/art
-		dex_install_dir = malloc(strlen(libart_so_full_path) + strlen(REL_DEX_INSTALL_PATH) + 1); // +1 for NULL
-		strcpy(dex_install_dir, libart_so_full_path);
-		strcat(dex_install_dir, REL_DEX_INSTALL_PATH);
+		dex_install_dir = g_strdup_printf("%s/%s", libart_so_full_path, REL_DEX_INSTALL_PATH);
 		free(libart_so_full_path);
 	} else {
-		dex_install_dir = "DIDN'T_GET_SO_PATH_WITH_dladdr_SUS"; // in case we print this as part of some other error, it should be clear what the real cause is
+		fprintf(stderr, "error: couldn't find art install path\n");
+		exit(1);
 	}
 
 	char *app_data_dir_base = getenv("ANDROID_APP_DATA_DIR");
@@ -347,7 +360,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			ret = mkdir(app_data_dir_base, DEFFILEMODE | S_IXUSR | S_IXGRP | S_IXOTH);
 			if (ret) {
 				if (errno != EEXIST) {
-					fprintf(stderr, "error: ANDROID_APP_DATA_DIR not set, and the default directory (%s) coudldn't be created (error: %s)\n", app_data_dir_base, strerror(errno));
+					fprintf(stderr, "error: ANDROID_APP_DATA_DIR not set, and the default directory (%s) couldn't be created (error: %s)\n", app_data_dir_base, strerror(errno));
 					exit(1);
 				}
 			}
@@ -356,14 +369,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			exit(1);
 		}
 	}
-	app_data_dir = malloc(strlen(app_data_dir_base) + 1 + strlen(apk_name) + 1 + 1 + 1); // +1 for middle '/', + 1 for _, +1 for end '/', and +1 for NULL
-	strcpy(app_data_dir, app_data_dir_base);
-	strcat(app_data_dir, "/");
+
 	// TODO: we should possibly use the app id instead, but we don't currently have a way to get that soon enough
 	// arguably both the app id and the apk name might have an issue with duplicates, but if two apks use the same app id, chances are it's less of an issue than when two apks have the same name
-	strcat(app_data_dir, apk_name);
-	strcat(app_data_dir, "_"); // !IMPORTANT! Unity can't comprehend that a directory name could end in .apk, so we have to avoid that here
-	strcat(app_data_dir, "/");
+	// !IMPORTANT! Unity can't comprehend that a directory name could end in .apk, so we have to avoid that here by adding `_`
+	app_data_dir = g_strdup_printf("%s/%s_/", app_data_dir_base, apk_name);
 
 	ret = mkdir(app_data_dir, DEFFILEMODE | S_IXUSR | S_IXGRP | S_IXOTH);
 	if (ret && errno != EEXIST) {
@@ -371,102 +381,13 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		exit(1);
 	}
 
-	// check for api-impl.jar and com.google.android.gms.apk in './' first (for running from builddir), and in system install path second
-	struct stat dont_care;
-	ret = stat(API_IMPL_JAR_PATH_LOCAL, &dont_care);
-	errno_localdir = errno;
-	if (!ret) {
-		api_impl_jar = strdup(API_IMPL_JAR_PATH_LOCAL); // for running out of builddir; using strdup so we can always safely call free on this
-	} else {
-		char *api_impl_install_dir = malloc(strlen(dex_install_dir) + strlen(REL_API_IMPL_JAR_INSTALL_PATH) + 1); // +1 for NULL
-		strcpy(api_impl_install_dir, dex_install_dir);
-		strcat(api_impl_install_dir, REL_API_IMPL_JAR_INSTALL_PATH);
+	// check for jars and apks  in './' (if running from builddir), or in system install path
+	api_impl_jar = find_jar_or_die(API_IMPL_JAR_PATH_LOCAL, REL_API_IMPL_JAR_INSTALL_PATH, dex_install_dir);
+	framework_res_apk = find_jar_or_die(FRAMEWORK_RES_PATH_LOCAL, REL_FRAMEWORK_RES_INSTALL_PATH, dex_install_dir);
+	if(d->apk_instrumentation_class)
+		test_runner_jar = find_jar_or_die(TEST_RUNNER_JAR_PATH_LOCAL, REL_TEST_RUNNER_JAR_INSTALL_PATH, dex_install_dir);
 
-		ret = stat(api_impl_install_dir, &dont_care);
-		errno_libdir = errno;
-		if (!ret) {
-			api_impl_jar = api_impl_install_dir;
-		} else {
-			fprintf(stderr, "error: can't stat api-impl.jar; tried:\n"
-			                "\t\"" API_IMPL_JAR_PATH_LOCAL "\", got - %s\n"
-			                "\t\"%s\", got - %s\n",
-			                strerror(errno_localdir),
-			                api_impl_install_dir, strerror(errno_libdir));
-			exit(1);
-		}
-	}
-
-	ret = stat(MICROG_APK_PATH_LOCAL, &dont_care);
-	errno_localdir = errno;
-	if (!ret) {
-		microg_apk = strdup(MICROG_APK_PATH_LOCAL); // for running out of builddir; using strdup so we can always safely call free on this
-	} else {
-		char *microg_install_dir = malloc(strlen(dex_install_dir) + strlen(REL_MICROG_APK_INSTALL_PATH) + 1); // +1 for NULL
-		strcpy(microg_install_dir, dex_install_dir);
-		strcat(microg_install_dir, REL_MICROG_APK_INSTALL_PATH);
-
-		ret = stat(microg_install_dir, &dont_care);
-		errno_libdir = errno;
-		if (!ret) {
-			microg_apk = microg_install_dir;
-		} else {
-			fprintf(stderr, "warning: can't stat com.google.android.gms.apk; tried:\n"
-			                "\t\"" MICROG_APK_PATH_LOCAL "\", got - %s\n"
-			                "\t\"%s\", got - %s\n",
-			                strerror(errno_localdir),
-			                microg_install_dir, strerror(errno_libdir));
-		}
-	}
-
-	ret = stat(FRAMEWORK_RES_PATH_LOCAL, &dont_care);
-	errno_localdir = errno;
-	if (!ret) {
-		framework_res_apk = strdup(FRAMEWORK_RES_PATH_LOCAL); // for running out of builddir; using strdup so we can always safely call free on this
-	} else {
-		char *framework_res_install_dir = malloc(strlen(dex_install_dir) + strlen(REL_FRAMEWORK_RES_INSTALL_PATH) + 1); // +1 for NULL
-		strcpy(framework_res_install_dir, dex_install_dir);
-		strcat(framework_res_install_dir, REL_FRAMEWORK_RES_INSTALL_PATH);
-
-		ret = stat(framework_res_install_dir, &dont_care);
-		errno_libdir = errno;
-		if (!ret) {
-			framework_res_apk = framework_res_install_dir;
-		} else {
-			fprintf(stderr, "warning: can't stat framework-res.apk; tried:\n"
-			                "\t\"" FRAMEWORK_RES_PATH_LOCAL "\", got - %s\n"
-			                "\t\"%s\", got - %s\n",
-			                strerror(errno_localdir),
-			                framework_res_install_dir, strerror(errno_libdir));
-		}
-	}
-
-	if(d->apk_instrumentation_class) {
-		ret = stat(TEST_RUNNER_JAR_PATH_LOCAL, &dont_care);
-		errno_localdir = errno;
-		if (!ret) {
-			test_runner_jar = strdup(TEST_RUNNER_JAR_PATH_LOCAL); // for running out of builddir; using strdup so we can always safely call free on this
-		} else {
-			char *test_runner_jar_install_dir = malloc(strlen(dex_install_dir) + strlen(REL_TEST_RUNNER_JAR_INSTALL_PATH) + 1); // +1 for NULL
-			strcpy(test_runner_jar_install_dir, dex_install_dir);
-			strcat(test_runner_jar_install_dir, REL_TEST_RUNNER_JAR_INSTALL_PATH);
-
-			ret = stat(test_runner_jar_install_dir, &dont_care);
-			errno_libdir = errno;
-			if (!ret) {
-				test_runner_jar = test_runner_jar_install_dir;
-			} else {
-				fprintf(stderr, "warning: can't stat test_runner.jar; tried:\n"
-				                "\t\"" TEST_RUNNER_JAR_PATH_LOCAL "\", got - %s\n"
-				                "\t\"%s\", got - %s\n",
-				                strerror(errno_localdir),
-				                test_runner_jar_install_dir, strerror(errno_libdir));
-			}
-		}
-	}
-
-	char *api_impl_natives_dir = malloc(strlen(dex_install_dir) + strlen(REL_API_IMPL_NATIVES_INSTALL_PATH) + 1); // +1 for NULL
-	strcpy(api_impl_natives_dir, dex_install_dir);
-	strcat(api_impl_natives_dir, REL_API_IMPL_NATIVES_INSTALL_PATH);
+	char *api_impl_natives_dir = g_strdup_printf("%s/%s", dex_install_dir, REL_API_IMPL_NATIVES_INSTALL_PATH);
 
 	char *app_lib_dir = malloc(strlen(app_data_dir) + strlen("/lib") + 1); // +1 for NULL
 	strcpy(app_lib_dir, app_data_dir);
@@ -482,7 +403,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	dl_parse_library_path(ld_path, ":");
 	g_free(ld_path);
 
-	JNIEnv *env = create_vm(api_impl_jar, apk_classpath, microg_apk, framework_res_apk, test_runner_jar, api_impl_natives_dir, app_lib_dir, d->sdk_int, d->extra_jvm_options);
+	JNIEnv *env = create_vm(api_impl_jar, apk_classpath, framework_res_apk, test_runner_jar, api_impl_natives_dir, app_lib_dir, d->sdk_int, d->extra_jvm_options);
 
 	free(app_lib_dir);
 

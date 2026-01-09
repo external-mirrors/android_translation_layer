@@ -122,7 +122,7 @@ public final class AssetManager {
 					path = URLDecoder.decode(path, "UTF-8");
 					if (path.contains("framework-res.apk"))  // needs to be first, so it can be overridden
 						paths.set(0, path);
-					else if (!path.contains("com.google.android.gms"))  // microg resources can not be merged
+					else
 						paths.add(path);
 				}
 				for (String path : paths) {
