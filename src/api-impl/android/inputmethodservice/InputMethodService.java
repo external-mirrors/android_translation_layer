@@ -1,15 +1,12 @@
 package android.inputmethodservice;
 
 import android.app.Dialog;
-import android.app.Dialog;
-import android.app.ATLKeyboardDialog;
-import android.app.Service;
+import android.atl.ATLKeyboardDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.Region;
-import android.inputmethodservice.AbstractInputMethodService.AbstractInputMethodImpl;
 import android.os.IBinder;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;

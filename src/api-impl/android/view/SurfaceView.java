@@ -2,7 +2,7 @@ package android.view;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.GskCanvas;
+import android.atl.GskCanvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 

@@ -1,5 +1,6 @@
 package android.graphics;
 
+import android.annotation.UnsupportedAppUsage;
 import android.util.Log;
 
 /*
@@ -46,7 +47,8 @@ public class Path {
 		return builder;
 	}
 
-	long getGskPath() {
+	@UnsupportedAppUsage
+	public long getGskPath() {
 		if (path == 0) {
 			path = native_create_path(builder);
 			builder = 0;

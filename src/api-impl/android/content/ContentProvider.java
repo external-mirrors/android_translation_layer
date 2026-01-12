@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
+import android.atl.ATLMediaContentProvider;
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
 import android.content.res.AssetFileDescriptor;

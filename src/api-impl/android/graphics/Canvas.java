@@ -2,6 +2,7 @@ package android.graphics;
 
 import android.content.res.Resources;
 import android.util.Log;
+import android.atl.GskCanvas;
 
 public class Canvas {
 

@@ -45,7 +45,7 @@ extra_jni_srcs = []
 layer_shell_dep = dependency('gtk4-layer-shell-0', required : false)
 if layer_shell_dep.found()
   extra_deps = [ layer_shell_dep ]
-  extra_jni_srcs = [ 'src/api-impl-jni/app/android_app_ATLKeyboardDialog.c' ]
+  extra_jni_srcs = [ 'src/api-impl-jni/app/android_atl_ATLKeyboardDialog.c' ]
   add_project_arguments('-DATL_HAS_OSK', language: 'c')
 endif
 
@@ -98,7 +98,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/AssetInputStream.c',
                                                                   	'src/api-impl-jni/audio/android_media_AudioTrack.c',
                                                                   	'src/api-impl-jni/audio/android_media_SoundPool.c',
-                                                                  	'src/api-impl-jni/content/android_content_ATLMediaContentProvider.c',
+                                                                  	'src/api-impl-jni/content/android_atl_ATLMediaContentProvider.c',
                                                                   	'src/api-impl-jni/content/android_content_ClipboardManager.c',
                                                                   	'src/api-impl-jni/content/android_content_ContentResolver.c',
                                                                   	'src/api-impl-jni/content/android_content_Context.c',
@@ -109,9 +109,9 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/egl/com_google_android_gles_jni_EGLImpl.c',
                                                                   	'src/api-impl-jni/graphics/NinePatchPaintable.c',
                                                                   	'src/api-impl-jni/graphics/NinePatchPaintable.c',
+                                                                  	'src/api-impl-jni/graphics/android_atl_GskCanvas.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Bitmap.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_BitmapFactory.c',
-                                                                  	'src/api-impl-jni/graphics/android_graphics_GskCanvas.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Matrix.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Paint.c',
                                                                   	'src/api-impl-jni/graphics/android_graphics_Path.c',

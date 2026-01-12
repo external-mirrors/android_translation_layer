@@ -377,7 +377,7 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	jmethodID draw_method = _METHOD(_CLASS(jobj), "draw", "(Landroid/graphics/Canvas;)V");
 	if (on_draw_method != handle_cache.view.onDraw || draw_method != handle_cache.view.draw || dispatch_draw_method != handle_cache.view.dispatchDraw) {
 		wrapper->draw_method = draw_method;
-		jclass canvas_class = (*env)->FindClass(env, "android/graphics/GskCanvas");
+		jclass canvas_class = (*env)->FindClass(env, "android/atl/GskCanvas");
 		jmethodID canvas_constructor = _METHOD(canvas_class, "<init>", "(J)V");
 		wrapper->canvas = _REF((*env)->NewObject(env, canvas_class, canvas_constructor, 0));
 		(*env)->DeleteLocalRef(env, canvas_class);

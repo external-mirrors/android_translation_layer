@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 #include <stdbool.h>
 
-#include "../generated_headers/android_content_ATLMediaContentProvider.h"
+#include "../generated_headers/android_atl_ATLMediaContentProvider.h"
 #include "../defines.h"
 #include "../util.h"
 
@@ -16,7 +16,7 @@ static void file_dialog_callback(GObject *dialog, GAsyncResult *res, gpointer us
 	_UNREF(this);
 }
 
-JNIEXPORT void JNICALL Java_android_content_ATLMediaContentProvider_native_1open_1media_1folder(JNIEnv *env, jobject this)
+JNIEXPORT void JNICALL Java_android_atl_ATLMediaContentProvider_native_1open_1media_1folder(JNIEnv *env, jobject this)
 {
 	GtkFileDialog *dialog = gtk_file_dialog_new();
 	gtk_file_dialog_set_title(GTK_FILE_DIALOG(dialog), "Open Media Folder");

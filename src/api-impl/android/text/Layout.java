@@ -1,7 +1,7 @@
 package android.text;
 
 import android.graphics.Canvas;
-import android.graphics.GskCanvas;
+import android.atl.GskCanvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 

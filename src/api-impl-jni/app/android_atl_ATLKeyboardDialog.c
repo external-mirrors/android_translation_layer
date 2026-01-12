@@ -8,7 +8,7 @@
 
 #include "../defines.h"
 #include "../util.h"
-#include "../generated_headers/android_app_ATLKeyboardDialog.h"
+#include "../generated_headers/android_atl_ATLKeyboardDialog.h"
 
 #define DEBUG(fmt, ...) android_log_printf(ANDROID_LOG_INFO, "ATLKeyboardDialog", "%s:%d: " fmt, __func__, __LINE__, ##__VA_ARGS__)
 
@@ -159,7 +159,7 @@ static gboolean on_close_request(GtkWidget *dialog, jobject jobj)
 	return FALSE;
 }
 
-JNIEXPORT jlong JNICALL Java_android_app_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this, jboolean floating)
+JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this, jboolean floating)
 {
 	GtkWidget *dialog = gtk_window_new();
 	GtkWindow *window = GTK_WINDOW(dialog);

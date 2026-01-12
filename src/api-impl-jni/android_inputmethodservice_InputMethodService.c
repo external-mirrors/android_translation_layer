@@ -34,7 +34,7 @@ struct {
 	guint serial;
 } osk = {0};
 
-/* android_app_ATLKeyboardDialog.c */
+/* android_atl_ATLKeyboardDialog.c */
 #ifdef ATL_HAS_OSK
 extern void atlosk_set_visible(gboolean new_visible);
 #else

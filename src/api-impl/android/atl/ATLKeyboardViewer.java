@@ -1,6 +1,7 @@
-package android.inputmethodservice;
+package android.atl;
 
 import android.app.Activity;
+import android.inputmethodservice.InputMethodService;
 import android.os.Bundle;
 
 import java.lang.reflect.Constructor;
