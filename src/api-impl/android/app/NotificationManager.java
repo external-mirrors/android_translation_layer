@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
+import android.service.notification.StatusBarNotification;
 
 public class NotificationManager {
 
@@ -96,4 +97,8 @@ public class NotificationManager {
 	public void createNotificationChannelGroups(List<NotificationChannelGroup> groups) {}
 
 	public void createNotificationChannels(List<NotificationChannel> channels) {}
+
+	public StatusBarNotification[] getActiveNotifications() {
+		return new StatusBarNotification[0];
+	}
 }

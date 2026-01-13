@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import android.annotation.NonNull;
 import android.annotation.SdkConstant;
 import android.annotation.SdkConstant.SdkConstantType;
 import android.content.ComponentName;
@@ -2098,6 +2099,25 @@ public class PackageManager {
 	 */
 	public List<ApplicationInfo> getInstalledApplications(int flags) {
 		return null;
+	}
+
+	/**
+	 * Gets whether this application is an instant app.
+	 *
+	 * @return Whether caller is an instant app.
+	 */
+	public boolean isInstantApp() {
+		return false;
+	}
+
+	/**
+	 * Gets whether the given package is an instant app.
+	 *
+	 * @param packageName The package to check
+	 * @return Whether the given package is an instant app.
+	 */
+	public boolean isInstantApp(@NonNull String packageName) {
+		return false;
 	}
 
 	/**

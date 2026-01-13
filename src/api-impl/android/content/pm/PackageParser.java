@@ -1058,6 +1058,12 @@ public class PackageParser {
 					return null;
 				}
 
+			} else if (tagName.equals("uses-permission-sdk-23")) {
+				if (Build.VERSION.RESOURCES_SDK_INT < 23) {
+					XmlUtils.skipCurrentTag(parser);
+				} else if (!parseUsesPermission(pkg, res, parser, attrs, outError)) {
+					return null;
+				}
 			} /* else if (tagName.equals("uses-configuration")) {
 			     ConfigurationInfo cPref = new ConfigurationInfo();
 			     sa = res.obtainAttributes(attrs,

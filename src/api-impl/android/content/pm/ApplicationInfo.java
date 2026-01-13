@@ -16,6 +16,7 @@
 
 package android.content.pm;
 
+import android.annotation.UnsupportedAppUsage;
 import android.content.pm.PackageManager.NameNotFoundException;
 // import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
@@ -438,6 +439,18 @@ public class ApplicationInfo extends PackageItemInfo {
 	public String nativeLibraryDir;
 
 	/**
+	 * While not being part of the official Android API, WhatsApp uses this field to check for cpu ABI.
+	 */
+	@UnsupportedAppUsage
+	public String primaryCpuAbi;
+
+	/**
+	 * While not being part of the official Android API, WhatsApp uses this field to check for cpu ABI.
+	 */
+	@UnsupportedAppUsage
+	public String secondaryCpuAbi;
+
+	/**
 	 * The kernel user-ID that has been assigned to this application;
 	 * currently this is not a unique ID (multiple applications can have
 	 * the same uid).
@@ -570,7 +583,10 @@ public class ApplicationInfo extends PackageItemInfo {
 		seinfo = orig.seinfo;
 		sharedLibraryFiles = orig.sharedLibraryFiles;
 		dataDir = orig.dataDir;
+		primaryCpuAbi = orig.primaryCpuAbi;
+		secondaryCpuAbi = orig.secondaryCpuAbi;
 		uid = orig.uid;
+		minSdkVersion = orig.minSdkVersion;
 		targetSdkVersion = orig.targetSdkVersion;
 		enabled = orig.enabled;
 		enabledSetting = orig.enabledSetting;

@@ -237,6 +237,17 @@ public class Paint {
 		return xfermode;
 	}
 
+	public void setBlendMode(BlendMode blendmode) {
+		setXfermode(blendmode == null ? null : blendmode.getXfermode());
+	}
+
+	public BlendMode getBlendMode() {
+		if (this.xfermode instanceof PorterDuffXfermode) {
+			return BlendMode.fromValue(((PorterDuffXfermode) this.xfermode).porterDuffMode);
+		}
+		return null;
+	}
+
 	public void setLetterSpacing(float spacing) {}
 
 	public enum Cap {
