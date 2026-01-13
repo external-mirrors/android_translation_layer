@@ -8,9 +8,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageParser;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -44,7 +46,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public static final int RESULT_CANCELED = 0;
 	public static final int RESULT_OK = -1;
 
-	Window window = new Window(this, this);
+	Window window;
 	int requested_orientation = -1 /*ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED*/; // dummy
 	public Intent intent;
 	private Activity resultActivity;
@@ -67,18 +69,17 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		}
 
 		app_label_res = pkg.applicationInfo.labelRes;
-
-		if (theme_res == 0)
-			theme_res = com.android.internal.R.style.Theme_DeviceDefault;
+		theme_res = Resources.selectDefaultTheme(theme_res,
+				Math.min(pkg.applicationInfo.targetSdkVersion, Build.VERSION.SDK_INT));
 
 		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
 		Constructor<? extends Activity> constructor = cls.getConstructor();
 		Activity activity = constructor.newInstance();
-		activity.window.set_native_window(native_window);
 		activity.intent = intent;
-		activity.attachBaseContext(new Context());
-		activity.setTheme(theme_res);
-
+		activity.attachBaseContext(new ContextImpl(r, pkg.applicationInfo, theme_res));
+		// Setting up a window requires a context.
+		activity.window = new Window(activity, activity);
+		activity.window.set_native_window(native_window);
 		if (label_res != 0) {
 			activity.setTitle(r.getText(label_res));
 		} else if (app_label_res != 0) {

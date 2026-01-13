@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.app.ContextImpl;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
@@ -15,6 +16,12 @@ public class JobScheduler {
 
 	static Map<Integer,JobInfo> pendingJobs = new HashMap<>();
 	private static Map<Class<? extends JobService>, JobService> runningServices = new HashMap<>();
+
+	private final Context context;
+
+	public JobScheduler(Context context) {
+		this.context = context;
+	}
 
 	/**
 	 * Retrieve all jobs that have been scheduled by the calling application.
@@ -43,7 +50,8 @@ public class JobScheduler {
 					Class <? extends JobService> cls = Class.forName(className).asSubclass(JobService.class);
 					if (!runningServices.containsKey(cls)) {
 						JobService service = cls.getConstructor().newInstance();
-						service.attachBaseContext(new Context());
+						service.attachBaseContext(new ContextImpl(
+								context.getResources(), context.getApplicationInfo(), context.getTheme()));
 						service.onCreate();
 						runningServices.put(cls, service);
 					}

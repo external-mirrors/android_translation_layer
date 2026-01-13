@@ -343,6 +343,8 @@ public class LayoutInflater {
 	public LayoutInflater cloneInContext(Context context) {
 		LayoutInflater inflater = new LayoutInflater(context);
 		inflater.factories.addAll(factories);
+		inflater.mFactory = mFactory;
+		inflater.mFactory2 = mFactory2;
 		return inflater;
 	}
 

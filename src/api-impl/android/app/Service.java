@@ -9,11 +9,6 @@ public abstract class Service extends ContextWrapper {
 
 	private int notification_id;
 
-	/* HACK for InputMethodService */
-	public Service(Context baseContext) {
-		super(baseContext);
-	}
-
 	public Service() {
 		super(null);
 	}

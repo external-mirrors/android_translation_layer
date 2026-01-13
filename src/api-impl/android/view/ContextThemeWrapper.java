@@ -1,12 +1,24 @@
 package android.view;
 
+import android.annotation.UnsupportedAppUsage;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 
-public class ContextThemeWrapper extends ContextWrapper {
+import java.lang.reflect.InvocationTargetException;
 
-	private Resources.Theme theme = null;
+public class ContextThemeWrapper extends ContextWrapper {
+	private LayoutInflater layout_inflater = null;
+	/**
+	 * While not being part of the official Android API, some applications use it to reset/reload the theme in the context.
+	 */
+	@UnsupportedAppUsage
+	private Resources.Theme mTheme = null;
+	/**
+	 * While not being part of the official Android API, some application use it to get the theme resource ID.
+	 */
+	@UnsupportedAppUsage
+	private int mThemeResource;
 
 	public ContextThemeWrapper(Context base) {
 		super(base);
@@ -14,29 +26,54 @@ public class ContextThemeWrapper extends ContextWrapper {
 
 	public ContextThemeWrapper(Context context, int themeResId) {
 		super(context);
-		setTheme(themeResId);
+		mThemeResource = themeResId;
 	}
 
 	public ContextThemeWrapper(Context context, Resources.Theme theme) {
 		super(context);
-		this.theme = theme;
+		mTheme = context.getResources().newTheme();
+		mTheme.setTo(theme);
+	}
+
+	@Override
+	public Object getSystemService(String name) {
+		if ("layout_inflater".equals(name)) {
+			if (layout_inflater == null) {
+				layout_inflater = LayoutInflater.from(this.getBaseContext()).cloneInContext(this);
+			}
+			return layout_inflater;
+		}
+		return super.getSystemService(name);
+	}
+
+	@Override
+	public Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		if (serviceClass == LayoutInflater.class) {
+			if (layout_inflater == null) {
+				layout_inflater = LayoutInflater.from(this.getBaseContext()).cloneInContext(this);
+			}
+			return layout_inflater;
+		}
+		return super.getSystemService(serviceClass);
 	}
 
 	@Override
 	public void setTheme(int resid) {
-		if (theme == null) {
-			theme = getResources().newTheme();
-			theme.setTo(getBaseContext().getTheme());
+		mThemeResource = resid;
+		if (mTheme == null) {
+			mTheme = getResources().newTheme();
+			mTheme.setTo(getBaseContext().getTheme());
 		}
-		theme.applyStyle(resid, true);
+		if (resid != 0) {
+			mTheme.applyStyle(resid, true);
+		}
 	}
 
 	@Override
 	public Resources.Theme getTheme() {
-		if (theme != null)
-			return theme;
-		else
-			return super.getTheme();
+		if (mTheme == null) {
+			setTheme(mThemeResource);
+		}
+		return mTheme;
 	}
-
 }

@@ -99,9 +99,7 @@ public class InputMethodService extends AbstractInputMethodService {
 
 	private InputConnection input_connection = new ATLInputConnection();
 
-	public InputMethodService() {
-		super(new Context());
-	}
+	public InputMethodService() {}
 
 	public void launch_keyboard(boolean is_layershell) {
 		if (is_layershell)

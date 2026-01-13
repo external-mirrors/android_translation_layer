@@ -88,11 +88,11 @@ public class Instrumentation {
 	}
 
 	public Context getContext() {
-		return new Context();
+		return Context.this_application;
 	}
 
 	public Context getTargetContext() {
-		return new Context();
+		return Context.this_application;
 	}
 
 	public void setAutomaticPerformanceSnapshots() {

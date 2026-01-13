@@ -6,6 +6,7 @@ import android.app.ActivityManager;
 import android.app.AlarmManager;
 import android.app.AppOpsManager;
 import android.app.Application;
+import android.app.ContextImpl;
 import android.app.KeyguardManager;
 import android.app.NotificationManager;
 import android.app.Service;
@@ -73,7 +74,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Context extends Object {
+public abstract class Context {
 	private final static String TAG = "Context";
 
 	public static final int MODE_PRIVATE = 0;
@@ -94,13 +95,11 @@ public class Context extends Object {
 	static DisplayMetrics dm;
 	public static Resources r;
 	static ApplicationInfo application_info;
-	static Resources.Theme theme;
 	private static Map<Class<? extends Service>, Service> runningServices = new HashMap<>();
 	public static PackageParser.Package pkg;
 	public static PackageManager package_manager;
 
 	public /*← FIXME?*/ static Application this_application;
-	private LayoutInflater layout_inflater = new LayoutInflater(this);
 
 	File data_dir = null;
 	File prefs_dir = null;
@@ -117,7 +116,6 @@ public class Context extends Object {
 		Configuration config = new Configuration();
 		native_updateConfig(config);
 		r = new Resources(assets, dm, config);
-		theme = r.newTheme();
 		application_info = new ApplicationInfo();
 		try (XmlResourceParser parser = assets.openXmlResourceParser("AndroidManifest.xml")) {
 			PackageParser packageParser = new PackageParser(native_get_apk_path());
@@ -172,11 +170,9 @@ public class Context extends Object {
 		} else {
 			application = new Application();
 		}
-		if (pkg.applicationInfo.theme != 0)
-			application.setTheme(pkg.applicationInfo.theme);
 		application.native_window = native_window;
 		this_application = application;
-		application.attachBaseContext(new Context());
+		application.attachBaseContext(new ContextImpl(r, application_info, pkg.applicationInfo.theme));
 		// HACK: Set WhatsApp's custom logging mechanism to verbose for easier debugging. Should be removed again once WhatsApp is fully supported
 		try {
 			Class.forName("com.whatsapp.util.Log").getField("level").setInt(null, 5);
@@ -193,13 +189,9 @@ public class Context extends Object {
 		return getPackageManager().checkPermission(permission, "dummy");
 	}
 
-	public Resources.Theme getTheme() {
-		return theme;
-	}
+	public abstract Resources.Theme getTheme();
 
-	public ApplicationInfo getApplicationInfo() {
-		return application_info;
-	}
+	public abstract ApplicationInfo getApplicationInfo();
 
 	public Context getApplicationContext() {
 		return (Context)this_application;
@@ -209,77 +201,9 @@ public class Context extends Object {
 		return new ContentResolver();
 	}
 
-	public Object getSystemService(String name) {
-		switch (name) {
-			case "window":
-				return new WindowManagerImpl();
-			case "clipboard":
-				return new ClipboardManager();
-			case "sensor":
-				return new SensorManager();
-			case "connectivity":
-				return new ConnectivityManager();
-			case "keyguard":
-				return new KeyguardManager();
-			case "phone":
-				return new TelephonyManager();
-			case "audio":
-				return new AudioManager();
-			case "activity":
-				return new ActivityManager();
-			case "usb":
-				return new UsbManager();
-			case "vibrator":
-				return (vibrator != null) ? vibrator : (vibrator = new Vibrator());
-			case "power":
-				return new PowerManager();
-			case "display":
-				return new DisplayManager();
-			case "media_router":
-				return new MediaRouter();
-			case "notification":
-				return new NotificationManager();
-			case "alarm":
-				return new AlarmManager();
-			case "input":
-				return new InputManager();
-			case "location":
-				return new LocationManager();
-			case "uimode":
-				return new UiModeManager();
-			case "input_method":
-				return new InputMethodManager();
-			case "accessibility":
-				return new AccessibilityManager();
-			case "layout_inflater":
-				return layout_inflater;
-			case "wifi":
-				return new WifiManager();
-			case "bluetooth":
-				return new BluetoothManager();
-			case "jobscheduler":
-				return new JobScheduler();
-			case "appops":
-				return new AppOpsManager();
-			case "user":
-				return new UserManager();
-			case "captioning":
-				return new CaptioningManager();
-			case "statusbar":
-				return new StatusBarManager();
-			case "color_display":
-				return new ColorDisplayManager();
-			default:
-				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
-				return null;
-		}
-	}
+	public abstract Object getSystemService(String name);
 
-	public final Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
-		if (serviceClass == LayoutInflater.class)
-			return layout_inflater;
-		return serviceClass.getConstructors()[0].newInstance();
-	}
+	public abstract Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException;
 
 	public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter) {
 		if (receiver == null)
@@ -316,12 +240,10 @@ public class Context extends Object {
 		return package_manager;
 	}
 
-	public Resources getResources() {
-		return r;
-	}
+	public abstract Resources getResources();
 
 	public AssetManager getAssets() {
-		return assets;
+		return getResources().getAssets();
 	}
 
 	private File makeFilename(File base, String name) {
@@ -527,7 +449,7 @@ public class Context extends Object {
 					Class<? extends Service> cls = Class.forName(className).asSubclass(Service.class);
 					if (!runningServices.containsKey(cls)) {
 						Service service = cls.getConstructor().newInstance();
-						service.attachBaseContext(new Context());
+						service.attachBaseContext(new ContextImpl(getResources(), getApplicationInfo(), getTheme()));
 						service.onCreate();
 						runningServices.put(cls, service);
 					}
@@ -705,9 +627,7 @@ public class Context extends Object {
 		return getTheme().obtainStyledAttributes(attrs);
 	}
 
-	public void setTheme(int resId) {
-		theme.applyStyle(resId, true);
-	}
+	public abstract void setTheme(int resId);
 
 	public final CharSequence getText(int resId) {
 		return getResources().getText(resId);
@@ -770,9 +690,7 @@ public class Context extends Object {
 		while (receiverMap.values().remove(receiver));
 	}
 
-	public Context createPackageContext(String dummy, int dummy2) {
-		return this; // FIXME?
-	}
+	public abstract Context createPackageContext(String packageName, int flags);
 
 	public void grantUriPermission(String dummy, Uri dummy2, int dummy3) {
 		System.out.println("grantUriPermission(" + dummy + ", " + dummy2 + ", " + dummy3 + ") called");
@@ -796,17 +714,13 @@ public class Context extends Object {
 		return dbFile.delete();
 	}
 
-	public Context createConfigurationContext(Configuration configuration) {
-		return new Context();
-	}
+	public abstract Context createConfigurationContext(Configuration configuration);
 
 	public void sendOrderedBroadcast(Intent intent, String receiverPermission, BroadcastReceiver resultReceiver, Handler handler, int flags, String extra, Bundle options) {
 		System.out.println("sendOrderedBroadcast(" + intent + ", " + receiverPermission + ", " + resultReceiver + ", " + handler + ", " + flags + ", " + extra + ", " + options + ") called");
 	}
 
-	public Context createDisplayContext(Display display) {
-		return new Context();
-	}
+	public abstract Context createDisplayContext(Display display);
 
 	public Intent registerReceiver(BroadcastReceiver receiver, IntentFilter filter, String broadcastPermission, Handler scheduler) {
 		return registerReceiver(receiver, filter);
@@ -840,10 +754,7 @@ public class Context extends Object {
 		}
 	}
 
-	public Context createDeviceProtectedStorageContext() {
-		/* FIXME: should be a different context, and return different storage locations */
-		return this;
-	}
+	public abstract Context createDeviceProtectedStorageContext();
 
 	public boolean deleteSharedPreferences(String name) {
 		getSharedPrefsFile(name).delete();

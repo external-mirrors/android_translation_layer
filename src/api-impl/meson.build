@@ -40,6 +40,7 @@ srcs = [
 	'android/app/ApplicationErrorReport.java',
 	'android/app/ApplicationExitInfo.java',
 	'android/app/AppOpsManager.java',
+	'android/app/ContextImpl.java',
 	'android/app/DatePickerDialog.java',
 	'android/app/Dialog.java',
 	'android/app/DownloadManager.java',
