@@ -458,6 +458,12 @@ public class ApplicationInfo extends PackageItemInfo {
 	public int uid;
 
 	/**
+	 * The minimum SDK version this application can run on. It will not run
+	 * on earlier versions.
+	 */
+	public int minSdkVersion;
+
+	/**
 	 * The minimum SDK version this application targets.  It may run on earlier
 	 * versions, but it knows how to work with any new behavior added at this
 	 * version.  Will be {@link android.os.Build.VERSION_CODES#CUR_DEVELOPMENT}
