@@ -99,25 +99,27 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;
 		if (className == null) {
 			for (PackageParser.Activity activity: pkg.activities) {
-				boolean isDefault = false;
+				boolean done = false;
 				for (PackageParser.IntentInfo intent: activity.intents) {
 					Slog.i(TAG, intent.toString());
-					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER")) ||
-						(uri != null && intent.hasDataScheme(uri.getScheme()))) {
+					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER") && intent.hasAction("android.intent.action.MAIN")) ||
+					    (uri != null && intent.hasDataScheme(uri.getScheme())                  && intent.hasCategory("android.intent.category.DEFAULT"))) {
 						className = activity.info.targetActivity != null ? activity.info.targetActivity : activity.className;
-						isDefault = intent.hasCategory("android.intent.category.DEFAULT");
-						if (isDefault)
-							break;
+						done = true;
+						break;
 					}
 				}
-				if (isDefault)
+				if (done)
 					break;
 			}
 		} else {
 			className = className.replace('/', '.');
 		}
 		if (className == null) {
-			System.err.println("Failed to find Activity to launch URI: " + uri);
+			if (uri != null)
+				System.err.println("Failed to find Activity to launch URI: " + uri);
+			else
+				System.err.println("Failed to find main Activity");
 			System.exit(1);
 		}
 		return internalCreateActivity(className, native_window, uri != null ? new Intent("android.intent.action.VIEW", uri) : new Intent());
