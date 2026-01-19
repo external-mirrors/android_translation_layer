@@ -138,7 +138,8 @@ public abstract class Context {
 
 		Provider provider = new Provider("AndroidKeyStore", 1.0, "Android KeyStore provider") {};
 		provider.put("KeyStore.AndroidKeyStore", "android.security.keystore.AndroidKeyStore");
-		provider.put("KeyGenerator.AES", "android.security.keystore.KeyGenerator");
+		provider.put("KeyGenerator.AES", "android.security.keystore.KeyGenerator$AES");
+		provider.put("KeyGenerator.HmacSHA512", "android.security.keystore.KeyGenerator$HmacSHA512");
 		Security.addProvider(provider);
 
 		r.applyPackageQuirks(application_info.packageName);
