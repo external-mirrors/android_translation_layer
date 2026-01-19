@@ -2,8 +2,11 @@ package android.view;
 
 import android.R;
 import android.animation.StateListAnimator;
+import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.atl.GskCanvas;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -37,6 +40,10 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -1049,6 +1056,10 @@ public class View implements Drawable.Callback {
 			setTextAlignment(textAlignment);
 		}
 
+		String handlerName = a.getString(com.android.internal.R.styleable.View_onClick);
+		if (handlerName != null) {
+			setOnClickListener(new DeclaredOnClickListener(this, handlerName));
+		}
 		a.recycle();
 		onCreateDrawableState(0);
 	}
@@ -2376,4 +2387,66 @@ public class View implements Drawable.Callback {
 	public ActionMode startActionMode(ActionMode.Callback callback) { return null; }
 
 	public void getFocusedRect(Rect r) {}
+
+	/**
+	* An implementation of OnClickListener that attempts to lazily load a
+	* named click handling method from a parent or ancestor context.
+	* See AOSP commit d13f0e21bf8059779c9330a5993907ec88c8e781
+	* Copyright (C) 2006 The Android Open Source Project
+	*/
+	private static class DeclaredOnClickListener implements OnClickListener {
+		private final View mHostView;
+		private final String mMethodName;
+		private Method mResolvedMethod;
+		private Context mResolvedContext;
+		public DeclaredOnClickListener(@NonNull View hostView, @NonNull String methodName) {
+			mHostView = hostView;
+			mMethodName = methodName;
+		}
+		@Override
+		public void onClick(@NonNull View v) {
+			if (mResolvedMethod == null) {
+				resolveMethod(mHostView.getContext(), mMethodName);
+			}
+			try {
+				mResolvedMethod.invoke(mResolvedContext, v);
+			} catch (IllegalAccessException e) {
+				throw new IllegalStateException(
+				    "Could not execute non-public method for android:onClick", e);
+			} catch (InvocationTargetException e) {
+				throw new IllegalStateException(
+				    "Could not execute method for android:onClick", e);
+			}
+		}
+
+		@NonNull
+		private void resolveMethod(@Nullable Context context, @NonNull String name) {
+			while (context != null) {
+				try {
+					if (!context.isRestricted()) {
+						final Method method = context.getClass().getMethod(mMethodName, View.class);
+						if (method != null) {
+							mResolvedMethod = method;
+							mResolvedContext = context;
+							return;
+						}
+					}
+				} catch (NoSuchMethodException e) {
+					// Failed to find method, keep searching up the hierarchy.
+				}
+				if (context instanceof ContextWrapper) {
+					context = ((ContextWrapper)context).getBaseContext();
+				} else {
+					// Can't search up the hierarchy, null out and fail.
+					context = null;
+				}
+			}
+
+			final int id = mHostView.getId();
+			final String idText = id == NO_ID ? "" : " with id '" + mHostView.getContext().getResources().getResourceEntryName(id) + "'";
+			throw new IllegalStateException("Could not find method " + mMethodName
+			                                + "(View) in a parent or ancestor Context for android:onClick "
+			                                + "attribute defined on view " + mHostView.getClass() + idText);
+		}
+	}
 }
