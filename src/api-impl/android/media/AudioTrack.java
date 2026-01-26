@@ -169,4 +169,42 @@ public class AudioTrack {
 	public native void native_pause();
 	private native int native_write(byte[] audioData, int offsetInBytes, int sizeInBytes);
 	public native void native_release();
+
+	// nested classes
+	public static class Builder {
+		private AudioAttributes mAttributes;
+		private AudioFormat mFormat;
+		private int mBufferSizeInBytes;
+		private int mTransferMode;
+
+		public Builder() {}
+
+		public AudioTrack build () {
+			return new AudioTrack(mAttributes, mFormat, mBufferSizeInBytes, mTransferMode, 0);
+		}
+
+		public Builder setAudioAttributes(AudioAttributes attributes) {
+			mAttributes = attributes;
+			return this;
+		}
+
+		public Builder setAudioFormat(AudioFormat format) {
+			mFormat = format;
+			return this;
+		}
+
+		public Builder setBufferSizeInBytes(int bufferSizeInBytes) {
+			mBufferSizeInBytes = bufferSizeInBytes;
+			return this;
+		}
+
+		public Builder setTransferMode(int mode) {
+			mTransferMode = mode;
+			return this;
+		}
+
+		public Builder setPerformanceMode(int performanceMode) {
+			return this;
+		}
+	}
 }
