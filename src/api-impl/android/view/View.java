@@ -2322,4 +2322,8 @@ public class View implements Drawable.Callback {
 	public WindowInsetsController getWindowInsetsController() {
 		return native_get_window(widget).getInsetsController();
 	}
+
+	public final boolean isKeyboardNavigationCluster() { return false; }
+
+	public void setKeyboardNavigationCluster(boolean isCluster) {}
 }
