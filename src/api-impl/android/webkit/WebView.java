@@ -98,6 +98,8 @@ public class WebView extends ViewGroup {
 
 	public void evaluateJavascript(String script, ValueCallback resultCallback) {}
 
+	public static void setWebContentsDebuggingEnabled(boolean enabled) {}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	private native void native_loadDataWithBaseURL(long widget, String baseUrl, String data, String mimeType, String encoding);

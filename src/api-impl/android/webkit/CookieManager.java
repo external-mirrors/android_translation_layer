@@ -1,6 +1,7 @@
 package android.webkit;
 
 import android.content.Context;
+import android.webkit.WebView;
 
 public class CookieManager {
 
@@ -27,4 +28,10 @@ public class CookieManager {
 	}
 
 	public void setCookie(String url, String value) {}
+
+	public boolean acceptThirdPartyCookies(WebView webview) {
+		return false;
+	}
+
+	public void setAcceptThirdPartyCookies(WebView webView, boolean accept) {}
 }

@@ -56,4 +56,10 @@ public class WebSettings {
 	public void setMixedContentMode(int mode) {}
 
 	public void setBlockNetworkImage(boolean block) {}
+
+	public void setDomStorageEnabled(boolean flag) {}
+
+	public void setMediaPlaybackRequiresUserGesture(boolean require) {}
+
+	public void setJavaScriptCanOpenWindowsAutomatically(boolean flag) {}
 }
