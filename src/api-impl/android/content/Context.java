@@ -511,6 +511,7 @@ public abstract class Context {
 					Class<? extends Service> cls = Class.forName(intent.getComponent().getClassName()).asSubclass(Service.class);
 					if (!runningServices.containsKey(cls)) {
 						Service service = cls.getConstructor().newInstance();
+						service.attachBaseContext(new ContextImpl(getResources(), getApplicationInfo(), getTheme()));
 						service.onCreate();
 						runningServices.put(cls, service);
 					}
