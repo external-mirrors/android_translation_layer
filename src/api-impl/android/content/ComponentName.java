@@ -19,6 +19,8 @@ package android.content;
 import java.io.PrintWriter;
 import java.lang.Comparable;
 
+import android.os.Parcelable;
+
 /**
  * Identifier for a specific application component
  * ({@link android.app.Activity}, {@link android.app.Service},
@@ -29,7 +31,7 @@ import java.lang.Comparable;
  * name inside of that package.
  *
  */
-public final class ComponentName implements Cloneable, Comparable<ComponentName> {
+public final class ComponentName implements Cloneable, Comparable<ComponentName>, Parcelable {
 	private final String mPackage;
 	private final String mClass;
 
