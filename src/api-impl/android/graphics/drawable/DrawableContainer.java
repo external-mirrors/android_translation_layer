@@ -52,6 +52,10 @@ public class DrawableContainer extends Drawable {
 			return childCount;
 		}
 
+		public Drawable[] getChildren() {
+			return drawables;
+		}
+
 		public Drawable getChild(int idx) {
 			return drawables[idx];
 		}
