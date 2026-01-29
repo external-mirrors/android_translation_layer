@@ -625,6 +625,10 @@ public class View implements Drawable.Callback {
 		boolean onTouch(View v, MotionEvent event);
 	}
 
+	public interface OnScrollChangeListener {
+		void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY);
+	}
+
 	public interface OnClickListener {
 		void onClick(View v);
 	}
@@ -1159,6 +1163,10 @@ public class View implements Drawable.Callback {
 		on_click_listener = l;
 	}
 	protected native void nativeSetOnClickListener(long widget);
+	
+	private OnScrollChangeListener on_scroll_change_listener = null;
+	public void setOnScrollChangeListener(OnScrollChangeListener l) {}
+
 	public /*native*/ void setOnSystemUiVisibilityChangeListener(OnSystemUiVisibilityChangeListener l) {}
 	public native final int getWidth();
 	public native final int getHeight();
@@ -1329,6 +1337,10 @@ public class View implements Drawable.Callback {
 		scrollX = x;
 		scrollY = y;
 		invalidate();
+	}
+
+	protected int computeVerticalScrollOffset() {
+		return -1;
 	}
 
 	protected void onScrollChanged(int l, int t, int oldl, int oldt) {}

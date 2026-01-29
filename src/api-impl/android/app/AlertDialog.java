@@ -27,6 +27,10 @@ public class AlertDialog extends Dialog implements DialogInterface {
 		nativeSetButton(nativePtr, whichButton, String.valueOf(text), listener);
 	}
 
+	public void setView(View view) {
+		setContentView(view);
+	}
+
 	public static class Builder {
 		private AlertDialog dialog;
 
