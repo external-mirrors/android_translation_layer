@@ -150,6 +150,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_Spinner.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_SeekBar.c',
                                                                   	'src/api-impl-jni/widgets/android_widget_TextView.c',
+                                                                  	'src/api-impl-jni/widgets/android_widget_TimePicker.c',
                                                                   	mpris,
                                                                   	portal_openuri,
                                                                   	unifiedpush_distributor,

@@ -170,6 +170,10 @@ struct handle_cache {
 		jclass class;
 		jmethodID dispatchOnGlobalLayout;
 	} view_tree_observer;
+	struct {
+		jclass class;
+		jmethodID onTimeChange;
+	} time_picker;
 };
 
 extern struct handle_cache handle_cache;
