@@ -99,6 +99,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;
 		if (className == null) {
 			for (PackageParser.Activity activity: pkg.activities) {
+				if (!activity.info.enabled)
+					continue;
 				boolean done = false;
 				for (PackageParser.IntentInfo intent: activity.intents) {
 					Slog.i(TAG, intent.toString());
