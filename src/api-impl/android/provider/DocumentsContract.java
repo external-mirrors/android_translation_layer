@@ -133,6 +133,11 @@ public final class DocumentsContract {
 		throw new RuntimeException("DocumentsContract.isChildDocument not implemented yet");
 	}
 
+	public static Uri buildDocumentUri(String authority, String documentId) {
+		return new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(authority)
+		                        .appendPath(PATH_DOCUMENT).appendPath(documentId).build();
+	}
+
 	public final static class Document {
 		public static final String COLUMN_DOCUMENT_ID = "document_id";
 	public static final String COLUMN_MIME_TYPE = "mime_type";

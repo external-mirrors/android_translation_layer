@@ -63,4 +63,16 @@ public class Typeface {
 	public static Typeface createFromFamiliesWithDefault(FontFamily[] families) {
 		return DEFAULT;
 	}
+
+	public static class Builder {
+		public Builder(AssetManager mgr, String path) {}
+
+		public Builder setFontVariationSettings(String settings) {
+			return this;
+		}
+
+		public Typeface build() {
+			return DEFAULT;
+		}
+	}
 }

@@ -18,6 +18,10 @@ public class ScaleGestureDetector {
 		return false;
 	}
 
+	public boolean isInProgress() {
+		return false;
+	}
+
 	public static class SimpleOnScaleGestureListener implements OnScaleGestureListener {
 		public SimpleOnScaleGestureListener () {
 			

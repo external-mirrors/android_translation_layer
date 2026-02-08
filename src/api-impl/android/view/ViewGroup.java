@@ -644,4 +644,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public native boolean native_dispatchTouchEvent(long widget, MotionEvent event, double x, double y);
+
+	@Override
+	public void onDescendantInvalidated(View child, View target) {}
 }

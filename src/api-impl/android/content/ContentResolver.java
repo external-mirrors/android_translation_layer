@@ -2,6 +2,9 @@ package android.content;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 import android.accounts.Account;
 import android.content.res.AssetFileDescriptor;
@@ -71,6 +74,11 @@ public class ContentResolver {
 		return openTypedAssetFileDescriptor(uri, mimeType, opts);
 	}
 
+	public InputStream openInputStream(Uri uri) throws FileNotFoundException {
+		ParcelFileDescriptor fd = openFileDescriptor(uri, "r");
+		return fd != null ? new ParcelFileDescriptor.AutoCloseInputStream(fd) : null;
+	}
+
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
 		if (provider != null) {
@@ -120,6 +128,10 @@ public class ContentResolver {
 			return provider.update(uri, values, selection, selectionArgs);
 		else
 			return 0;
+	}
+
+	public List getPersistedUriPermissions() {
+		return Collections.emptyList();
 	}
 
 	public static void requestSync(Account account, String authority, Bundle extras) {

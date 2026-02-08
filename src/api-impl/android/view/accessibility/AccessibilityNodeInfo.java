@@ -10,6 +10,13 @@ public class AccessibilityNodeInfo {
 		public static final AccessibilityAction ACTION_SCROLL_LEFT = new AccessibilityAction(0, null);
 		public static final AccessibilityAction ACTION_SCROLL_RIGHT = new AccessibilityAction(0, null);
 		public static final AccessibilityAction ACTION_SCROLL_DOWN = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_PAGE_UP = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_PAGE_DOWN = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_PAGE_LEFT = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_PAGE_RIGHT = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_MOVE_WINDOW = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_SHOW_TOOLTIP = new AccessibilityAction(0, null);
+		public static final AccessibilityAction ACTION_HIDE_TOOLTIP = new AccessibilityAction(0, null);
 
 
 		public AccessibilityAction(int actionId, CharSequence label) {}

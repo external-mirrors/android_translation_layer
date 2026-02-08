@@ -63,6 +63,12 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'onStopNestedScroll'");
 		}
+
+		@Override
+		public void onDescendantInvalidated(View child, View target) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'onDescendantInvalidated'");
+		}
 	}
 
 	public android.view.Display getDefaultDisplay() {

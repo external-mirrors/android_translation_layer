@@ -32,6 +32,7 @@ import android.util.Property;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.view.animation.Animation;
+import android.view.autofill.AutofillId;
 
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
@@ -2338,4 +2339,8 @@ public class View implements Drawable.Callback {
 	public final boolean isKeyboardNavigationCluster() { return false; }
 
 	public void setKeyboardNavigationCluster(boolean isCluster) {}
+
+	public AutofillId getAutofillId() { return new AutofillId(); }
+
+	public AccessibilityDelegate getAccessibilityDelegate() { return null; }
 }

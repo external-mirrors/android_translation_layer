@@ -69,6 +69,10 @@ public class LayoutInflater {
 		factories.addFirst(factory);
 	}
 
+	public Factory2 getFactory2() {
+		return mFactory2;
+	}
+
 	public static LayoutInflater from(Context context) {
 		return (LayoutInflater)context.getSystemService("layout_inflater");
 	}

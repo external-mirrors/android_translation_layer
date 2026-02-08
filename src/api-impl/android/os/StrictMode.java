@@ -84,6 +84,9 @@ public final class StrictMode {
 			public Builder detectUnbufferedIo() {
 				return this;
 			}
+			public Builder permitUnbufferedIo() {
+				return this;
+			}
 		}
 	}
 	public static final class VmPolicy {

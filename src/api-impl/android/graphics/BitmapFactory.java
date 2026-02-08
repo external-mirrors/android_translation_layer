@@ -356,6 +356,10 @@ public class BitmapFactory {
 			mCancel = true;
 			requestCancel();
 		}
+
+		public ColorSpace inPreferredColorSpace;
+		public ColorSpace outColorSpace;
+		public Bitmap.Config outConfig;
 	}
 
 	/**

@@ -222,4 +222,8 @@ public class SurfaceView extends View {
 	public void setZOrderOnTop(boolean onTop) {
 		/* TODO */
 	}
+
+	public void setZOrderMediaOverlay(boolean mediaOverlay) {
+		/* TODO */
+	}
 }
