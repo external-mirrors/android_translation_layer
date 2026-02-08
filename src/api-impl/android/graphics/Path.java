@@ -40,8 +40,8 @@ public class Path {
 	}
 
 	private long getBuilder() {
-		if (builder == 0) {
-			builder = native_create_builder(path);
+		if (builder == 0 || path != 0) {
+			builder = native_create_builder(path, builder);
 			path = 0;
 		}
 		return builder;
@@ -51,7 +51,6 @@ public class Path {
 	public long getGskPath() {
 		if (path == 0) {
 			path = native_create_path(builder);
-			builder = 0;
 		}
 		return path;
 	}
@@ -246,7 +245,7 @@ public class Path {
 		}
 	}
 
-	private static native long native_create_builder(long path);
+	private static native long native_create_builder(long path, long builder);
 	private static native long native_create_path(long builder);
 	private static native long native_ref_path(long path);
 	private static native void native_reset(long path, long builder);

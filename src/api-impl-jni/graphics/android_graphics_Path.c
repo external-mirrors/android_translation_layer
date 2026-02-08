@@ -4,9 +4,11 @@
 
 #include "../generated_headers/android_graphics_Path.h"
 
-JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1create_1builder(JNIEnv *env, jclass this, jlong path_ptr)
+JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1create_1builder(JNIEnv *env, jclass this, jlong path_ptr, jlong builder_ptr)
 {
-	GskPathBuilder *builder = gsk_path_builder_new();
+	GskPathBuilder *builder = _PTR(builder_ptr);
+	if (!builder)
+		builder = gsk_path_builder_new();
 	if (path_ptr) {
 		GskPath *path = _PTR(path_ptr);
 		gsk_path_builder_add_path(builder, path);
@@ -20,7 +22,7 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1create_1path(JNIEnv *
 	GskPathBuilder *builder = _PTR(builder_ptr);
 	if (!builder)
 		builder = gsk_path_builder_new();
-	return _INTPTR(gsk_path_builder_free_to_path(builder));
+	return _INTPTR(gsk_path_builder_to_path(builder));
 }
 
 JNIEXPORT jlong JNICALL Java_android_graphics_Path_native_1ref_1path(JNIEnv *env, jclass this, jlong path_ptr)
