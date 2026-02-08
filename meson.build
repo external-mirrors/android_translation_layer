@@ -32,6 +32,9 @@ mpris = gnome.gdbus_codegen('mpris-dbus',
 portal_openuri = gnome.gdbus_codegen('portal-openuri',
                                      'src/api-impl-jni/content/org.freedesktop.portal.OpenURI.xml',
                                      interface_prefix: 'org.freedesktop.portal')
+portal_email = gnome.gdbus_codegen('portal-email',
+                                   'src/api-impl-jni/content/org.freedesktop.portal.Email.xml',
+                                   interface_prefix: 'org.freedesktop.portal')
 unifiedpush_distributor = gnome.gdbus_codegen('unifiedpush-distributor',
                                               'src/api-impl-jni/content/org.unifiedpush.Distributor1.xml',
                                               interface_prefix: 'org.unifiedpush')
@@ -153,6 +156,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/widgets/android_widget_TimePicker.c',
                                                                   	mpris,
                                                                   	portal_openuri,
+                                                                  	portal_email,
                                                                   	unifiedpush_distributor,
                                                                   	unifiedpush_connector,
                                                                         wl_proto_headers,

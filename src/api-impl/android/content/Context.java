@@ -157,6 +157,7 @@ public abstract class Context {
 	private static native String native_get_apk_path();
 	protected static native void native_updateConfig(Configuration config);
 	private static native void nativeOpenFile(int fd);
+	private static native void nativeShareFile(String text, int fd);
 	private static native void nativeExportUnifiedPush(String packageName);
 	private static native void nativeRegisterUnifiedPush(String token, String application);
 	private static native void nativeStartExternalService(Intent service);
@@ -558,12 +559,17 @@ public abstract class Context {
 			className = intent.getComponent().getClassName();
 		} else {
 			if (intent.getAction() != null && intent.getAction().equals("android.intent.action.SEND")) {
-				Slog.i(TAG, "starting extern activity with intent: " + intent);
+				Slog.i(TAG, "sharing intent via composeMail: " + intent);
 				String text = intent.getStringExtra("android.intent.extra.TEXT");
-				if (text == null)
-					text = String.valueOf(intent.getExtras().get("android.intent.extra.STREAM"));
-				if (text != null)
-					ClipboardManager.native_set_clipboard(text);
+				ParcelFileDescriptor fd = null;
+				if (intent.hasExtra(Intent.EXTRA_STREAM)) {
+					try {
+						fd = getContentResolver().openFileDescriptor((Uri)intent.getParcelableExtra(Intent.EXTRA_STREAM), "r");
+					} catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+				}
+				nativeShareFile(text, fd != null ? fd.getFd() : -1);
 				return;
 			} else if (intent.getData() != null) {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
