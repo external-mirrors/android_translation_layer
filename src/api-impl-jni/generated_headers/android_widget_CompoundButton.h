@@ -209,6 +209,14 @@ JNIEXPORT jlong JNICALL Java_android_widget_CompoundButton_native_1constructor
 
 /*
  * Class:     android_widget_CompoundButton
+ * Method:    native_setText
+ * Signature: (JLjava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_CompoundButton_native_1setText
+  (JNIEnv *, jobject, jlong, jstring);
+
+/*
+ * Class:     android_widget_CompoundButton
  * Method:    setOnCheckedChangeListener
  * Signature: (Landroid/widget/CompoundButton/OnCheckedChangeListener;)V
  */
