@@ -54,6 +54,10 @@ public class ATLMediaContentProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+		if (selectionArgs != null && selectionArgs.length > 0) {
+			selectedFile = new File(selectionArgs[0]);
+			timestamp = System.currentTimeMillis();
+		}
 		// if we haven't selected a file, open the file chooser
 		if (!"0".equals(uri.getLastPathSegment()) && timestamp + 1000 < System.currentTimeMillis()) {
 			openFileChooser();
