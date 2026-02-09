@@ -100,6 +100,11 @@ public class WebView extends ViewGroup {
 
 	public static void setWebContentsDebuggingEnabled(boolean enabled) {}
 
+	// directly accessed by androidx WebViewGlueCommunicator to get ClassLoader
+	private static Object getFactory() {
+		return new Object();
+	}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	private native void native_loadDataWithBaseURL(long widget, String baseUrl, String data, String mimeType, String encoding);
