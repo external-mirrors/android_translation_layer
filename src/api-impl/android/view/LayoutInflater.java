@@ -54,6 +54,13 @@ public class LayoutInflater {
 		this.context = context;
 	}
 
+	public LayoutInflater(LayoutInflater original, Context context) {
+		this.context = context;
+		this.factories.addAll(original.factories);
+		this.mFactory = original.mFactory;
+		this.mFactory2 = original.mFactory2;
+	}
+
 	private Factory mFactory;
 
 	public final LayoutInflater.Factory getFactory() {

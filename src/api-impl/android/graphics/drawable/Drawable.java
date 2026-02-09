@@ -87,6 +87,10 @@ public class Drawable {
 
 		public abstract Drawable newDrawable();
 
+		public Drawable newDrawable(Resources res, Theme theme) {
+			return newDrawable(res);
+		}
+
 		public abstract int getChangingConfigurations();
 	}
 

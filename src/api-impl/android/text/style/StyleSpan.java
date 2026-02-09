@@ -1,6 +1,8 @@
 package android.text.style;
 
-public class StyleSpan extends MetricAffectingSpan {
+import android.text.ParcelableSpan;
+
+public class StyleSpan extends MetricAffectingSpan implements ParcelableSpan {
 
 	private int style;
 
