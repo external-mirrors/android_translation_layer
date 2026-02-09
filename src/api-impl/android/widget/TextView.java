@@ -419,4 +419,6 @@ public class TextView extends View {
 	public void clearComposingText() {}
 
 	public void setKeyListener(KeyListener keyListener) {}
+
+	public int getAutoLinkMask() {return 0;}
 }

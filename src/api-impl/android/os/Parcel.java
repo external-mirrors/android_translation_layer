@@ -142,6 +142,51 @@ public class Parcel {
 		return strings;
 	}
 
+	public void writeValue(Object value) {
+		System.out.println("Parcel.writeValue(" + value + ")");
+		if (value instanceof String) {
+			native_writeInt(builder, 0);
+			native_writeString(builder, (String)value);
+		} else if (value instanceof Integer) {
+			native_writeInt(builder, 1);
+			native_writeInt(builder, ((Integer)value).intValue());
+		} else if (value == null || value instanceof Parcelable) {
+			native_writeInt(builder, 2);
+			writeParcelable((Parcelable)value, 0);
+		} else if (value instanceof List) {
+			native_writeInt(builder, 3);
+			writeList((List<?>)value);
+		} else {
+			throw new RuntimeException("Unsupported value type: " + value.getClass().getName());
+		}
+	}
+
+	public Object readValue(ClassLoader loader) throws ReflectiveOperationException {
+		switch (native_readInt(iter)) {
+		case 0:
+			return native_readString(iter);
+		case 1:
+			return native_readInt(iter);
+		case 2:
+			return readParcelable(loader);
+		case 3:
+		default:
+			throw new RuntimeException("Unsupported value type: " + native_readInt(iter));
+		}
+	}
+
+	public void writeList(List<?> list) {
+		System.out.println("Parcel.writeList(" + list + ")");
+		if (list == null) {
+			native_writeInt(builder, -1);
+			return;
+		}
+		native_writeInt(builder, list.size());
+		for (Object value : list) {
+			writeValue(value);
+		}
+	}
+
 	protected static native void native_writeInt(long builder, int i);
 	protected static native void native_writeString(long builder, String s);
 	protected static native int native_readInt(long iter);

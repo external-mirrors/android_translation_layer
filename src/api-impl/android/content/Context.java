@@ -142,7 +142,7 @@ public abstract class Context {
 		provider.put("KeyGenerator.HmacSHA512", "android.security.keystore.KeyGenerator$HmacSHA512");
 		Security.addProvider(provider);
 
-		r.applyPackageQuirks(application_info.packageName);
+		r.applyPackageQuirks(application_info.minSdkVersion);
 
 		for (PackageParser.Activity receiver : pkg.receivers) {
 			for (PackageParser.ActivityIntentInfo intent : receiver.intents) {

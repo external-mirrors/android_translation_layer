@@ -213,9 +213,9 @@ public class Resources {
 		//        assets.ensureStringBlocks();
 	}
 
-	public void applyPackageQuirks(String packageName) {
-		// F-Droid expects mDrawableCache to be a ThemedResourceCache while most other apps expect a Map
-		if ("org.fdroid.fdroid".equals(packageName)) {
+	public void applyPackageQuirks(int minSdkVersion) {
+		// Apps that target >= 23 expect mDrawableCache to be a ThemedResourceCache while other apps expect a Map
+		if (Build.VERSION.SDK_INT >= 23 || minSdkVersion >= 23) {
 			mDrawableCache = new ThemedResourceCache<Drawable>() {
 				@Override
 				protected boolean shouldInvalidateEntry(Drawable entry, int configChanges) {
