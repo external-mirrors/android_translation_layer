@@ -569,16 +569,33 @@ public abstract class Context {
 						e.printStackTrace();
 					}
 				}
-				nativeShareFile(text, fd != null ? fd.getFd() : -1);
+				final ParcelFileDescriptor fd_final = fd;
+				Runnable runnable = new Runnable() {
+					@Override
+					public void run() {
+						nativeShareFile(text, fd_final != null ? fd_final.getFd() : -1);
+						if (fd_final != null) {
+							try {
+								fd_final.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				};
+				if(Looper.myLooper() == Looper.getMainLooper()) {
+					runnable.run();
+				} else {
+					new Handler(Looper.getMainLooper()).post(runnable);
+				}
 				return;
 			} else if (intent.getData() != null) {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
 				if (intent.getData().getScheme().equals("content")) {
-					try {
-						ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(intent.getData(), "r");
+					try (ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(intent.getData(), "r")) {
 						nativeOpenFile(fd.getFd());
 						return;
-					} catch (FileNotFoundException e) {
+					} catch (IOException e) {
 						e.printStackTrace();
 					}
 				}
