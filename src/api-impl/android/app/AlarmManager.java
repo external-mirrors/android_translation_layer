@@ -58,6 +58,10 @@ public class AlarmManager {
 
 	}
 
+	public void setAndAllowWhileIdle(int type, long triggerAtMillis, PendingIntent operation) {
+		setExact(type, triggerAtMillis,operation);
+	}
+
 	public boolean canScheduleExactAlarms() {
 		return true;
 	}

@@ -415,6 +415,11 @@ public class PopupMenu {
 		}
 
 		@Override
+		public boolean isCheckable() {
+			return false;
+		}
+
+		@Override
 		public MenuItem setTitleCondensed(CharSequence titleCondensed) {
 			return this;
 		}
