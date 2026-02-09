@@ -10,7 +10,7 @@ JNIEXPORT jlong JNICALL Java_android_widget_CompoundButton_native_1constructor(J
 {
 	GtkWidget *wrapper = g_object_ref(wrapper_widget_new());
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label = gtk_label_new("CompoundButton");
+	GtkWidget *label = gtk_label_new("");
 	gtk_widget_set_hexpand(label, TRUE);
 	gtk_widget_set_halign(label, GTK_ALIGN_START);
 	gtk_box_append(GTK_BOX(box), label);
@@ -33,7 +33,7 @@ JNIEXPORT jboolean JNICALL Java_android_widget_CompoundButton_isChecked(JNIEnv *
 static gboolean on_state_set(GtkSwitch* self, gboolean state, jobject listener)
 {
 	JNIEnv *env = get_jni_env();
-	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(self)));
+	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(self))));
 	jmethodID on_check_changed = _METHOD(_CLASS(listener), "onCheckedChanged", "(Landroid/widget/CompoundButton;Z)V");
 	(*env)->CallVoidMethod(env, listener, on_check_changed, wrapper->jobj, state);
 	return FALSE;
