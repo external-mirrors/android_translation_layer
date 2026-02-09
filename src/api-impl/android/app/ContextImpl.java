@@ -2,6 +2,7 @@ package android.app;
 
 import android.annotation.UnsupportedAppUsage;
 import android.app.job.JobScheduler;
+import android.app.SearchManager;
 import android.bluetooth.BluetoothManager;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -146,6 +147,8 @@ public final class ContextImpl extends Context {
 				return new StatusBarManager();
 			case "color_display":
 				return new ColorDisplayManager();
+			case "search":
+				return new SearchManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;

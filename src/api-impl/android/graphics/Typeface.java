@@ -64,6 +64,10 @@ public class Typeface {
 		return DEFAULT;
 	}
 
+	public static Typeface createFromFamiliesWithDefault(FontFamily[] families, int dummy1, int dummy2) {
+		return createFromFamiliesWithDefault(families);
+	}
+
 	public static class Builder {
 		public Builder(AssetManager mgr, String path) {}
 

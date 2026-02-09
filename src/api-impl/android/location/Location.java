@@ -10,6 +10,8 @@ public class Location {
 	private double bearing;
 	private long timestamp;
 
+	public Location(String provider) {}
+
 	/* for internal use */
 	public Location (double latitude,
 	                 double longitude,
@@ -31,8 +33,16 @@ public class Location {
 		return latitude;
 	}
 
+	public void setLatitude(double latitude) {
+		this.latitude = latitude;
+	}
+
 	public double getLongitude() {
 		return longitude;
+	}
+
+	public void setLongitude(double longitude) {
+		this.longitude = longitude;
 	}
 
 	public boolean hasAltitude() {

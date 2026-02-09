@@ -59,6 +59,10 @@ public class Paint {
 	public void setAntiAlias(boolean aa) {
 	}
 
+	public boolean setFontVariationSettings(String fvs) {
+		return true;
+	}
+
 	public void setStrokeWidth(float width) {
 		native_set_stroke_width(paint, width);
 	}
