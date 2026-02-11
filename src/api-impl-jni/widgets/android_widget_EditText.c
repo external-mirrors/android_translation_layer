@@ -104,3 +104,17 @@ JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setText(JNIEnv *env,
 	gtk_entry_buffer_set_text(gtk_entry_get_buffer(GTK_ENTRY(_PTR(widget_ptr))), text, length);
 	(*env)->ReleaseStringUTFChars(env, text_jstr, text);
 }
+
+JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setHint(JNIEnv *env, jobject this, jlong widget_ptr, jstring text_jstr)
+{
+	const char *text = (*env)->GetStringUTFChars(env, text_jstr, NULL);
+	gtk_entry_set_placeholder_text(GTK_ENTRY(_PTR(widget_ptr)), text);
+	(*env)->ReleaseStringUTFChars(env, text_jstr, text);
+}
+
+JNIEXPORT jstring JNICALL Java_android_widget_EditText_native_1getHint(JNIEnv *env, jobject this, jlong widget_ptr)
+{
+	GtkEntry *entry = GTK_ENTRY(_PTR(widget_ptr));
+	const char *text = gtk_entry_get_placeholder_text(entry);
+	return _JSTRING(text);
+}

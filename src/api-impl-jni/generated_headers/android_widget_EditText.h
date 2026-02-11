@@ -247,6 +247,22 @@ JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setOnEditorActionLis
 JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setText
   (JNIEnv *, jobject, jlong, jstring);
 
+/*
+ * Class:     android_widget_EditText
+ * Method:    native_setHint
+ * Signature: (JLjava/lang/CharSequence;)V
+ */
+JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setHint
+  (JNIEnv *, jobject, jlong, jobject);
+
+/*
+ * Class:     android_widget_EditText
+ * Method:    native_getHint
+ * Signature: (J)Ljava/lang/CharSequence;
+ */
+JNIEXPORT jobject JNICALL Java_android_widget_EditText_native_1getHint
+  (JNIEnv *, jobject, jlong);
+
 #ifdef __cplusplus
 }
 #endif

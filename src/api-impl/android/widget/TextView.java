@@ -52,6 +52,10 @@ public class TextView extends View {
 			if (a.hasValue(com.android.internal.R.styleable.TextView_text)) {
 				setText(a.getText(com.android.internal.R.styleable.TextView_text));
 			}
+			if (a.hasValue(com.android.internal.R.styleable.TextView_hint)) {
+				setHint(a.getText(com.android.internal.R.styleable.TextView_hint));
+			}
+
 			int ap = a.getResourceId(com.android.internal.R.styleable.TextView_textAppearance, -1);
 			if (ap != -1) {
 				TypedArray aa = context.obtainStyledAttributes(ap, com.android.internal.R.styleable.TextAppearance);
@@ -308,7 +312,9 @@ public class TextView extends View {
 
 	public int getCompoundPaddingRight() {return 0;}
 
-	public void setHint(int resId) {}
+	public void setHint(int resId) {
+		setHint(getContext().getResources().getText(resId));
+	}
 
 	public float getLetterSpacing() {return 0.f;}
 
