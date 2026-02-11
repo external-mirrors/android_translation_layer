@@ -24,4 +24,5 @@ public interface Editable extends CharSequence {
 
 	public Editable insert(int where, CharSequence text);
 
+	public void clear();
 }
