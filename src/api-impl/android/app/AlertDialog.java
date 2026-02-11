@@ -87,6 +87,10 @@ public class AlertDialog extends Dialog implements DialogInterface {
 			return this;
 		}
 
+		public AlertDialog.Builder setMessage(int message) {
+			return setMessage(dialog.getContext().getText(message));
+		}
+
 		public AlertDialog.Builder setView(View view) {
 			return this;
 		}

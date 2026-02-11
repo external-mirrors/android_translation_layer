@@ -63,6 +63,9 @@ public final class StrictMode {
 			public Builder detectNetwork() {
 				return this;
 			}
+			public Builder permitAll() {
+				return this;
+			}
 			public Builder permitDiskReads() {
 				return this;
 			}
