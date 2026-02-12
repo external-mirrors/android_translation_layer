@@ -2350,4 +2350,6 @@ public class View implements Drawable.Callback {
 	public AccessibilityDelegate getAccessibilityDelegate() { return null; }
 
 	public void setScrollY(int value) {}
+
+	protected boolean dispatchHoverEvent(MotionEvent event) { return false; }
 }

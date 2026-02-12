@@ -23,6 +23,7 @@ struct _WrapperWidget {
 	gboolean needs_allocation;
 	gboolean intercepting_touch;
 	gboolean custom_dispatch_touch;
+	gboolean hover_exit_pending;
 };
 
 struct _WrapperWidgetClass {

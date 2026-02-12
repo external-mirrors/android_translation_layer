@@ -1459,11 +1459,24 @@ public final class MotionEvent extends InputEvent {
 	                                 float xPrecision, float yPrecision, int deviceId,
 	                                 int edgeFlags, int source, int flags) {
 		MotionEvent ev = obtain();
-		ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-		                                 deviceId, source, action, flags, edgeFlags, metaState, buttonState,
-		                                 0, 0, xPrecision, yPrecision,
-		                                 downTime * NS_PER_MS, eventTime * NS_PER_MS,
-		                                 pointerCount, pointerProperties, pointerCoords);
+		// ev.mNativePtr = nativeInitialize(ev.mNativePtr,
+		//                                  deviceId, source, action, flags, edgeFlags, metaState, buttonState,
+		//                                  0, 0, xPrecision, yPrecision,
+		//                                  downTime * NS_PER_MS, eventTime * NS_PER_MS,
+		//                                  pointerCount, pointerProperties, pointerCoords);
+
+		ev.source = source;
+		ev.action = action;
+		ev.eventTime = eventTime;
+		ev.ids = new int[pointerCount];
+		ev.coords = new float[pointerCount * 4];
+		for (int i = 0; i < pointerCount; i++) {
+			ev.ids[i] = pointerProperties[i].id;
+			ev.coords[i * 4] = pointerCoords[i].x;
+			ev.coords[i * 4 + 1] = pointerCoords[i].y;
+			ev.coords[i * 4 + 2] = pointerCoords[i].x;
+			ev.coords[i * 4 + 3] = pointerCoords[i].y;
+		}
 		return ev;
 	}
 
@@ -1789,7 +1802,8 @@ public final class MotionEvent extends InputEvent {
 	 * @see #FLAG_WINDOW_IS_OBSCURED
 	 */
 	public final int getFlags() {
-		return nativeGetFlags(mNativePtr);
+		// return nativeGetFlags(mNativePtr);
+		return 0;
 	}
 
 	/**
@@ -2203,7 +2217,10 @@ public final class MotionEvent extends InputEvent {
 	 * @see PointerCoords
 	 */
 	public final void getPointerCoords(int pointerIndex, PointerCoords outPointerCoords) {
-		nativeGetPointerCoords(mNativePtr, pointerIndex, HISTORY_CURRENT, outPointerCoords);
+		// nativeGetPointerCoords(mNativePtr, pointerIndex, HISTORY_CURRENT, outPointerCoords);
+		outPointerCoords.clear();
+		outPointerCoords.x = getX(pointerIndex);
+		outPointerCoords.y = getY(pointerIndex);
 	}
 
 	/**
@@ -2218,7 +2235,8 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final void getPointerProperties(int pointerIndex,
 	                                       PointerProperties outPointerProperties) {
-		nativeGetPointerProperties(mNativePtr, pointerIndex, outPointerProperties);
+		// nativeGetPointerProperties(mNativePtr, pointerIndex, outPointerProperties);
+		outPointerProperties.clear();
 	}
 
 	/**
@@ -2249,7 +2267,10 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final int getButtonState() {
 		// return nativeGetButtonState(mNativePtr);
-		return BUTTON_PRIMARY;
+		if (getAction() == ACTION_DOWN || getAction() == ACTION_MOVE)
+			return BUTTON_PRIMARY;
+		else
+			return 0;
 	}
 
 	/**
@@ -2287,7 +2308,8 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_X
 	 */
 	public final float getXPrecision() {
-		return nativeGetXPrecision(mNativePtr);
+		// return nativeGetXPrecision(mNativePtr);
+		return 1.0f;
 	}
 
 	/**
@@ -2299,7 +2321,8 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_Y
 	 */
 	public final float getYPrecision() {
-		return nativeGetYPrecision(mNativePtr);
+		// return nativeGetYPrecision(mNativePtr);
+		return 1.0f;
 	}
 
 	/**

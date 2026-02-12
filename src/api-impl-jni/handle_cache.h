@@ -87,6 +87,7 @@ struct handle_cache {
 		jmethodID onKeyDown;
 		jmethodID onAttachedToWindow;
 		jmethodID onDetachedFromWindow;
+		jmethodID dispatchHoverEvent;
 	} view;
 	struct {
 		jclass class;

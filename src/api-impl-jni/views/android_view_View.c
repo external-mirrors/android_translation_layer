@@ -22,13 +22,17 @@ enum {
 	JAVA_ENUM(ACTION_POINTER_DOWN),
 	JAVA_ENUM(ACTION_POINTER_UP),
 
+	JAVA_ENUM(ACTION_HOVER_MOVE),
 	JAVA_ENUM(ACTION_SCROLL),
+	JAVA_ENUM(ACTION_HOVER_ENTER),
+	JAVA_ENUM(ACTION_HOVER_EXIT),
 };
 #undef JAVA_ENUM_CLASS
 
-#define SOURCE_TOUCHSCREEN 0x1002
+#define SOURCE_TOUCHSCREEN   0x1002
+#define SOURCE_CLASS_POINTER 0x2
 
-#define MAX_POINTERS       50
+#define MAX_POINTERS         50
 
 struct pointer {
 	int id;
@@ -114,6 +118,16 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 
 	return ret;
 }
+
+static void call_hover_callback(jobject this, int action, float x, float y)
+{
+	JNIEnv *env = get_jni_env();
+	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor_single, SOURCE_CLASS_POINTER, action, 0, x, y, x, y);
+	(*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchHoverEvent, motion_event);
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+}
+
 static void gdk_event_get_widget_relative_position(GdkEvent *event, GtkWidget *widget, double *x, double *y)
 {
 	int ret;
@@ -231,6 +245,10 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 	if (event_type == GDK_BUTTON_RELEASE || event_type == GDK_TOUCH_END) {
 		remove_pointer_fast(pointer_indices, &pointers[id]);
 	}
+	if (pointer_indices->len == 0 && wrapper->hover_exit_pending) {
+		wrapper->hover_exit_pending = FALSE;
+		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, x, y);
+	}
 	return ret;
 }
 
@@ -255,9 +273,7 @@ static void on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	}
 }
 
-#define SOURCE_CLASS_POINTER 0x2
-
-#define MAGIC_SCROLL_FACTOR  32
+#define MAGIC_SCROLL_FACTOR 32
 
 static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy, jobject this)
 {
@@ -275,6 +291,25 @@ static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy
 		(*env)->ExceptionDescribe(env);
 
 	return ret;
+}
+
+static void hover_enter_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
+{
+	wrapper->hover_exit_pending = FALSE;
+	call_hover_callback(wrapper->jobj, ACTION_HOVER_ENTER, x, y);
+}
+
+static void hover_leave_cb(GtkEventControllerMotion *controller, WrapperWidget *wrapper)
+{
+	if (pointer_indices->len) // composeUI apps don't like ACTION_HOVER_EXIT events while a pointer is down
+		wrapper->hover_exit_pending = TRUE;
+	else
+		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, 0, 0);
+}
+
+static void hover_motion_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
+{
+	call_hover_callback(wrapper->jobj, ACTION_HOVER_MOVE, x, y);
 }
 
 void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
@@ -529,10 +564,18 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 	(*env)->ReleaseStringUTFChars(env, nameObj, name);
 
 	if (_METHOD(class, "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.onGenericMotionEvent
-		|| _METHOD(class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchGenericMotionEvent) {
+	    || _METHOD(class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchGenericMotionEvent) {
 		GtkEventController *controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
 
 		g_signal_connect(controller, "scroll", G_CALLBACK(scroll_cb), wrapper->jobj);
+		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
+	}
+	if (_METHOD(class, "dispatchHoverEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchHoverEvent) {
+		GtkEventController *controller = gtk_event_controller_motion_new();
+
+		g_signal_connect(controller, "enter", G_CALLBACK(hover_enter_cb), wrapper);
+		g_signal_connect(controller, "leave", G_CALLBACK(hover_leave_cb), wrapper);
+		g_signal_connect(controller, "motion", G_CALLBACK(hover_motion_cb), wrapper);
 		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	}
 
