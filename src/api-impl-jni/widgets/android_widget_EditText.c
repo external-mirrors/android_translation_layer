@@ -78,7 +78,7 @@ static void on_activate(GtkEntry *entry, struct changed_callback_data *d)
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, IME_ACTION_SEARCH, KEYCODE_ENTER);
+	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, IME_ACTION_SEARCH, KEYCODE_ENTER, 0, 0);
 	(*env)->CallBooleanMethod(env, d->listener, d->listener_method, d->this, 0, key_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);

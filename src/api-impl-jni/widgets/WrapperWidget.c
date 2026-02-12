@@ -278,26 +278,51 @@ static bool on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	return ret;
 }
 
-#define KEYCODE_0           7
-#define KEYCODE_1           8
-#define KEYCODE_2           9
-#define KEYCODE_3           10
-#define KEYCODE_4           11
-#define KEYCODE_5           12
-#define KEYCODE_6           13
-#define KEYCODE_7           14
-#define KEYCODE_8           15
-#define KEYCODE_9           16
-#define KEYCODE_DPAD_UP     19
-#define KEYCODE_DPAD_DOWN   20
-#define KEYCODE_DPAD_LEFT   21
-#define KEYCODE_DPAD_RIGHT  22
-#define KEYCODE_ENTER       66
-#define KEYCODE_DEL         67
-#define KEYCODE_FORWARD_DEL 112
+#define KEYCODE_0             7 /* KEYCODE_[1-9] = [8-16] */
+#define KEYCODE_DPAD_UP       19
+#define KEYCODE_DPAD_DOWN     20
+#define KEYCODE_DPAD_LEFT     21
+#define KEYCODE_DPAD_RIGHT    22
+#define KEYCODE_A             29 /* KEYCODE_[B-Z] = [30-54] */
+#define KEYCODE_COMMA         55
+#define KEYCODE_PERIOD        56
+#define KEYCODE_TAB           61
+#define KEYCODE_SPACE         62
+#define KEYCODE_ENTER         66
+#define KEYCODE_DEL           67
+#define KEYCODE_GRAVE         68
+#define KEYCODE_MINUS         69
+#define KEYCODE_EQUALS        70
+#define KEYCODE_LEFT_BRACKET  71
+#define KEYCODE_RIGHT_BRACKET 72
+#define KEYCODE_BACKSLASH     73
+#define KEYCODE_SEMICOLON     74
+#define KEYCODE_APOSTROPHE    75
+#define KEYCODE_SLASH         76
+#define KEYCODE_AT            77
+#define KEYCODE_PLUS          81
+#define KEYCODE_PAGE_UP       92
+#define KEYCODE_PAGE_DOWN     93
+#define KEYCODE_ESCAPE        111
+#define KEYCODE_FORWARD_DEL   112
+#define KEYCODE_MOVE_HOME     122
+#define KEYCODE_MOVE_END      123
+#define KEYCODE_INSERT        124
+#define KEYCODE_F1            131 /* KEYCODE_F[2-12] = [132-142] */
+#define KEYCODE_NUMPAD_0      144 /* KEYCODE_NUMPAD_[1-9] = [145-153] */
 
 static int map_key_code(int key_code)
 {
+	if (key_code >= GDK_KEY_0 && key_code <= GDK_KEY_9)
+		return key_code - GDK_KEY_0 + KEYCODE_0;
+	if (key_code >= GDK_KEY_a && key_code <= GDK_KEY_z)
+		return key_code - GDK_KEY_a + KEYCODE_A;
+	else if (key_code >= GDK_KEY_A && key_code <= GDK_KEY_Z)
+		return key_code - GDK_KEY_A + KEYCODE_A;
+	else if (key_code >= GDK_KEY_F1 && key_code <= GDK_KEY_F12)
+		return key_code - GDK_KEY_F1 + KEYCODE_F1;
+	else if (key_code >= GDK_KEY_KP_0 && key_code <= GDK_KEY_KP_9)
+		return key_code - GDK_KEY_KP_0 + KEYCODE_NUMPAD_0;
 	switch (key_code) {
 		case GDK_KEY_Up:
 			return KEYCODE_DPAD_UP;
@@ -307,35 +332,79 @@ static int map_key_code(int key_code)
 			return KEYCODE_DPAD_LEFT;
 		case GDK_KEY_Right:
 			return KEYCODE_DPAD_RIGHT;
+		case GDK_KEY_comma:
+			return KEYCODE_COMMA;
+		case GDK_KEY_period:
+			return KEYCODE_PERIOD;
+		case GDK_KEY_Tab:
+			return KEYCODE_TAB;
+		case GDK_KEY_space:
+			return KEYCODE_SPACE;
 		case GDK_KEY_Return:
 			return KEYCODE_ENTER;
 		case GDK_KEY_BackSpace:
 			return KEYCODE_DEL;
+		case GDK_KEY_grave:
+			return KEYCODE_GRAVE;
+		case GDK_KEY_minus:
+			return KEYCODE_MINUS;
+		case GDK_KEY_equal:
+			return KEYCODE_EQUALS;
+		case GDK_KEY_bracketleft:
+			return KEYCODE_LEFT_BRACKET;
+		case GDK_KEY_bracketright:
+			return KEYCODE_RIGHT_BRACKET;
+		case GDK_KEY_backslash:
+			return KEYCODE_BACKSLASH;
+		case GDK_KEY_semicolon:
+			return KEYCODE_SEMICOLON;
+		case GDK_KEY_apostrophe:
+			return KEYCODE_APOSTROPHE;
+		case GDK_KEY_slash:
+			return KEYCODE_SLASH;
+		case GDK_KEY_at:
+			return KEYCODE_AT;
+		case GDK_KEY_plus:
+			return KEYCODE_PLUS;
+		case GDK_KEY_Page_Up:
+			return KEYCODE_PAGE_UP;
+		case GDK_KEY_Page_Down:
+			return KEYCODE_PAGE_DOWN;
+		case GDK_KEY_Escape:
+			return KEYCODE_ESCAPE;
 		case GDK_KEY_Delete:
 			return KEYCODE_FORWARD_DEL;
-		case GDK_KEY_0:
-			return KEYCODE_0;
-		case GDK_KEY_1:
-			return KEYCODE_1;
-		case GDK_KEY_2:
-			return KEYCODE_2;
-		case GDK_KEY_3:
-			return KEYCODE_3;
-		case GDK_KEY_4:
-			return KEYCODE_4;
-		case GDK_KEY_5:
-			return KEYCODE_5;
-		case GDK_KEY_6:
-			return KEYCODE_6;
-		case GDK_KEY_7:
-			return KEYCODE_7;
-		case GDK_KEY_8:
-			return KEYCODE_8;
-		case GDK_KEY_9:
-			return KEYCODE_9;
+		case GDK_KEY_Home:
+			return KEYCODE_MOVE_HOME;
+		case GDK_KEY_End:
+			return KEYCODE_MOVE_END;
+		case GDK_KEY_Insert:
+			return KEYCODE_INSERT;
 		default:
 			return key_code;
 	}
+}
+
+#define META_SHIFT_ON     (1 << 0)
+#define META_ALT_ON       (1 << 1)
+#define META_CTRL_ON      (1 << 12)
+#define META_META_ON      (1 << 16)
+#define META_CAPS_LOCK_ON (1 << 20)
+
+static int map_meta_state(GdkModifierType state)
+{
+	int meta_state = 0;
+	if (state & GDK_SHIFT_MASK)
+		meta_state |= META_SHIFT_ON;
+	if (state & GDK_CONTROL_MASK)
+		meta_state |= META_CTRL_ON;
+	if (state & GDK_META_MASK)
+		meta_state |= META_META_ON;
+	if (state & GDK_ALT_MASK)
+		meta_state |= META_ALT_ON;
+	if (state & GDK_LOCK_MASK)
+		meta_state |= META_CAPS_LOCK_ON;
+	return meta_state;
 }
 
 #define ACTION_DOWN 0
@@ -345,7 +414,7 @@ static gboolean on_key_pressed(GtkEventControllerKey *controller, guint keyval, 
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, ACTION_DOWN, map_key_code(keyval));
+	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, ACTION_DOWN, map_key_code(keyval), 0, map_meta_state(state));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
 	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
 	if ((*env)->ExceptionCheck(env))
@@ -357,7 +426,7 @@ static gboolean on_key_released(GtkEventControllerKey *controller, guint keyval,
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, ACTION_UP, map_key_code(keyval));
+	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, ACTION_UP, map_key_code(keyval), 0, map_meta_state(state));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
 	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
 	if ((*env)->ExceptionCheck(env))
