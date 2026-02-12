@@ -618,6 +618,7 @@ srcs = [
 	'android/view/inputmethod/ExtractedTextRequest.java',
 	'android/view/inputmethod/InputBinding.java',
 	'android/view/inputmethod/InputConnection.java',
+	'android/view/inputmethod/InputConnectionWrapper.java',
 	'android/view/inputmethod/InputMethod.java',
 	'android/view/inputmethod/InputMethodInfo.java',
 	'android/view/inputmethod/InputMethodManager.java',

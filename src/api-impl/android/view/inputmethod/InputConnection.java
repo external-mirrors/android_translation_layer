@@ -348,4 +348,18 @@ public interface InputConnection {
 	 * valid.
 	 */
 	public boolean performPrivateCommand(String action, Bundle data);
+
+	/**
+	 * Called by the system up to only once to notify that the system is about to invalidate
+	 * connection between the input method and the application.
+	 *
+	 * <p><strong>Editor authors</strong>: You can clear all the nested batch edit right now and
+	 * you no longer need to handle subsequent callbacks on this connection, including
+	 * {@link #beginBatchEdit()}}.  Note that although the system tries to call this method whenever
+	 * possible, there may be a chance that this method is not called in some exceptional
+	 * situations.</p>
+	 *
+	 * <p>Note: This does nothing when called from input methods.</p>
+	 */
+	void closeConnection();
 }

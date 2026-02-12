@@ -33,6 +33,8 @@ import android.util.Slog;
 import android.util.SparseArray;
 import android.view.animation.Animation;
 import android.view.autofill.AutofillId;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -2355,4 +2357,6 @@ public class View implements Drawable.Callback {
 	protected boolean dispatchHoverEvent(MotionEvent event) { return false; }
 
 	public ActionMode startActionMode(ActionMode.Callback callback, int type) { return null; }
+
+	public InputConnection onCreateInputConnection(EditorInfo outAttrs) { return null; }
 }
