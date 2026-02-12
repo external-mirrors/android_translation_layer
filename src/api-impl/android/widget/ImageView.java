@@ -58,7 +58,8 @@ public class ImageView extends View {
 			return;
 		}
 		bitmap = BitmapFactory.decodeResource(Context.this_application.getResources(), resid);
-		native_setDrawable(widget, bitmap.getTexture());
+		if (bitmap != null)
+			native_setDrawable(widget, bitmap.getTexture());
 	}
 	public void setAdjustViewBounds(boolean adjustViewBounds) {}
 

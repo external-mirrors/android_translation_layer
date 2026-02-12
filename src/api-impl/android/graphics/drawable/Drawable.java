@@ -15,6 +15,7 @@ import android.content.res.Resources;
 import android.content.res.XmlResourceParser;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BlendMode;
 import android.graphics.BlendModeColorFilter;
@@ -312,7 +313,10 @@ public class Drawable {
 	public static Drawable createFromResourceStream(Resources resources, TypedValue value, InputStream is, String file,
 			Object object) {
 		if (!file.endsWith(".9.png")) {
-			return new BitmapDrawable(resources, BitmapFactory.decodeStream(is));
+			final Bitmap bm = BitmapFactory.decodeStream(is);
+			if (bm == null)
+				return null;
+			return new BitmapDrawable(resources, bm);
 		}
 		Path path = Paths.get(android.os.Environment.getExternalStorageDirectory().getPath(), file);
 		if (!Files.exists(path)) {

@@ -45,16 +45,21 @@ public class BitmapDrawable extends Drawable {
 			throws XmlPullParserException, IOException {
 		final TypedArray a = obtainAttributes(r, theme, attrs, R.styleable.BitmapDrawable);
 		if (a.hasValue(R.styleable.BitmapDrawable_src)) {
+			BitmapDrawable dr = null;
 			try {
-			// TODO: getDrawable() might pick up another <bitmap> XML,
-			// but we should reject anything other than image files.
-			bitmap = ((BitmapDrawable)a.getDrawable(R.styleable.BitmapDrawable_src)).bitmap;
-			paintable = bitmap.getTexture();
-			} catch (java.lang.Exception e) {e.printStackTrace();}
+				// TODO: getDrawable() might pick up another <bitmap> XML,
+				// but we should reject anything other than image files.
+				dr = (BitmapDrawable)a.getDrawable(R.styleable.BitmapDrawable_src);
+			} catch (java.lang.Exception e) {
+				e.printStackTrace();
+			}
+			if (dr != null)
+				bitmap = dr.bitmap;
 		}
 		a.recycle();
 		if (bitmap == null)
 			throw new XmlPullParserException("<bitmap> needs a valid `src' attribute");
+		paintable = bitmap.getTexture();
 	}
 
 	@Override

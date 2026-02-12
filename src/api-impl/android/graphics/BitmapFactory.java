@@ -448,7 +448,10 @@ public class BitmapFactory {
 	 */
 	public static Bitmap decodeResource(Resources res, int id, Options opts) throws NotFoundException {
 		Bitmap bitmap = decodeStreamInternal(res.openRawResource(id), null, opts);
-		if (opts != null && opts.inScaled == false) {
+		if (bitmap == null && opts != null && opts.inBitmap != null) {
+			throw new IllegalArgumentException("Problem decoding into existing bitmap");
+		}
+		if (bitmap != null && opts != null && opts.inScaled == false) {
 			bitmap.mutable = false;
 		}
 		return bitmap;
@@ -594,7 +597,8 @@ public class BitmapFactory {
 			tempStorage = opts.inTempStorage;
 		if (tempStorage == null)
 			tempStorage = new byte[DECODE_BUFFER_SIZE];
-		return new Bitmap(nativeDecodeStream(is, tempStorage, outPadding, opts));
+		final long texture = nativeDecodeStream(is, tempStorage, outPadding, opts);
+		return texture == 0 ? null : new Bitmap(texture);
 	}
 
 	/**
