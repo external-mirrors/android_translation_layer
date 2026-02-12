@@ -49,9 +49,6 @@ public class Window {
 		TypedArray a = context.obtainStyledAttributes(com.android.internal.R.styleable.Window);
 		/* windows are not floating by default - so a dialog without a dialog theme is not a dialog */
 		is_floating = a.getBoolean(R.styleable.Window_windowIsFloating, false);
-		Drawable background = a.getDrawable(R.styleable.Window_windowBackground);
-		if (background != null)
-			setBackgroundDrawable(background);
 		a.recycle();
 	}
 
