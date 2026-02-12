@@ -68,6 +68,7 @@ struct handle_cache {
 		jmethodID getSuggestedMinimumHeight;
 		jmethodID setMeasuredDimension;
 		jmethodID onGenericMotionEvent;
+		jmethodID dispatchGenericMotionEvent;
 		jmethodID computeScroll;
 		jmethodID getScrollX;
 		jmethodID getScrollY;

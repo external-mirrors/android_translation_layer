@@ -1765,6 +1765,10 @@ public class View implements Drawable.Callback {
 
 	public boolean onGenericMotionEvent(MotionEvent event) { return false; }
 
+	public boolean dispatchGenericMotionEvent(MotionEvent event) {
+		return onGenericMotionEvent(event);
+	}
+
 	protected boolean awakenScrollBars() { return false; }
 
 	protected native boolean native_getMatrix(long widget, long matrix);

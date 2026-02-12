@@ -69,6 +69,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.view.getSuggestedMinimumHeight = _METHOD(handle_cache.view.class, "getSuggestedMinimumHeight", "()I");
 	handle_cache.view.setMeasuredDimension = _METHOD(handle_cache.view.class, "setMeasuredDimension", "(II)V");
 	handle_cache.view.onGenericMotionEvent = _METHOD(handle_cache.view.class, "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z");
+	handle_cache.view.dispatchGenericMotionEvent = _METHOD(handle_cache.view.class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z");
 	handle_cache.view.computeScroll = _METHOD(handle_cache.view.class, "computeScroll", "()V");
 	handle_cache.view.getScrollX = _METHOD(handle_cache.view.class, "getScrollX", "()I");
 	handle_cache.view.getScrollY = _METHOD(handle_cache.view.class, "getScrollY", "()I");

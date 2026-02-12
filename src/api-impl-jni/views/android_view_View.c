@@ -270,7 +270,7 @@ static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy
 	}
 	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor_single, SOURCE_CLASS_POINTER, ACTION_SCROLL, 0, dx, -dy, 0.f, 0.f);
 
-	gboolean ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onGenericMotionEvent, motion_event);
+	gboolean ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchGenericMotionEvent, motion_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -528,11 +528,12 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 	gtk_widget_set_name(widget, name);
 	(*env)->ReleaseStringUTFChars(env, nameObj, name);
 
-	if (_METHOD(_CLASS(this), "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.onGenericMotionEvent) {
+	if (_METHOD(class, "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.onGenericMotionEvent
+		|| _METHOD(class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchGenericMotionEvent) {
 		GtkEventController *controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
 
 		g_signal_connect(controller, "scroll", G_CALLBACK(scroll_cb), wrapper->jobj);
-		gtk_widget_add_controller(widget, controller);
+		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	}
 
 	g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
