@@ -99,6 +99,11 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 		mClassLoader = b.mClassLoader;
 	}
 
+	public Bundle(PersistableBundle b) {
+		mMap = new ArrayMap<String, Object>(b.mMap);
+		mClassLoader = getClass().getClassLoader();
+	}
+
 	/**
 	 * Make a Bundle for a single key/value pair.
 	 *

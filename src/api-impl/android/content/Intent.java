@@ -893,4 +893,8 @@ public class Intent implements Parcelable {
 	public ArrayList<Integer> getIntegerArrayListExtra(String name) {
 		return extras.getIntegerArrayList(name);
 	}
+
+	public int[] getIntArrayExtra(String name) {
+		return extras.getIntArray(name);
+	}
 }

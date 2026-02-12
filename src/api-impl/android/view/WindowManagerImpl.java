@@ -6,8 +6,7 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 
 		@Override
 		public android.view.ViewParent getParent() {
-			// TODO Auto-generated method stub
-			throw new UnsupportedOperationException("Unimplemented method 'getParent'");
+			return null;
 		}
 
 		@Override

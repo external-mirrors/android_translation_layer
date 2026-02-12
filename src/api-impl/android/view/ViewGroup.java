@@ -647,4 +647,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	@Override
 	public void onDescendantInvalidated(View child, View target) {}
+
+	public boolean getTouchscreenBlocksFocus() { return false; }
 }

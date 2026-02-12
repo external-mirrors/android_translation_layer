@@ -2353,4 +2353,6 @@ public class View implements Drawable.Callback {
 	public void setScrollY(int value) {}
 
 	protected boolean dispatchHoverEvent(MotionEvent event) { return false; }
+
+	public ActionMode startActionMode(ActionMode.Callback callback, int type) { return null; }
 }

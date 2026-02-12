@@ -52,5 +52,9 @@ public class MediaCodecInfo {
 		public boolean isSampleRateSupported(int sampleRate) {
 			return true;
 		}
+
+		public int getMaxInputChannelCount() {
+			return 2;
+		}
 	}
 }

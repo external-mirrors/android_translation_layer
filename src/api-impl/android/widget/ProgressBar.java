@@ -1,8 +1,10 @@
 package android.widget;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.View;
@@ -113,4 +115,8 @@ public class ProgressBar extends View {
 	public int getSecondaryProgress() {
 		return 0;
 	}
+
+	public void setIndeterminateTintList(ColorStateList tint) {}
+
+	public void setIndeterminateTintMode(PorterDuff.Mode tintMode) {}
 }

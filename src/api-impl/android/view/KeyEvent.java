@@ -16,6 +16,7 @@
 
 package android.view;
 
+import android.os.Parcelable;
 //import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
 import android.util.Slog;
@@ -78,7 +79,7 @@ import android.view.KeyCharacterMap.KeyData;
  * input devices and sources represent keys and buttons.
  * </p>
  */
-public class KeyEvent extends InputEvent {
+public class KeyEvent extends InputEvent implements Parcelable {
 	/**
 	 * Key code constant: Unknown key code.
 	 */
