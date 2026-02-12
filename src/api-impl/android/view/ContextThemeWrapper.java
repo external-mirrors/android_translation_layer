@@ -60,12 +60,13 @@ public class ContextThemeWrapper extends ContextWrapper {
 	@Override
 	public void setTheme(int resid) {
 		mThemeResource = resid;
-		if (mTheme == null) {
+		boolean first = mTheme == null;
+		if (first) {
 			mTheme = getResources().newTheme();
 			mTheme.setTo(getBaseContext().getTheme());
 		}
 		if (resid != 0) {
-			mTheme.applyStyle(resid, true);
+			this.onApplyThemeResource(mTheme, resid, first);
 		}
 	}
 
@@ -75,5 +76,9 @@ public class ContextThemeWrapper extends ContextWrapper {
 			setTheme(mThemeResource);
 		}
 		return mTheme;
+	}
+
+	protected void onApplyThemeResource(Resources.Theme theme, int resId, boolean first) {
+		theme.applyStyle(resId, true);
 	}
 }
