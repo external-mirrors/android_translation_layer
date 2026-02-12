@@ -1099,6 +1099,7 @@ public class View implements Drawable.Callback {
 		if (params == null) {
 			throw new NullPointerException("Layout parameters cannot be null");
 		}
+		params.resolveLayoutDirection(getLayoutDirection());
 
 		int gravity = params.gravity;
 		if (gravity == -1 && parent instanceof View)
