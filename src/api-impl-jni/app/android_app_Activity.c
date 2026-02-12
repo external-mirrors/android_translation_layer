@@ -44,26 +44,27 @@ static void activity_unfocus(JNIEnv *env, jobject activity)
 		(*env)->ExceptionDescribe(env);
 }
 
-static jobject removed_activity = NULL;
-
 static void activity_focus(JNIEnv *env, jobject activity)
 {
+	if (_GET_BOOL_FIELD(activity, "finishing"))
+		return;
+
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onStart);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	if (activity == removed_activity)
+	if (_GET_BOOL_FIELD(activity, "finishing"))
 		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onResume);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	if (activity == removed_activity)
+	if (_GET_BOOL_FIELD(activity, "finishing"))
 		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onPostResume);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	if (activity == removed_activity)
+	if (_GET_BOOL_FIELD(activity, "finishing"))
 		return;
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onWindowFocusChanged, true);
@@ -78,10 +79,11 @@ static void activity_update_current(JNIEnv *env)
 	if (activity_current != activity_new) {
 		if (activity_current)
 			activity_unfocus(env, activity_current);
+		activity_current = NULL;
 
 		if (activity_new)
 			activity_focus(env, activity_new);
-		if (activity_new == removed_activity)
+		if (activity_new && _GET_BOOL_FIELD(activity_new, "finishing"))
 			return;
 
 		activity_current = activity_new;
@@ -148,8 +150,6 @@ void activity_close_all(void)
 	g_list_free(activities);
 }
 
-static jobject activity_not_created = NULL;
-
 void activity_start(JNIEnv *env, jobject activity_object)
 {
 	if (activity_current)
@@ -160,9 +160,7 @@ void activity_start(JNIEnv *env, jobject activity_object)
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	if ((*env)->IsSameObject(env, activity_object, activity_not_created)) { // finish() was called before the activity was created
-		_UNREF(activity_not_created);
-		activity_not_created = NULL;
+	if (_GET_BOOL_FIELD(activity_object, "finishing")) { // finish() was called before the activity was created
 		return;
 	}
 
@@ -178,7 +176,7 @@ void activity_start(JNIEnv *env, jobject activity_object)
 JNIEXPORT void JNICALL Java_android_app_Activity_nativeFinish(JNIEnv *env, jobject this, jlong window)
 {
 	GList *l;
-	removed_activity = NULL;
+	jobject removed_activity = NULL;
 	for (l = activity_backlog; l != NULL; l = l->next) {
 		if ((*env)->IsSameObject(env, this, l->data)) {
 			removed_activity = l->data;
@@ -190,8 +188,6 @@ JNIEXPORT void JNICALL Java_android_app_Activity_nativeFinish(JNIEnv *env, jobje
 	if (removed_activity) {
 		activity_close(env, removed_activity);
 		_UNREF(removed_activity);
-	} else {
-		activity_not_created = _REF(this);
 	}
 	if (activity_backlog == NULL && window)
 		gtk_window_close(GTK_WINDOW(_PTR(window)));

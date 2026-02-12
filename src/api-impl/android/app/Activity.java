@@ -54,6 +54,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	private CharSequence title = null;
 	List<Fragment> fragments = new ArrayList<>();
 	boolean destroyed = false;
+	private boolean finishing = false;
 
 	public static Activity internalCreateActivity(String className, long native_window, Intent intent) throws ReflectiveOperationException {
 		int theme_res = 0;
@@ -161,7 +162,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public boolean isFinishing() {
-		return false; // FIXME
+		return finishing;
 	}
 
 	public final boolean requestWindowFeature(int featureId) {
@@ -423,6 +424,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public void finish() {
+		finishing = true;
 		new Handler(Looper.getMainLooper()).post(new Runnable() {
 			@Override
 			public void run() {
@@ -545,11 +547,17 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public void recreate() {
+		finishing = true;
 		try {
 			/* TODO: check if this is a toplevel activity */
 			Activity activity = internalCreateActivity(this.getClass().getName(), getWindow().native_window, intent);
-			nativeFinish(0);
-			nativeStartActivity(activity);
+			new Handler().post(new Runnable() {
+				@Override
+				public void run() {
+					nativeFinish(0);
+					nativeStartActivity(activity);
+				}
+			});
 		} catch (ReflectiveOperationException e) {
 			Slog.i(TAG, "exception in Activity.recreate, this is kinda sus");
 			e.printStackTrace();
