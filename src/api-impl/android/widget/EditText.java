@@ -65,7 +65,7 @@ public class EditText extends TextView {
 
 	@Override
 	public void setHint(CharSequence s) {
-		native_setHint(widget, s);
+		native_setHint(widget, s == null ? "" : s.toString());
 	}
 
 	@Override
