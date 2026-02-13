@@ -174,6 +174,10 @@ struct handle_cache {
 		jclass class;
 		jmethodID onTimeChange;
 	} time_picker;
+	struct {
+		jclass class;
+		jmethodID onDateChange;
+	} date_picker;
 };
 
 extern struct handle_cache handle_cache;

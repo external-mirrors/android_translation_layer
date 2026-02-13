@@ -160,4 +160,6 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.time_picker.class = _REF((*env)->FindClass(env, "android/widget/TimePicker"));
 	handle_cache.time_picker.onTimeChange = _METHOD(handle_cache.time_picker.class, "onTimeChange", "()V");
 
+	handle_cache.date_picker.class = _REF((*env)->FindClass(env, "android/widget/DatePicker"));
+	handle_cache.date_picker.onDateChange = _METHOD(handle_cache.date_picker.class, "onDateChange", "()V");
 }
