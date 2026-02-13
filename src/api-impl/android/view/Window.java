@@ -1,11 +1,8 @@
 package android.view;
 
-import android.R;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.transition.Transition;
-import android.view.SurfaceHolder;
 import android.widget.FrameLayout;
 
 public class Window {
@@ -13,6 +10,7 @@ public class Window {
 	public static final int FEATURE_NO_TITLE = 1;
 
 	public ViewTreeObserver view_tree_observer = null;
+	private WindowManager.LayoutParams params = new WindowManager.LayoutParams(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT, 0, 0, 0);
 
 	public static interface Callback {
 		public void onContentChanged();
@@ -38,18 +36,11 @@ public class Window {
 	private Window.Callback callback;
 	private Context context;
 
-	public boolean is_floating = false;
-
 	public Window(Context context, Window.Callback callback) {
 		this.callback = callback;
 		this.context = context;
 		decorView = new FrameLayout(context);
 		decorView.setId(android.R.id.content);
-
-		TypedArray a = context.obtainStyledAttributes(com.android.internal.R.styleable.Window);
-		/* windows are not floating by default - so a dialog without a dialog theme is not a dialog */
-		is_floating = a.getBoolean(R.styleable.Window_windowIsFloating, false);
-		a.recycle();
 	}
 
 	public void set_native_window(long native_window) {
@@ -97,7 +88,7 @@ public class Window {
 	}
 
 	public WindowManager.LayoutParams getAttributes() {
-		return new WindowManager.LayoutParams();
+		return params;
 	}
 
 	public void setBackgroundDrawable(Drawable drawable) {
@@ -105,6 +96,7 @@ public class Window {
 	}
 
 	public void setAttributes(WindowManager.LayoutParams params) {
+		this.params = params;
 		setLayout(params.width, params.height);
 	}
 
@@ -117,8 +109,8 @@ public class Window {
 	public void setFormat(int format) {}
 
 	public void setLayout(int width, int height) {
-		if (height == 0) // FIXME: remove this hack once measurement error with composeUI dialogs is fixed
-			height = 500;
+		params.width = width;
+		params.height = height;
 		set_layout(native_window, width, height);
 	}
 

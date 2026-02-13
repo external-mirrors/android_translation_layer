@@ -159,7 +159,7 @@ static gboolean on_close_request(GtkWidget *dialog, jobject jobj)
 	return FALSE;
 }
 
-JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this, jboolean floating)
+JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this)
 {
 	GtkWidget *dialog = gtk_window_new();
 	GtkWindow *window = GTK_WINDOW(dialog);

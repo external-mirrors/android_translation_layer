@@ -32,7 +32,7 @@ static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *
 		return;
 
 	// If the parent widget is also an AndroidLayout, the measurement will already have happened in Java
-	if ((layout->width || layout->height) && !ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(gtk_widget_get_parent(gtk_widget_get_parent(widget))))) {
+	if (!ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(gtk_widget_get_parent(gtk_widget_get_parent(widget))))) {
 		widthMeasureSpec = make_measure_spec(layout->width, orientation == GTK_ORIENTATION_VERTICAL ? for_size : -1);
 		heightMeasureSpec = make_measure_spec(layout->height, orientation == GTK_ORIENTATION_HORIZONTAL ? for_size : -1);
 

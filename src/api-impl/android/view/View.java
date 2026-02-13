@@ -1555,7 +1555,7 @@ public class View implements Drawable.Callback {
 	/** Helper function to be called from GTKs LayoutManager via JNI */
 	private void layoutInternal(int width, int height) {
 		// if the layout is triggered from a native widget, we might not have measured yet
-		if (width != getMeasuredWidth() || height != getMeasuredHeight()) {
+		if (!(parent instanceof ViewGroup) && (width != getMeasuredWidth() || height != getMeasuredHeight())) {
 			requestLayout();
 			measure(width | MeasureSpec.EXACTLY, height | MeasureSpec.EXACTLY);
 		}
@@ -1567,6 +1567,13 @@ public class View implements Drawable.Callback {
 		onLayout(changed, 0, 0, width, height);
 		oldWidth = width;
 		oldHeight = height;
+	}
+
+	/** Prefill the measureSpec cache, so that AndroidLayout can use it from native code if GTK measure spec is incomplete */
+	public void internalSetDefaultMeasureSpec(int widthMeasureSpec, int heightMeasureSpec) {
+		this.oldWidthMeasureSpec = widthMeasureSpec;
+		this.oldHeightMeasureSpec = heightMeasureSpec;
+		requestLayout();
 	}
 
 	public int getLeft() {
