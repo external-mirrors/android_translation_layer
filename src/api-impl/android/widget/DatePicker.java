@@ -2,24 +2,27 @@ package android.widget;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.view.View;
 
-public class DatePicker extends View {
+public class DatePicker extends FrameLayout {
 
 	public interface OnDateChangedListener {
 		void onDateChanged(DatePicker view, int year, int monthOfYear, int dayOfMonth);
 	}
 
 	public DatePicker(Context context) {
-		super(context);
+		this(context, null);
 	}
 
 	public DatePicker(Context context, AttributeSet attrs) {
-		super(context, attrs);
+		this(context, attrs, 0);
 	}
 
 	public DatePicker(Context context, AttributeSet attrs, int defStyleAttr) {
-		super(context, attrs, defStyleAttr);
+		this(context, attrs, defStyleAttr, 0);
+	}
+
+	public DatePicker(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
 	public void setMinDate(long minDate) {}
@@ -27,4 +30,6 @@ public class DatePicker extends View {
 	public void setMaxDate(long maxDate) {}
 
 	public void init(int year, int monthOfYear, int dayOfMonth, OnDateChangedListener listener) {}
+
+	public void setFirstDayOfWeek(int dayOfWeek) {}
 }

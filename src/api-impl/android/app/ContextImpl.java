@@ -159,6 +159,8 @@ public final class ContextImpl extends Context {
 	public Object getSystemService(Class<?> serviceClass) throws InstantiationException, IllegalAccessException, InvocationTargetException {
 		if (serviceClass == LayoutInflater.class)
 			return layout_inflater;
+		if (serviceClass == JobScheduler.class)
+			return job_scheduler;
 		return serviceClass.getConstructors()[0].newInstance();
 	}
 

@@ -2343,4 +2343,6 @@ public class View implements Drawable.Callback {
 	public AutofillId getAutofillId() { return new AutofillId(); }
 
 	public AccessibilityDelegate getAccessibilityDelegate() { return null; }
+
+	public void setScrollY(int value) {}
 }
