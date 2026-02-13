@@ -687,7 +687,8 @@ public class PackageParser {
 						for (int i = 0; i < certs.length; i++) {
 							boolean found = false;
 							for (int j = 0; j < localCerts.length; j++) {
-								if (certs[i] != null && certs[i].equals(localCerts[j])) {
+								if (certs[i] != null
+								    && certs[i].equals(localCerts[j])) {
 									found = true;
 									break;
 								}

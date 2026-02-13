@@ -407,7 +407,8 @@ public class OverScroller {
 		if (mFlywheel && !isFinished()) {
 			float oldVelocityX = mScrollerX.mCurrVelocity;
 			float oldVelocityY = mScrollerY.mCurrVelocity;
-			if (Math.signum(velocityX) == Math.signum(oldVelocityX) && Math.signum(velocityY) == Math.signum(oldVelocityY)) {
+			if (Math.signum(velocityX) == Math.signum(oldVelocityX)
+			    && Math.signum(velocityY) == Math.signum(oldVelocityY)) {
 				velocityX += oldVelocityX;
 				velocityY += oldVelocityY;
 			}
@@ -465,7 +466,10 @@ public class OverScroller {
 	 *         interpolating back to a valid value.
 	 */
 	public boolean isOverScrolled() {
-		return ((!mScrollerX.mFinished && mScrollerX.mState != SplineOverScroller.SPLINE) || (!mScrollerY.mFinished && mScrollerY.mState != SplineOverScroller.SPLINE));
+		return ((!mScrollerX.mFinished
+		        && mScrollerX.mState != SplineOverScroller.SPLINE)
+		        || (!mScrollerY.mFinished
+		        && mScrollerY.mState != SplineOverScroller.SPLINE));
 	}
 
 	/**
@@ -499,7 +503,8 @@ public class OverScroller {
 	public boolean isScrollingInDirection(float xvel, float yvel) {
 		final int dx = mScrollerX.mFinal - mScrollerX.mStart;
 		final int dy = mScrollerY.mFinal - mScrollerY.mStart;
-		return !isFinished() && Math.signum(xvel) == Math.signum(dx) && Math.signum(yvel) == Math.signum(dy);
+		return !isFinished() && Math.signum(xvel) == Math.signum(dx)
+		    && Math.signum(yvel) == Math.signum(dy);
 	}
 
 	double getSplineFlingDistance(int velocity) {

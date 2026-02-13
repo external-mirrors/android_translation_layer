@@ -803,7 +803,8 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
 	 * iteration.
 	 */
 	private boolean shouldPlayBackward(int iteration, boolean inReverse) {
-		if (iteration > 0 && mRepeatMode == REVERSE && (iteration < (mRepeatCount + 1) || mRepeatCount == INFINITE)) {
+		if (iteration > 0 && mRepeatMode == REVERSE
+		    && (iteration < (mRepeatCount + 1) || mRepeatCount == INFINITE)) {
 			// if we were seeked to some other iteration in a reversing animator,
 			// figure out the correct direction to start playing based on the iteration
 			if (inReverse) {
@@ -1326,7 +1327,8 @@ public class ValueAnimator extends Animator implements AnimationHandler.Animatio
 			final float fraction = scaledDuration > 0 ? (float)(currentTime - mStartTime) / scaledDuration : 1f;
 			final float lastFraction = mOverallFraction;
 			final boolean newIteration = (int)fraction > (int)lastFraction;
-			final boolean lastIterationFinished = (fraction >= mRepeatCount + 1) && (mRepeatCount != INFINITE);
+			final boolean lastIterationFinished = (fraction >= mRepeatCount + 1)
+			                                   && (mRepeatCount != INFINITE);
 			if (scaledDuration == 0) {
 				// 0 duration animator, ignore the repeat count and skip to the end
 				done = true;

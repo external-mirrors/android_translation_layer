@@ -1,17 +1,15 @@
 #include <gtk/gtk.h>
 
-G_DECLARE_FINAL_TYPE (SurfaceViewWidget, surface_view_widget, SURFACE_VIEW, WIDGET, GtkWidget)
+G_DECLARE_FINAL_TYPE(SurfaceViewWidget, surface_view_widget, SURFACE_VIEW, WIDGET, GtkWidget)
 
-struct _SurfaceViewWidget
-{
+struct _SurfaceViewWidget {
 	GtkWidget parent_instance;
 	GdkTexture *texture;
 	void (*frame_callback)(SurfaceViewWidget *surface_view_widget);
 	gpointer frame_callback_data;
 };
 
-struct _SurfaceViewWidgetClass
-{
+struct _SurfaceViewWidgetClass {
 	GtkWidgetClass parent_class;
 };
 

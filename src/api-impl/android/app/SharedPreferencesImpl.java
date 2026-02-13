@@ -459,8 +459,8 @@ public final class SharedPreferencesImpl implements SharedPreferences {
 		}
 
 		private void notifyListeners(final MemoryCommitResult mcr) { /*
-		     if (mcr.listeners == null || mcr.keysModified == null ||
-			 mcr.keysModified.size() == 0) {
+		     if (mcr.listeners == null || mcr.keysModified == null
+|| mcr.keysModified.size() == 0) {
 			 return;
 		     }
 		     if (Looper.myLooper() == Looper.getMainLooper()) {
@@ -590,9 +590,10 @@ public final class SharedPreferencesImpl implements SharedPreferences {
 				return;
 			}
 			XmlUtils.writeMapXml(mcr.mapToWriteToDisk, str);
-			//			FileUtils.sync(str);
+
+			//FileUtils.sync(str);
 			str.close();
-			//			ContextImpl.setFilePermissionsFromMode(mFile.getPath(), mMode, 0);
+			//ContextImpl.setFilePermissionsFromMode(mFile.getPath(), mMode, 0);
 			try {
 				final StructStat stat = Os.stat(mFile.getPath());
 				synchronized (this) {

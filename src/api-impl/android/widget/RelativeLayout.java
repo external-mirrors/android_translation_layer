@@ -1110,7 +1110,8 @@ public class RelativeLayout extends ViewGroup {
 			TypedArray a = c.obtainStyledAttributes(attrs,
 			                                        com.android.internal.R.styleable.RelativeLayout_Layout);
 			final int targetSdkVersion = c.getApplicationInfo().targetSdkVersion;
-			mIsRtlCompatibilityMode = (targetSdkVersion < JELLY_BEAN_MR1 || !c.getApplicationInfo().hasRtlSupport());
+			mIsRtlCompatibilityMode = (targetSdkVersion < JELLY_BEAN_MR1
+			                           || !c.getApplicationInfo().hasRtlSupport());
 			final int[] rules = mRules;
 			//noinspection MismatchedReadAndWriteOfArray
 			final int[] initialRules = mInitialRules;
@@ -1320,7 +1321,9 @@ public class RelativeLayout extends ViewGroup {
 		}
 
 		private boolean hasRelativeRules() {
-			return (mInitialRules[START_OF] != 0 || mInitialRules[END_OF] != 0 || mInitialRules[ALIGN_START] != 0 || mInitialRules[ALIGN_END] != 0 || mInitialRules[ALIGN_PARENT_START] != 0 || mInitialRules[ALIGN_PARENT_END] != 0);
+			return (mInitialRules[START_OF] != 0 || mInitialRules[END_OF] != 0
+			        || mInitialRules[ALIGN_START] != 0 || mInitialRules[ALIGN_END] != 0
+			        || mInitialRules[ALIGN_PARENT_START] != 0 || mInitialRules[ALIGN_PARENT_END] != 0);
 		}
 
 		private boolean isRelativeRule(int rule) {
@@ -1398,7 +1401,8 @@ public class RelativeLayout extends ViewGroup {
 				}
 			} else {
 				// JB MR1+ case
-				if ((mRules[ALIGN_START] != 0 || mRules[ALIGN_END] != 0) && (mRules[ALIGN_LEFT] != 0 || mRules[ALIGN_RIGHT] != 0)) {
+				if ((mRules[ALIGN_START] != 0 || mRules[ALIGN_END] != 0)
+				    && (mRules[ALIGN_LEFT] != 0 || mRules[ALIGN_RIGHT] != 0)) {
 					// "start"/"end" rules take precedence over "left"/"right" rules
 					mRules[ALIGN_LEFT] = 0;
 					mRules[ALIGN_RIGHT] = 0;
@@ -1413,7 +1417,8 @@ public class RelativeLayout extends ViewGroup {
 					mRules[isLayoutRtl ? ALIGN_LEFT : ALIGN_RIGHT] = mRules[ALIGN_END];
 					mRules[ALIGN_END] = 0;
 				}
-				if ((mRules[START_OF] != 0 || mRules[END_OF] != 0) && (mRules[LEFT_OF] != 0 || mRules[RIGHT_OF] != 0)) {
+				if ((mRules[START_OF] != 0 || mRules[END_OF] != 0)
+				    && (mRules[LEFT_OF] != 0 || mRules[RIGHT_OF] != 0)) {
 					// "start"/"end" rules take precedence over "left"/"right" rules
 					mRules[LEFT_OF] = 0;
 					mRules[RIGHT_OF] = 0;
@@ -1428,7 +1433,8 @@ public class RelativeLayout extends ViewGroup {
 					mRules[isLayoutRtl ? LEFT_OF : RIGHT_OF] = mRules[END_OF];
 					mRules[END_OF] = 0;
 				}
-				if ((mRules[ALIGN_PARENT_START] != 0 || mRules[ALIGN_PARENT_END] != 0) && (mRules[ALIGN_PARENT_LEFT] != 0 || mRules[ALIGN_PARENT_RIGHT] != 0)) {
+				if ((mRules[ALIGN_PARENT_START] != 0 || mRules[ALIGN_PARENT_END] != 0)
+				    && (mRules[ALIGN_PARENT_LEFT] != 0 || mRules[ALIGN_PARENT_RIGHT] != 0)) {
 					// "start"/"end" rules take precedence over "left"/"right" rules
 					mRules[ALIGN_PARENT_LEFT] = 0;
 					mRules[ALIGN_PARENT_RIGHT] = 0;

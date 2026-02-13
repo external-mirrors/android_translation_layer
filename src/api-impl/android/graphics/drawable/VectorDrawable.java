@@ -1125,7 +1125,11 @@ public class VectorDrawable extends Drawable {
 	 * @hide
 	 */
 	public float getPixelSize() {
-		if (mVectorState == null || mVectorState.mVPathRenderer == null || mVectorState.mVPathRenderer.mBaseWidth == 0 || mVectorState.mVPathRenderer.mBaseHeight == 0 || mVectorState.mVPathRenderer.mViewportHeight == 0 || mVectorState.mVPathRenderer.mViewportWidth == 0) {
+		if (mVectorState == null || mVectorState.mVPathRenderer == null
+		    || mVectorState.mVPathRenderer.mBaseWidth == 0
+		    || mVectorState.mVPathRenderer.mBaseHeight == 0
+		    || mVectorState.mVPathRenderer.mViewportHeight == 0
+		    || mVectorState.mVPathRenderer.mViewportWidth == 0) {
 			return 1; // fall back to 1:1 pixel mapping.
 		}
 		float intrinsicWidth = mVectorState.mVPathRenderer.mBaseWidth;
@@ -1143,7 +1147,8 @@ public class VectorDrawable extends Drawable {
 			final XmlPullParser parser = resources.getXml(rid);
 			final AttributeSet attrs = Xml.asAttributeSet(parser);
 			int type;
-			while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+			while ((type = parser.next()) != XmlPullParser.START_TAG
+			       && type != XmlPullParser.END_DOCUMENT) {
 				// Empty loop
 			}
 			if (type != XmlPullParser.START_TAG) {

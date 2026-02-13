@@ -145,8 +145,8 @@ public class Canvas {
 	 */
 	public void drawText(CharSequence text, int start, int end, float x, float y, Paint paint) {
 		drawText(text.toString(), start, end, x, y, paint);
-		/*if (text instanceof String || text instanceof SpannedString ||
-		    text instanceof SpannableString) {
+		/*if (text instanceof String || text instanceof SpannedString
+		      || text instanceof SpannableString) {
 		    native_drawText(mNativeCanvas, text.toString(), start, end, x, y,
 			    paint.mBidiFlags, paint.mNativePaint);
 		} else if (text instanceof GraphicsOperations) {

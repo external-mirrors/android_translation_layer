@@ -100,7 +100,7 @@ public class Application extends ContextWrapper {
 	}
 	public void onTrimMemory(int level) {
 	}
-	/*	public void registerComponentCallbacks(ComponentCallbacks callback) {
+	/*public void registerComponentCallbacks(ComponentCallbacks callback) {
 	}
 	public void unregisterComponentCallbacks(ComponentCallbacks callback) {
 	}*/

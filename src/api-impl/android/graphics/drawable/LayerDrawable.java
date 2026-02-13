@@ -48,7 +48,7 @@ import org.xmlpull.v1.XmlPullParserException;
 public class LayerDrawable extends Drawable implements Drawable.Callback {
 	LayerState mLayerState;
 
-	//	private int mOpacityOverride = PixelFormat.UNKNOWN;
+	//private int mOpacityOverride = PixelFormat.UNKNOWN;
 	private int[] mPaddingL;
 	private int[] mPaddingT;
 	private int[] mPaddingR;
@@ -110,7 +110,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		return new LayerState(state, this, res);
 	}
 
-	//	@Override
+	//@Override
 	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs, Theme theme)
 	    throws XmlPullParserException, IOException {
 		//super.inflate(r, parser, attrs);
@@ -119,9 +119,9 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 
 		TypedArray a = obtainAttributes(r, theme, attrs, com.android.internal.R.styleable.LayerDrawable);
 
-		//		mOpacityOverride = a.getInt(com.android.internal.R.styleable.LayerDrawable_opacity, PixelFormat.UNKNOWN);
+		//mOpacityOverride = a.getInt(com.android.internal.R.styleable.LayerDrawable_opacity, PixelFormat.UNKNOWN);
 
-		//		setAutoMirrored(a.getBoolean(com.android.internal.R.styleable.LayerDrawable_autoMirrored, false));
+		//setAutoMirrored(a.getBoolean(com.android.internal.R.styleable.LayerDrawable_autoMirrored, false));
 
 		a.recycle();
 
@@ -361,7 +361,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 	}
 
-	/*	@Override
+	/*@Override
 	public int getChangingConfigurations() {
 		return super.getChangingConfigurations() | mLayerState.mChangingConfigurations | mLayerState.mChildrenChangingConfigurations;
 	}*/
@@ -398,7 +398,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		return changed;
 	}
 
-	/*	@Override
+	/*@Override
 	public void setDither(boolean dither) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;
@@ -407,7 +407,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 	}*/
 
-	/*	@Override
+	/*@Override
 	public void setAlpha(int alpha) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;
@@ -416,7 +416,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 	}*/
 
-	/*	@Override
+	/*@Override
 	public int getAlpha() {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		if (mLayerState.mNum > 0) {
@@ -427,7 +427,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 	}*/
 
-	/*	@Override
+	/*@Override
 	public void setColorFilter(ColorFilter cf) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;
@@ -448,11 +448,11 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 	 * @see PixelFormat#TRANSPARENT
 	 * @see PixelFormat#OPAQUE
 	 */
-	/*	public void setOpacity(int opacity) {
+	/*public void setOpacity(int opacity) {
 		mOpacityOverride = opacity;
 	}*/
 
-	/*	@Override
+	/*@Override
 	public int getOpacity() {
 		if (mOpacityOverride != PixelFormat.UNKNOWN) {
 			return mOpacityOverride;
@@ -460,7 +460,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		return mLayerState.getOpacity();
 	}*/
 
-	/*	@Override
+	/*@Override
 	public void setAutoMirrored(boolean mirrored) {
 		mLayerState.mAutoMirrored = mirrored;
 		final ChildDrawable[] array = mLayerState.mChildren;
@@ -470,17 +470,17 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 	}*/
 
-	/*	@Override
+	/*@Override
 	public boolean isAutoMirrored() {
 		return mLayerState.mAutoMirrored;
 	}*/
 
-	/*	@Override
+	/*@Override
 	public boolean isStateful() {
 		return mLayerState.isStateful();
 	}*/
 
-	/*	@Override
+	/*@Override
 	protected boolean onStateChange(int[] state) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;
@@ -501,7 +501,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		return changed;
 	}*/
 
-	/*	@Override
+	/*@Override
 	protected boolean onLevelChange(int level) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;
@@ -579,7 +579,8 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 	private boolean reapplyPadding(int i, ChildDrawable r) {
 		final Rect rect = mTmpRect;
 		r.mDrawable.getPadding(rect);
-		if (rect.left != mPaddingL[i] || rect.top != mPaddingT[i] || rect.right != mPaddingR[i] || rect.bottom != mPaddingB[i]) {
+		if (rect.left != mPaddingL[i] || rect.top != mPaddingT[i]
+		    || rect.right != mPaddingR[i] || rect.bottom != mPaddingB[i]) {
 			mPaddingL[i] = rect.left;
 			mPaddingT[i] = rect.top;
 			mPaddingR[i] = rect.right;
@@ -600,7 +601,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		mPaddingB = new int[N];
 	}
 
-	/*	@Override
+	/*@Override
 	public ConstantState getConstantState() {
 		if (mLayerState.canConstantState()) {
 			mLayerState.mChangingConfigurations = getChangingConfigurations();
@@ -626,7 +627,7 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 	/**
 	 * @hide
 	 */
-	/*	@Override
+	/*@Override
 	public void setLayoutDirection(int layoutDirection) {
 		final ChildDrawable[] array = mLayerState.mChildren;
 		final int N = mLayerState.mNum;

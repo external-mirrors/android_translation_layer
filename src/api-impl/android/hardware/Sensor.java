@@ -295,7 +295,8 @@ public final class Sensor {
 		int type = sensor.mType;
 		// RotationVector length has changed to 3 to 5 for API level 18
 		// Set it to 3 for backward compatibility.
-		if (type == Sensor.TYPE_ROTATION_VECTOR && sdkLevel <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+		if (type == Sensor.TYPE_ROTATION_VECTOR
+		    && sdkLevel <= Build.VERSION_CODES.JELLY_BEAN_MR1) {
 			return 3;
 		}
 		int offset = type * 2 + 1;

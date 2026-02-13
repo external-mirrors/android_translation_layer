@@ -367,7 +367,8 @@ public final class JsonWriter implements Closeable {
 		}
 
 		String string = value.toString();
-		if (!lenient && (string.equals("-Infinity") || string.equals("Infinity") || string.equals("NaN"))) {
+		if (!lenient
+		    && (string.equals("-Infinity") || string.equals("Infinity") || string.equals("NaN"))) {
 			throw new IllegalArgumentException("Numeric values must be finite, but was " + value);
 		}
 		beforeValue(false);

@@ -99,11 +99,26 @@ public final class DocumentsContract {
 	}
 
 	public static Uri buildChildDocumentsUriUsingTree(Uri treeUri, String parentDocumentId) {
-		return new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(treeUri.getAuthority()).appendPath(PATH_TREE).appendPath(getTreeDocumentId(treeUri)).appendPath(PATH_DOCUMENT).appendPath(parentDocumentId).appendPath(PATH_CHILDREN).build();
+		return new Uri.Builder()
+		    .scheme(ContentResolver.SCHEME_CONTENT)
+		    .authority(treeUri.getAuthority())
+		    .appendPath(PATH_TREE)
+		    .appendPath(getTreeDocumentId(treeUri))
+		    .appendPath(PATH_DOCUMENT)
+		    .appendPath(parentDocumentId)
+		    .appendPath(PATH_CHILDREN)
+		    .build();
 	}
 
 	public static Uri buildDocumentUriUsingTree(Uri treeUri, String documentId) {
-		return new Uri.Builder().scheme(ContentResolver.SCHEME_CONTENT).authority(treeUri.getAuthority()).appendPath(PATH_TREE).appendPath(getTreeDocumentId(treeUri)).appendPath(PATH_DOCUMENT).appendPath(documentId).build();
+		return new Uri.Builder()
+		    .scheme(ContentResolver.SCHEME_CONTENT)
+		    .authority(treeUri.getAuthority())
+		    .appendPath(PATH_TREE)
+		    .appendPath(getTreeDocumentId(treeUri))
+		    .appendPath(PATH_DOCUMENT)
+		    .appendPath(documentId)
+		    .build();
 	}
 
 	public static Uri copyDocument(ContentResolver content, Uri sourceDocumentUri, Uri targetParentDocumentUri) {

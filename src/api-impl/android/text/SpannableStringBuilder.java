@@ -269,19 +269,23 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 	private boolean removeSpansForChange(int start, int end, boolean textIsRemoved, int i) {
 		if ((i & 1) != 0) {
 			// internal tree node
-			if (resolveGap(mSpanMax[i]) >= start && removeSpansForChange(start, end, textIsRemoved, leftChild(i))) {
+			if (resolveGap(mSpanMax[i]) >= start
+			    && removeSpansForChange(start, end, textIsRemoved, leftChild(i))) {
 				return true;
 			}
 		}
 		if (i < mSpanCount) {
-			if ((mSpanFlags[i] & Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) == Spanned.SPAN_EXCLUSIVE_EXCLUSIVE && mSpanStarts[i] >= start && mSpanStarts[i] < mGapStart + mGapLength && mSpanEnds[i] >= start && mSpanEnds[i] < mGapStart + mGapLength &&
+			if ((mSpanFlags[i] & Spanned.SPAN_EXCLUSIVE_EXCLUSIVE) == Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+			    && mSpanStarts[i] >= start && mSpanStarts[i] < mGapStart + mGapLength
+			    && mSpanEnds[i] >= start && mSpanEnds[i] < mGapStart + mGapLength
 			    // The following condition indicates that the span would become empty
-			    (textIsRemoved || mSpanStarts[i] > start || mSpanEnds[i] < mGapStart)) {
+			    && (textIsRemoved || mSpanStarts[i] > start || mSpanEnds[i] < mGapStart)) {
 				mIndexOfSpan.remove(mSpans[i]);
 				removeSpan(i, 0 /* flags */);
 				return true;
 			}
-			return resolveGap(mSpanStarts[i]) <= end && (i & 1) != 0 && removeSpansForChange(start, end, textIsRemoved, rightChild(i));
+			return resolveGap(mSpanStarts[i]) <= end && (i & 1) != 0
+			    && removeSpansForChange(start, end, textIsRemoved, rightChild(i));
 		}
 		return false;
 	}
@@ -341,7 +345,8 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 		// The removal pass needs to be done before the gap is updated in order to broadcast the
 		// correct previous positions to the correct intersecting SpanWatchers
 		if (replacedLength > 0) { // no need for span fixup on pure insertion
-			while (mSpanCount > 0 && removeSpansForChange(start, end, textIsRemoved, treeRoot())) {
+			while (mSpanCount > 0
+			       && removeSpansForChange(start, end, textIsRemoved, treeRoot())) {
 				// keep deleting spans as needed, and restart from root after every deletion
 				// because deletion can invalidate an index.
 			}
@@ -549,7 +554,10 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 				}
 			} else if (spanStart >= replaceStart) {
 				// No change if span start was already at replace interval boundaries before replace
-				if ((spanStart != replaceStart || ((spanFlags & SPAN_START_AT_START) != SPAN_START_AT_START)) && (spanStart != newReplaceEnd || ((spanFlags & SPAN_START_AT_END) != SPAN_START_AT_END))) {
+				if ((spanStart != replaceStart
+				     || ((spanFlags & SPAN_START_AT_START) != SPAN_START_AT_START))
+				    && (spanStart != newReplaceEnd
+				        || ((spanFlags & SPAN_START_AT_END) != SPAN_START_AT_END))) {
 					// TODO A correct previousSpanStart cannot be computed at this point.
 					// It would require to save all the previous spans' positions before the replace
 					// Using an invalid -1 value to convey this would break the broacast range
@@ -564,7 +572,10 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 				}
 			} else if (spanEnd >= replaceStart) {
 				// No change if span start was already at replace interval boundaries before replace
-				if ((spanEnd != replaceStart || ((spanFlags & SPAN_END_AT_START) != SPAN_END_AT_START)) && (spanEnd != newReplaceEnd || ((spanFlags & SPAN_END_AT_END) != SPAN_END_AT_END))) {
+				if ((spanEnd != replaceStart
+				     || ((spanFlags & SPAN_END_AT_START) != SPAN_END_AT_START))
+				    && (spanEnd != newReplaceEnd
+				        || ((spanFlags & SPAN_END_AT_END) != SPAN_END_AT_END))) {
 					// TODO same as above for previousSpanEnd
 					spanChanged = true;
 				}
@@ -824,7 +835,10 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 				if (spanEnd > mGapStart) {
 					spanEnd -= mGapLength;
 				}
-				if (spanEnd >= queryStart && (spanStart == spanEnd || queryStart == queryEnd || (spanStart != queryEnd && spanEnd != queryStart)) && (Object.class == kind || kind.isInstance(mSpans[i]))) {
+				if (spanEnd >= queryStart
+				    && (spanStart == spanEnd || queryStart == queryEnd
+				        || (spanStart != queryEnd && spanEnd != queryStart))
+				    && (Object.class == kind || kind.isInstance(mSpans[i]))) {
 					count++;
 				}
 				if ((i & 1) != 0) {
@@ -877,7 +891,10 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 			if (spanEnd > mGapStart) {
 				spanEnd -= mGapLength;
 			}
-			if (spanEnd >= queryStart && (spanStart == spanEnd || queryStart == queryEnd || (spanStart != queryEnd && spanEnd != queryStart)) && (Object.class == kind || kind.isInstance(mSpans[i]))) {
+			if (spanEnd >= queryStart
+			    && (spanStart == spanEnd || queryStart == queryEnd
+			        || (spanStart != queryEnd && spanEnd != queryStart))
+			    && (Object.class == kind || kind.isInstance(mSpans[i]))) {
 				int spanPriority = mSpanFlags[i] & SPAN_PRIORITY;
 				int target = count;
 				if (sort) {
@@ -1233,7 +1250,8 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 	// Same as SpannableStringInternal
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof Spanned && toString().equals(o.toString())) {
+		if (o instanceof Spanned
+		    && toString().equals(o.toString())) {
 			final Spanned other = (Spanned)o;
 			// Check span data
 			final Object[] otherSpans = other.getSpans(0, other.length(), Object.class);
@@ -1243,10 +1261,16 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 					final Object thisSpan = thisSpans[i];
 					final Object otherSpan = otherSpans[i];
 					if (thisSpan == this) {
-						if (other != otherSpan || getSpanStart(thisSpan) != other.getSpanStart(otherSpan) || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan) || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
+						if (other != otherSpan
+						    || getSpanStart(thisSpan) != other.getSpanStart(otherSpan)
+						    || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan)
+						    || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
 							return false;
 						}
-					} else if (!thisSpan.equals(otherSpan) || getSpanStart(thisSpan) != other.getSpanStart(otherSpan) || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan) || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
+					} else if (!thisSpan.equals(otherSpan)
+					           || getSpanStart(thisSpan) != other.getSpanStart(otherSpan)
+					           || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan)
+					           || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
 						return false;
 					}
 				}

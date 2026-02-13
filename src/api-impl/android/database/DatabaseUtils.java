@@ -1259,7 +1259,10 @@ public class DatabaseUtils {
 		String prefixSql = sql.substring(0, 3).toUpperCase(Locale.ROOT);
 		if (prefixSql.equals("SEL")) {
 			return STATEMENT_SELECT;
-		} else if (prefixSql.equals("INS") || prefixSql.equals("UPD") || prefixSql.equals("REP") || prefixSql.equals("DEL")) {
+		} else if (prefixSql.equals("INS")
+		           || prefixSql.equals("UPD")
+		           || prefixSql.equals("REP")
+		           || prefixSql.equals("DEL")) {
 			return STATEMENT_UPDATE;
 		} else if (prefixSql.equals("ATT")) {
 			return STATEMENT_ATTACH;
@@ -1273,7 +1276,8 @@ public class DatabaseUtils {
 			return STATEMENT_BEGIN;
 		} else if (prefixSql.equals("PRA")) {
 			return STATEMENT_PRAGMA;
-		} else if (prefixSql.equals("CRE") || prefixSql.equals("DRO") || prefixSql.equals("ALT")) {
+		} else if (prefixSql.equals("CRE") || prefixSql.equals("DRO")
+		           || prefixSql.equals("ALT")) {
 			return STATEMENT_DDL;
 		} else if (prefixSql.equals("ANA") || prefixSql.equals("DET")) {
 			return STATEMENT_UNPREPARED;

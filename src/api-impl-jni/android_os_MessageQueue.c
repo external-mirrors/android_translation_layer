@@ -85,11 +85,11 @@ JNIEXPORT jboolean JNICALL Java_android_os_MessageQueue_nativePollOnce(JNIEnv *e
 		}
 	}
 
-	//	printf("Java_android_os_MessageQueue_nativePollOnce: entry (timeout: %d)\n", timeout_millis);
+	//printf("Java_android_os_MessageQueue_nativePollOnce: entry (timeout: %d)\n", timeout_millis);
 	message_queue->in_callback = true;
 	ALooper_pollOnce(timeout_millis, NULL, NULL, NULL);
 	message_queue->in_callback = false;
-	//	printf("Java_android_os_MessageQueue_nativePollOnce: exit\n");
+	//printf("Java_android_os_MessageQueue_nativePollOnce: exit\n");
 
 	/* TODO: what's with the exception stuff */
 	return false;

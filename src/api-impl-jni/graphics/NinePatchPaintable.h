@@ -1,7 +1,6 @@
 #include <gdk/gdk.h>
 
-struct Res_png_9patch
-{
+struct Res_png_9patch {
 	int8_t wasDeserialized;
 	uint8_t numXDivs;
 	uint8_t numYDivs;

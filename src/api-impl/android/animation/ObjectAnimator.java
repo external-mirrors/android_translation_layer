@@ -513,11 +513,13 @@ public final class ObjectAnimator extends ValueAnimator {
 	private boolean hasSameTargetAndProperties(@Nullable Animator anim) {
 		if (anim instanceof ObjectAnimator) {
 			PropertyValuesHolder[] theirValues = ((ObjectAnimator)anim).getValues();
-			if (((ObjectAnimator)anim).getTarget() == getTarget() && mValues.length == theirValues.length) {
+			if (((ObjectAnimator)anim).getTarget() == getTarget()
+			    && mValues.length == theirValues.length) {
 				for (int i = 0; i < mValues.length; ++i) {
 					PropertyValuesHolder pvhMine = mValues[i];
 					PropertyValuesHolder pvhTheirs = theirValues[i];
-					if (pvhMine.getProperty_name() == null || !pvhMine.getProperty_name().equals(pvhTheirs.getProperty_name())) {
+					if (pvhMine.getProperty_name() == null
+					    || !pvhMine.getProperty_name().equals(pvhTheirs.getProperty_name())) {
 						return false;
 					}
 				}

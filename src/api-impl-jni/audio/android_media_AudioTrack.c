@@ -178,7 +178,7 @@ void periodic_update_callback(snd_async_handler_t *pcm_callback)
 	JNIEnv *env;
 	getenv_ret = (*d->jvm)->GetEnv(d->jvm, (void **)&env, JNI_VERSION_1_6);
 
-	//	printf("!!!! GetEnv: %p getenv_ret: %d\n",env, getenv_ret);
+	//printf("!!!! GetEnv: %p getenv_ret: %d\n",env, getenv_ret);
 	if (getenv_ret == JNI_EDETACHED) {
 		printf("!!!! JNI_EDETACHED\n");
 		attach_ret = (*d->jvm)->AttachCurrentThread(d->jvm, (void **)&env, NULL);
@@ -195,8 +195,8 @@ void periodic_update_callback(snd_async_handler_t *pcm_callback)
 		(*d->jvm)->DetachCurrentThread(d->jvm);
 
 	// microseconds to milliseconds
-	//	g_timeout_add (d->period_time / 1000 - 2, G_SOURCE_FUNC(helper_loop), d);
-	//	return G_SOURCE_REMOVE;
+	//g_timeout_add (d->period_time / 1000 - 2, G_SOURCE_FUNC(helper_loop), d);
+	//return G_SOURCE_REMOVE;
 }
 
 JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1play(JNIEnv *env, jobject this)
@@ -251,7 +251,7 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write(JNIEnv *env, 
 		}
 	}
 
-	//	printf("::::> tried to write %d frames, actually wrote %d frames.\n", frames_to_write, frames_written);
+	//printf("::::> tried to write %d frames, actually wrote %d frames.\n", frames_to_write, frames_written);
 
 	_RELEASE_BYTE_ARRAY_ELEMENTS(audio_data, buffer);
 	return frames_written;

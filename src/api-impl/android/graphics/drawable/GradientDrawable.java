@@ -455,7 +455,8 @@ public class GradientDrawable extends Drawable {
 		final int currFillAlpha = modulateAlpha(prevFillAlpha);
 		final int currStrokeAlpha = modulateAlpha(prevStrokeAlpha);
 
-		final boolean haveStroke = currStrokeAlpha > 0 && mStrokePaint != null && mStrokePaint.getStrokeWidth() > 0;
+		final boolean haveStroke = currStrokeAlpha > 0 && mStrokePaint != null
+		                        && mStrokePaint.getStrokeWidth() > 0;
 		final boolean haveFill = currFillAlpha > 0;
 		final GradientState st = mGradientState;
 		final ColorFilter colorFilter = mColorFilter != null ? mColorFilter : mTintFilter;
@@ -464,7 +465,8 @@ public class GradientDrawable extends Drawable {
 		    fill+stroke. Otherwise we can just draw the stroke (if any) on top
 		    of the fill (if any) without worrying about blending artifacts.
 		 */
-		final boolean useLayer = haveStroke && haveFill && st.mShape != LINE && currStrokeAlpha < 255 && (mAlpha < 255 || colorFilter != null);
+		final boolean useLayer = haveStroke && haveFill && st.mShape != LINE
+		                      && currStrokeAlpha < 255 && (mAlpha < 255 || colorFilter != null);
 
 		/*  Drawing with a layer is slower than direct drawing, but it
 		    allows us to apply paint effects like alpha and colorfilter to
@@ -535,7 +537,8 @@ public class GradientDrawable extends Drawable {
 						canvas.drawRoundRect(mRect, rad, rad, mStrokePaint);
 					}
 				} else {
-					if (mFillPaint.getColor() != 0 || colorFilter != null || mFillPaint.getShader() != null) {
+					if (mFillPaint.getColor() != 0 || colorFilter != null
+					    || mFillPaint.getShader() != null) {
 						canvas.drawRect(mRect, mFillPaint);
 					}
 					if (haveStroke) {
@@ -1041,7 +1044,8 @@ public class GradientDrawable extends Drawable {
 				    com.android.internal.R.styleable.DrawableCorners_bottomLeftRadius, radius);
 				int bottomRightRadius = a.getDimensionPixelSize(
 				    com.android.internal.R.styleable.DrawableCorners_bottomRightRadius, radius);
-				if (topLeftRadius != radius || topRightRadius != radius || bottomLeftRadius != radius || bottomRightRadius != radius) {
+				if (topLeftRadius != radius || topRightRadius != radius
+				    || bottomLeftRadius != radius || bottomRightRadius != radius) {
 					// The corner radii are specified in clockwise order (see Path.addRoundRect())
 					setCornerRadii(new float[] {
 						topLeftRadius, topLeftRadius,

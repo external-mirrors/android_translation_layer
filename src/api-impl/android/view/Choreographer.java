@@ -144,8 +144,7 @@ public final class Choreographer {
 		}
 	}
 	private static float getRefreshRate() {
-		/*		DisplayInfo di = DisplayManagerGlobal.getInstance().getDisplayInfo(
-		    Display.DEFAULT_DISPLAY);*/
+		/*DisplayInfo di = DisplayManagerGlobal.getInstance().getDisplayInfo(Display.DEFAULT_DISPLAY);*/
 		return 60 /*di.refreshRate*/; // FIXME
 	}
 	/**
@@ -442,7 +441,7 @@ public final class Choreographer {
 					Log.d(TAG, "Frame time appears to be going backwards.  May be due to a "
 					           + "previously skipped frame.  Waiting for next vsync.");
 				}
-				//				scheduleVsyncLocked();
+				//scheduleVsyncLocked();
 				return;
 			}
 			mFrameScheduled = false;
@@ -561,7 +560,7 @@ public final class Choreographer {
 					break;
 				case MSG_DO_SCHEDULE_VSYNC:
 					Log.d(TAG, "VSYNC not supported!");
-					//					doScheduleVsync();
+					//doScheduleVsync();
 					break;
 				case MSG_DO_SCHEDULE_CALLBACK:
 					doScheduleCallback(msg.arg1);

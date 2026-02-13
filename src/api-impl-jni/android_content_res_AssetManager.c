@@ -462,26 +462,20 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceName(
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
 	AM_SCOPEDLOCK(asset_manager)
 	struct resource_name res_name;
-	gchar *type8 = NULL;
-	gchar *entry8 = NULL;
 	bool ret = AssetManager_getResourceName(asset_manager, ident, &res_name);
 	if (!ret)
 		return NULL;
 
-	if (!res_name.type)
-		type8 = g_utf16_to_utf8(res_name.type16, res_name.type_len, NULL, NULL, NULL);
-	if (!res_name.entry)
-		entry8 = g_utf16_to_utf8(res_name.entry16, res_name.entry_len, NULL, NULL, NULL);
+	const gchar *type = res_name.type ?: g_utf16_to_utf8(res_name.type16, res_name.type_len, NULL, NULL, NULL);
+	const gchar *entry = res_name.entry ?: g_utf16_to_utf8(res_name.entry16, res_name.entry_len, NULL, NULL, NULL);
 
 	gchar *result = g_strdup_printf("%.*s:%.*s/%.*s",
 	                                res_name.package ? (int)res_name.package_len : 0,
 	                                res_name.package ?: "",
-	                                (res_name.type || type8) ? (int)res_name.type_len : 0,
-	                                res_name.type ?: type8 ?
-	                                                       : "",
-	                                (res_name.entry || entry8) ? (int)res_name.entry_len : 0,
-	                                res_name.entry ?: entry8 ?
-	                                                         : "");
+	                                type ? (int)res_name.type_len : 0,
+	                                type ?: "",
+	                                entry ? (int)res_name.entry_len : 0,
+	                                entry ?: "");
 	jstring result_jstr = _JSTRING(result);
 	free(result);
 	return result_jstr;
@@ -505,8 +499,12 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceTypeN
 	if (!ret)
 		return NULL;
 
-	return res_name.type ? (*env)->NewStringUTF(env, res_name.type) : res_name.type16 ? (*env)->NewString(env, res_name.type16, res_name.type_len)
-	                                                                                  : NULL;
+	if (res_name.type)
+		return (*env)->NewStringUTF(env, res_name.type);
+	else if (res_name.type16)
+		return (*env)->NewString(env, res_name.type16, res_name.type_len);
+	else
+		return NULL;
 }
 
 JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceEntryName(JNIEnv *env, jobject this, jint ident)
@@ -518,8 +516,12 @@ JNIEXPORT jstring JNICALL Java_android_content_res_AssetManager_getResourceEntry
 	if (!ret)
 		return NULL;
 
-	return res_name.entry ? (*env)->NewStringUTF(env, res_name.entry) : res_name.entry16 ? (*env)->NewString(env, res_name.entry16, res_name.entry_len)
-	                                                                                     : NULL;
+	if (res_name.entry)
+		return (*env)->NewStringUTF(env, res_name.entry);
+	else if (res_name.entry16)
+		return (*env)->NewString(env, res_name.entry16, res_name.entry_len);
+	else
+		return NULL;
 }
 
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceBagValue(JNIEnv *env, jobject this, jint ident, jint bagEntryId, jobject outValue, jboolean resolve)

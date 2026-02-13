@@ -297,7 +297,7 @@ public class KeyCharacterMap {
 	 * is missing from the system.
 	 */
 	public static KeyCharacterMap load(int deviceId) {
-		/*		final InputManager im = InputManager.getInstance();
+		/*final InputManager im = InputManager.getInstance();
 		InputDevice inputDevice = im.getInputDevice(deviceId);
 		if (inputDevice == null) {
 			inputDevice = im.getInputDevice(VIRTUAL_KEYBOARD);
@@ -664,7 +664,7 @@ public class KeyCharacterMap {
 	 * @return True if at least one attached keyboard supports the specified key code.
 	 */
 	public static boolean deviceHasKey(int keyCode) {
-		//		return InputManager.getInstance().deviceHasKeys(new int[] {keyCode})[0];
+		//return InputManager.getInstance().deviceHasKeys(new int[] {keyCode})[0];
 		return false;
 	}
 
@@ -679,7 +679,7 @@ public class KeyCharacterMap {
 	 * at the same index in the key codes array.
 	 */
 	public static boolean[] deviceHasKeys(int[] keyCodes) {
-		//		return InputManager.getInstance().deviceHasKeys(keyCodes);
+		//return InputManager.getInstance().deviceHasKeys(keyCodes);
 		System.out.println("deviceHasKeys: FIXME");
 		return null;
 	}

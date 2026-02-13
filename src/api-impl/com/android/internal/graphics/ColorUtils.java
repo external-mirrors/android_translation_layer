@@ -195,7 +195,8 @@ public final class ColorUtils {
 		int minAlpha = 0;
 		int maxAlpha = 255;
 
-		while (numIterations <= MIN_ALPHA_SEARCH_MAX_ITERATIONS && (maxAlpha - minAlpha) > MIN_ALPHA_SEARCH_PRECISION) {
+		while (numIterations <= MIN_ALPHA_SEARCH_MAX_ITERATIONS
+		       && (maxAlpha - minAlpha) > MIN_ALPHA_SEARCH_PRECISION) {
 			final int testAlpha = (minAlpha + maxAlpha) / 2;
 
 			final double testRatio = calculator.calculateContrast(foreground, background,

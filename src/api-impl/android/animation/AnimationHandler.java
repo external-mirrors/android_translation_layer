@@ -355,7 +355,8 @@ public class AnimationHandler {
 	}
 
 	private void commitAnimationFrame(AnimationFrameCallback callback, long frameTime) {
-		if (!mDelayedCallbackStartTime.containsKey(callback) && mCommitCallbacks.contains(callback)) {
+		if (!mDelayedCallbackStartTime.containsKey(callback)
+		    && mCommitCallbacks.contains(callback)) {
 			callback.commitAnimationFrame(frameTime);
 			mCommitCallbacks.remove(callback);
 		}

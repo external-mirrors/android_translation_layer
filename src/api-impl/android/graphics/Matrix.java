@@ -489,7 +489,8 @@ public class Matrix {
 		// check for too-small and too-big indices
 		int srcStop = srcIndex + (pointCount << 1);
 		int dstStop = dstIndex + (pointCount << 1);
-		if ((pointCount | srcIndex | dstIndex | srcStop | dstStop) < 0 || srcStop > src.length || dstStop > dst.length) {
+		if ((pointCount | srcIndex | dstIndex | srcStop | dstStop) < 0
+		    || srcStop > src.length || dstStop > dst.length) {
 			throw new ArrayIndexOutOfBoundsException();
 		}
 	}

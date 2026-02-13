@@ -779,7 +779,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 	public void setAdapter(ListAdapter adapter) {
 		if (adapter != null) {
 			mAdapterHasStableIds = mAdapter.hasStableIds();
-			if (mChoiceMode != CHOICE_MODE_NONE && mAdapterHasStableIds && mCheckedIdStates == null) {
+			if (mChoiceMode != CHOICE_MODE_NONE && mAdapterHasStableIds
+			    && mCheckedIdStates == null) {
 				mCheckedIdStates = new LongSparseArray<Integer>();
 			}
 		}
@@ -914,7 +915,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 
 		// Start selection mode if needed. We don't need to if we're unchecking something.
 		if (value && mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode == null) {
-			if (mMultiChoiceModeCallback == null || !mMultiChoiceModeCallback.hasWrappedCallback()) {
+			if (mMultiChoiceModeCallback == null
+			    || !mMultiChoiceModeCallback.hasWrappedCallback()) {
 				throw new IllegalStateException("AbsListView: attempted to start selection mode "
 				                                + "for CHOICE_MODE_MULTIPLE_MODAL but no choice mode callback was "
 				                                + "supplied. Call setMultiChoiceModeListener to set a callback.");
@@ -984,7 +986,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 			handled = true;
 			boolean checkedStateChanged = false;
 
-			if (mChoiceMode == CHOICE_MODE_MULTIPLE || (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode != null)) {
+			if (mChoiceMode == CHOICE_MODE_MULTIPLE
+			    || (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL && mChoiceActionMode != null)) {
 				boolean checked = !mCheckStates.get(position, false);
 				mCheckStates.put(position, checked);
 				if (mCheckedIdStates != null && mAdapter.hasStableIds()) {
@@ -1120,7 +1123,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 		if (childCount != mItemCount)
 			return false;
 
-		return getChildAt(0).getTop() >= mListPadding.top && getChildAt(childCount - 1).getBottom() <= getHeight() - mListPadding.bottom;
+		return getChildAt(0).getTop() >= mListPadding.top
+		    && getChildAt(childCount - 1).getBottom() <= getHeight() - mListPadding.bottom;
 	}
 
 	/**
@@ -1437,7 +1441,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 	}
 
 	private boolean acceptFilter() {
-		return mTextFilterEnabled && getAdapter() instanceof Filterable && ((Filterable)getAdapter()).getFilter() != null;
+		return mTextFilterEnabled && getAdapter() instanceof Filterable
+		    && ((Filterable)getAdapter()).getFilter() != null;
 	}
 
 	/**
@@ -1610,7 +1615,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 			final int listBottom = getHeight() - getPaddingBottom();
 			final View lastChild = getChildAt(childCount - 1);
 			final int lastBottom = lastChild != null ? lastChild.getBottom() : listBottom;
-			mForceTranscriptScroll = mFirstPosition + childCount >= mLastHandledItemCount && lastBottom <= listBottom;
+			mForceTranscriptScroll = mFirstPosition + childCount >= mLastHandledItemCount
+			                      && lastBottom <= listBottom;
 		}
 	}
 
@@ -2264,7 +2270,9 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 
 			final ListAdapter adapter = mAdapter;
 			final int motionPosition = mClickMotionPosition;
-			if (adapter != null && mItemCount > 0 && motionPosition != INVALID_POSITION && motionPosition < adapter.getCount() && sameWindow()) {
+			if (adapter != null && mItemCount > 0
+			    && motionPosition != INVALID_POSITION
+			    && motionPosition < adapter.getCount() && sameWindow()) {
 				final View view = getChildAt(motionPosition - mFirstPosition);
 				// If there is no view, something bad happened (the view scrolled off the
 				// screen, etc.) and we should cancel the click
@@ -2328,8 +2336,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 	                         final int longPressPosition, final long longPressId) {
 		// CHOICE_MODE_MULTIPLE_MODAL takes over long press.
 		if (mChoiceMode == CHOICE_MODE_MULTIPLE_MODAL) {
-			// if (mChoiceActionMode == null &&
-			// 		(mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
+			// if (mChoiceActionMode == null
+			//     && (mChoiceActionMode = startActionMode(mMultiChoiceModeCallback)) != null) {
 			setItemChecked(longPressPosition, true);
 			// }
 			return true;
@@ -2352,7 +2360,9 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 			if (!isEnabled()) {
 				return true;
 			}
-			if (isClickable() && isPressed() && mSelectedPosition >= 0 && mAdapter != null && mSelectedPosition < mAdapter.getCount()) {
+			if (isClickable() && isPressed()
+			    && mSelectedPosition >= 0 && mAdapter != null
+			    && mSelectedPosition < mAdapter.getCount()) {
 
 				final View view = getChildAt(mSelectedPosition - mFirstPosition);
 				if (view != null) {
@@ -2483,8 +2493,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 		final int deltaY = y - mMotionY;
 		final int distance = Math.abs(deltaY);
 		final boolean overscroll = getScrollY() != 0;
-		if ((overscroll || distance > mTouchSlop) /* &&
-				(getNestedScrollAxes() & SCROLL_AXIS_VERTICAL) == 0 */
+		if ((overscroll || distance > mTouchSlop) /*
+		    && (getNestedScrollAxes() & SCROLL_AXIS_VERTICAL) == 0 */
 		) {
 			createScrollingCache();
 			if (overscroll) {
@@ -2605,9 +2615,9 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 						// 	}
 
 						// 	final int overscrollMode = getOverScrollMode();
-						// 	if (overscrollMode == OVER_SCROLL_ALWAYS ||
-						// 			(overscrollMode == OVER_SCROLL_IF_CONTENT_SCROLLS &&
-						// 					!contentFits())) {
+						// 	if (overscrollMode == OVER_SCROLL_ALWAYS
+						// 			|| (overscrollMode == OVER_SCROLL_IF_CONTENT_SCROLLS
+						// 					&& !contentFits())) {
 						// 		if (!atOverscrollEdge) {
 						// 			mDirection = 0; // Reset when entering overscroll.
 						// 			mTouchMode = TOUCH_MODE_OVERSCROLL;
@@ -2656,9 +2666,9 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 				// 	overScrollBy(0, overScrollDistance, 0, getScrollY(), 0, 0,
 				// 			0, mOverscrollDistance, true);
 				// 	final int overscrollMode = getOverScrollMode();
-				// 	if (overscrollMode == OVER_SCROLL_ALWAYS ||
-				// 			(overscrollMode == OVER_SCROLL_IF_CONTENT_SCROLLS &&
-				// 					!contentFits())) {
+				// 	if (overscrollMode == OVER_SCROLL_ALWAYS
+				// 			|| (overscrollMode == OVER_SCROLL_IF_CONTENT_SCROLLS
+				// 					&& !contentFits())) {
 				// 		if (rawDeltaY > 0) {
 				// 			mEdgeGlowTop.onPull((float) overScrollDistance / getHeight(),
 				// 					(float) x / getWidth());
@@ -3031,7 +3041,9 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 					final int lastChildBottom = getChildAt(childCount - 1).getBottom();
 					final int contentTop = mListPadding.top;
 					final int contentBottom = getHeight() - mListPadding.bottom;
-					if (mFirstPosition == 0 && firstChildTop >= contentTop && mFirstPosition + childCount < mItemCount && lastChildBottom <= getHeight() - contentBottom) {
+					if (mFirstPosition == 0 && firstChildTop >= contentTop
+					    && mFirstPosition + childCount < mItemCount
+					    && lastChildBottom <= getHeight() - contentBottom) {
 						mTouchMode = TOUCH_MODE_REST;
 						reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
 					} else {
@@ -3044,7 +3056,11 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 						// allow the weird behavior where you can scroll to a boundary then
 						// fling further.
 						boolean flingVelocity = Math.abs(initialVelocity) > mMinimumVelocity;
-						if (flingVelocity && !((mFirstPosition == 0 && firstChildTop == contentTop - mOverscrollDistance) || (mFirstPosition + childCount == mItemCount && lastChildBottom == contentBottom + mOverscrollDistance))) {
+						if (flingVelocity
+						    && !((mFirstPosition == 0
+						          && firstChildTop == contentTop - mOverscrollDistance)
+						         || (mFirstPosition + childCount == mItemCount
+						             && lastChildBottom == contentBottom + mOverscrollDistance))) {
 							// if (!dispatchNestedPreFling(0, -initialVelocity)) {
 							// 	if (mFlingRunnable == null) {
 							// 		mFlingRunnable = new FlingRunnable();
@@ -3238,7 +3254,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 	@Override
 	public boolean onNestedFling(View target, float velocityX, float velocityY, boolean consumed) {
 		final int childCount = getChildCount();
-		if (!consumed && childCount > 0 && canScrollList((int)velocityY) && Math.abs(velocityY) > mMinimumVelocity) {
+		if (!consumed && childCount > 0 && canScrollList((int)velocityY)
+		    && Math.abs(velocityY) > mMinimumVelocity) {
 			reportScrollStateChange(OnScrollListener.SCROLL_STATE_FLING);
 			if (mFlingRunnable == null) {
 				mFlingRunnable = new FlingRunnable();
@@ -3555,7 +3572,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 		void edgeReached(int delta) {
 			mScroller.notifyVerticalEdgeReached(getScrollY(), 0, mOverflingDistance);
 			final int overscrollMode = getOverScrollMode();
-			if (overscrollMode == 0 /*OVER_SCROLL_ALWAYS*/ || (overscrollMode == 1 /*OVER_SCROLL_IF_CONTENT_SCROLLS*/ && !contentFits())) {
+			if (overscrollMode == 0 /*OVER_SCROLL_ALWAYS*/
+			    || (overscrollMode == 1 /*OVER_SCROLL_IF_CONTENT_SCROLLS*/ && !contentFits())) {
 				mTouchMode = TOUCH_MODE_OVERFLING;
 				final int vel = (int)mScroller.getCurrVelocity();
 				if (delta > 0) {
@@ -3837,7 +3855,10 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 		final int topLimit = getPaddingTop();
 		final int bottomLimit = getHeight() - getPaddingBottom();
 
-		if (distance == 0 || mItemCount == 0 || childCount == 0 || (firstPos == 0 && getChildAt(0).getTop() == topLimit && distance < 0) || (lastPos == mItemCount && getChildAt(childCount - 1).getBottom() == bottomLimit && distance > 0)) {
+		if (distance == 0 || mItemCount == 0 || childCount == 0
+		    || (firstPos == 0 && getChildAt(0).getTop() == topLimit && distance < 0)
+		    || (lastPos == mItemCount
+		        && getChildAt(childCount - 1).getBottom() == bottomLimit && distance > 0)) {
 			mFlingRunnable.endFling();
 			if (mPositionScroller != null) {
 				mPositionScroller.stop();
@@ -4013,8 +4034,10 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 		// 	mLastPositionDistanceGuess += incrementalDeltaY;
 		// }
 
-		final boolean cannotScrollDown = (firstPosition == 0 && firstTop >= listPadding.top && incrementalDeltaY >= 0);
-		final boolean cannotScrollUp = (firstPosition + childCount == mItemCount && lastBottom <= getHeight() - listPadding.bottom && incrementalDeltaY <= 0);
+		final boolean cannotScrollDown = (firstPosition == 0
+		                                  && firstTop >= listPadding.top && incrementalDeltaY >= 0);
+		final boolean cannotScrollUp = (firstPosition + childCount == mItemCount
+		                                && lastBottom <= getHeight() - listPadding.bottom && incrementalDeltaY <= 0);
 
 		if (cannotScrollDown || cannotScrollUp) {
 			return incrementalDeltaY != 0;
@@ -4426,7 +4449,8 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 					final int listBottom = getHeight() - getPaddingBottom();
 					final View lastChild = getChildAt(childCount - 1);
 					final int lastBottom = lastChild != null ? lastChild.getBottom() : listBottom;
-					if (mFirstPosition + childCount >= lastHandledItemCount && lastBottom <= listBottom) {
+					if (mFirstPosition + childCount >= lastHandledItemCount
+					    && lastBottom <= listBottom) {
 						mLayoutMode = LAYOUT_FORCE_BOTTOM;
 						return;
 					}

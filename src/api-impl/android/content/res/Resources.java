@@ -233,15 +233,15 @@ public class Resources {
 	 */
 	public static Resources getSystem() {
 		return Context.this_application.getResources();
-		//		synchronized (sSync) {
-		//			Resources ret = mSystem;
-		//			if (ret == null) {
-		//				ret = new Resources();
-		//				mSystem = ret;
-		//			}
+		//synchronized (sSync) {
+		//	Resources ret = mSystem;
+		//	if (ret == null) {
+		//		ret = new Resources();
+		//		mSystem = ret;
+		//	}
 		//
-		//			return ret;
-		//		}
+		//	return ret;
+		//}
 	}
 
 	/**
@@ -1748,37 +1748,36 @@ public class Resources {
 
 	private void clearDrawableCacheLocked(
 	    LongSparseArray<WeakReference<ConstantState>> cache,
-	    int configChanges) { /*
-	 int N = cache.size();
-	 if (DEBUG_CONFIG) {
-	     Log.d(TAG, "Cleaning up drawables config changes: 0x"
-		     + Integer.toHexString(configChanges));
-	 }
-	 for (int i=0; i<N; i++) {
-	     WeakReference<Drawable.ConstantState> ref = cache.valueAt(i);
-	     if (ref != null) {
-		 Drawable.ConstantState cs = ref.get();
-		 if (cs != null) {
-		     if (Configuration.needNewResources(
-			     configChanges, cs.getChangingConfigurations())) {
-			 if (DEBUG_CONFIG) {
-			     Log.d(TAG, "FLUSHING #0x"
-				     + Long.toHexString(mDrawableCache.keyAt(i))
-				     + " / " + cs + " with changes: 0x"
-				     + Integer.toHexString(cs.getChangingConfigurations()));
-			 }
-			 cache.setValueAt(i, null);
-		     } else if (DEBUG_CONFIG) {
-			 Log.d(TAG, "(Keeping #0x"
-				 + Long.toHexString(cache.keyAt(i))
-				 + " / " + cs + " with changes: 0x"
-				 + Integer.toHexString(cs.getChangingConfigurations())
-				 + ")");
-		     }
-		 }
-	     }
-	 }
-     */
+	    int configChanges) {
+		/*int N = cache.size();
+		if (DEBUG_CONFIG) {
+			Log.d(TAG, "Cleaning up drawables config changes: 0x"
+			           + Integer.toHexString(configChanges));
+		}
+		for (int i = 0; i < N; i++) {
+			WeakReference<Drawable.ConstantState> ref = cache.valueAt(i);
+			if (ref != null) {
+				Drawable.ConstantState cs = ref.get();
+				if (cs != null) {
+					if (Configuration.needNewResources(
+						configChanges, cs.getChangingConfigurations())) {
+						if (DEBUG_CONFIG) {
+							Log.d(TAG, "FLUSHING #0x"
+							           + Long.toHexString(mDrawableCache.keyAt(i))
+							               + " / " + cs + " with changes: 0x"
+							               + Integer.toHexString(cs.getChangingConfigurations()));
+						}
+						cache.setValueAt(i, null);
+					} else if (DEBUG_CONFIG) {
+						Log.d(TAG, "(Keeping #0x"
+						           + Long.toHexString(cache.keyAt(i))
+						               + " / " + cs + " with changes: 0x"
+						               + Integer.toHexString(cs.getChangingConfigurations())
+						               + ")");
+					}
+				}
+			}
+		}*/
 	}
 
 	/**
@@ -2145,38 +2144,39 @@ public class Resources {
 		return loadDrawable(value, id, null);
 	}
 
-	/*package*/ Drawable loadDrawable(TypedValue value, int id, Theme theme) throws NotFoundException { /*
+	/*package*/ Drawable loadDrawable(TypedValue value, int id, Theme theme) throws NotFoundException {
 
-	 if (TRACE_FOR_PRELOAD) {
-	     // Log only framework resources
-	     if ((id >>> 24) == 0x1) {
-		 final String name = getResourceName(id);
-		 if (name != null) android.util.Log.d("PreloadDrawable", name);
-	     }
-	 }*/
+		/*if (TRACE_FOR_PRELOAD) {
+			// Log only framework resources
+			if ((id >>> 24) == 0x1) {
+				final String name = getResourceName(id);
+				if (name != null)
+					android.util.Log.d("PreloadDrawable", name);
+			}
+		}*/
 
 		boolean isColorDrawable = false;
-		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
+		if (value.type >= TypedValue.TYPE_FIRST_COLOR_INT
+		    && value.type <= TypedValue.TYPE_LAST_COLOR_INT) {
 			isColorDrawable = true;
 		}
 		final long key = isColorDrawable ? value.data : (((long)value.assetCookie) << 32) | value.data;
 
 		Drawable dr = null;
-		/*
-	 Drawable dr = getCachedDrawable(isColorDrawable ? mColorDrawableCache : mDrawableCache, key);
+		/*Drawable dr = getCachedDrawable(isColorDrawable ? mColorDrawableCache : mDrawableCache, key);
 
-	 if (dr != null) {
-	     return dr;
-	 }
-	 Drawable.ConstantState cs;
-	 if (isColorDrawable) {
-	     cs = sPreloadedColorDrawables.get(key);
-	 } else {
-	     cs = sPreloadedDrawables[mConfiguration.getLayoutDirection()].get(key);
-	 }
-	 if (cs != null) {
-	     dr = cs.newDrawable(this);
-	 } else*/
+		if (dr != null) {
+			return dr;
+		}
+		Drawable.ConstantState cs;
+		if (isColorDrawable) {
+			cs = sPreloadedColorDrawables.get(key);
+		} else {
+			cs = sPreloadedDrawables[mConfiguration.getLayoutDirection()].get(key);
+		}
+		if (cs != null) {
+			dr = cs.newDrawable(this);
+		} else*/
 		{
 			if (isColorDrawable) {
 				dr = new ColorDrawable(value.data);
@@ -2247,44 +2247,43 @@ public class Resources {
 
 		if (dr != null) {
 			dr.setChangingConfigurations(value.changingConfigurations);
-			/* cs = dr.getConstantState();
-	     if (cs != null) {
-		 if (mPreloading) {
-		     final int changingConfigs = cs.getChangingConfigurations();
-		     if (isColorDrawable) {
-			 if (verifyPreloadConfig(changingConfigs, 0, value.resourceId,
-				 "drawable")) {
-			     sPreloadedColorDrawables.put(key, cs);
-			 }
-		     } else {
-			 if (verifyPreloadConfig(changingConfigs,
-				 LAYOUT_DIR_CONFIG, value.resourceId, "drawable")) {
-			     if ((changingConfigs&LAYOUT_DIR_CONFIG) == 0) {
-				 // If this resource does not vary based on layout direction,
-				 // we can put it in all of the preload maps.
-				 sPreloadedDrawables[0].put(key, cs);
-				 sPreloadedDrawables[1].put(key, cs);
-			     } else {
-				 // Otherwise, only in the layout dir we loaded it for.
-				 final LongSparseArray<Drawable.ConstantState> preloads
-					 = sPreloadedDrawables[mConfiguration.getLayoutDirection()];
-				 preloads.put(key, cs);
-			     }
-			 }
-		     }
-		 } else {
-		     synchronized (mAccessLock) {
-			 //Log.i(TAG, "Saving cached drawable @ #" +
-			 //        Integer.toHexString(key.intValue())
-			 //        + " in " + this + ": " + cs);
-			 if (isColorDrawable) {
-			     mColorDrawableCache.put(key, new WeakReference<Drawable.ConstantState>(cs));
-			 } else {
-			     mDrawableCache.put(key, new WeakReference<Drawable.ConstantState>(cs));
-			 }
-		     }
-		 }
-	     }*/
+			/*cs = dr.getConstantState();
+			if (cs != null) {
+				if (mPreloading) {
+					final int changingConfigs = cs.getChangingConfigurations();
+					if (isColorDrawable) {
+						if (verifyPreloadConfig(changingConfigs, 0, value.resourceId,
+						                        "drawable")) {
+							sPreloadedColorDrawables.put(key, cs);
+						}
+					} else {
+						if (verifyPreloadConfig(changingConfigs,
+						                        LAYOUT_DIR_CONFIG, value.resourceId, "drawable")) {
+							if ((changingConfigs & LAYOUT_DIR_CONFIG) == 0) {
+								// If this resource does not vary based on layout direction,
+								// we can put it in all of the preload maps.
+								sPreloadedDrawables[0].put(key, cs);
+								sPreloadedDrawables[1].put(key, cs);
+							} else {
+								// Otherwise, only in the layout dir we loaded it for.
+								final LongSparseArray<Drawable.ConstantState> preloads = sPreloadedDrawables[mConfiguration.getLayoutDirection()];
+								preloads.put(key, cs);
+							}
+						}
+					}
+				} else {
+					synchronized (mAccessLock) {
+						//Log.i(TAG, "Saving cached drawable @ #" +
+						//        Integer.toHexString(key.intValue())
+						//        + " in " + this + ": " + cs);
+						if (isColorDrawable) {
+							mColorDrawableCache.put(key, new WeakReference<Drawable.ConstantState>(cs));
+						} else {
+							mDrawableCache.put(key, new WeakReference<Drawable.ConstantState>(cs));
+						}
+					}
+				}
+			}*/
 		}
 
 		return dr;

@@ -564,8 +564,8 @@ public class AdaptiveIconDrawable extends Drawable implements Drawable.Callback 
 		// Extract the theme attributes, if any.
 		layer.mThemeAttrs = a.extractThemeAttrs();
 
-		//		Drawable dr = a.getDrawableForDensity(R.styleable.AdaptiveIconDrawableLayer_drawable,
-		//						      state.mSrcDensityOverride);
+		//Drawable dr = a.getDrawableForDensity(R.styleable.AdaptiveIconDrawableLayer_drawable,
+		//				      state.mSrcDensityOverride);
 		Drawable dr = a.getDrawable(R.styleable.AdaptiveIconDrawableLayer_drawable);
 
 		if (dr != null) {

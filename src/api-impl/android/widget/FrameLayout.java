@@ -115,7 +115,8 @@ public class FrameLayout extends ViewGroup {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		int count = getChildCount();
 		final boolean measureMatchParentChildren =
-		    MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
+		    MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.EXACTLY
+		    || MeasureSpec.getMode(heightMeasureSpec) != MeasureSpec.EXACTLY;
 		mMatchParentChildren.clear();
 		int maxHeight = 0;
 		int maxWidth = 0;
@@ -131,7 +132,8 @@ public class FrameLayout extends ViewGroup {
 				                     child.getMeasuredHeight() + lp.topMargin + lp.bottomMargin);
 				childState = combineMeasuredStates(childState, child.getMeasuredState());
 				if (measureMatchParentChildren) {
-					if (lp.width == LayoutParams.MATCH_PARENT || lp.height == LayoutParams.MATCH_PARENT) {
+					if (lp.width == LayoutParams.MATCH_PARENT
+					    || lp.height == LayoutParams.MATCH_PARENT) {
 						mMatchParentChildren.add(child);
 					}
 				}

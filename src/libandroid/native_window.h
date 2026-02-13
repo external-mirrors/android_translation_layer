@@ -1,8 +1,8 @@
 
 #include <EGL/egl.h>
+#include <X11/Xlib.h>
 #include <gtk/gtk.h>
 #include <jni.h>
-#include <X11/Xlib.h>
 
 struct ANativeWindow {
 	EGLNativeWindowType egl_window;
@@ -16,7 +16,7 @@ struct ANativeWindow {
 
 extern GHashTable *egl_surface_hashtable;
 
-struct ANativeWindow *ANativeWindow_fromSurface(JNIEnv* env, jobject surface);
+struct ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface);
 EGLSurface bionic_eglCreateWindowSurface(EGLDisplay display, EGLConfig config, struct ANativeWindow *native_window, EGLint const *attrib_list);
 EGLDisplay bionic_eglGetDisplay(NativeDisplayType native_display);
 void ANativeWindow_release(struct ANativeWindow *native_window);

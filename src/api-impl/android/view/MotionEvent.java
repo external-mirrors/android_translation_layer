@@ -1560,11 +1560,11 @@ public final class MotionEvent extends InputEvent {
 			pc[0].pressure = pressure;
 			pc[0].size = size;*/
 
-			//			ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-			//							 deviceId, /*InputDevice.SOURCE_UNKNOWN*/ 0, action, 0, edgeFlags, metaState, 0,
-			//							 0, 0, xPrecision, yPrecision,
-			//							 downTime * NS_PER_MS, eventTime * NS_PER_MS,
-			//							 1, pp, pc);
+			//ev.mNativePtr = nativeInitialize(ev.mNativePtr,
+			//                                 deviceId, /*InputDevice.SOURCE_UNKNOWN*/ 0, action, 0, edgeFlags, metaState, 0,
+			//                                 0, 0, xPrecision, yPrecision,
+			//                                 downTime * NS_PER_MS, eventTime * NS_PER_MS,
+			//                                 1, pp, pc);
 			ev.action = action;
 			ev.ids = new int[] {1};
 			ev.coords = new float[] {x, y, 0, 0};
@@ -1715,7 +1715,7 @@ public final class MotionEvent extends InputEvent {
 	@Override
 	public final int getDeviceId() {
 		return 1; // FIXME: implement this properly
-			  //		return nativeGetDeviceId(mNativePtr);
+			  //return nativeGetDeviceId(mNativePtr);
 	}
 
 	/**
@@ -1724,7 +1724,7 @@ public final class MotionEvent extends InputEvent {
 	@Override
 	public final int getSource() {
 		return source;
-		//		return nativeGetSource(mNativePtr);
+		//return nativeGetSource(mNativePtr);
 	}
 
 	/**
@@ -1887,7 +1887,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_PRESSURE
 	 */
 	public final float getPressure() {
-		//		return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, 0, HISTORY_CURRENT);
+		//return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, 0, HISTORY_CURRENT);
 		return 0;
 	}
 
@@ -2071,7 +2071,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_PRESSURE
 	 */
 	public final float getPressure(int pointerIndex) {
-		//		return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, pointerIndex, HISTORY_CURRENT);
+		//return nativeGetAxisValue(mNativePtr, AXIS_PRESSURE, pointerIndex, HISTORY_CURRENT);
 		return 0;
 	}
 
@@ -2312,7 +2312,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final int getHistorySize() {
 		return 0;
-		//		return nativeGetHistorySize(mNativePtr);
+		//return nativeGetHistorySize(mNativePtr);
 	}
 
 	/**

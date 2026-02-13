@@ -1671,7 +1671,10 @@ public class ListView extends AbsListView {
 				// The current selected item should get focus if items are
 				// focusable.
 				if (mItemsCanFocus && hasFocus() && !sel.hasFocus()) {
-					final boolean focusWasTaken = (sel == focusLayoutRestoreDirectChild && focusLayoutRestoreView != null && focusLayoutRestoreView.requestFocus()) || sel.requestFocus();
+					final boolean focusWasTaken = (sel == focusLayoutRestoreDirectChild
+					                               && focusLayoutRestoreView != null
+					                               && focusLayoutRestoreView.requestFocus())
+					                           || sel.requestFocus();
 					if (!focusWasTaken) {
 						// Selected item didn't take focus, but we still want to
 						// make sure something else outside of the selected view
@@ -1861,7 +1864,8 @@ public class ListView extends AbsListView {
 		final boolean isSelected = selected && shouldShowSelector();
 		final boolean updateChildSelected = isSelected != child.isSelected();
 		final int mode = mTouchMode;
-		final boolean isPressed = mode > TOUCH_MODE_DOWN && mode < TOUCH_MODE_SCROLL && mMotionPosition == position;
+		final boolean isPressed = mode > TOUCH_MODE_DOWN && mode < TOUCH_MODE_SCROLL
+		                       && mMotionPosition == position;
 		final boolean updateChildPressed = isPressed != child.isPressed();
 		final boolean needToMeasure = !recycled || updateChildSelected || child.isLayoutRequested();
 
@@ -2366,7 +2370,8 @@ public class ListView extends AbsListView {
 		final int numChildren = getChildCount();
 		if (mItemsCanFocus && numChildren > 0 && mSelectedPosition != INVALID_POSITION) {
 			final View selectedView = getSelectedView();
-			if (selectedView != null && selectedView.hasFocus() && selectedView instanceof ViewGroup) {
+			if (selectedView != null && selectedView.hasFocus()
+			    && selectedView instanceof ViewGroup) {
 
 				// final View currentFocus = selectedView.findFocus();
 				// final View nextFocus = FocusFinder.getInstance().findNextFocus(
@@ -2747,7 +2752,8 @@ public class ListView extends AbsListView {
 				return 0;
 			}
 
-			if (nextSelectedPosition != INVALID_POSITION && (viewToMakeVisible.getBottom() - goalTop) >= getMaxScrollAmount()) {
+			if (nextSelectedPosition != INVALID_POSITION
+			    && (viewToMakeVisible.getBottom() - goalTop) >= getMaxScrollAmount()) {
 				// item already has enough of it visible, changing selection is good enough
 				return 0;
 			}
@@ -2824,9 +2830,9 @@ public class ListView extends AbsListView {
 		// 	// we aren't jumping over another selectable position
 		// 	if (mSelectedPosition != INVALID_POSITION && positionOfNewFocus != mSelectedPosition) {
 		// 		final int selectablePosition = lookForSelectablePositionOnScreen(direction);
-		// 		if (selectablePosition != INVALID_POSITION &&
-		// 				((direction == View.FOCUS_DOWN && selectablePosition < positionOfNewFocus) ||
-		// 				(direction == View.FOCUS_UP && selectablePosition > positionOfNewFocus))) {
+		// 		if (selectablePosition != INVALID_POSITION
+		// 				&& ((direction == View.FOCUS_DOWN && selectablePosition < positionOfNewFocus)
+		// 				|| (direction == View.FOCUS_UP && selectablePosition > positionOfNewFocus))) {
 		// 			return null;
 		// 		}
 		// 	}
@@ -3192,7 +3198,8 @@ public class ListView extends AbsListView {
 				}
 
 				final int overFooterBottom = getBottom() + getScrollY();
-				if (drawOverscrollFooter && first + count == itemCount && overFooterBottom > bottom) {
+				if (drawOverscrollFooter && first + count == itemCount
+				    && overFooterBottom > bottom) {
 					bounds.top = bottom;
 					bounds.bottom = overFooterBottom;
 					drawOverscrollFooter(canvas, overscrollFooter, bounds);

@@ -103,7 +103,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 				boolean done = false;
 				for (PackageParser.IntentInfo intent : activity.intents) {
 					Slog.i(TAG, intent.toString());
-					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER") && intent.hasAction("android.intent.action.MAIN")) || (uri != null && intent.hasDataScheme(uri.getScheme()) && intent.hasCategory("android.intent.category.DEFAULT"))) {
+					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER") && intent.hasAction("android.intent.action.MAIN")) ||        // NOLINT
+					    (uri != null && intent.hasDataScheme(uri.getScheme())                  && intent.hasCategory("android.intent.category.DEFAULT"))) { // NOLINT
 						className = activity.info.targetActivity != null ? activity.info.targetActivity : activity.className;
 						done = true;
 						break;

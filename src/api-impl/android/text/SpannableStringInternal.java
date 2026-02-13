@@ -353,7 +353,8 @@ import java.lang.reflect.Array;
 	// Same as SpannableStringBuilder
 	@Override
 	public boolean equals(Object o) {
-		if (o instanceof Spanned && toString().equals(o.toString())) {
+		if (o instanceof Spanned
+		    && toString().equals(o.toString())) {
 			Spanned other = (Spanned)o;
 			// Check span data
 			Object[] otherSpans = other.getSpans(0, other.length(), Object.class);
@@ -362,10 +363,16 @@ import java.lang.reflect.Array;
 					Object thisSpan = mSpans[i];
 					Object otherSpan = otherSpans[i];
 					if (thisSpan == this) {
-						if (other != otherSpan || getSpanStart(thisSpan) != other.getSpanStart(otherSpan) || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan) || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
+						if (other != otherSpan
+						    || getSpanStart(thisSpan) != other.getSpanStart(otherSpan)
+						    || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan)
+						    || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
 							return false;
 						}
-					} else if (!thisSpan.equals(otherSpan) || getSpanStart(thisSpan) != other.getSpanStart(otherSpan) || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan) || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
+					} else if (!thisSpan.equals(otherSpan)
+					           || getSpanStart(thisSpan) != other.getSpanStart(otherSpan)
+					           || getSpanEnd(thisSpan) != other.getSpanEnd(otherSpan)
+					           || getSpanFlags(thisSpan) != other.getSpanFlags(otherSpan)) {
 						return false;
 					}
 				}

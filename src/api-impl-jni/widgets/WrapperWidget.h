@@ -1,13 +1,12 @@
 #ifndef WRAPPER_WIDGET_H
 #define WRAPPER_WIDGET_H
 
-#include <jni.h>
 #include <gtk/gtk.h>
+#include <jni.h>
 
-G_DECLARE_FINAL_TYPE (WrapperWidget, wrapper_widget, WRAPPER, WIDGET, GtkWidget)
+G_DECLARE_FINAL_TYPE(WrapperWidget, wrapper_widget, WRAPPER, WIDGET, GtkWidget)
 
-struct _WrapperWidget
-{
+struct _WrapperWidget {
 	GtkWidget parent_instance;
 	GtkWidget *child;
 	GtkWidget *background;
@@ -26,12 +25,11 @@ struct _WrapperWidget
 	gboolean custom_dispatch_touch;
 };
 
-struct _WrapperWidgetClass
-{
+struct _WrapperWidgetClass {
 	GtkWidgetClass parent_class;
 };
 
-GtkWidget * wrapper_widget_new(void);
+GtkWidget *wrapper_widget_new(void);
 void wrapper_widget_set_child(WrapperWidget *parent, GtkWidget *child);
 void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject jobj);
 void wrapper_widget_queue_draw(WrapperWidget *wrapper);

@@ -264,7 +264,8 @@ public abstract class AbsSpinner extends AdapterView<SpinnerAdapter> {
 	 */
 	public void setSelection(int position, boolean animate) {
 		// Animate only if requested position is already on screen somewhere
-		boolean shouldAnimate = animate && mFirstPosition <= position && position <= mFirstPosition + getChildCount() - 1;
+		boolean shouldAnimate = animate && mFirstPosition <= position
+		                     && position <= mFirstPosition + getChildCount() - 1;
 		setSelectionInt(position, shouldAnimate);
 	}
 

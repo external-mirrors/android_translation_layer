@@ -2508,7 +2508,7 @@ public class KeyEvent extends InputEvent {
 		if ((metaState & (META_META_LEFT_ON | META_META_RIGHT_ON)) != 0) {
 			metaState |= META_META_ON;
 		}
-		/*		if ((metaState & MetaKeyKeyListener.META_CAP_LOCKED) != 0) {
+		/*if ((metaState & MetaKeyKeyListener.META_CAP_LOCKED) != 0) {
 			metaState |= META_CAPS_LOCK_ON;
 		}
 		if ((metaState & MetaKeyKeyListener.META_ALT_LOCKED) != 0) {

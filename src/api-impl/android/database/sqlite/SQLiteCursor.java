@@ -112,7 +112,8 @@ public class SQLiteCursor extends AbstractWindowedCursor {
 	@Override
 	public boolean onMove(int oldPosition, int newPosition) {
 		// Make sure the row at newPosition is present in the window
-		if (mWindow == null || newPosition < mWindow.getStartPosition() || newPosition >= (mWindow.getStartPosition() + mWindow.getNumRows())) {
+		if (mWindow == null || newPosition < mWindow.getStartPosition()
+		    || newPosition >= (mWindow.getStartPosition() + mWindow.getNumRows())) {
 			fillWindow(newPosition);
 		}
 

@@ -177,7 +177,8 @@ public class LayoutInflater {
 
 		// Look for the root node.
 		int type;
-		while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.next()) != XmlPullParser.START_TAG
+		       && type != XmlPullParser.END_DOCUMENT) {
 			// Empty
 		}
 
@@ -254,7 +255,9 @@ public class LayoutInflater {
 		int type;
 
 		indent++; // prettyprint for debugging
-		while (((type = parser.next()) != XmlPullParser.END_TAG || parser.getDepth() > depth) && type != XmlPullParser.END_DOCUMENT) {
+		while (((type = parser.next()) != XmlPullParser.END_TAG
+		        || parser.getDepth() > depth)
+		       && type != XmlPullParser.END_DOCUMENT) {
 
 			if (type != XmlPullParser.START_TAG) {
 				continue;
@@ -307,7 +310,8 @@ public class LayoutInflater {
 		final XmlResourceParser childParser = context.getResources().getLayout(layout);
 		final AttributeSet childAttrs = Xml.asAttributeSet(childParser);
 
-		while ((type = childParser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT) {
+		while ((type = childParser.next()) != XmlPullParser.START_TAG
+		       && type != XmlPullParser.END_DOCUMENT) {
 			// Empty.
 		}
 		if (type != XmlPullParser.START_TAG) {

@@ -111,18 +111,18 @@ struct NativeCode {
 	void *dlhandle;
 	ANativeActivity_createFunc *createActivityFunc;
 
-	//	const char* internalDataPathObj;
-	//	const char* externalDataPathObj;
-	//	const char* obbPathObj;
+	//const char* internalDataPathObj;
+	//const char* externalDataPathObj;
+	//const char* obbPathObj;
 
 	ANativeWindow *nativeWindow;
 	int32_t lastWindowWidth;
 	int32_t lastWindowHeight;
 
 	// These are used to wake up the main thread to process work.
-	//	int mainWorkRead;
-	//	int mainWorkWrite;
-	//	MessageQueue *messageQueue;
+	//int mainWorkRead;
+	//int mainWorkWrite;
+	//MessageQueue *messageQueue;
 };
 
 struct NativeCode *NativeCode_new(void *_dlhandle, ANativeActivity_createFunc *_createFunc)
@@ -132,7 +132,7 @@ struct NativeCode *NativeCode_new(void *_dlhandle, ANativeActivity_createFunc *_
 	this->dlhandle = _dlhandle;
 	this->createActivityFunc = _createFunc;
 	this->nativeWindow = NULL;
-	//	this->mainWorkRead = this->mainWorkWrite = -1;
+	//this->mainWorkRead = this->mainWorkWrite = -1;
 
 	return this;
 }
@@ -159,15 +159,15 @@ void NativeCode_destroy(struct NativeCode *this)
 	if (this->callbacks.onDestroy != NULL) {
 		this->callbacks.onDestroy((struct ANativeActivity *)this);
 	}
-	//	if (env != NULL && clazz != NULL) {
-	// 		(*env)->DeleteGlobalRef(env, clazz);
-	//	}
-	//	if (messageQueue != NULL && mainWorkRead >= 0) {
-	//		messageQueue->getLooper()->removeFd(mainWorkRead);
-	//	}
+	//if (env != NULL && clazz != NULL) {
+	//	(*env)->DeleteGlobalRef(env, clazz);
+	//}
+	//if (messageQueue != NULL && mainWorkRead >= 0) {
+	//	messageQueue->getLooper()->removeFd(mainWorkRead);
+	//}
 	NativeCode_setSurface(this, NULL);
-	//	if (this->mainWorkRead >= 0) close(this->mainWorkRead);
-	//	if (this->mainWorkWrite >= 0) close(this->mainWorkWrite);
+	//if (this->mainWorkRead >= 0) close(this->mainWorkRead);
+	//if (this->mainWorkWrite >= 0) close(this->mainWorkWrite);
 	if (this->dlhandle != NULL) {
 		// for now don't unload...  we probably should clean this
 		// up and only keep one open dlhandle per proc, since there
@@ -196,7 +196,7 @@ void NativeCode_destroy(struct NativeCode *this)
 	}
 
 	printf("STUB - mainWorkCallback\n");
-//	printf("mainWorkCallback: cmd=%d", work.cmd);
+	//printf("mainWorkCallback: cmd=%d", work.cmd);
 
 	switch (work.cmd) {
 		case CMD_FINISH: {
@@ -304,8 +304,8 @@ jlong Java_android_app_NativeActivity_loadNativeCode(JNIEnv *env, jobject clazz,
 			printf("Unable to retrieve native MessageQueue\n");
 			NativeCode_destroy(code);
 			return 0;
-		}
-*/
+		}*/
+
 		int msgpipe[2];
 		if (pipe(msgpipe)) {
 			fprintf(stderr, "could not create pipe: %s", strerror(errno));
@@ -459,7 +459,7 @@ void Java_android_app_NativeActivity_onStopNative(JNIEnv *env, jobject clazz, jl
 void Java_android_app_NativeActivity_onConfigurationChangedNative(JNIEnv *env, jobject clazz, jlong handle)
 {
 	printf("STUB - onConfigurationChanged_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->callbacks.onConfigurationChanged != NULL) {
 			code->callbacks.onConfigurationChanged((ANativeActivity *)code);
@@ -470,7 +470,7 @@ void Java_android_app_NativeActivity_onConfigurationChangedNative(JNIEnv *env, j
 void Java_android_app_NativeActivity_onLowMemoryNative(JNIEnv *env, jobject clazz, jlong handle)
 {
 	printf("STUB - onLowMemory_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->callbacks.onLowMemory != NULL) {
 			code->callbacks.onLowMemory((ANativeActivity *)code);
@@ -534,7 +534,7 @@ void Java_android_app_NativeActivity_onSurfaceChangedNative(JNIEnv *env, jobject
 void Java_android_app_NativeActivity_onSurfaceRedrawNeededNative(JNIEnv *env, jobject clazz, jlong handle, jobject surface /*?*/)
 {
 	printf("STUB - onSurfaceRedrawNeeded_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->nativeWindow != NULL && code->callbacks.onNativeWindowRedrawNeeded != NULL) {
 			code->callbacks.onNativeWindowRedrawNeeded((ANativeActivity *)code, code->nativeWindow.get());
@@ -545,7 +545,7 @@ void Java_android_app_NativeActivity_onSurfaceRedrawNeededNative(JNIEnv *env, jo
 void Java_android_app_NativeActivity_onSurfaceDestroyedNative(JNIEnv *env, jobject clazz, jlong handle)
 {
 	printf("STUB - onSurfaceDestroyed_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->nativeWindow != NULL && code->callbacks.onNativeWindowDestroyed != NULL) {
 			code->callbacks.onNativeWindowDestroyed(code,
@@ -569,7 +569,7 @@ void Java_android_app_NativeActivity_onInputQueueCreatedNative(JNIEnv *env, jobj
 void Java_android_app_NativeActivity_onInputQueueDestroyedNative(JNIEnv *env, jobject clazz, jlong handle, jlong queuePtr)
 {
 	printf("STUB - onInputChannelDestroyed_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->callbacks.onInputQueueDestroyed != NULL) {
 			AInputQueue* queue = reinterpret_cast<AInputQueue*>(queuePtr);
@@ -582,7 +582,7 @@ void Java_android_app_NativeActivity_onContentRectChangedNative(JNIEnv *env, job
                                                                 jint x, jint y, jint w, jint h)
 {
 	printf("STUB - onContentRectChanged_native\n");
-	/*	if (handle != 0) {
+	/*if (handle != 0) {
 		struct NativeCode* code = (struct NativeCode*)_PTR(handle);
 		if (code->callbacks.onContentRectChanged != NULL) {
 			ARect rect;

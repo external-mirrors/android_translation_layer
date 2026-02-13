@@ -803,7 +803,8 @@ public class LinearLayout extends ViewGroup {
 		if (nonSkippedChildCount > 0 && hasDividerBeforeChildAt(count)) {
 			mTotalLength += mDividerHeight;
 		}
-		if (useLargestChild && (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED)) {
+		if (useLargestChild
+		    && (heightMode == MeasureSpec.AT_MOST || heightMode == MeasureSpec.UNSPECIFIED)) {
 			mTotalLength = 0;
 			for (int i = 0; i < count; ++i) {
 				final View child = getVirtualChildAt(i);
@@ -875,7 +876,8 @@ public class LinearLayout extends ViewGroup {
 				final int margin = lp.leftMargin + lp.rightMargin;
 				final int measuredWidth = child.getMeasuredWidth() + margin;
 				maxWidth = Math.max(maxWidth, measuredWidth);
-				boolean matchWidthLocally = widthMode != MeasureSpec.EXACTLY && lp.width == LayoutParams.MATCH_PARENT;
+				boolean matchWidthLocally = widthMode != MeasureSpec.EXACTLY
+				                         && lp.width == LayoutParams.MATCH_PARENT;
 				alternativeMaxWidth = Math.max(alternativeMaxWidth,
 				                               matchWidthLocally ? margin : measuredWidth);
 				allFillParent = allFillParent && lp.width == LayoutParams.MATCH_PARENT;
@@ -1104,7 +1106,10 @@ public class LinearLayout extends ViewGroup {
 		}
 		// Check mMaxAscent[INDEX_TOP] first because it maps to Gravity.TOP,
 		// the most common case
-		if (maxAscent[INDEX_TOP] != -1 || maxAscent[INDEX_CENTER_VERTICAL] != -1 || maxAscent[INDEX_BOTTOM] != -1 || maxAscent[INDEX_FILL] != -1) {
+		if (maxAscent[INDEX_TOP] != -1
+		    || maxAscent[INDEX_CENTER_VERTICAL] != -1
+		    || maxAscent[INDEX_BOTTOM] != -1
+		    || maxAscent[INDEX_FILL] != -1) {
 			final int ascent = Math.max(maxAscent[INDEX_FILL],
 			                            Math.max(maxAscent[INDEX_CENTER_VERTICAL],
 			                                     Math.max(maxAscent[INDEX_TOP], maxAscent[INDEX_BOTTOM])));
@@ -1113,7 +1118,8 @@ public class LinearLayout extends ViewGroup {
 			                                      Math.max(maxDescent[INDEX_TOP], maxDescent[INDEX_BOTTOM])));
 			maxHeight = Math.max(maxHeight, ascent + descent);
 		}
-		if (useLargestChild && (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED)) {
+		if (useLargestChild
+		    && (widthMode == MeasureSpec.AT_MOST || widthMode == MeasureSpec.UNSPECIFIED)) {
 			mTotalLength = 0;
 			nonSkippedChildCount = 0;
 			for (int i = 0; i < count; ++i) {
@@ -1207,7 +1213,8 @@ public class LinearLayout extends ViewGroup {
 					final int totalLength = mTotalLength;
 					mTotalLength = Math.max(totalLength, totalLength + child.getMeasuredWidth() + lp.leftMargin + lp.rightMargin + getNextLocationOffset(child));
 				}
-				boolean matchHeightLocally = heightMode != MeasureSpec.EXACTLY && lp.height == LayoutParams.MATCH_PARENT;
+				boolean matchHeightLocally = heightMode != MeasureSpec.EXACTLY
+				                          && lp.height == LayoutParams.MATCH_PARENT;
 				final int margin = lp.topMargin + lp.bottomMargin;
 				int childHeight = child.getMeasuredHeight() + margin;
 				maxHeight = Math.max(maxHeight, childHeight);
@@ -1237,7 +1244,10 @@ public class LinearLayout extends ViewGroup {
 			// TODO: Should we update widthSize with the new total length?
 			// Check mMaxAscent[INDEX_TOP] first because it maps to Gravity.TOP,
 			// the most common case
-			if (maxAscent[INDEX_TOP] != -1 || maxAscent[INDEX_CENTER_VERTICAL] != -1 || maxAscent[INDEX_BOTTOM] != -1 || maxAscent[INDEX_FILL] != -1) {
+			if (maxAscent[INDEX_TOP] != -1
+			    || maxAscent[INDEX_CENTER_VERTICAL] != -1
+			    || maxAscent[INDEX_BOTTOM] != -1
+			    || maxAscent[INDEX_FILL] != -1) {
 				final int ascent = Math.max(maxAscent[INDEX_FILL],
 				                            Math.max(maxAscent[INDEX_CENTER_VERTICAL],
 				                                     Math.max(maxAscent[INDEX_TOP], maxAscent[INDEX_BOTTOM])));

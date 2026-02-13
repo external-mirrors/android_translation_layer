@@ -731,18 +731,21 @@ static gboolean option_uri_cb(const gchar *option_name, const gchar *value, gpoi
 void init_cmd_parameters(GApplication *app, struct jni_callback_data *d)
 {
 	const GOptionEntry cmd_params[] = {
+		/* clang-format off */
 		/* long_name | short_name | flags | arg                 | arg_data                     | description                                                                                   | arg_desc */
-		{"launch-activity", 'l', 0, G_OPTION_ARG_STRING, &d->apk_main_activity_class, "the fully qualifed name of the activity you wish to launch (usually the apk's main activity)", "ACTIVITY_NAME"},
-		{"instrument", 0, 0, G_OPTION_ARG_STRING, &d->apk_instrumentation_class, "the fully qualifed name of the instrumentation you wish to launch", "CLASS_NAME"},
-		{"window-width", 'w', 0, G_OPTION_ARG_INT, &d->window_width, "window width to launch with (some apps react poorly to runtime window size adjustments)", "WIDTH"},
-		{"window-height", 'h', 0, G_OPTION_ARG_INT, &d->window_height, "window height to launch with (some apps react poorly to runtime window size adjustments)", "HEIGHT"},
-		{"install", 'i', 0, G_OPTION_ARG_NONE, &d->install, "install .desktop file for the given apk", NULL},
-		{"install-internal", 0, 0, G_OPTION_ARG_NONE, &d->install_internal, "copy an apk to _installed_apks_ but don't create a desktop entry", NULL},
-		{"extra-jvm-option", 'X', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_jvm_options, "pass an additional option directly to art (e.g -X \"-verbose:jni\")", "\"OPTION\""},
-		{"extra-string-key", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_string_keys, "pass a string extra (-e key=value)", "\"KEY=VALUE\""},
-		{"uri", 'u', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, option_uri_cb, "open the given URI inside the application", "URI"},
-		{"sdk-int", 0, 0, G_OPTION_ARG_STRING, &d->sdk_int, "pass a string extra (-e key=value)", "\"KEY=VALUE\""},
+		{ "launch-activity",  'l', 0, G_OPTION_ARG_STRING,       &d->apk_main_activity_class,   "the fully qualifed name of the activity you wish to launch (usually the apk's main activity)", "ACTIVITY_NAME" },
+		{ "instrument",        0,  0, G_OPTION_ARG_STRING,       &d->apk_instrumentation_class, "the fully qualifed name of the instrumentation you wish to launch",                            "CLASS_NAME"    },
+		{ "window-width",     'w', 0, G_OPTION_ARG_INT,          &d->window_width,              "window width to launch with (some apps react poorly to runtime window size adjustments)",      "WIDTH"         },
+		{ "window-height",    'h', 0, G_OPTION_ARG_INT,          &d->window_height,             "window height to launch with (some apps react poorly to runtime window size adjustments)",     "HEIGHT"        },
+		{ "install",          'i', 0, G_OPTION_ARG_NONE,         &d->install,                   "install .desktop file for the given apk",                                                      NULL            },
+		{ "install-internal",  0 , 0, G_OPTION_ARG_NONE,         &d->install_internal,          "copy an apk to _installed_apks_ but don't create a desktop entry",                             NULL            },
+		{ "extra-jvm-option", 'X', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_jvm_options,         "pass an additional option directly to art (e.g -X \"-verbose:jni\")",                          "\"OPTION\""    },
+		{ "extra-string-key", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_string_keys,         "pass a string extra (-e key=value)",                                                           "\"KEY=VALUE\"" },
+		{ "sdk-int",           0 , 0, G_OPTION_ARG_STRING,       &d->sdk_int,                   "shorthand for -X \"-DBuild.VERSION.SDK_INT=<version>\"",                                                           "SDK_INT" },
+		/* long_name | short_name | flags                     | arg                  | arg_data     | description                                                                              | arg_desc */
+		{ "uri",              'u', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, option_uri_cb, "open the given URI inside the application",                                               "URI"           },
 		{NULL}
+		/* clang-format on */
 	};
 
 	g_application_add_main_option_entries(G_APPLICATION(app), cmd_params);

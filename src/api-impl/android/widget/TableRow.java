@@ -74,12 +74,12 @@ public class TableRow extends LinearLayout {
 	}
 
 	private void initTableRow() {
-		//		OnHierarchyChangeListener oldListener = mOnHierarchyChangeListener;
+		//OnHierarchyChangeListener oldListener = mOnHierarchyChangeListener;
 		mChildrenTracker = new ChildrenTracker();
-		/*		if (oldListener != null) {
+		/*if (oldListener != null) {
 			mChildrenTracker.setOnHierarchyChangeListener(oldListener);
-		}
-*/
+		}*/
+
 		super.setOnHierarchyChangeListener(mChildrenTracker);
 	}
 
@@ -401,13 +401,13 @@ public class TableRow extends LinearLayout {
 		/**
 		 * <p>The column index of the cell represented by the widget.</p>
 		 */
-		//		@ViewDebug.ExportedProperty(category = "layout")
+		//@ViewDebug.ExportedProperty(category = "layout")
 		public int column;
 
 		/**
 		 * <p>The number of columns the widgets spans over.</p>
 		 */
-		//		@ViewDebug.ExportedProperty(category = "layout")
+		//@ViewDebug.ExportedProperty(category = "layout")
 		public int span;
 
 		private static final int LOCATION = 0;

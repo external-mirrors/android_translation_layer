@@ -65,7 +65,8 @@ graphene_matrix_t *get_mount_matrix(char *mount_matrix_path)
 	                    0, 0, 1, 0,
 	                    0, 0, 0, 1};
 
-	sscanf(matrix_str, "%f, %f, %f; %f, %f, %f; %f, %f, %f", &matrix_f[0], &matrix_f[1], &matrix_f[2],
+	sscanf(matrix_str, "%f, %f, %f; %f, %f, %f; %f, %f, %f",
+	       &matrix_f[0], &matrix_f[1], &matrix_f[2],
 	       &matrix_f[4], &matrix_f[5], &matrix_f[6],
 	       &matrix_f[8], &matrix_f[9], &matrix_f[10]);
 	matrix = graphene_matrix_alloc();

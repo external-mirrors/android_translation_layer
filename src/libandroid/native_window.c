@@ -351,7 +351,7 @@ ANativeWindow *ANativeWindow_fromSurface(JNIEnv *env, jobject surface)
 		native_window->wayland_surface = wayland_surface;
 		printf("EGL::: wayland_surface: %p\n", wayland_surface);
 	} else if (GDK_IS_X11_DISPLAY(display)) {
-/* X11 support is deprecated, which means that if we decide to switch to Gtk 5 we will loose the ability to run ATL on X11.
+		/* X11 support is deprecated, which means that if we decide to switch to Gtk 5 we will loose the ability to run ATL on X11.
 		 * for now, silence the warnings */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"

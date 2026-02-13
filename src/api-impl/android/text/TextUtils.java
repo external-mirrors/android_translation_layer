@@ -94,7 +94,8 @@ public class TextUtils {
 	public static int indexOf(CharSequence s, char ch, int start, int end) {
 		Class<? extends CharSequence> c = s.getClass();
 
-		if (s instanceof GetChars || c == StringBuffer.class || c == StringBuilder.class || c == String.class) {
+		if (s instanceof GetChars || c == StringBuffer.class
+		    || c == StringBuilder.class || c == String.class) {
 			final int INDEX_INCREMENT = 500;
 			char[] temp = obtain(INDEX_INCREMENT);
 
@@ -151,7 +152,8 @@ public class TextUtils {
 
 		Class<? extends CharSequence> c = s.getClass();
 
-		if (s instanceof GetChars || c == StringBuffer.class || c == StringBuilder.class || c == String.class) {
+		if (s instanceof GetChars || c == StringBuffer.class
+		    || c == StringBuilder.class || c == String.class) {
 			final int INDEX_INCREMENT = 500;
 			char[] temp = obtain(INDEX_INCREMENT);
 

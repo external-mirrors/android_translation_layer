@@ -21,9 +21,9 @@ package com.google.android.gles_jni;
 
 /*import android.app.AppGlobals;
 import android.content.pm.ApplicationInfo;
-import android.content.pm.IPackageManager;
+import android.content.pm.IPackageManager;*/
 import android.opengl.GLES10;
-import android.os.Build;
+/*import android.os.Build;
 import android.os.UserHandle;
 import android.util.Log;
 */
@@ -206,7 +206,11 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if ((size == 4) && ((type == GL_FLOAT) || (type == GL_UNSIGNED_BYTE) || (type == GL_FIXED)) && (stride >= 0)) {
+		if ((size == 4)
+		    && ((type == GL_FLOAT)
+		        || (type == GL_UNSIGNED_BYTE)
+		        || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_colorPointer = pointer;
 		}
 	}
@@ -716,7 +720,11 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if (((type == GL_FLOAT) || (type == GL_BYTE) || (type == GL_SHORT) || (type == GL_FIXED)) && (stride >= 0)) {
+		if (((type == GL_FLOAT)
+		     || (type == GL_BYTE)
+		     || (type == GL_SHORT)
+		     || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_normalPointer = pointer;
 		}
 	}
@@ -884,7 +892,14 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if (((size == 2) || (size == 3) || (size == 4)) && ((type == GL_FLOAT) || (type == GL_BYTE) || (type == GL_SHORT) || (type == GL_FIXED)) && (stride >= 0)) {
+		if (((size == 2)
+		     || (size == 3)
+		     || (size == 4))
+		    && ((type == GL_FLOAT)
+		        || (type == GL_BYTE)
+		        || (type == GL_SHORT)
+		        || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_texCoordPointer = pointer;
 		}
 	}
@@ -1009,7 +1024,14 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if (((size == 2) || (size == 3) || (size == 4)) && ((type == GL_FLOAT) || (type == GL_BYTE) || (type == GL_SHORT) || (type == GL_FIXED)) && (stride >= 0)) {
+		if (((size == 2)
+		     || (size == 3)
+		     || (size == 4))
+		    && ((type == GL_FLOAT)
+		        || (type == GL_BYTE)
+		        || (type == GL_SHORT)
+		        || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_vertexPointer = pointer;
 		}
 	}
@@ -1430,7 +1452,9 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if (((type == GL_FLOAT) || (type == GL_FIXED)) && (stride >= 0)) {
+		if (((type == GL_FLOAT)
+		     || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_pointSizePointerOES = pointer;
 		}
 	}
@@ -1634,7 +1658,14 @@ public class GLImpl implements GL10, GL10Ext, GL11, GL11Ext, GL11ExtensionPack {
 		    stride,
 		    pointer,
 		    pointer.remaining());
-		if (((size == 2) || (size == 3) || (size == 4)) && ((type == GL_FLOAT) || (type == GL_BYTE) || (type == GL_SHORT) || (type == GL_FIXED)) && (stride >= 0)) {
+		if (((size == 2)
+		     || (size == 3)
+		     || (size == 4))
+		    && ((type == GL_FLOAT)
+		        || (type == GL_BYTE)
+		        || (type == GL_SHORT)
+		        || (type == GL_FIXED))
+		    && (stride >= 0)) {
 			_matrixIndexPointerOES = pointer;
 		}
 	}

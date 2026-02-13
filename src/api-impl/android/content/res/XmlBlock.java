@@ -369,7 +369,8 @@ final class XmlBlock {
 			int t = nativeGetAttributeDataType(mParseState, idx);
 			// Note: don't attempt to convert any other types, because
 			// we want to count on appt doing the conversion for us.
-			if (t >= TypedValue.TYPE_FIRST_INT && t <= TypedValue.TYPE_LAST_INT) {
+			if (t >= TypedValue.TYPE_FIRST_INT
+			    && t <= TypedValue.TYPE_LAST_INT) {
 				return nativeGetAttributeData(mParseState, idx) != 0;
 			}
 			return defaultValue;
@@ -387,7 +388,8 @@ final class XmlBlock {
 			int t = nativeGetAttributeDataType(mParseState, idx);
 			// Note: don't attempt to convert any other types, because
 			// we want to count on appt doing the conversion for us.
-			if (t >= TypedValue.TYPE_FIRST_INT && t <= TypedValue.TYPE_LAST_INT) {
+			if (t >= TypedValue.TYPE_FIRST_INT
+			    && t <= TypedValue.TYPE_LAST_INT) {
 				return nativeGetAttributeData(mParseState, idx);
 			}
 			return defaultValue;
@@ -396,7 +398,8 @@ final class XmlBlock {
 			int t = nativeGetAttributeDataType(mParseState, idx);
 			// Note: don't attempt to convert any other types, because
 			// we want to count on appt doing the conversion for us.
-			if (t >= TypedValue.TYPE_FIRST_INT && t <= TypedValue.TYPE_LAST_INT) {
+			if (t >= TypedValue.TYPE_FIRST_INT
+			    && t <= TypedValue.TYPE_LAST_INT) {
 				return nativeGetAttributeData(mParseState, idx);
 			}
 			return defaultValue;

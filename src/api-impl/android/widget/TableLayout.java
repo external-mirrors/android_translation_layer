@@ -664,7 +664,7 @@ public class TableLayout extends LinearLayout {
 		return new LayoutParams(p);
 	}
 
-	/*	@Override
+	/*@Override
 	public void onInitializeAccessibilityEvent(AccessibilityEvent event) {
 		super.onInitializeAccessibilityEvent(event);
 		event.setClassName(TableLayout.class.getName());
@@ -675,7 +675,7 @@ public class TableLayout extends LinearLayout {
 		super.onInitializeAccessibilityNodeInfo(info);
 		info.setClassName(TableLayout.class.getName());
 	}
-*/
+	*/
 	/**
 	 * <p>This set of layout parameters enforces the width of each child to be
 	 * {@link #MATCH_PARENT} and the height of each child to be

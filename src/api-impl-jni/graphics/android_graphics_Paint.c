@@ -141,24 +141,14 @@ JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1text_1size(JNI
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter(JNIEnv *env, jclass clazz, jlong paint_ptr, jint mode, jint color)
 {
 	struct AndroidPaint *paint = _PTR(paint_ptr);
+	/* clang-format off */
 	graphene_matrix_init_from_float(&paint->color_matrix, (float[]){
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      0,
-								      1,
-							      });
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 1,
+	});
+	/* clang-format on */
 	graphene_vec4_init(&paint->color_offset, ((color >> 16) & 0xFF) / 255.f, ((color >> 8) & 0xFF) / 255.f, ((color >> 0) & 0xFF) / 255.f, 0);
 	paint->use_color_filter = mode != -1;
 }

@@ -46,16 +46,17 @@ void init__r_debug()
  */
 #if defined(__arm__) || defined(__aarch64__)
 /* this is the **ONLY** thread-local variable in the main executable, which means it has a well-known placement relative to the thread pointer */
+/* clang-format off */
 _Thread_local uintptr_t TLS[] = {
 	/* these are occupied by musl/glibc internal structures */
 	/* (tp - 3) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_STACK_MTE
 	/* (tp - 2) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_NATIVE_BRIDGE_GUEST_STATE
 	/* (tp - 1) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_BIONIC_TLS
-					       /* dtv (per spec) */
+	/* dtv (per spec) */
 	/* (tp + 0) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_DTV
-					       /* internal on glibc, seems to be unused on musl */
+	/* internal on glibc, seems to be unused on musl */
 	/* (tp + 1) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_THREAD_ID
-					       /* PT_TLS of main executable gets copied here (so this array!) */
+	/* PT_TLS of main executable gets copied here (so this array!) */
 	/* (tp + 2) = */ 0x5555555555555555,   // TLS_SLOT_APP
 	/* (tp + 3) = */ 0x5555555555555555,   // TLS_SLOT_OPENGL
 	/* (tp + 4) = */ 0x5555555555555555,   // TLS_SLOT_OPENGL_API
@@ -64,14 +65,14 @@ _Thread_local uintptr_t TLS[] = {
 	/* (tp + 7) = */ 0x5555555555555555,   // TLS_SLOT_ART_THREAD_SELF
 };
 #elif defined(__i386__) || defined(__x86_64__)
-/*
+	/*
 	 * PT_TLS goes before the thread pointer but bionic's slots go after
 	 * how fucked are we? let's see what an app will access on glibc/musl if it decides
 	 * to consider a particular slot a part of the platform ABI:
 	 */
 
-/* glibc (64bit): */
-/*
+	/* glibc (64bit): */
+	/*
 	 * typedef struct
 	 * {
 	 *	void *tcb;  // (tp + 0) TLS_SLOT_SELF
@@ -97,8 +98,8 @@ _Thread_local uintptr_t TLS[] = {
 	 * void *__padding[8];
 	 * } tcbhead_t;
 	 */
-/* glibc (32bit): */
-/*
+	/* glibc (32bit): */
+	/*
 	 * typedef struct
 	 * {
 	 *	void *tcb;  // (tp + 0) TLS_SLOT_SELF
@@ -119,8 +120,8 @@ _Thread_local uintptr_t TLS[] = {
 	 *	unsigned long  ssp_base;
 	 * } tcbhead_t;
 	 */
-/* musl: */
-/*
+	/* musl: */
+	/*
 	 * struct pthread {
 	 *	struct pthread *self; // (tp + 0) TLS_SLOT_SELF
 	 *	uintptr_t *dtv; // (tp + 1) TLS_SLOT_THREAD_ID
@@ -159,3 +160,4 @@ _Thread_local uintptr_t TLS[] = {
 	 * };
 	 */
 #endif
+/* clang-format on */

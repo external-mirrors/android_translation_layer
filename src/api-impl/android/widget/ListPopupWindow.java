@@ -960,7 +960,8 @@ public class ListPopupWindow {
 					lastItem = allEnabled ? adapter.getCount() - 1 : mDropDownList.lookForSelectablePosition(adapter.getCount() - 1, false);
 				}
 
-				if ((below && keyCode == KeyEvent.KEYCODE_DPAD_UP && curIndex <= firstItem) || (!below && keyCode == KeyEvent.KEYCODE_DPAD_DOWN && curIndex >= lastItem)) {
+				if ((below && keyCode == KeyEvent.KEYCODE_DPAD_UP && curIndex <= firstItem)
+				    || (!below && keyCode == KeyEvent.KEYCODE_DPAD_DOWN && curIndex >= lastItem)) {
 					// When the selection is at the top, we block the key
 					// event to prevent focus from moving.
 					clearListSelection();
@@ -1005,7 +1006,8 @@ public class ListPopupWindow {
 						if (curIndex == lastItem) {
 							return true;
 						}
-					} else if (!below && keyCode == KeyEvent.KEYCODE_DPAD_UP && curIndex == firstItem) {
+					} else if (!below && keyCode == KeyEvent.KEYCODE_DPAD_UP
+					           && curIndex == firstItem) {
 						return true;
 					}
 				}
@@ -1332,9 +1334,9 @@ public class ListPopupWindow {
 			final int x = (int)event.getX();
 			final int y = (int)event.getY();
 
-			// if (action == MotionEvent.ACTION_DOWN &&
-			// 		mPopup != null && mPopup.isShowing() &&
-			// 		(x >= 0 && x < mPopup.getWidth() && y >= 0 && y < mPopup.getHeight())) {
+			// if (action == MotionEvent.ACTION_DOWN
+			// 		&& mPopup != null && mPopup.isShowing()
+			// 		&& (x >= 0 && x < mPopup.getWidth() && y >= 0 && y < mPopup.getHeight())) {
 			// 	mHandler.postDelayed(mResizePopupRunnable, EXPAND_LIST_TIMEOUT);
 			// } else if (action == MotionEvent.ACTION_UP) {
 			// 	mHandler.removeCallbacks(mResizePopupRunnable);
@@ -1349,7 +1351,8 @@ public class ListPopupWindow {
 		}
 
 		public void onScrollStateChanged(AbsListView view, int scrollState) {
-			if (scrollState == SCROLL_STATE_TOUCH_SCROLL && !isInputMethodNotNeeded() && mPopup.getContentView() != null) {
+			if (scrollState == SCROLL_STATE_TOUCH_SCROLL
+			    && !isInputMethodNotNeeded() && mPopup.getContentView() != null) {
 				mHandler.removeCallbacks(mResizePopupRunnable);
 				mResizePopupRunnable.run();
 			}

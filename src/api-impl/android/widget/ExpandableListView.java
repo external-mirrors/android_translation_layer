@@ -535,7 +535,8 @@ public class ExpandableListView extends ListView {
 				// Empty check based on availability of data.  If the groupMetadata isn't null,
 				// we do a check on it. Otherwise, the group is collapsed so we consider it
 				// empty for performance reasons.
-				boolean isEmpty = (pos.groupMetadata == null) || (pos.groupMetadata.lastChildFlPos == pos.groupMetadata.flPos);
+				boolean isEmpty = (pos.groupMetadata == null)
+				               || (pos.groupMetadata.lastChildFlPos == pos.groupMetadata.flPos);
 
 				final int stateSetIndex =
 				    (pos.isExpanded() ? 1 : 0) | // Expanded?

@@ -71,7 +71,7 @@ public class NativeActivity extends Activity implements SurfaceHolder.Callback,
 	private static final String KEY_NATIVE_SAVED_STATE = "android:native_state";
 
 	private NativeContentView mNativeContentView;
-	//	private InputMethodManager mIMM;
+	//private InputMethodManager mIMM;
 
 	private long mNativeHandle;
 
@@ -128,14 +128,13 @@ public class NativeActivity extends Activity implements SurfaceHolder.Callback,
 		String funcname = "ANativeActivity_onCreate";
 		ActivityInfo ai;
 
-		//		mIMM = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+		//mIMM = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
 
-		//		getWindow().takeSurface(this);
+		//getWindow().takeSurface(this);
 		getWindow().takeInputQueue(this);
-		//		getWindow().setFormat(PixelFormat.RGB_565);
-		//		getWindow().setSoftInputMode(
-		//				WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
-		//				| WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		//getWindow().setFormat(PixelFormat.RGB_565);
+		//getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_UNSPECIFIED
+		//                             | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 
 		mNativeContentView = new NativeContentView(this);
 		mNativeContentView.mActivity = this;
@@ -144,7 +143,7 @@ public class NativeActivity extends Activity implements SurfaceHolder.Callback,
 		mNativeContentView.requestFocus();
 		mNativeContentView.getViewTreeObserver().addOnGlobalLayoutListener(this);
 
-		/*		try {
+		/*try {
 			ai = getPackageManager().getActivityInfo(
 					getIntent().getComponent(), PackageManager.GET_META_DATA);
 			if (ai.metaData != null) {
@@ -317,7 +316,7 @@ public class NativeActivity extends Activity implements SurfaceHolder.Callback,
 	}
 
 	public void onGlobalLayout() {
-		/*		mNativeContentView.getLocationInWindow(mLocation);
+		/*mNativeContentView.getLocationInWindow(mLocation);
 		int w = mNativeContentView.getWidth();
 		int h = mNativeContentView.getHeight();
 		if (mLocation[0] != mLastContentX || mLocation[1] != mLastContentY
@@ -334,18 +333,18 @@ public class NativeActivity extends Activity implements SurfaceHolder.Callback,
 	}
 
 	void setWindowFlags(int flags, int mask) {
-		//		getWindow().setFlags(flags, mask);
+		//getWindow().setFlags(flags, mask);
 	}
 
 	void setWindowFormat(int format) {
-		//		getWindow().setFormat(format);
+		//getWindow().setFormat(format);
 	}
 
 	void showIme(int mode) {
-		//		mIMM.showSoftInput(mNativeContentView, mode);
+		//mIMM.showSoftInput(mNativeContentView, mode);
 	}
 
 	void hideIme(int mode) {
-		//		mIMM.hideSoftInputFromWindow(mNativeContentView.getWindowToken(), mode);
+		//mIMM.hideSoftInputFromWindow(mNativeContentView.getWindowToken(), mode);
 	}
 }

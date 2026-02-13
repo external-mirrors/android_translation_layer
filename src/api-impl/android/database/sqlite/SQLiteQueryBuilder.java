@@ -612,7 +612,8 @@ public class SQLiteQueryBuilder {
 						continue;
 					}
 
-					if (!mStrict && (userColumn.contains(" AS ") || userColumn.contains(" as "))) {
+					if (!mStrict
+					    && (userColumn.contains(" AS ") || userColumn.contains(" as "))) {
 						/* A column alias already exist */
 						projection[i] = userColumn;
 						continue;

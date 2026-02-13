@@ -413,7 +413,8 @@ public class Scroller {
 			float ndy = dy / hyp;
 			float oldVelocityX = ndx * oldVel;
 			float oldVelocityY = ndy * oldVel;
-			if (Math.signum(velocityX) == Math.signum(oldVelocityX) && Math.signum(velocityY) == Math.signum(oldVelocityY)) {
+			if (Math.signum(velocityX) == Math.signum(oldVelocityX)
+			    && Math.signum(velocityY) == Math.signum(oldVelocityY)) {
 				velocityX += oldVelocityX;
 				velocityY += oldVelocityY;
 			}
@@ -530,7 +531,8 @@ public class Scroller {
 	 * @hide
 	 */
 	public boolean isScrollingInDirection(float xvel, float yvel) {
-		return !mFinished && Math.signum(xvel) == Math.signum(mFinalX - mStartX) && Math.signum(yvel) == Math.signum(mFinalY - mStartY);
+		return !mFinished && Math.signum(xvel) == Math.signum(mFinalX - mStartX)
+		    && Math.signum(yvel) == Math.signum(mFinalY - mStartY);
 	}
 
 	static class ViscousFluidInterpolator implements Interpolator {

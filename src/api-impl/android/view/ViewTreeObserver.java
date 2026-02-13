@@ -268,7 +268,10 @@ public final class ViewTreeObserver {
 				return false;
 
 			InternalInsetsInfo other = (InternalInsetsInfo)o;
-			return mTouchableInsets == other.mTouchableInsets && contentInsets.equals(other.contentInsets) && visibleInsets.equals(other.visibleInsets) && touchableRegion.equals(other.touchableRegion);
+			return mTouchableInsets == other.mTouchableInsets
+			    && contentInsets.equals(other.contentInsets)
+			    && visibleInsets.equals(other.visibleInsets)
+			    && touchableRegion.equals(other.touchableRegion);
 		}
 
 		void set(InternalInsetsInfo other) {

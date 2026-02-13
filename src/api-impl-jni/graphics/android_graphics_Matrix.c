@@ -258,10 +258,12 @@ JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1setValues(JNIEnv *en
 	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
 	jfloat *values = (*env)->GetFloatArrayElements(env, values_ref, NULL);
 	float values4x4[4][4] = {
+		/* clang-format off */
 		{values[android_graphics_Matrix_MSCALE_X],  values[android_graphics_Matrix_MSKEW_X], 0, values[android_graphics_Matrix_MTRANS_X]},
 		{ values[android_graphics_Matrix_MSKEW_Y], values[android_graphics_Matrix_MSCALE_Y], 0, values[android_graphics_Matrix_MTRANS_Y]},
-		{				       0,					0, 1,					0},
+		{                                       0,                                        0, 1,                                        0},
 		{values[android_graphics_Matrix_MPERSP_0], values[android_graphics_Matrix_MPERSP_1], 0, values[android_graphics_Matrix_MPERSP_2]},
+		/* clang-format on */
 	};
 	graphene_matrix_init_from_float(matrix, *values4x4);
 	(*env)->ReleaseFloatArrayElements(env, values_ref, values, 0);

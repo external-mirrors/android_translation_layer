@@ -721,7 +721,8 @@ public class AnimatorInflater {
 		ArrayList<PropertyValuesHolder> values = null;
 
 		int type;
-		while ((type = parser.getEventType()) != XmlPullParser.END_TAG && type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.getEventType()) != XmlPullParser.END_TAG
+		       && type != XmlPullParser.END_DOCUMENT) {
 
 			if (type != XmlPullParser.START_TAG) {
 				parser.next();
@@ -838,8 +839,8 @@ public class AnimatorInflater {
 		ArrayList<Keyframe> keyframes = null;
 
 		int type;
-		while ((type = parser.next()) != XmlPullParser.END_TAG &&
-		       type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.next()) != XmlPullParser.END_TAG
+		       && type != XmlPullParser.END_DOCUMENT) {
 			String name = parser.getName();
 			if (name.equals("keyframe")) {
 				if (valueType == VALUE_TYPE_UNDEFINED) {

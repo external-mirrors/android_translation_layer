@@ -293,8 +293,10 @@ public class TypedValue {
 	private static final float MANTISSA_MULT =
 	    1.0f / (1 << TypedValue.COMPLEX_MANTISSA_SHIFT);
 	private static final float[] RADIX_MULTS = new float[] {
-		1.0f * MANTISSA_MULT, 1.0f / (1 << 7) * MANTISSA_MULT,
-		1.0f / (1 << 15) * MANTISSA_MULT, 1.0f / (1 << 23) * MANTISSA_MULT
+		1.0f * MANTISSA_MULT,
+		1.0f / (1 << 7) * MANTISSA_MULT,
+		1.0f / (1 << 15) * MANTISSA_MULT,
+		1.0f / (1 << 23) * MANTISSA_MULT,
 	};
 
 	/**
@@ -308,7 +310,8 @@ public class TypedValue {
 	 * @return A floating point value corresponding to the complex data.
 	 */
 	public static float complexToFloat(int complex) {
-		return (complex & (TypedValue.COMPLEX_MANTISSA_MASK << TypedValue.COMPLEX_MANTISSA_SHIFT)) * RADIX_MULTS[(complex >> TypedValue.COMPLEX_RADIX_SHIFT) & TypedValue.COMPLEX_RADIX_MASK];
+		return (complex & (TypedValue.COMPLEX_MANTISSA_MASK << TypedValue.COMPLEX_MANTISSA_SHIFT))
+		     * RADIX_MULTS[(complex >> TypedValue.COMPLEX_RADIX_SHIFT) & TypedValue.COMPLEX_RADIX_MASK];
 	}
 
 	/**
@@ -392,8 +395,11 @@ public class TypedValue {
 
 	public static float complexToDimensionNoisy(int data, DisplayMetrics metrics) {
 		float res = complexToDimension(data, metrics);
-		System.out.println(
-		    "Dimension (0x" + ((data >> TypedValue.COMPLEX_MANTISSA_SHIFT) & TypedValue.COMPLEX_MANTISSA_MASK) + "*" + (RADIX_MULTS[(data >> TypedValue.COMPLEX_RADIX_SHIFT) & TypedValue.COMPLEX_RADIX_MASK] / MANTISSA_MULT) + ")" + DIMENSION_UNIT_STRS[(data >> COMPLEX_UNIT_SHIFT) & COMPLEX_UNIT_MASK] + " = " + res);
+		System.out.println(String.format("Dimension (0x%s*%s)%s = %s",
+		                                 ((data >> COMPLEX_MANTISSA_SHIFT) & COMPLEX_MANTISSA_MASK),
+		                                 (RADIX_MULTS[(data >> COMPLEX_RADIX_SHIFT) & COMPLEX_RADIX_MASK] / MANTISSA_MULT),
+		                                 DIMENSION_UNIT_STRS[(data >> COMPLEX_UNIT_SHIFT) & COMPLEX_UNIT_MASK],
+		                                 res));
 		return res;
 	}
 
