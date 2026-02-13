@@ -22,7 +22,6 @@ import android.os.Trace;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
@@ -412,7 +411,7 @@ public class BitmapFactory {
 	 * resources, which we pass to be able to scale the bitmap accordingly.
 	 */
 	public static Bitmap decodeResourceStream(Resources res, TypedValue value,
-						  InputStream is, Rect pad, Options opts) {
+	                                          InputStream is, Rect pad, Options opts) {
 
 		if (opts == null) {
 			opts = new Options();
@@ -637,15 +636,15 @@ public class BitmapFactory {
 			//if (nativeIsSeekable(fd)) {
 			//	bm = nativeDecodeFileDescriptor(fd, outPadding, opts);
 			//} else {
-				FileInputStream fis = new FileInputStream(fd);
+			FileInputStream fis = new FileInputStream(fd);
+			try {
+				bm = decodeStreamInternal(fis, outPadding, opts);
+			} finally {
 				try {
-					bm = decodeStreamInternal(fis, outPadding, opts);
-				} finally {
-					try {
-						fis.close();
-					} catch (Throwable t) { /* ignore */
-					}
+					fis.close();
+				} catch (Throwable t) { /* ignore */
 				}
+			}
 			//}
 
 			if (bm == null && opts != null && opts.inBitmap != null) {
@@ -672,11 +671,11 @@ public class BitmapFactory {
 	}
 
 	private static native long nativeDecodeStream(InputStream is, byte[] storage,
-							Rect padding, Options opts);
+	                                              Rect padding, Options opts);
 	private static native Bitmap nativeDecodeFileDescriptor(FileDescriptor fd,
-								Rect padding, Options opts);
+	                                                        Rect padding, Options opts);
 	private static native Bitmap nativeDecodeAsset(int asset, Rect padding, Options opts);
 	private static native Bitmap nativeDecodeByteArray(byte[] data, int offset,
-							   int length, Options opts);
+	                                                   int length, Options opts);
 	private static native boolean nativeIsSeekable(FileDescriptor fd);
 }

@@ -727,7 +727,7 @@ public class Environment {
 	private static void throwIfUserRequired() {
 		if (sUserRequired) {
 			Log.wtf(TAG, "Path requests must specify a user by using UserEnvironment",
-				new Throwable());
+			        new Throwable());
 		}
 	}
 
@@ -783,7 +783,7 @@ public class Environment {
 			final String rawPath = path.getCanonicalPath();
 			if (rawPath.startsWith(CANONCIAL_EMULATED_STORAGE_TARGET)) {
 				final File internalPath = new File(DIR_MEDIA_STORAGE,
-								   rawPath.substring(CANONCIAL_EMULATED_STORAGE_TARGET.length()));
+				                                   rawPath.substring(CANONCIAL_EMULATED_STORAGE_TARGET.length()));
 				if (internalPath.exists()) {
 					return internalPath;
 				}

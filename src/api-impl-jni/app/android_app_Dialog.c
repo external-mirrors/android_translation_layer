@@ -35,12 +35,13 @@ JNIEXPORT jlong JNICALL Java_android_app_Dialog_nativeInit(JNIEnv *env, jobject 
 JNIEXPORT void JNICALL Java_android_app_Dialog_nativeSetTitle(JNIEnv *env, jobject this, jlong ptr, jstring title)
 {
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
-	const char* nativeTitle = (*env)->GetStringUTFChars(env, title, NULL);
+	const char *nativeTitle = (*env)->GetStringUTFChars(env, title, NULL);
 	gtk_window_set_title(dialog, nativeTitle);
 	(*env)->ReleaseStringUTFChars(env, title, nativeTitle);
 }
 
-JNIEXPORT void JNICALL Java_android_app_Dialog_nativeSetContentView(JNIEnv *env, jobject this, jlong ptr, jlong widget_ptr) {
+JNIEXPORT void JNICALL Java_android_app_Dialog_nativeSetContentView(JNIEnv *env, jobject this, jlong ptr, jlong widget_ptr)
+{
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 

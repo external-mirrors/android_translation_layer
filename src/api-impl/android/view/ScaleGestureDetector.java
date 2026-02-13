@@ -23,8 +23,7 @@ public class ScaleGestureDetector {
 	}
 
 	public static class SimpleOnScaleGestureListener implements OnScaleGestureListener {
-		public SimpleOnScaleGestureListener () {
-			
+		public SimpleOnScaleGestureListener() {
 		}
 
 		public boolean onScale(ScaleGestureDetector detector) {
@@ -34,7 +33,6 @@ public class ScaleGestureDetector {
 			return true;
 		}
 		public void onScaleEnd(ScaleGestureDetector detector) {
-			
 		}
 	}
 }

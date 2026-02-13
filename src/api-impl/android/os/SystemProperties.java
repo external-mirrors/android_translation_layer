@@ -7,7 +7,8 @@ public class SystemProperties {
 
 	static {
 		String SDK_INT_str = System.getProperty("Build.VERSION.SDK_INT");
-		if (SDK_INT_str == null) SDK_INT_str = "" + Build.VERSION_CODES.GINGERBREAD;
+		if (SDK_INT_str == null)
+			SDK_INT_str = "" + Build.VERSION_CODES.GINGERBREAD;
 		properties.put("ro.build.version.sdk", SDK_INT_str);
 		properties.put("ro.product.brand", "google");
 		properties.put("ro.build.tags", "release-keys");

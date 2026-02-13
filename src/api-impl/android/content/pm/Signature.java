@@ -104,8 +104,8 @@ public class Signature {
 		final int N = sig.length;
 		final int N2 = N * 2;
 		char[] text = existingArray == null || N2 > existingArray.length
-				  ? new char[N2]
-				  : existingArray;
+		                ? new char[N2]
+		                : existingArray;
 		for (int j = 0; j < N; j++) {
 			byte v = sig[j];
 			int d = (v >> 4) & 0xf;

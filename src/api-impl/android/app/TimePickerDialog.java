@@ -1,8 +1,8 @@
 package android.app;
 
 import android.content.Context;
-import android.widget.TimePicker;
 import android.util.TypedValue;
+import android.widget.TimePicker;
 import com.android.internal.R;
 
 public class TimePickerDialog extends AlertDialog implements TimePicker.OnTimeChangedListener {
@@ -14,7 +14,7 @@ public class TimePickerDialog extends AlertDialog implements TimePicker.OnTimeCh
 		this(context, 0, listener, hourOfDay, minute, is24HourView);
 	}
 
-	public TimePickerDialog(Context context, int themeResId, OnTimeSetListener listener, int hourOfDay, int minute, boolean is24HourView)  {
+	public TimePickerDialog(Context context, int themeResId, OnTimeSetListener listener, int hourOfDay, int minute, boolean is24HourView) {
 		super(context, resolveDialogTheme(context, themeResId));
 
 		time_set_listener = listener;
@@ -25,7 +25,7 @@ public class TimePickerDialog extends AlertDialog implements TimePicker.OnTimeCh
 		time_picker.setOnTimeChangedListener(this);
 		setView(time_picker);
 	}
-	
+
 	public void updateTime(int hourOfDay, int minuteOfHour) {
 		time_picker.setHour(hourOfDay);
 		time_picker.setMinute(minuteOfHour);

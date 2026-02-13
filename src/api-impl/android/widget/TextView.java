@@ -74,16 +74,19 @@ public class TextView extends View {
 				setTextSize(a.getDimensionPixelSize(com.android.internal.R.styleable.TextView_textSize, 10));
 			}
 
-			if(a.hasValue(com.android.internal.R.styleable.TextView_textStyle)) {
+			if (a.hasValue(com.android.internal.R.styleable.TextView_textStyle)) {
 				int textStyle = a.getInt(com.android.internal.R.styleable.TextView_textStyle, 0);
 				setTypeface(getTypeface(), textStyle);
 			}
 
-			if(a.hasValue(com.android.internal.R.styleable.TextView_textAllCaps)) {
+			if (a.hasValue(com.android.internal.R.styleable.TextView_textAllCaps)) {
 				boolean allCaps = a.getBoolean(com.android.internal.R.styleable.TextView_textAllCaps, false);
 				setAllCaps(allCaps);
 			}
-		} catch(java.lang.Exception e) { System.out.println("exception while inflating TextView:"); e.printStackTrace(); }
+		} catch (java.lang.Exception e) {
+			System.out.println("exception while inflating TextView:");
+			e.printStackTrace();
+		}
 
 		a.recycle();
 		haveCustomMeasure = false;
@@ -115,8 +118,8 @@ public class TextView extends View {
 	public native final void native_setText(String text);
 
 	public void setTextSize(int unit, float size) {
-		if(unit != TypedValue.COMPLEX_UNIT_SP)
-			System.out.println("setTextSize called with non-SP unit ("+unit+"), we don't currently handle that");
+		if (unit != TypedValue.COMPLEX_UNIT_SP)
+			System.out.println("setTextSize called with non-SP unit (" + unit + "), we don't currently handle that");
 		setTextSize(size);
 	}
 	public native void setTextSize(float size);
@@ -135,7 +138,7 @@ public class TextView extends View {
 		String[] classesToRemove = {"ATL-font-bold", "ATL-font-italic"};
 		native_removeClasses(widget, classesToRemove);
 
-		switch(style) {
+		switch (style) {
 			case Typeface.BOLD:
 				native_addClass(widget, "ATL-font-bold");
 				break;
@@ -199,16 +202,16 @@ public class TextView extends View {
 	public void setMinWidth(int minWidth) {}
 	public void setMaxWidth(int maxWidth) {}
 
-	public Typeface getTypeface() {return null;}
+	public Typeface getTypeface() { return null; }
 
-	public float getTextSize() {return 10;}
+	public float getTextSize() { return 10; }
 
 	public int getGravity() {
 		return Gravity.CENTER;
 	}
 
-	public int getCompoundPaddingTop() {return 0;}
-	public int getCompoundPaddingBottom() {return 0;}
+	public int getCompoundPaddingTop() { return 0; }
+	public int getCompoundPaddingBottom() { return 0; }
 
 	public CharSequence getText() {
 		return text;
@@ -226,10 +229,10 @@ public class TextView extends View {
 
 	public void setCompoundDrawables(Drawable left, Drawable top, Drawable right, Drawable bottom) {
 		native_setCompoundDrawables(widget,
-				left != null ? left.paintable : 0,
-				top != null ? top.paintable : 0,
-				right != null ? right.paintable : 0,
-				bottom != null ? bottom.paintable : 0);
+		                            left != null ? left.paintable : 0,
+		                            top != null ? top.paintable : 0,
+		                            right != null ? right.paintable : 0,
+		                            bottom != null ? bottom.paintable : 0);
 		drawableLeft = left;
 		drawableTop = top;
 		drawableRight = right;
@@ -240,7 +243,7 @@ public class TextView extends View {
 		String[] classesToRemove = {"ATL-text-uppercase"};
 		native_removeClasses(widget, classesToRemove);
 
-		if(allCaps){
+		if (allCaps) {
 			native_addClass(widget, "ATL-text-uppercase");
 		}
 	}
@@ -251,23 +254,23 @@ public class TextView extends View {
 
 	public void setEditableFactory(Editable.Factory factory) {}
 
-	public KeyListener getKeyListener() {return null;}
+	public KeyListener getKeyListener() { return null; }
 
-	public int getInputType() {return 0;}
+	public int getInputType() { return 0; }
 
 	public final void setTransformationMethod(TransformationMethod method) {}
 
-	public InputFilter[] getFilters() {return new InputFilter[0];}
+	public InputFilter[] getFilters() { return new InputFilter[0]; }
 
-	public int getMaxLines() {return -1;}
+	public int getMaxLines() { return -1; }
 
 	public void setCompoundDrawablesRelative(Drawable start, Drawable top, Drawable end, Drawable bottom) {
 		setCompoundDrawables(start, top, end, bottom);
 	}
 
-	public int getLineCount() {return 1;}
+	public int getLineCount() { return 1; }
 
-	public URLSpan[] getUrls() {return new URLSpan[0];}
+	public URLSpan[] getUrls() { return new URLSpan[0]; }
 
 	public void setMovementMethod(MovementMethod method) {}
 
@@ -277,10 +280,10 @@ public class TextView extends View {
 		return new BaseMovementMethod();
 	}
 
-	public CharSequence getHint() {return "HINT";}
+	public CharSequence getHint() { return "HINT"; }
 
-	public int getMinHeight() {return 0;}
-	public int getMinWidth() {return 0;}
+	public int getMinHeight() { return 0; }
+	public int getMinWidth() { return 0; }
 	public void setMinHeight(int minHeight) {}
 
 	public void setHorizontallyScrolling(boolean whether) {}
@@ -308,23 +311,23 @@ public class TextView extends View {
 
 	public void setSingleLine(boolean singleLine) {}
 
-	public int getCompoundPaddingLeft() {return 0;}
+	public int getCompoundPaddingLeft() { return 0; }
 
-	public int getCompoundPaddingRight() {return 0;}
+	public int getCompoundPaddingRight() { return 0; }
 
 	public void setHint(int resId) {
 		setHint(getContext().getResources().getText(resId));
 	}
 
-	public float getLetterSpacing() {return 0.f;}
+	public float getLetterSpacing() { return 0.f; }
 
 	public void setCompoundDrawablesRelativeWithIntrinsicBounds(int start, int top, int end, int bottom) {}
 
 	public void setCompoundDrawablesRelativeWithIntrinsicBounds(Drawable start, Drawable top, Drawable end, Drawable bottom) {}
 
-	public boolean getLinksClickable() {return true;}
+	public boolean getLinksClickable() { return true; }
 
-	public boolean isTextSelectable() {return true;}
+	public boolean isTextSelectable() { return true; }
 
 	public void setCompoundDrawablesWithIntrinsicBounds(int left, int top, int right, int bottom) {}
 
@@ -332,9 +335,9 @@ public class TextView extends View {
 
 	public void setHint(CharSequence s) {}
 
-	public Drawable[] getCompoundDrawablesRelative() {return new Drawable[4];}
+	public Drawable[] getCompoundDrawablesRelative() { return new Drawable[4]; }
 
-	public Drawable[] getCompoundDrawables() {return new Drawable[4];}
+	public Drawable[] getCompoundDrawables() { return new Drawable[4]; }
 
 	public void setTextAppearance(int dummy) {}
 
@@ -348,7 +351,7 @@ public class TextView extends View {
 		return new SpannableStringBuilder(getText());
 	}
 
-	public int getMaxWidth() {return 1000;}
+	public int getMaxWidth() { return 1000; }
 
 	public void nullLayouts() {}
 
@@ -356,11 +359,11 @@ public class TextView extends View {
 
 	public void setCustomSelectionActionModeCallback(ActionMode.Callback actionModeCallback) {}
 
-	public int getExtendedPaddingTop() {return 0;}
+	public int getExtendedPaddingTop() { return 0; }
 
 	public void setRawInputType(int type) {}
 
-	public TextUtils.TruncateAt getEllipsize() {return null;}
+	public TextUtils.TruncateAt getEllipsize() { return null; }
 
 	public void setLines(int lines) {}
 
@@ -372,9 +375,9 @@ public class TextView extends View {
 
 	public void setSelectAllOnFocus(boolean selectAllOnFocus) {}
 
-	public int getCompoundDrawablePadding() {return 0;}
+	public int getCompoundDrawablePadding() { return 0; }
 
-	public int getPaintFlags() {return 0;}
+	public int getPaintFlags() { return 0; }
 
 	public void setPaintFlags(int flags) {}
 
@@ -398,7 +401,7 @@ public class TextView extends View {
 
 	public void setIncludeFontPadding(boolean includePadding) {}
 
-	public float getLineSpacingExtra() {return 0.f;}
+	public float getLineSpacingExtra() { return 0.f; }
 
 	public Bundle getInputExtras(boolean key) {
 		return new Bundle();
@@ -408,15 +411,15 @@ public class TextView extends View {
 		System.out.println("ERROR: " + error);
 	}
 
-	public int getTotalPaddingLeft() {return 0;}
+	public int getTotalPaddingLeft() { return 0; }
 
-	public int getTotalPaddingTop() {return 0;}
+	public int getTotalPaddingTop() { return 0; }
 
-	public int getTotalPaddingRight() {return 0;}
+	public int getTotalPaddingRight() { return 0; }
 
-	public int getTotalPaddingBottom() {return 0;}
+	public int getTotalPaddingBottom() { return 0; }
 
-	public int getImeOptions() {return 0;}
+	public int getImeOptions() { return 0; }
 
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
@@ -426,5 +429,5 @@ public class TextView extends View {
 
 	public void setKeyListener(KeyListener keyListener) {}
 
-	public int getAutoLinkMask() {return 0;}
+	public int getAutoLinkMask() { return 0; }
 }

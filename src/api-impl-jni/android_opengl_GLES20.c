@@ -14,7 +14,7 @@ JNIEXPORT jstring JNICALL Java_android_opengl_GLES20_glGetString(JNIEnv *env, jc
 
 JNIEXPORT jint JNICALL Java_android_opengl_GLES20_glGetError(JNIEnv *env, jclass)
 {
-	return (jint) glGetError();
+	return (jint)glGetError();
 }
 
 JNIEXPORT void JNICALL Java_android_opengl_GLES20_glGetIntegerv__I_3II(JNIEnv *env, jclass, jint pname, jintArray params_ref, jint offset)
@@ -38,7 +38,6 @@ JNIEXPORT void JNICALL Java_android_opengl_GLES20_glVertexAttribPointerBounds(JN
 	glVertexAttribPointer(index, size, type, normalized, stride, pixels);
 	release_nio_buffer(env, array_ref, array);
 }
-
 
 JNIEXPORT void JNICALL Java_android_opengl_GLES20_glDisable(JNIEnv *env, jclass, jint cap)
 {
@@ -231,7 +230,7 @@ JNIEXPORT void JNICALL Java_android_opengl_GLES20_glDeleteTextures(JNIEnv *env, 
 {
 	jint *tex = (*env)->GetIntArrayElements(env, textures, NULL);
 
-	glDeleteTextures((GLsizei) n, (const GLuint*) tex + (4 * offset));
+	glDeleteTextures((GLsizei)n, (const GLuint *)tex + (4 * offset));
 
 	(*env)->ReleaseIntArrayElements(env, textures, tex, 0);
 }

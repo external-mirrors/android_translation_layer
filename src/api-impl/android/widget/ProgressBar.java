@@ -28,7 +28,7 @@ public class ProgressBar extends View {
 			setIndeterminate(true);
 		}
 		/* FIXME hack: NewPipe expects this to not be null, but for some reason it is */
-		if(indeterminateDrawable == null)
+		if (indeterminateDrawable == null)
 			indeterminateDrawable = new Drawable() {
 				@Override
 				public void draw(Canvas canvas) {
@@ -59,7 +59,6 @@ public class ProgressBar extends View {
 		native_setIndeterminate(indeterminate);
 		indeterminate = true;
 	}
-
 
 	public Drawable getProgressDrawable() {
 		return progressDrawable;

@@ -13,5 +13,4 @@ public class StyleSpan extends MetricAffectingSpan implements ParcelableSpan {
 	public int getStyle() {
 		return style;
 	}
-
 }

@@ -408,8 +408,8 @@ public abstract class Context {
 		ComponentName component = intent.getComponent();
 		if (component == null) {
 			int priority = Integer.MIN_VALUE;
-			for (PackageParser.Service service: pkg.services) {
-				for (PackageParser.IntentInfo intentInfo: service.intents) {
+			for (PackageParser.Service service : pkg.services) {
+				for (PackageParser.IntentInfo intentInfo : service.intents) {
 					if (intentInfo.matchAction(intent.getAction()) && intentInfo.priority > priority) {
 						component = new ComponentName(pkg.packageName, service.className);
 						priority = intentInfo.priority;
@@ -501,7 +501,7 @@ public abstract class Context {
 			}
 		}
 		if (intent.getComponent() == null) {
-			Slog.w(TAG, "Context.bindService("+intent+", "+serviceConnection+", "+flags+"): intent.getComponent() is null");
+			Slog.w(TAG, "Context.bindService(" + intent + ", " + serviceConnection + ", " + flags + "): intent.getComponent() is null");
 			return false;
 		}
 
@@ -532,8 +532,8 @@ public abstract class Context {
 			className = intent.getComponent().getClassName();
 		} else {
 			int best_score = -5;
-			for (PackageParser.Activity activity: pkg.activities) {
-				for (PackageParser.IntentInfo intentInfo: activity.intents) {
+			for (PackageParser.Activity activity : pkg.activities) {
+				for (PackageParser.IntentInfo intentInfo : activity.intents) {
 					int score = intentInfo.match(intent.getAction(), intent.getType(), intent.getScheme(), intent.getData(), intent.getCategories(), "Context");
 					if (score > best_score && score > 0) {
 						className = activity.className;
@@ -583,7 +583,7 @@ public abstract class Context {
 						}
 					}
 				};
-				if(Looper.myLooper() == Looper.getMainLooper()) {
+				if (Looper.myLooper() == Looper.getMainLooper()) {
 					runnable.run();
 				} else {
 					new Handler(Looper.getMainLooper()).post(runnable);
@@ -602,8 +602,8 @@ public abstract class Context {
 				Activity.nativeOpenURI(String.valueOf(intent.getData()));
 				return;
 			}
-			for (PackageParser.Activity activity: pkg.activities) {
-				for (PackageParser.IntentInfo intentInfo: activity.intents) {
+			for (PackageParser.Activity activity : pkg.activities) {
+				for (PackageParser.IntentInfo intentInfo : activity.intents) {
 					if (intentInfo.matchAction(intent.getAction())) {
 						className = activity.className;
 						break;
@@ -712,7 +712,8 @@ public abstract class Context {
 	public void unbindService(ServiceConnection serviceConnection) {}
 
 	public void unregisterReceiver(BroadcastReceiver receiver) {
-		while (receiverMap.values().remove(receiver));
+		while (receiverMap.values().remove(receiver))
+			;
 	}
 
 	public abstract Context createPackageContext(String packageName, int flags);

@@ -64,14 +64,14 @@ public class Parcel {
 			p.writeToParcel(this, flags);
 	}
 
-	public void writeSerializable (Serializable s) {
+	public void writeSerializable(Serializable s) {
 		System.out.println("Parcel.writeSerializable(" + s + ")");
 		try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
+		     ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream)) {
 			objectOutputStream.writeObject(s);
 			byte[] byteArray = byteArrayOutputStream.toByteArray();
 			native_writeString(builder, Base64.getEncoder().encodeToString(byteArray));
-		} catch(Exception exception) {
+		} catch (Exception exception) {
 			throw new RuntimeException("Parcel.writeSerializable failed", exception);
 		}
 	}
@@ -163,15 +163,15 @@ public class Parcel {
 
 	public Object readValue(ClassLoader loader) throws ReflectiveOperationException {
 		switch (native_readInt(iter)) {
-		case 0:
-			return native_readString(iter);
-		case 1:
-			return native_readInt(iter);
-		case 2:
-			return readParcelable(loader);
-		case 3:
-		default:
-			throw new RuntimeException("Unsupported value type: " + native_readInt(iter));
+			case 0:
+				return native_readString(iter);
+			case 1:
+				return native_readInt(iter);
+			case 2:
+				return readParcelable(loader);
+			case 3:
+			default:
+				throw new RuntimeException("Unsupported value type: " + native_readInt(iter));
 		}
 	}
 

@@ -1,11 +1,11 @@
-#include <sys/poll.h>
-#include <wayland-server.h>
-#include <GL/gl.h>
 #include <EGL/egl.h>
 #include <EGL/eglext.h>
-#include <gtk/gtk.h>
+#include <GL/gl.h>
 #include <gdk/wayland/gdkwayland.h>
 #include <gdk/x11/gdkx.h>
+#include <gtk/gtk.h>
+#include <sys/poll.h>
+#include <wayland-server.h>
 
 #include "../api-impl-jni/defines.h"
 #include "../api-impl-jni/widgets/android_view_SurfaceView.h"
@@ -15,11 +15,12 @@ static GdkGLContext *gl_context_gtk = NULL;
 static struct wl_event_loop *event_loop = NULL;
 static PFNEGLQUERYWAYLANDBUFFERWL eglQueryWaylandBufferWL = NULL;
 static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = NULL;
-static GMutex mutex;  // synchronize access to wl_display_server
+static GMutex mutex; // synchronize access to wl_display_server
 static struct wl_display *wl_display_server;
 
 /* runs on main thread */
-static gboolean delete_texture(void *data) {
+static gboolean delete_texture(void *data)
+{
 	GLuint texture_id = (uintptr_t)data;
 	gdk_gl_context_make_current(gl_context_gtk);
 	glDeleteTextures(1, &texture_id);
@@ -78,7 +79,7 @@ static void draw_callback(SurfaceViewWidget *surface_view_widget)
 	g_mutex_lock(&mutex);
 	struct surface *surface = surface_view_widget->frame_callback_data;
 	if (surface && surface->frame_callback) {
-		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time()/1000);
+		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time() / 1000);
 		wl_resource_destroy(surface->frame_callback);
 		surface->frame_callback = NULL;
 		wl_event_source_timer_update(surface->frame_timer, 0);
@@ -125,7 +126,8 @@ static gboolean render_texture(void *data)
 	return G_SOURCE_REMOVE;
 }
 
-static void buffer_destroy_listener(struct wl_listener *listener, void *data) {
+static void buffer_destroy_listener(struct wl_listener *listener, void *data)
+{
 	BufferData *buffer = wl_container_of(listener, buffer, buffer_destroy_listener);
 	buffer->destroyed = TRUE;
 	g_object_unref(buffer);
@@ -160,7 +162,7 @@ static void surface_frame(struct wl_client *client, struct wl_resource *resource
 	surface->surface_view_widget->frame_callback = draw_callback;
 	surface->surface_view_widget->frame_callback_data = surface;
 	// this timer is required in case the main thread and the wayland server thread deadlock each other waiting for the next frame_callback
-	wl_event_source_timer_update(surface->frame_timer, 1000/20);
+	wl_event_source_timer_update(surface->frame_timer, 1000 / 20);
 }
 
 static void surface_damage(struct wl_client *client, struct wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height)
@@ -171,7 +173,7 @@ static int frame_timer(void *data)
 {
 	struct surface *surface = data;
 	if (surface->frame_callback) {
-		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time()/1000);
+		wl_callback_send_done(surface->frame_callback, g_get_monotonic_time() / 1000);
 		wl_resource_destroy(surface->frame_callback);
 		surface->frame_callback = NULL;
 	}
@@ -212,7 +214,7 @@ static void surface_set_buffer_scale(struct wl_client *client, struct wl_resourc
 static void surface_set_buffer_transform(struct wl_client *client, struct wl_resource *resource, int32_t transform)
 {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	surface->surface_view_widget = _PTR((((uint64_t)(uintptr_t)surface->surface_view_widget) & 0x00000000ffffffffL) | ((uintptr_t)(uint32_t)transform)<<32);
+	surface->surface_view_widget = _PTR((((uint64_t)(uintptr_t)surface->surface_view_widget) & 0x00000000ffffffffL) | ((uintptr_t)(uint32_t)transform) << 32);
 }
 
 static struct wl_surface_interface surface_implementation = {
@@ -238,7 +240,8 @@ static struct wl_compositor_interface compositor_implementation = {
 	.create_surface = compositor_create_surface,
 };
 
-static void compositor_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id) {
+static void compositor_bind(struct wl_client *client, void *data, uint32_t version, uint32_t id)
+{
 	struct wl_resource *resource = wl_resource_create(client, &wl_compositor_interface, 1, id);
 	wl_resource_set_implementation(resource, &compositor_implementation, NULL, NULL);
 }
@@ -269,10 +272,10 @@ struct wl_display *wayland_server_start()
 		struct wl_display *wl_display = gdk_wayland_display_get_wl_display(gdk_display);
 		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_WAYLAND_KHR, wl_display, NULL);
 	} else if (GDK_IS_X11_DISPLAY(gdk_display)) {
-		#pragma GCC diagnostic push
-		#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 		Display *x11_display = gdk_x11_display_get_xdisplay(gdk_display);
-		#pragma GCC diagnostic pop
+#pragma GCC diagnostic pop
 		egl_display_gtk = eglGetPlatformDisplay(EGL_PLATFORM_X11_KHR, x11_display, NULL);
 	}
 	gl_context_gtk = gdk_surface_create_gl_context(gtk_native_get_surface(GTK_NATIVE(window)), NULL);

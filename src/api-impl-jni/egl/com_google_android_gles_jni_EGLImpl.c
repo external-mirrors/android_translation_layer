@@ -8,7 +8,8 @@
 #include "../generated_headers/com_google_android_gles_jni_EGLImpl.h"
 
 // helpers from android source (TODO: either use GetIntArrayElements, or figure out if GetPrimitiveArrayCritical is superior and use it everywhere if so)
-static jint* get_int_array_crit(JNIEnv *env, jintArray array) {
+static jint *get_int_array_crit(JNIEnv *env, jintArray array)
+{
 	if (array != NULL) {
 		return (jint *)(*env)->GetPrimitiveArrayCritical(env, array, (jboolean *)0);
 	} else {
@@ -16,7 +17,8 @@ static jint* get_int_array_crit(JNIEnv *env, jintArray array) {
 	}
 }
 
-static void release_int_array_crit(JNIEnv *env, jintArray array, jint* base) {
+static void release_int_array_crit(JNIEnv *env, jintArray array, jint *base)
+{
 	if (array != NULL) {
 		(*env)->ReleasePrimitiveArrayCritical(env, array, base, JNI_ABORT);
 	}
@@ -24,15 +26,17 @@ static void release_int_array_crit(JNIEnv *env, jintArray array, jint* base) {
 
 // ---
 
-static jlong* get_long_array_crit(JNIEnv *env, jlongArray array) {
+static jlong *get_long_array_crit(JNIEnv *env, jlongArray array)
+{
 	if (array != NULL) {
 		return (jlong *)(*env)->GetPrimitiveArrayCritical(env, array, (jboolean *)0);
 	} else {
-		return(jlong*) NULL; // FIXME - do apps expect us to use some default?
+		return (jlong *)NULL; // FIXME - do apps expect us to use some default?
 	}
 }
 
-static void release_long_array_crit(JNIEnv *env, jlongArray array, jlong* base) {
+static void release_long_array_crit(JNIEnv *env, jlongArray array, jlong *base)
+{
 	if (array != NULL) {
 		(*env)->ReleasePrimitiveArrayCritical(env, array, base, JNI_ABORT);
 	}
@@ -56,9 +60,9 @@ JNIEXPORT jboolean JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1egl
 {
 	int ret;
 
-	jint* attrib_base = get_int_array_crit(env, attrib_list);
-	jlong* configs_base = get_long_array_crit(env, egl_configs);
-	jint* num_config_base = get_int_array_crit(env, num_config);
+	jint *attrib_base = get_int_array_crit(env, attrib_list);
+	jlong *configs_base = get_long_array_crit(env, egl_configs);
+	jint *num_config_base = get_int_array_crit(env, num_config);
 
 	ret = eglChooseConfig(_PTR(egl_display), attrib_base, egl_configs ? _PTR(configs_base) : NULL, config_size, num_config_base);
 	printf(".. eglChooseConfig: egl_display: %w64x, egl_configs: %p, _PTR(configs_base): %p, config_size: %d, num_config_base[0]: %d\n", egl_display, egl_configs, _PTR(configs_base), config_size, num_config_base[0]);

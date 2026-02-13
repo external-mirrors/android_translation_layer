@@ -11,9 +11,10 @@ extern ElfW(Dyn) _DYNAMIC[];
 
 extern struct r_debug *_r_debug_ptr;
 /* this has to be called from the main executable, since that's the only one guaranteed to have the debug section filled in */
-void init__r_debug() {
+void init__r_debug()
+{
 #if defined(_r_debug)
-/* _r_debug is defined by glibc and is declared as extern in link.h*/
+	/* _r_debug is defined by glibc and is declared as extern in link.h*/
 	_r_debug_ptr = &_r_debug;
 #else
 	int i = 0;
@@ -21,14 +22,14 @@ void init__r_debug() {
 
 	do {
 		current = _DYNAMIC[i];
-		if(current.d_tag == DT_DEBUG) {
+		if (current.d_tag == DT_DEBUG) {
 			_r_debug_ptr = (struct r_debug *)current.d_un.d_ptr;
 			break;
 		}
 		i++;
-	} while(current.d_tag != 0);
+	} while (current.d_tag != 0);
 
-	if(!_r_debug_ptr) {
+	if (!_r_debug_ptr) {
 		fprintf(stderr, "error: no DEBUG tag in the dynamic section, treating this as fatal\n");
 		exit(1);
 	}
@@ -50,11 +51,11 @@ _Thread_local uintptr_t TLS[] = {
 	/* (tp - 3) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_STACK_MTE
 	/* (tp - 2) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_NATIVE_BRIDGE_GUEST_STATE
 	/* (tp - 1) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_BIONIC_TLS
-	/* dtv (per spec) */
+					       /* dtv (per spec) */
 	/* (tp + 0) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_DTV
-	/* internal on glibc, seems to be unused on musl */
+					       /* internal on glibc, seems to be unused on musl */
 	/* (tp + 1) =    0xXXXXXXXXXXXXXXXX */ // TLS_SLOT_THREAD_ID
-	/* PT_TLS of main executable gets copied here (so this array!) */
+					       /* PT_TLS of main executable gets copied here (so this array!) */
 	/* (tp + 2) = */ 0x5555555555555555,   // TLS_SLOT_APP
 	/* (tp + 3) = */ 0x5555555555555555,   // TLS_SLOT_OPENGL
 	/* (tp + 4) = */ 0x5555555555555555,   // TLS_SLOT_OPENGL_API
@@ -63,14 +64,14 @@ _Thread_local uintptr_t TLS[] = {
 	/* (tp + 7) = */ 0x5555555555555555,   // TLS_SLOT_ART_THREAD_SELF
 };
 #elif defined(__i386__) || defined(__x86_64__)
-	/*
+/*
 	 * PT_TLS goes before the thread pointer but bionic's slots go after
 	 * how fucked are we? let's see what an app will access on glibc/musl if it decides
 	 * to consider a particular slot a part of the platform ABI:
 	 */
 
-	/* glibc (64bit): */
-	/*
+/* glibc (64bit): */
+/*
 	 * typedef struct
 	 * {
 	 *	void *tcb;  // (tp + 0) TLS_SLOT_SELF
@@ -96,8 +97,8 @@ _Thread_local uintptr_t TLS[] = {
 	 * void *__padding[8];
 	 * } tcbhead_t;
 	 */
-	/* glibc (32bit): */
-	/*
+/* glibc (32bit): */
+/*
 	 * typedef struct
 	 * {
 	 *	void *tcb;  // (tp + 0) TLS_SLOT_SELF
@@ -118,8 +119,8 @@ _Thread_local uintptr_t TLS[] = {
 	 *	unsigned long  ssp_base;
 	 * } tcbhead_t;
 	 */
-	/* musl: */
-	/*
+/* musl: */
+/*
 	 * struct pthread {
 	 *	struct pthread *self; // (tp + 0) TLS_SLOT_SELF
 	 *	uintptr_t *dtv; // (tp + 1) TLS_SLOT_THREAD_ID

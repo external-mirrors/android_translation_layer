@@ -27,7 +27,7 @@ public class Toast {
 	public void show() {
 		System.out.println("showing toast: " + text);
 		Notification notification = new Notification.Builder(Context.this_application).setContentText(text).build();
-		NotificationManager manager = (NotificationManager) Context.this_application.getSystemService("notification");
+		NotificationManager manager = (NotificationManager)Context.this_application.getSystemService("notification");
 		int id = hashCode();
 		manager.notify(id, notification);
 		new Handler().postDelayed(new Runnable() {

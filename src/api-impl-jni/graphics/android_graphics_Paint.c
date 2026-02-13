@@ -2,8 +2,8 @@
 #include <gsk/gsk.h>
 #include <gtk/gtk.h>
 
-#include "AndroidPaint.h"
 #include "../defines.h"
+#include "AndroidPaint.h"
 #include "pango/pango-font.h"
 
 #include "../generated_headers/android_graphics_Paint.h"
@@ -62,8 +62,8 @@ JNIEXPORT int JNICALL Java_android_graphics_Paint_native_1get_1alpha(JNIEnv *env
 	return (int)(paint->color.alpha * 0xFF);
 }
 
-#define STYLE_FILL 0
-#define STYLE_STROKE 1
+#define STYLE_FILL            0
+#define STYLE_STROKE          1
 #define STYLE_FILL_AND_STROKE 2
 
 JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1style(JNIEnv *env, jclass clazz, jlong paint_ptr, jint style)
@@ -91,7 +91,7 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1stroke_1width(JN
 	 * meanwile width of 1 should care about scaling;
 	 * The problem is, 0 is not a valid value for gsk_stroke_set_line_width,
 	 * so at least change it to 1 for now */
-	if(width == 0)
+	if (width == 0)
 		width = 1;
 	gsk_stroke_set_line_width(paint->gsk_stroke, width);
 }
@@ -142,11 +142,23 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter(JN
 {
 	struct AndroidPaint *paint = _PTR(paint_ptr);
 	graphene_matrix_init_from_float(&paint->color_matrix, (float[]){
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 1,
-	});
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      0,
+								      1,
+							      });
 	graphene_vec4_init(&paint->color_offset, ((color >> 16) & 0xFF) / 255.f, ((color >> 8) & 0xFF) / 255.f, ((color >> 0) & 0xFF) / 255.f, 0);
 	paint->use_color_filter = mode != -1;
 }

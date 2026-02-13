@@ -1,7 +1,7 @@
 package android.text;
 
-import android.graphics.Canvas;
 import android.atl.GskCanvas;
+import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
 
@@ -17,7 +17,7 @@ public class Layout {
 
 	public class Directions {}
 
-	long layout;  // native PangoLayout
+	long layout; // native PangoLayout
 	private CharSequence text;
 	private TextPaint paint;
 	private float spacing_mult;
@@ -53,7 +53,7 @@ public class Layout {
 		return native_get_ellipsis_count(layout, line);
 	}
 
-	public CharSequence getText() {return text;}
+	public CharSequence getText() { return text; }
 
 	public int getWidth() {
 		return native_get_width(layout);
@@ -105,11 +105,11 @@ public class Layout {
 		return native_get_line_descent(layout, line);
 	}
 
-	public int getTopPadding() {return -5;}
+	public int getTopPadding() { return -5; }
 
-	public int getBottomPadding() {return 5;}
+	public int getBottomPadding() { return 5; }
 
-	public boolean isRtlCharAt(int offset) {return false;}
+	public boolean isRtlCharAt(int offset) { return false; }
 
 	public float getSecondaryHorizontal(int line) {
 		if (getLineDirections(0) == null)
@@ -133,7 +133,7 @@ public class Layout {
 		return 0;
 	}
 
-	public int getLineForOffset(int offset) {return 0;}
+	public int getLineForOffset(int offset) { return 0; }
 
 	public int getLineTop(int line) {
 		if (line < 0 || line >= getLineCount())

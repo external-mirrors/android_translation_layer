@@ -1,8 +1,8 @@
 package android.animation;
 
-import java.lang.reflect.Method;
 import android.util.Log;
 import android.util.Property;
+import java.lang.reflect.Method;
 
 public class PropertyValuesHolder {
 
@@ -110,19 +110,19 @@ public class PropertyValuesHolder {
 		if (fraction > 1f)
 			fraction = 1f;
 		if (values_object != null && evaluator != null) {
-			int i = (int) (fraction * (values_object.length - 1));
+			int i = (int)(fraction * (values_object.length - 1));
 			float f = fraction * (values_object.length - 1) - i;
-			value = evaluator.evaluate(f, values_object[i], values_object[i >= values_object.length - 1 ? i : i+1]);
+			value = evaluator.evaluate(f, values_object[i], values_object[i >= values_object.length - 1 ? i : i + 1]);
 		} else if (values_object != null) {
-			value = values_object[(int) (fraction * (values_object.length - 1) + 0.5f)];
+			value = values_object[(int)(fraction * (values_object.length - 1) + 0.5f)];
 		} else if (values_float != null) {
-			int i = (int) (fraction * (values_float.length - 1));
+			int i = (int)(fraction * (values_float.length - 1));
 			float f = fraction * (values_float.length - 1) - i;
-			value = values_float[i] * (1 - f) + ((f!=0.f) ? values_float[i + 1] * f : 0.f);
+			value = values_float[i] * (1 - f) + ((f != 0.f) ? values_float[i + 1] * f : 0.f);
 		} else if (values_int != null) {
-			int i = (int) (fraction * (values_int.length - 1));
+			int i = (int)(fraction * (values_int.length - 1));
 			float f = fraction * (values_int.length - 1) - i;
-			value = (int)(values_int[i] * (1 - f) + ((f!=0.f) ? values_int[i + 1] * f : 0.f) + 0.5f);
+			value = (int)(values_int[i] * (1 - f) + ((f != 0.f) ? values_int[i + 1] * f : 0.f) + 0.5f);
 		} else {
 			Log.e("PropertyValuesHolder", "No values set");
 		}
@@ -144,11 +144,11 @@ public class PropertyValuesHolder {
 		if (property != null) {
 			setter = null;
 			if (values_int != null && values_int.length == 1) {
-				values_int = new int[] { (Integer)property.get(target), values_int[0] };
+				values_int = new int[] {(Integer)property.get(target), values_int[0]};
 			} else if (values_float != null && values_float.length == 1) {
-				values_float = new float[] { (Float)property.get(target), values_float[0] };
+				values_float = new float[] {(Float)property.get(target), values_float[0]};
 			} else if (values_object != null && values_object.length == 1) {
-				values_object = new Object[] { property.get(target), values_object[0] };
+				values_object = new Object[] {property.get(target), values_object[0]};
 			}
 			return;
 		}
@@ -164,11 +164,11 @@ public class PropertyValuesHolder {
 			setter = target.getClass().getMethod("set" + property_name.substring(0, 1).toUpperCase() + property_name.substring(1), clazz);
 			Method getter = target.getClass().getMethod("get" + property_name.substring(0, 1).toUpperCase() + property_name.substring(1));
 			if (values_int != null && values_int.length == 1) {
-				values_int = new int[] { (Integer)getter.invoke(target), values_int[0] };
+				values_int = new int[] {(Integer)getter.invoke(target), values_int[0]};
 			} else if (values_float != null && values_float.length == 1) {
-				values_float = new float[] { (Float)getter.invoke(target), values_float[0] };
+				values_float = new float[] {(Float)getter.invoke(target), values_float[0]};
 			} else if (values_object != null && values_object.length == 1) {
-				values_object = new Object[] { getter.invoke(target), values_object[0] };
+				values_object = new Object[] {getter.invoke(target), values_object[0]};
 			}
 		} catch (ReflectiveOperationException e) {
 			Log.e("PropertyValuesHolder", "failed to setup setter and getter", e);

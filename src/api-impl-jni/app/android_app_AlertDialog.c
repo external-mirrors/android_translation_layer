@@ -8,7 +8,7 @@
 JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetMessage(JNIEnv *env, jobject this, jlong ptr, jstring message)
 {
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
-	const char* nativeMessage = (*env)->GetStringUTFChars(env, message, NULL);
+	const char *nativeMessage = (*env)->GetStringUTFChars(env, message, NULL);
 	GtkWidget *content_area = gtk_window_get_child(dialog);
 	GtkWidget *label = gtk_label_new(nativeMessage);
 	gtk_label_set_wrap(GTK_LABEL(label), TRUE);
@@ -16,7 +16,8 @@ JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetMessage(JNIEnv *env
 	(*env)->ReleaseStringUTFChars(env, message, nativeMessage);
 }
 
-static void button_clicked_cb(GtkWidget *button, gpointer user_data) {
+static void button_clicked_cb(GtkWidget *button, gpointer user_data)
+{
 	JNIEnv *env = get_jni_env();
 	jobject listener = user_data;
 	jobject this = g_object_get_data(G_OBJECT(button), "this_dialog");
@@ -27,10 +28,11 @@ static void button_clicked_cb(GtkWidget *button, gpointer user_data) {
 		(*env)->ExceptionDescribe(env);
 }
 
-JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetButton(JNIEnv *env, jobject this, jlong ptr, jint id, jstring text, jobject listener) {
+JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetButton(JNIEnv *env, jobject this, jlong ptr, jint id, jstring text, jobject listener)
+{
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
 	GtkWidget *content_area = gtk_window_get_child(dialog);
-	const char* nativeText = (*env)->GetStringUTFChars(env, text, NULL);
+	const char *nativeText = (*env)->GetStringUTFChars(env, text, NULL);
 	GtkWidget *button = gtk_button_new_with_label(nativeText);
 	g_object_set_data(G_OBJECT(button), "which", _PTR(id));
 	g_object_set_data(G_OBJECT(button), "this_dialog", _REF(this));
@@ -47,12 +49,12 @@ struct click_callback_data {
 };
 
 struct _ListEntry {
-  GObject parent;
-  const char *text;
+	GObject parent;
+	const char *text;
 };
 G_DECLARE_FINAL_TYPE(ListEntry, list_entry, ATL, LIST_ENTRY, GObject);
-static void list_entry_class_init(ListEntryClass *cls){}
-static void list_entry_init(ListEntry *self){}
+static void list_entry_class_init(ListEntryClass *cls) {}
+static void list_entry_init(ListEntry *self) {}
 G_DEFINE_TYPE(ListEntry, list_entry, G_TYPE_OBJECT)
 
 static void setup_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item)
@@ -71,19 +73,20 @@ static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item
 static void activate_cb(GtkListView *list, guint position, struct click_callback_data *d)
 {
 	JNIEnv *env;
-	(*d->jvm)->GetEnv(d->jvm, (void**)&env, JNI_VERSION_1_6);
+	(*d->jvm)->GetEnv(d->jvm, (void **)&env, JNI_VERSION_1_6);
 
 	(*env)->CallVoidMethod(env, d->on_click_listener, d->on_click_method, d->this, position);
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
 
-JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetItems(JNIEnv *env, jobject this, jlong ptr, jobjectArray items, jobject on_click) {
+JNIEXPORT void JNICALL Java_android_app_AlertDialog_nativeSetItems(JNIEnv *env, jobject this, jlong ptr, jobjectArray items, jobject on_click)
+{
 	GtkWindow *dialog = GTK_WINDOW(_PTR(ptr));
 
 	GListStore *store = g_list_store_new(list_entry_get_type());
 	int stringCount = (*env)->GetArrayLength(env, items);
-	for (int i=0; i<stringCount; i++) {
+	for (int i = 0; i < stringCount; i++) {
 		ListEntry *entry = ATL_LIST_ENTRY(g_object_new(list_entry_get_type(), NULL));
 		entry->text = _CSTRING((*env)->GetObjectArrayElement(env, items, i));
 		g_list_store_append(store, entry);

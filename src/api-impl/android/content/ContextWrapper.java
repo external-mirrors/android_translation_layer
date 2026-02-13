@@ -4,7 +4,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.view.Display;
-
 import java.lang.reflect.InvocationTargetException;
 
 public class ContextWrapper extends Context {

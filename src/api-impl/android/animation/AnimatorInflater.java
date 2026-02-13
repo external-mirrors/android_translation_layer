@@ -107,9 +107,9 @@ public class AnimatorInflater {
 	 * @hide
 	 */
 	public static Animator loadAnimator(Resources resources, Theme theme, int id,
-					    float pathErrorScale) throws NotFoundException {
+	                                    float pathErrorScale) throws NotFoundException {
 		//final ConfigurationBoundResourceCache<Animator> animatorCache = resources.getAnimatorCache();
-		Animator animator = null;//animatorCache.getInstance(id, resources, theme);
+		Animator animator = null; //animatorCache.getInstance(id, resources, theme);
 		/*if (animator != null) {
 			if (DBG_ANIMATOR_INFLATER) {
 				Log.d(TAG, "loaded animator from cache, " + resources.getResourceName(id));
@@ -138,21 +138,18 @@ public class AnimatorInflater {
 			return animator;
 		} catch (XmlPullParserException ex) {
 			Resources.NotFoundException rnf =
-			    new Resources.NotFoundException("Can't load animation resource ID #0x" +
-							    Integer.toHexString(id));
+			    new Resources.NotFoundException("Can't load animation resource ID #0x" + Integer.toHexString(id));
 			rnf.initCause(ex);
 			throw rnf;
 		} catch (IOException ex) {
 			Resources.NotFoundException rnf =
-			    new Resources.NotFoundException("Can't load animation resource ID #0x" +
-							    Integer.toHexString(id));
+			    new Resources.NotFoundException("Can't load animation resource ID #0x" + Integer.toHexString(id));
 			rnf.initCause(ex);
 			throw rnf;
 		} catch (Exception ex) {
 			/* TODO: why is this necessary, the two exceptions above are enough in AOSP */
 			Resources.NotFoundException rnf =
-			    new Resources.NotFoundException("Can't load animation resource ID #0x" +
-							    Integer.toHexString(id));
+			    new Resources.NotFoundException("Can't load animation resource ID #0x" + Integer.toHexString(id));
 			rnf.initCause(ex);
 			throw rnf;
 		} finally {
@@ -209,7 +206,7 @@ public class AnimatorInflater {
 	}
 
 	private static StateListAnimator createStateListAnimatorFromXml(Context context,
-									XmlPullParser parser, AttributeSet attributeSet)
+	                                                                XmlPullParser parser, AttributeSet attributeSet)
 	    throws IOException, XmlPullParserException {
 		int type;
 		StateListAnimator stateListAnimator = new StateListAnimator();
@@ -240,7 +237,7 @@ public class AnimatorInflater {
 						}
 						if (animator == null) {
 							animator = createAnimatorFromXml(context.getResources(),
-											 context.getTheme(), parser, 1f);
+							                                 context.getTheme(), parser, 1f);
 						}
 
 						if (animator == null) {
@@ -415,7 +412,7 @@ public class AnimatorInflater {
 	 *                  maximum error for path animations.
 	 */
 	private static void parseAnimatorFromTypeArray(ValueAnimator anim,
-						       TypedArray arrayAnimator, TypedArray arrayObjectAnimator, float pixelSize) {
+	                                               TypedArray arrayAnimator, TypedArray arrayObjectAnimator, float pixelSize) {
 		long duration = arrayAnimator.getInt(R.styleable.Animator_duration, 300);
 
 		long startDelay = arrayAnimator.getInt(R.styleable.Animator_startOffset, 0);
@@ -424,7 +421,7 @@ public class AnimatorInflater {
 
 		if (valueType == VALUE_TYPE_UNDEFINED) {
 			valueType = inferValueTypeFromValues(arrayAnimator, R.styleable.Animator_valueFrom,
-							     R.styleable.Animator_valueTo);
+			                                     R.styleable.Animator_valueTo);
 		}
 		/*PropertyValuesHolder pvh = getPVH(arrayAnimator, valueType,
 						  R.styleable.Animator_valueFrom, R.styleable.Animator_valueTo, "");
@@ -442,7 +439,7 @@ public class AnimatorInflater {
 		if (arrayAnimator.hasValue(R.styleable.Animator_repeatMode)) {
 			anim.setRepeatMode(
 			    arrayAnimator.getInt(R.styleable.Animator_repeatMode,
-						 ValueAnimator.RESTART));
+			                         ValueAnimator.RESTART));
 		}
 
 		/*if (arrayObjectAnimator != null) {
@@ -644,14 +641,14 @@ public class AnimatorInflater {
 	}*/
 
 	private static Animator createAnimatorFromXml(Resources res, Theme theme, XmlPullParser parser,
-						      float pixelSize)
+	                                              float pixelSize)
 	    throws XmlPullParserException, IOException {
 		return createAnimatorFromXml(res, theme, parser, Xml.asAttributeSet(parser), null, 0,
-					     pixelSize);
+		                             pixelSize);
 	}
 
 	private static Animator createAnimatorFromXml(Resources res, Theme theme, XmlPullParser parser,
-						      AttributeSet attrs, AnimatorSet parent, int sequenceOrdering, float pixelSize)
+	                                              AttributeSet attrs, AnimatorSet parent, int sequenceOrdering, float pixelSize)
 	    throws XmlPullParserException, IOException {
 		Animator anim = null;
 		ArrayList<Animator> childAnims = null;
@@ -684,11 +681,11 @@ public class AnimatorInflater {
 				anim.appendChangingConfigurations(a.getChangingConfigurations());
 				int ordering = a.getInt(R.styleable.AnimatorSet_ordering, TOGETHER);
 				createAnimatorFromXml(res, theme, parser, attrs, (AnimatorSet)anim, ordering,
-						      pixelSize);
+				                      pixelSize);
 				a.recycle();
 			} else if (name.equals("propertyValuesHolder")) {
 				PropertyValuesHolder[] values = loadValues(res, theme, parser,
-									   Xml.asAttributeSet(parser));
+				                                           Xml.asAttributeSet(parser));
 				if (values != null && anim != null && (anim instanceof ValueAnimator)) {
 					((ValueAnimator)anim).setValues(values);
 				}
@@ -720,12 +717,11 @@ public class AnimatorInflater {
 	}
 
 	private static PropertyValuesHolder[] loadValues(Resources res, Theme theme,
-							 XmlPullParser parser, AttributeSet attrs) throws XmlPullParserException, IOException {
+	                                                 XmlPullParser parser, AttributeSet attrs) throws XmlPullParserException, IOException {
 		ArrayList<PropertyValuesHolder> values = null;
 
 		int type;
-		while ((type = parser.getEventType()) != XmlPullParser.END_TAG &&
-		       type != XmlPullParser.END_DOCUMENT) {
+		while ((type = parser.getEventType()) != XmlPullParser.END_TAG && type != XmlPullParser.END_DOCUMENT) {
 
 			if (type != XmlPullParser.START_TAG) {
 				parser.next();
@@ -743,7 +739,7 @@ public class AnimatorInflater {
 				}
 				String propertyName = a.getString(R.styleable.PropertyValuesHolder_propertyName);
 				int valueType = a.getInt(R.styleable.PropertyValuesHolder_valueType,
-							 VALUE_TYPE_UNDEFINED);
+				                         VALUE_TYPE_UNDEFINED);
 
 				/*PropertyValuesHolder pvh = loadPvh(res, theme, parser, propertyName, valueType);
 				if (pvh == null) {
@@ -800,7 +796,7 @@ public class AnimatorInflater {
 	}
 
 	private static int inferValueTypeFromValues(TypedArray styledAttributes, int valueFromId,
-						    int valueToId) {
+	                                            int valueToId) {
 		TypedValue tvFrom = styledAttributes.peekValue(valueFromId);
 		boolean hasFrom = (tvFrom != null);
 		int fromType = hasFrom ? tvFrom.type : 0;
@@ -1008,7 +1004,7 @@ public class AnimatorInflater {
 	}*/
 
 	private static ObjectAnimator loadObjectAnimator(Resources res, Theme theme, AttributeSet attrs,
-							 float pathErrorScale) throws NotFoundException {
+	                                                 float pathErrorScale) throws NotFoundException {
 		ObjectAnimator anim = new ObjectAnimator();
 
 		loadAnimator(res, theme, attrs, anim, pathErrorScale);
@@ -1026,7 +1022,7 @@ public class AnimatorInflater {
 	 *            ObjectAnimator
 	 */
 	private static ValueAnimator loadAnimator(Resources res, Theme theme,
-						  AttributeSet attrs, ValueAnimator anim, float pathErrorScale)
+	                                          AttributeSet attrs, ValueAnimator anim, float pathErrorScale)
 	    throws NotFoundException {
 		TypedArray arrayAnimator = null;
 		TypedArray arrayObjectAnimator = null;
@@ -1041,7 +1037,7 @@ public class AnimatorInflater {
 		if (anim != null) {
 			if (theme != null) {
 				arrayObjectAnimator = theme.obtainStyledAttributes(attrs,
-										   R.styleable.PropertyAnimator, 0, 0);
+				                                                   R.styleable.PropertyAnimator, 0, 0);
 			} else {
 				arrayObjectAnimator = res.obtainAttributes(attrs, R.styleable.PropertyAnimator);
 			}

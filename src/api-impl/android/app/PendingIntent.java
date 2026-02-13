@@ -10,7 +10,7 @@ public class PendingIntent implements Parcelable {
 
 	private int requestCode;
 	Intent intent;
-	int type;  // 0: activity, 1: service, 2: broadcast
+	int type; // 0: activity, 1: service, 2: broadcast
 
 	private PendingIntent(int requestCode, Intent intent, int type) {
 		this.requestCode = requestCode;
@@ -52,7 +52,7 @@ public class PendingIntent implements Parcelable {
 
 	public String toString() {
 		return "PendingIntent [requestCode=" + requestCode + ", intent=" + intent + ", type="
-			+ new String[] { "activity", "service", "broadcast" }[type] + "]";
+		     + new String[] {"activity", "service", "broadcast"}[type] + "]";
 	}
 
 	public void cancel() {}

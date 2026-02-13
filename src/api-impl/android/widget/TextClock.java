@@ -32,7 +32,7 @@ public class TextClock extends TextView {
 		return mFormat24Hour;
 	}
 
-	public String getTimeZone () {
+	public String getTimeZone() {
 		return mTimeZone;
 	}
 

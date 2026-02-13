@@ -13,13 +13,13 @@ public class Location {
 	public Location(String provider) {}
 
 	/* for internal use */
-	public Location (double latitude,
-	                 double longitude,
-	                 double altitude,
-	                 double accuracy,
-	                 double speed,
-	                 double bearing,
-	                 long timestamp) {
+	public Location(double latitude,
+	                double longitude,
+	                double altitude,
+	                double accuracy,
+	                double speed,
+	                double bearing,
+	                long timestamp) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.altitude = altitude;

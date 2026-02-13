@@ -10,15 +10,20 @@
 
 G_DEFINE_TYPE(WrapperWidget, wrapper_widget, GTK_TYPE_WIDGET)
 
-typedef enum { ATL_ID = 1, ATL_ID_NAME, ATL_CLASS_NAME, ATL_SUPER_CLASS_NAMES, N_PROPERTIES } WrapperWidgetProperty;
-static GParamSpec *wrapper_widget_properties[N_PROPERTIES] = { NULL, };
+typedef enum { ATL_ID = 1,
+	       ATL_ID_NAME,
+	       ATL_CLASS_NAME,
+	       ATL_SUPER_CLASS_NAMES,
+	       N_PROPERTIES } WrapperWidgetProperty;
+static GParamSpec *wrapper_widget_properties[N_PROPERTIES] = {
+	NULL,
+};
 
-static void wrapper_widget_set_property (GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
+static void wrapper_widget_set_property(GObject *object, guint property_id, const GValue *value, GParamSpec *pspec)
 {
-	switch ((WrapperWidgetProperty) property_id)
-	{
+	switch ((WrapperWidgetProperty)property_id) {
 		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 			break;
 	}
 }
@@ -32,12 +37,10 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 	jobject jobj = self->jobj;
 	jclass class = _CLASS(jobj);
 
-	switch ((WrapperWidgetProperty) property_id)
-	{
-		case ATL_ID:
-		{
+	switch ((WrapperWidgetProperty)property_id) {
+		case ATL_ID: {
 			jint id_jint = (*env)->CallIntMethod(env, jobj, handle_cache.view.getId);
-			if((*env)->ExceptionCheck(env))
+			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
 			const char *id = g_markup_printf_escaped("0x%08x", id_jint);
@@ -45,10 +48,9 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 			break;
 		}
 
-		case ATL_ID_NAME:
-		{
+		case ATL_ID_NAME: {
 			jstring id_name_jstring = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getIdName);
-			if((*env)->ExceptionCheck(env))
+			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
 			const char *id_name = (*env)->GetStringUTFChars(env, id_name_jstring, NULL);
@@ -58,10 +60,9 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 			break;
 		}
 
-		case ATL_CLASS_NAME:
-		{
+		case ATL_CLASS_NAME: {
 			jstring class_name_jstring = (*env)->CallObjectMethod(env, class, _METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
-			if((*env)->ExceptionCheck(env))
+			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
 			const char *class_name = (*env)->GetStringUTFChars(env, class_name_jstring, NULL);
@@ -71,10 +72,9 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 			break;
 		}
 
-		case ATL_SUPER_CLASS_NAMES:
-		{
+		case ATL_SUPER_CLASS_NAMES: {
 			jstring super_classes_names_obj = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getAllSuperClasses);
-			if((*env)->ExceptionCheck(env))
+			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
 			const char *super_classes_names = (*env)->GetStringUTFChars(env, super_classes_names_obj, NULL);
@@ -84,16 +84,14 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 			break;
 		}
 
-
 		default:
-			G_OBJECT_WARN_INVALID_PROPERTY_ID (object, property_id, pspec);
+			G_OBJECT_WARN_INVALID_PROPERTY_ID(object, property_id, pspec);
 			break;
 	}
 }
 
 static void wrapper_widget_init(WrapperWidget *wrapper_widget)
 {
-
 }
 
 static void wrapper_widget_dispose(GObject *wrapper_widget)
@@ -108,13 +106,13 @@ static void wrapper_widget_dispose(GObject *wrapper_widget)
 	WrapperWidget *wrapper = WRAPPER_WIDGET(wrapper_widget);
 	if (wrapper->jvm) {
 		JNIEnv *env;
-		(*wrapper->jvm)->GetEnv(wrapper->jvm, (void**)&env, JNI_VERSION_1_6);
+		(*wrapper->jvm)->GetEnv(wrapper->jvm, (void **)&env, JNI_VERSION_1_6);
 		if (wrapper->jobj)
 			_WEAK_UNREF(wrapper->jobj);
 		if (wrapper->canvas)
 			_UNREF(wrapper->canvas);
 	}
-	G_OBJECT_CLASS (wrapper_widget_parent_class)->dispose (wrapper_widget);
+	G_OBJECT_CLASS(wrapper_widget_parent_class)->dispose(wrapper_widget);
 }
 
 GtkSizeRequestMode wrapper_widget_get_request_mode(GtkWidget *widget)
@@ -154,9 +152,9 @@ void wrapper_widget_allocate(GtkWidget *widget, int width, int height, int basel
 		gtk_widget_size_allocate(wrapper->child, &allocation, baseline);
 
 		JNIEnv *env;
-		(*wrapper->jvm)->GetEnv(wrapper->jvm, (void**)&env, JNI_VERSION_1_6);
+		(*wrapper->jvm)->GetEnv(wrapper->jvm, (void **)&env, JNI_VERSION_1_6);
 		(*env)->CallVoidMethod(env, wrapper->jobj, wrapper->computeScroll_method);
-		if((*env)->ExceptionCheck(env))
+		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 		allocation.x = -(*env)->CallIntMethod(env, wrapper->jobj, handle_cache.view.getScrollX);
 		allocation.y = -(*env)->CallIntMethod(env, wrapper->jobj, handle_cache.view.getScrollY);
@@ -233,12 +231,12 @@ static void wrapper_widget_class_init(WrapperWidgetClass *class)
 	wrapper_widget_properties[ATL_CLASS_NAME] = g_param_spec_string("ATL-class-name", "ATL: Class name", "Name of the class of the component", "", G_PARAM_READABLE);
 	wrapper_widget_properties[ATL_SUPER_CLASS_NAMES] = g_param_spec_string("ATL-superclasses-names", "ATL: Super classes names", "Names of all the superclasses of the component class", "", G_PARAM_READABLE);
 
-	g_object_class_install_properties (object_class, N_PROPERTIES, wrapper_widget_properties);
+	g_object_class_install_properties(object_class, N_PROPERTIES, wrapper_widget_properties);
 }
 
-GtkWidget * wrapper_widget_new(void)
+GtkWidget *wrapper_widget_new(void)
 {
-	return g_object_new (wrapper_widget_get_type(), NULL);
+	return g_object_new(wrapper_widget_get_type(), NULL);
 }
 
 void wrapper_widget_set_child(WrapperWidget *parent, GtkWidget *child) // TODO: make sure there can only be one child
@@ -262,7 +260,7 @@ void wrapper_widget_queue_draw(WrapperWidget *wrapper)
 		g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_queue_redraw), g_object_ref(wrapper), NULL);
 	}
 
-	if(wrapper->child)
+	if (wrapper->child)
 		gtk_widget_queue_draw(wrapper->child);
 	if (wrapper->computeScroll_method) {
 		atl_safe_gtk_widget_queue_allocate(GTK_WIDGET(wrapper));
@@ -274,31 +272,32 @@ static bool on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	JNIEnv *env = get_jni_env();
 
 	bool ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.performClick);
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
 	return ret;
 }
 
-#define KEYCODE_0 7
-#define KEYCODE_1 8
-#define KEYCODE_2 9
-#define KEYCODE_3 10
-#define KEYCODE_4 11
-#define KEYCODE_5 12
-#define KEYCODE_6 13
-#define KEYCODE_7 14
-#define KEYCODE_8 15
-#define KEYCODE_9 16
-#define KEYCODE_DPAD_UP 19
-#define KEYCODE_DPAD_DOWN 20
-#define KEYCODE_DPAD_LEFT 21
-#define KEYCODE_DPAD_RIGHT 22
-#define KEYCODE_ENTER 66
-#define KEYCODE_DEL 67
+#define KEYCODE_0           7
+#define KEYCODE_1           8
+#define KEYCODE_2           9
+#define KEYCODE_3           10
+#define KEYCODE_4           11
+#define KEYCODE_5           12
+#define KEYCODE_6           13
+#define KEYCODE_7           14
+#define KEYCODE_8           15
+#define KEYCODE_9           16
+#define KEYCODE_DPAD_UP     19
+#define KEYCODE_DPAD_DOWN   20
+#define KEYCODE_DPAD_LEFT   21
+#define KEYCODE_DPAD_RIGHT  22
+#define KEYCODE_ENTER       66
+#define KEYCODE_DEL         67
 #define KEYCODE_FORWARD_DEL 112
 
-static int map_key_code(int key_code) {
+static int map_key_code(int key_code)
+{
 	switch (key_code) {
 		case GDK_KEY_Up:
 			return KEYCODE_DPAD_UP;
@@ -340,7 +339,7 @@ static int map_key_code(int key_code) {
 }
 
 #define ACTION_DOWN 0
-#define ACTION_UP 1
+#define ACTION_UP   1
 
 static gboolean on_key_pressed(GtkEventControllerKey *controller, guint keyval, guint keycode, GdkModifierType state, WrapperWidget *wrapper)
 {
@@ -349,7 +348,7 @@ static gboolean on_key_pressed(GtkEventControllerKey *controller, guint keyval, 
 	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, ACTION_DOWN, map_key_code(keyval));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
 	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	return ret;
 }
@@ -361,7 +360,7 @@ static gboolean on_key_released(GtkEventControllerKey *controller, guint keyval,
 	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, ACTION_UP, map_key_code(keyval));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
 	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	return ret;
 }
@@ -430,8 +429,9 @@ void wrapper_widget_set_background(WrapperWidget *wrapper, GdkPaintable *paintab
 	gtk_picture_set_paintable(GTK_PICTURE(wrapper->background), paintable);
 }
 
-static gboolean on_touch_event_consume(GtkEventControllerLegacy *controller, GdkEvent *event) {
-	switch(gdk_event_get_event_type(event)) {
+static gboolean on_touch_event_consume(GtkEventControllerLegacy *controller, GdkEvent *event)
+{
+	switch (gdk_event_get_event_type(event)) {
 		case GDK_BUTTON_PRESS:
 		case GDK_TOUCH_BEGIN:
 		case GDK_BUTTON_RELEASE:
@@ -451,5 +451,4 @@ void wrapper_widget_consume_touch_events(WrapperWidget *wrapper)
 	g_signal_connect(controller, "event", G_CALLBACK(on_touch_event_consume), NULL);
 	gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	g_object_set_data(G_OBJECT(wrapper), "on_touch_listener", controller);
-
 }

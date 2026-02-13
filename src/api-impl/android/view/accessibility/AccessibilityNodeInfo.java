@@ -18,11 +18,10 @@ public class AccessibilityNodeInfo {
 		public static final AccessibilityAction ACTION_SHOW_TOOLTIP = new AccessibilityAction(0, null);
 		public static final AccessibilityAction ACTION_HIDE_TOOLTIP = new AccessibilityAction(0, null);
 
-
 		public AccessibilityAction(int actionId, CharSequence label) {}
 
-		public int getId() {return 0;}
+		public int getId() { return 0; }
 	}
 
-	public static AccessibilityNodeInfo obtain() {return null;}
+	public static AccessibilityNodeInfo obtain() { return null; }
 }

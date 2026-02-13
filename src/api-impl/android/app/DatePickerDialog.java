@@ -1,8 +1,8 @@
 package android.app;
 
 import android.content.Context;
-import android.widget.DatePicker;
 import android.util.TypedValue;
+import android.widget.DatePicker;
 import com.android.internal.R;
 
 public class DatePickerDialog extends AlertDialog implements DatePicker.OnDateChangedListener {

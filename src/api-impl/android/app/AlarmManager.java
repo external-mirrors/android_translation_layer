@@ -14,7 +14,7 @@ public class AlarmManager {
 		Slog.i(TAG, "cancel(" + operation + ") called");
 	}
 
-	public void cancel (OnAlarmListener listener) {
+	public void cancel(OnAlarmListener listener) {
 		Slog.i(TAG, "cancel(" + listener + ") called");
 	}
 
@@ -55,11 +55,10 @@ public class AlarmManager {
 	}
 
 	public void setAlarmClock(AlarmClockInfo info, PendingIntent operation) {
-
 	}
 
 	public void setAndAllowWhileIdle(int type, long triggerAtMillis, PendingIntent operation) {
-		setExact(type, triggerAtMillis,operation);
+		setExact(type, triggerAtMillis, operation);
 	}
 
 	public boolean canScheduleExactAlarms() {
@@ -83,7 +82,7 @@ public class AlarmManager {
 		}
 	}
 
-	 public static interface OnAlarmListener {
+	public static interface OnAlarmListener {
 		void onAlarm();
-	 }
+	}
 }

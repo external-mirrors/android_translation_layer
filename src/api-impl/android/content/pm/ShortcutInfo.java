@@ -8,10 +8,10 @@ import android.os.Parcelable;
 public class ShortcutInfo implements Parcelable {
 	public static final Creator<ShortcutInfo> CREATOR = null;
 
-	 public static class Builder {
-		public Builder(Context context, String id)  {}
+	public static class Builder {
+		public Builder(Context context, String id) {}
 
-		public ShortcutInfo  build() {
+		public ShortcutInfo build() {
 			return new ShortcutInfo();
 		}
 
@@ -30,5 +30,5 @@ public class ShortcutInfo implements Parcelable {
 		public Builder setShortLabel(CharSequence shortLabel) {
 			return this;
 		}
-	 }
+	}
 }

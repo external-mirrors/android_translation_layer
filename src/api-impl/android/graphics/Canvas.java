@@ -1,8 +1,8 @@
 package android.graphics;
 
+import android.atl.GskCanvas;
 import android.content.res.Resources;
 import android.util.Log;
-import android.atl.GskCanvas;
 
 public class Canvas {
 
@@ -190,7 +190,7 @@ public class Canvas {
 	 * @param paint      The paint used to draw the arc
 	 */
 	public void drawArc(RectF oval, float startAngle, float sweepAngle, boolean useCenter,
-			    Paint paint) {
+	                    Paint paint) {
 		if (oval == null) {
 			throw new NullPointerException();
 		}
@@ -322,7 +322,7 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(int[] colors, int offset, int stride, float x, float y,
-			       int width, int height, boolean hasAlpha, Paint paint) {
+	                       int width, int height, boolean hasAlpha, Paint paint) {
 		Log.w("Canvas", "STUB: drawBitmap(colors, offset, ...)");
 		/*        // check for valid input
 			if (width < 0) {
@@ -353,10 +353,10 @@ public class Canvas {
 	 * Legacy version of drawBitmap(int[] colors, ...) that took ints for x,y
 	 */
 	public void drawBitmap(int[] colors, int offset, int stride, int x, int y,
-			       int width, int height, boolean hasAlpha, Paint paint) {
+	                       int width, int height, boolean hasAlpha, Paint paint) {
 		// call through to the common float version
 		drawBitmap(colors, offset, stride, (float)x, (float)y, width, height,
-			   hasAlpha, paint);
+		           hasAlpha, paint);
 	}
 
 	/**
@@ -465,11 +465,11 @@ public class Canvas {
 	}
 
 	public void drawColor(int color) {
-		Log.w("Canvas", "STUB: drawColor("+String.format("0x%08x", color)+")");
+		Log.w("Canvas", "STUB: drawColor(" + String.format("0x%08x", color) + ")");
 	}
 
 	public void drawARGB(int a, int r, int g, int b) {
-		Log.w("Canvas", "STUB: drawARGB("+a+", "+r+", "+g+", "+b+")");
+		Log.w("Canvas", "STUB: drawARGB(" + a + ", " + r + ", " + g + ", " + b + ")");
 	}
 
 	public int saveLayer(RectF bounds, Paint paint, int flags) {
@@ -485,11 +485,11 @@ public class Canvas {
 	}
 
 	public void drawOval(RectF oval, Paint paint) {
-		drawRoundRect(oval, oval.width()/2, oval.height()/2, paint);
+		drawRoundRect(oval, oval.width() / 2, oval.height() / 2, paint);
 	}
 
 	public void drawColor(int color, PorterDuff.Mode mode) {
-		Log.w("Canvas", "STUB: drawColor("+String.format("0x%08x", color)+", "+mode+")");
+		Log.w("Canvas", "STUB: drawColor(" + String.format("0x%08x", color) + ", " + mode + ")");
 	}
 
 	public boolean clipRect(int left, int top, int right, int bottom) {

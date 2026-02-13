@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 
-#include "WrapperWidget.h"
 #include "../util.h"
+#include "WrapperWidget.h"
 
 #include "../generated_headers/android_widget_CompoundButton.h"
 #include "jni.h"
@@ -30,7 +30,7 @@ JNIEXPORT jboolean JNICALL Java_android_widget_CompoundButton_isChecked(JNIEnv *
 	return gtk_switch_get_active(GTK_SWITCH(gtk_widget_get_last_child(_PTR(_GET_LONG_FIELD(this, "widget")))));
 }
 
-static gboolean on_state_set(GtkSwitch* self, gboolean state, jobject listener)
+static gboolean on_state_set(GtkSwitch *self, gboolean state, jobject listener)
 {
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(self))));

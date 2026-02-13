@@ -1,7 +1,6 @@
 package android.atl;
 
 import android.graphics.*;
-
 import java.util.Arrays;
 
 /**
@@ -80,7 +79,7 @@ public class GskCanvas extends Canvas {
 
 	@Override
 	public void drawText(String text, float x, float y, Paint paint) {
-		if(text == null) {
+		if (text == null) {
 			new Exception("drawText: text is null; stack trace:").printStackTrace();
 			return;
 		}
@@ -127,7 +126,6 @@ public class GskCanvas extends Canvas {
 		concat(matrix);
 		drawBitmap(bitmap, 0, 0, paint);
 		restore();
-
 	}
 
 	@Override
@@ -160,9 +158,9 @@ public class GskCanvas extends Canvas {
 	public boolean clipRect(float left, float top, float right, float bottom) {
 		native_clipRect(snapshot, left, top, right, bottom);
 		if (push_history == null)
-			push_history = new int[save_count+1];
+			push_history = new int[save_count + 1];
 		else if (push_history.length <= save_count)
-			push_history = Arrays.copyOf(push_history, save_count+1);
+			push_history = Arrays.copyOf(push_history, save_count + 1);
 		push_history[save_count]++;
 		return right > left && bottom > top;
 	}

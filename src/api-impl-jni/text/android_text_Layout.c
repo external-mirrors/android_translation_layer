@@ -3,8 +3,8 @@
 
 #include "../defines.h"
 #include "../util.h"
-#include "../graphics/AndroidPaint.h"
 #include "../generated_headers/android_text_Layout.h"
+#include "../graphics/AndroidPaint.h"
 
 extern GtkWidget *window;
 
@@ -68,7 +68,8 @@ JNIEXPORT jint JNICALL Java_android_text_Layout_native_1get_1line_1end(JNIEnv *e
 	return g_utf8_strlen(pango_layout_get_text(pango_layout), byte_index);
 }
 
-static void get_line_extends(PangoLayout *pango_layout, int line, PangoRectangle *logical_rect) {
+static void get_line_extends(PangoLayout *pango_layout, int line, PangoRectangle *logical_rect)
+{
 	PangoRectangle ink_rect;
 	PangoLayoutIter *pango_iter = pango_layout_get_iter(pango_layout);
 	while (line--)

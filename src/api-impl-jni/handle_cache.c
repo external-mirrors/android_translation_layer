@@ -5,7 +5,7 @@ struct handle_cache handle_cache = {0};
 void set_up_handle_cache(JNIEnv *env)
 {
 	handle_cache.activity.class = _REF((*env)->FindClass(env, "android/app/Activity"));
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.activity.onCreate = _METHOD(handle_cache.activity.class, "onCreate", "(Landroid/os/Bundle;)V");
 	handle_cache.activity.onPostCreate = _METHOD(handle_cache.activity.class, "onPostCreate", "(Landroid/os/Bundle;)V");
@@ -20,7 +20,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.activity.onNewIntent = _METHOD(handle_cache.activity.class, "onNewIntent", "(Landroid/content/Intent;)V");
 
 	handle_cache.attribute_set.class = _REF((*env)->FindClass(env, "android/util/AttributeSet"));
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.attribute_set.getAttributeValue_string = _METHOD(handle_cache.attribute_set.class, "getAttributeValue", "(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;");
 	handle_cache.attribute_set.getAttributeValue_int = _METHOD(handle_cache.attribute_set.class, "getAttributeIntValue", "(Ljava/lang/String;Ljava/lang/String;I)I");
@@ -53,10 +53,10 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.surface_view.surfaceChanged = _METHOD(handle_cache.surface_view.class, "surfaceChanged", "(III)V");
 
 	handle_cache.view.class = _REF((*env)->FindClass(env, "android/view/View"));
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.view.setLayoutParams = _METHOD(handle_cache.view.class, "setLayoutParams", "(Landroid/view/ViewGroup$LayoutParams;)V");
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.view.onDraw = _METHOD(handle_cache.view.class, "onDraw", "(Landroid/graphics/Canvas;)V");
 	handle_cache.view.dispatchDraw = _METHOD(handle_cache.view.class, "dispatchDraw", "(Landroid/graphics/Canvas;)V");
@@ -95,10 +95,10 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.asset_manager.extractFromAPK = _STATIC_METHOD(handle_cache.asset_manager.class, "extractFromAPK", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V");
 
 	handle_cache.context.class = _REF((*env)->FindClass(env, "android/content/Context"));
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.context.get_package_name = _METHOD(handle_cache.context.class, "getPackageName", "()Ljava/lang/String;");
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	handle_cache.context.sendBroadcast = _METHOD(handle_cache.context.class, "sendBroadcast", "(Landroid/content/Intent;)V");
 	handle_cache.context.startActivity = _METHOD(handle_cache.context.class, "startActivity", "(Landroid/content/Intent;)V");

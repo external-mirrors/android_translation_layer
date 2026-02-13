@@ -1,11 +1,5 @@
 package android.content;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
-import java.util.Collections;
-import java.util.List;
-
 import android.accounts.Account;
 import android.content.res.AssetFileDescriptor;
 import android.database.ContentObserver;
@@ -15,6 +9,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.CancellationSignal;
 import android.os.ParcelFileDescriptor;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.util.Collections;
+import java.util.List;
 
 public class ContentResolver {
 	public static final String SCHEME_CONTENT = "content";

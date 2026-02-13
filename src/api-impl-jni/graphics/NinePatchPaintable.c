@@ -24,23 +24,23 @@ static void ninepatch_paintable_snapshot(GdkPaintable *paintable, GdkSnapshot *s
 
 		graphene_rect_t rect;
 		GdkRGBA rgba;
-		for (j = 0, rect.origin.y = 0; j < chunk->numYDivs+1; j++, rect.origin.y += rect.size.height) {
-			int div_start = j ? yDivs[j-1] : 0;
+		for (j = 0, rect.origin.y = 0; j < chunk->numYDivs + 1; j++, rect.origin.y += rect.size.height) {
+			int div_start = j ? yDivs[j - 1] : 0;
 			int div_end = (j == chunk->numYDivs) ? ninepatch->height : yDivs[j];
 			float patch_height = div_end - div_start;
-			if (j%2)  // odd sections are stretchable
+			if (j % 2) // odd sections are stretchable
 				patch_height *= strech_factor_height;
 			rect.size.height = patch_height;
-			if (!patch_height)  // skip empty sections
+			if (!patch_height) // skip empty sections
 				continue;
-			for (i = 0, rect.origin.x = 0; i < chunk->numXDivs+1; i++, rect.origin.x += rect.size.width) {
-				int div_start = i ? xDivs[i-1] : 0;
+			for (i = 0, rect.origin.x = 0; i < chunk->numXDivs + 1; i++, rect.origin.x += rect.size.width) {
+				int div_start = i ? xDivs[i - 1] : 0;
 				int div_end = (i == chunk->numXDivs) ? ninepatch->width : xDivs[i];
 				float patch_width = div_end - div_start;
-				if (i%2)  // odd sections are stretchable
+				if (i % 2) // odd sections are stretchable
 					patch_width *= strech_factor_width;
 				rect.size.width = patch_width;
-				if (!patch_width)  // skip empty sections
+				if (!patch_width) // skip empty sections
 					continue;
 				if (*color == NO_COLOR) {
 					printf("NinePatchPaintable: warning NO_COLOR sections not yet implemented");
@@ -77,7 +77,7 @@ static void ninepatch_paintable_class_init(NinePatchPaintableClass *class)
 }
 
 G_DEFINE_TYPE_WITH_CODE(NinePatchPaintable, ninepatch_paintable, G_TYPE_OBJECT,
-		G_IMPLEMENT_INTERFACE(GDK_TYPE_PAINTABLE, ninepatch_paintable_paintable_init))
+                        G_IMPLEMENT_INTERFACE(GDK_TYPE_PAINTABLE, ninepatch_paintable_paintable_init))
 
 GdkPaintable *ninepatch_paintable_new(const char *path)
 {
@@ -96,7 +96,7 @@ GdkPaintable *ninepatch_paintable_new(const char *path)
 	while (!feof(f)) {
 		fread(buf, 1, 8, f);
 		int size = ntohl(((uint32_t *)buf)[0]);
-		size += 4;  // 4 bytes checksum
+		size += 4; // 4 bytes checksum
 
 		if (!strncmp((char *)&buf[4], "npTc", 4)) {
 			chunk = malloc(size);
@@ -124,10 +124,10 @@ GdkPaintable *ninepatch_paintable_new(const char *path)
 	height = gdk_pixbuf_get_height(pixbuf);
 	g_object_unref(pixbuf);
 
-	for (i = 1; i < chunk->numXDivs+1; i+=2)
-		strechy_width += (i == chunk->numXDivs ? width : xDivs[i]) - xDivs[i-1];
-	for (i = 1; i < chunk->numYDivs+1; i+=2)
-		strechy_height += (i == chunk->numYDivs ? height : yDivs[i]) - yDivs[i-1];
+	for (i = 1; i < chunk->numXDivs + 1; i += 2)
+		strechy_width += (i == chunk->numXDivs ? width : xDivs[i]) - xDivs[i - 1];
+	for (i = 1; i < chunk->numYDivs + 1; i += 2)
+		strechy_height += (i == chunk->numYDivs ? height : yDivs[i]) - yDivs[i - 1];
 
 	NinePatchPaintable *ninepatch = NINEPATCH_PAINTABLE(g_object_new(ninepatch_paintable_get_type(), NULL));
 	ninepatch->chunk = chunk;

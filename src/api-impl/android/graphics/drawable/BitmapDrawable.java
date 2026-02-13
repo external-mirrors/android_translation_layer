@@ -1,12 +1,5 @@
 package android.graphics.drawable;
 
-import java.io.IOException;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
-import com.android.internal.R;
-
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
@@ -17,6 +10,10 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
 import android.util.AttributeSet;
+import com.android.internal.R;
+import java.io.IOException;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class BitmapDrawable extends Drawable {
 
@@ -42,7 +39,7 @@ public class BitmapDrawable extends Drawable {
 	}
 
 	public void inflate(Resources r, XmlPullParser parser, AttributeSet attrs, Theme theme)
-			throws XmlPullParserException, IOException {
+	    throws XmlPullParserException, IOException {
 		final TypedArray a = obtainAttributes(r, theme, attrs, R.styleable.BitmapDrawable);
 		if (a.hasValue(R.styleable.BitmapDrawable_src)) {
 			BitmapDrawable dr = null;

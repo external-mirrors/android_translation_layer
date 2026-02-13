@@ -13,5 +13,4 @@ public class RippleDrawable extends LayerDrawable {
 	public void setColor(ColorStateList colorStateList) {}
 
 	public void setRadius(int radius) {}
-
 }

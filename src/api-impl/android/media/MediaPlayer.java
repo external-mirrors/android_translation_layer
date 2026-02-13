@@ -2,7 +2,6 @@ package android.media;
 
 import android.content.Context;
 import android.net.Uri;
-
 import java.io.FileDescriptor;
 import java.util.Map;
 

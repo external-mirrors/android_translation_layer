@@ -30,7 +30,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.WindowManagerImpl;
-
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -60,7 +59,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		int theme_res = 0;
 		int label_res = 0;
 		int app_label_res = 0;
-		for (PackageParser.Activity activity: pkg.activities) {
+		for (PackageParser.Activity activity : pkg.activities) {
 			if (className.equals(activity.className)) {
 				label_res = activity.info.labelRes;
 				theme_res = activity.info.getThemeResource();
@@ -70,7 +69,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 		app_label_res = pkg.applicationInfo.labelRes;
 		theme_res = Resources.selectDefaultTheme(theme_res,
-				Math.min(pkg.applicationInfo.targetSdkVersion, Build.VERSION.SDK_INT));
+		                                         Math.min(pkg.applicationInfo.targetSdkVersion, Build.VERSION.SDK_INT));
 
 		Class<? extends Activity> cls = Class.forName(className).asSubclass(Activity.class);
 		Constructor<? extends Activity> constructor = cls.getConstructor();
@@ -98,14 +97,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	private static Activity createMainActivity(String className, long native_window, String uriString) throws Exception {
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;
 		if (className == null) {
-			for (PackageParser.Activity activity: pkg.activities) {
+			for (PackageParser.Activity activity : pkg.activities) {
 				if (!activity.info.enabled)
 					continue;
 				boolean done = false;
-				for (PackageParser.IntentInfo intent: activity.intents) {
+				for (PackageParser.IntentInfo intent : activity.intents) {
 					Slog.i(TAG, intent.toString());
-					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER") && intent.hasAction("android.intent.action.MAIN")) ||
-					    (uri != null && intent.hasDataScheme(uri.getScheme())                  && intent.hasCategory("android.intent.category.DEFAULT"))) {
+					if ((uri == null && intent.hasCategory("android.intent.category.LAUNCHER") && intent.hasAction("android.intent.action.MAIN")) || (uri != null && intent.hasDataScheme(uri.getScheme()) && intent.hasCategory("android.intent.category.DEFAULT"))) {
 						className = activity.info.targetActivity != null ? activity.info.targetActivity : activity.className;
 						done = true;
 						break;
@@ -316,7 +314,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public final void runOnUiThread(Runnable action) {
-		if(Looper.myLooper() == Looper.getMainLooper()) {
+		if (Looper.myLooper() == Looper.getMainLooper()) {
 			action.run();
 		} else {
 			new Handler(Looper.getMainLooper()).post(action);
@@ -327,9 +325,9 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	// the order must match GtkFileChooserAction enum
 	private static final List<String> FILE_CHOOSER_ACTIONS = Arrays.asList(
-		"android.intent.action.OPEN_DOCUMENT",     // (0) GTK_FILE_CHOOSER_ACTION_OPEN
-		"android.intent.action.CREATE_DOCUMENT",   // (1) GTK_FILE_CHOOSER_ACTION_SAVE
-		"android.intent.action.OPEN_DOCUMENT_TREE" // (2) GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
+	    "android.intent.action.OPEN_DOCUMENT",     // (0) GTK_FILE_CHOOSER_ACTION_OPEN
+	    "android.intent.action.CREATE_DOCUMENT",   // (1) GTK_FILE_CHOOSER_ACTION_SAVE
+	    "android.intent.action.OPEN_DOCUMENT_TREE" // (2) GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER
 	);
 
 	// callback from native code
@@ -447,7 +445,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return (LayoutInflater)getSystemService("layout_inflater");
 	}
 
-	public boolean isChangingConfigurations() {return false;}
+	public boolean isChangingConfigurations() { return false; }
 
 	@Override
 	public void onContentChanged() {
@@ -564,7 +562,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		if (!cls.startsWith(pkg) || cls.length() <= packageLen || cls.charAt(packageLen) != '.') {
 			return cls;
 		}
-		return cls.substring(packageLen+1);
+		return cls.substring(packageLen + 1);
 	}
 
 	public SharedPreferences getPreferences(int mode) {

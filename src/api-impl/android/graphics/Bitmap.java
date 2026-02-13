@@ -1,10 +1,9 @@
 package android.graphics;
 
+import android.util.DisplayMetrics;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.Buffer;
-
-import android.util.DisplayMetrics;
 
 /*
  * Bitmap is implemented as GdkTexture or GtkSnapshot. It can only be one of the two at a time.
@@ -13,16 +12,16 @@ import android.util.DisplayMetrics;
 public final class Bitmap {
 
 	public enum Config {
-		RGB_565(2, -1, /*ANDROID_BITMAP_FORMAT_RGB_565*/4),
-		ARGB_8888(4, /*GDK_MEMORY_R8G8B8A8*/5, /**ANDROID_BITMAP_FORMAT_RGBA_8888*/1),
-		ARGB_4444(2, -1, /*ANDROID_BITMAP_FORMAT_RGBA_4444*/7),
-		ALPHA_8(1, /*GDK_MEMORY_A8*/ 24, /*ANDROID_BITMAP_FORMAT_A_8*/8),
-		RGBA_F16(8, /*GDK_MEMORY_R16G16B16A16_FLOAT*/14, /*ANDROID_BITMAP_FORMAT_RGBA_F16*/9),
-		HARDWARE(4, /*GDK_MEMORY_R8G8B8A8*/5, /*ANDROID_BITMAP_FORMAT_RGBA_8888*/1);
+		RGB_565(2, -1, /*ANDROID_BITMAP_FORMAT_RGB_565*/ 4),
+		ARGB_8888(4, /*GDK_MEMORY_R8G8B8A8*/ 5, /**ANDROID_BITMAP_FORMAT_RGBA_8888*/ 1),
+		ARGB_4444(2, -1, /*ANDROID_BITMAP_FORMAT_RGBA_4444*/ 7),
+		ALPHA_8(1, /*GDK_MEMORY_A8*/ 24, /*ANDROID_BITMAP_FORMAT_A_8*/ 8),
+		RGBA_F16(8, /*GDK_MEMORY_R16G16B16A16_FLOAT*/ 14, /*ANDROID_BITMAP_FORMAT_RGBA_F16*/ 9),
+		HARDWARE(4, /*GDK_MEMORY_R8G8B8A8*/ 5, /*ANDROID_BITMAP_FORMAT_RGBA_8888*/ 1);
 
 		private int bytes_per_pixel;
 		private int gdk_memory_format;
-		int android_memory_format;  // used by native function AndroidBitmap_getInfo()
+		int android_memory_format; // used by native function AndroidBitmap_getInfo()
 
 		private Config(int bytes_per_pixel, int gdk_memory_format, int android_memory_format) {
 			this.bytes_per_pixel = bytes_per_pixel;
@@ -46,7 +45,7 @@ public final class Bitmap {
 	private long snapshot;
 	private Config config = Config.ARGB_8888;
 	private boolean hasAlpha = true;
-	long bytes = 0;  // used by native function AndroidBitmap_lockPixels()
+	long bytes = 0; // used by native function AndroidBitmap_lockPixels()
 	private boolean recycled = false;
 	boolean mutable = true;
 
@@ -60,7 +59,7 @@ public final class Bitmap {
 		this.width = width;
 		this.height = height;
 		int stride = width * config.bytes_per_pixel;
-		this.stride = (stride + 3) & ~3;  // 4-byte alignment
+		this.stride = (stride + 3) & ~3; // 4-byte alignment
 	}
 
 	public static Bitmap createBitmap(int width, int height, Config config) {

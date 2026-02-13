@@ -4,7 +4,6 @@ import android.annotation.UnsupportedAppUsage;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
-
 import java.lang.reflect.InvocationTargetException;
 
 public class ContextThemeWrapper extends ContextWrapper {

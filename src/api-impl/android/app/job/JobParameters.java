@@ -1,8 +1,8 @@
 package android.app.job;
 
-import android.os.PersistableBundle;
 import android.net.Uri;
 import android.os.Parcelable;
+import android.os.PersistableBundle;
 
 public class JobParameters implements Parcelable {
 
@@ -18,11 +18,11 @@ public class JobParameters implements Parcelable {
 		return jobInfo.getExtras();
 	}
 
-	public Uri[] getTriggeredContentUris()  {
+	public Uri[] getTriggeredContentUris() {
 		return new Uri[0];
 	}
 
-	public String[]  getTriggeredContentAuthorities() {
+	public String[] getTriggeredContentAuthorities() {
 		return new String[0];
 	}
 }

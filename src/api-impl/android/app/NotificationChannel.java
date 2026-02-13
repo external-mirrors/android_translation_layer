@@ -1,7 +1,7 @@
 package android.app;
 
-import android.net.Uri;
 import android.media.AudioAttributes;
+import android.net.Uri;
 
 public class NotificationChannel {
 

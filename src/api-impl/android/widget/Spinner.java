@@ -39,7 +39,7 @@ public class Spinner extends AbsSpinner {
 	}
 
 	public SpinnerAdapter getAdapter() {
-		return (SpinnerAdapter) super.getAdapter();
+		return (SpinnerAdapter)super.getAdapter();
 	}
 
 	@Override
@@ -62,6 +62,5 @@ public class Spinner extends AbsSpinner {
 
 	public int getDropDownWidth() { return 100; }
 
-	public void setDropDownHorizontalOffset(int offset) {};
-
+	public void setDropDownHorizontalOffset(int offset){};
 }

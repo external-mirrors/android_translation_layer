@@ -47,5 +47,4 @@ public class SeekBar extends AbsSeekBar {
 
 		public void onStopTrackingTouch(SeekBar seekBar);
 	}
-
 }

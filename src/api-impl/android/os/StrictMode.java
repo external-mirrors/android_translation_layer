@@ -26,9 +26,9 @@ public final class StrictMode {
 		final Executor callbackExecutor;
 
 		private ThreadPolicy(int mask, OnThreadViolationListener listener, Executor executor) {
-		    this.mask = mask;
-		    this.listener = listener;
-		    this.callbackExecutor = executor;
+			this.mask = mask;
+			this.listener = listener;
+			this.callbackExecutor = executor;
 		}
 
 		private ThreadPolicy() {
@@ -50,7 +50,7 @@ public final class StrictMode {
 			}
 
 			public Builder(ThreadPolicy policy) {
-				if(policy != null) {
+				if (policy != null) {
 					mask = policy.mask;
 					listener = policy.listener;
 					executor = policy.callbackExecutor;
@@ -119,7 +119,7 @@ public final class StrictMode {
 				return this;
 			}
 			public Builder penaltyDropBox() {
-			return this;
+				return this;
 			}
 			public VmPolicy build() {
 				return new VmPolicy();

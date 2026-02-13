@@ -4,7 +4,7 @@ import android.content.ComponentName;
 
 public class SearchManager {
 
-    public SearchableInfo getSearchableInfo(ComponentName componentName) {
-        return null;
-    }
+	public SearchableInfo getSearchableInfo(ComponentName componentName) {
+		return null;
+	}
 }

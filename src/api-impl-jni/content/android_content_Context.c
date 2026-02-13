@@ -1,16 +1,16 @@
 #define _GNU_SOURCE
 
 #include <gtk/gtk.h>
-#include <string.h>
 #include <libportal/portal.h>
-#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
-#include <libportal/settings.h>
+#include <string.h>
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION // libportal >= 0.8
+	#include <libportal/settings.h>
 #endif
 
-#include "portal-openuri.h"
 #include "portal-email.h"
-#include "unifiedpush-distributor.h"
+#include "portal-openuri.h"
 #include "unifiedpush-connector.h"
+#include "unifiedpush-distributor.h"
 
 #include "../defines.h"
 #include "../util.h"
@@ -19,12 +19,13 @@
 
 extern char *apk_path;
 
-JNIEXPORT jstring JNICALL Java_android_content_Context_native_1get_1apk_1path(JNIEnv *env, jclass this) {
+JNIEXPORT jstring JNICALL Java_android_content_Context_native_1get_1apk_1path(JNIEnv *env, jclass this)
+{
 	return _JSTRING(apk_path);
 }
 
-#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
-static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gchar *key, GVariant* value, jobject configuration)
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION // libportal >= 0.8
+static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gchar *key, GVariant *value, jobject configuration)
 {
 	JNIEnv *env;
 	if (!strcmp(namestpace, "org.freedesktop.appearance") && !strcmp(key, "color-scheme")) {
@@ -35,11 +36,11 @@ static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gc
 			jobject resources = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "r", "Landroid/content/res/Resources;");
 			configuration = _GET_OBJ_FIELD(resources, "mConfiguration", "Landroid/content/res/Configuration;");
 		}
-		if (color_sheme == 1)  // Prefer dark appearance
+		if (color_sheme == 1) // Prefer dark appearance
 			_SET_INT_FIELD(configuration, "uiMode", /*UI_MODE_NIGHT_YES*/ 0x20);
-		else if (color_sheme == 2)  // Prefer light appearance
+		else if (color_sheme == 2) // Prefer light appearance
 			_SET_INT_FIELD(configuration, "uiMode", /*UI_MODE_NIGHT_NO*/ 0x10);
-		else  // No preference
+		else // No preference
 			_SET_INT_FIELD(configuration, "uiMode", /*UI_MODE_NIGHT_UNDEFINED*/ 0x00);
 	}
 }
@@ -56,7 +57,7 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv 
 
 	_SET_INT_FIELD(config, "screenWidthDp", geometry.width);
 	_SET_INT_FIELD(config, "screenHeightDp", geometry.height);
-#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION  // libportal >= 0.8
+#ifdef XDP_TYPE_INPUT_CAPTURE_SESSION // libportal >= 0.8
 	if (!xdp_settings) {
 		GError *error = NULL;
 		XdpPortal *portal = xdp_portal_initable_new(&error);
@@ -79,7 +80,7 @@ JNIEXPORT void JNICALL Java_android_content_Context_native_1updateConfig(JNIEnv 
 
 JNIEXPORT void JNICALL Java_android_content_Context_nativeOpenFile(JNIEnv *env, jclass class, jint fd)
 {
-	GDBusConnection *connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, NULL);
+	GDBusConnection *connection = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL);
 	OpenURI *openuri = open_uri_proxy_new_sync(connection, 0, "org.freedesktop.portal.Desktop", "/org/freedesktop/portal/desktop", NULL, NULL);
 	GVariantBuilder opt_builder;
 	g_variant_builder_init(&opt_builder, G_VARIANT_TYPE_VARDICT);
@@ -106,7 +107,8 @@ char *fd_get_path(int fd)
 
 extern GtkWindow *window;
 
-static void share_dialog_callback(GObject *dialog, GAsyncResult *result, gpointer text_jstr) {
+static void share_dialog_callback(GObject *dialog, GAsyncResult *result, gpointer text_jstr)
+{
 	JNIEnv *env = get_jni_env();
 	int button_id = gtk_alert_dialog_choose_finish(GTK_ALERT_DIALOG(dialog), result, NULL);
 	const char *text = NULL;
@@ -123,7 +125,8 @@ static void share_dialog_callback(GObject *dialog, GAsyncResult *result, gpointe
 			gdk_clipboard_set(clipboard, G_TYPE_FILE, file);
 			g_object_unref(file);
 			g_free(path);
-		} if (text) {
+		}
+		if (text) {
 			gdk_clipboard_set_text(clipboard, text);
 		}
 	} else if (button_id == 2) {
@@ -247,7 +250,7 @@ JNIEXPORT void JNICALL Java_android_content_Context_nativeExportUnifiedPush(JNIE
 	g_signal_connect(connector1, "handle-new-endpoint", G_CALLBACK(on_new_endpoint), NULL);
 	g_signal_connect(connector1, "handle-message", G_CALLBACK(on_message), NULL);
 	g_bus_own_name(G_BUS_TYPE_SESSION, application, G_BUS_NAME_OWNER_FLAGS_NONE,
-	              on_bus_acquired, NULL, NULL, connector1, NULL);
+	               on_bus_acquired, NULL, NULL, connector1, NULL);
 	(*env)->ReleaseStringUTFChars(env, application_jstr, application);
 }
 

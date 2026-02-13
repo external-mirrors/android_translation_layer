@@ -1,8 +1,8 @@
 package android.app;
 
 import android.annotation.UnsupportedAppUsage;
-import android.app.job.JobScheduler;
 import android.app.SearchManager;
+import android.app.job.JobScheduler;
 import android.bluetooth.BluetoothManager;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -30,7 +30,6 @@ import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
 import android.view.inputmethod.InputMethodManager;
-
 import java.lang.reflect.InvocationTargetException;
 
 public final class ContextImpl extends Context {

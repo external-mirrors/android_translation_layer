@@ -87,7 +87,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 					onShowListener.onShow(Dialog.this);
 			}
 		};
-		if(Looper.myLooper() == Looper.getMainLooper()) {
+		if (Looper.myLooper() == Looper.getMainLooper()) {
 			action.run();
 		} else {
 			new Handler(Looper.getMainLooper()).post(action);
@@ -161,7 +161,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 		throw new UnsupportedOperationException("Unimplemented method 'onMenuOpened'");
 	}
 
-	protected void onCreate (Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
 		System.out.println("- onCreate - Dialog!");
 	}
 

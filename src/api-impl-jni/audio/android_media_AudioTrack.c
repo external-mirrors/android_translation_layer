@@ -37,7 +37,6 @@ void helper_hw_params_init(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params, u
 JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv *env, jobject this, jint streamType, jint rate, jint channels, jint audioFormat, jint buffer_size, jint mode)
 {
 
-
 	snd_pcm_t *pcm_handle;
 	snd_pcm_hw_params_t *params;
 
@@ -55,10 +54,10 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 	snd_pcm_hw_params_alloca(&params);
 	helper_hw_params_init(pcm_handle, params, rate, channels, SND_PCM_FORMAT_S16_LE);
 
-/*--↓*/
-	snd_pcm_uframes_t buffer_size_as_uframes_t = buffer_size / channels / 2;  // 2 means PCM16
-	snd_pcm_hw_params_set_buffer_size_near (pcm_handle, params, &buffer_size_as_uframes_t);
-/*--↑*/
+	/*--↓*/
+	snd_pcm_uframes_t buffer_size_as_uframes_t = buffer_size / channels / 2; // 2 means PCM16
+	snd_pcm_hw_params_set_buffer_size_near(pcm_handle, params, &buffer_size_as_uframes_t);
+	/*--↑*/
 
 	/* set the period time to 1/4 of the buffer time */
 	ret = snd_pcm_hw_params_get_buffer_time(params, &buffer_time, NULL);
@@ -72,7 +71,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 
 	//snd_pcm_hw_params_free (hw_params);
 
-/*--↓*/
+	/*--↓*/
 	snd_pcm_uframes_t period_size;
 
 	ret = snd_pcm_hw_params_get_period_size(params, &period_size, 0);
@@ -81,8 +80,8 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 
 	snd_pcm_sw_params_t *sw_params;
 
-	snd_pcm_sw_params_malloc (&sw_params);
-	snd_pcm_sw_params_current (pcm_handle, sw_params);
+	snd_pcm_sw_params_malloc(&sw_params);
+	snd_pcm_sw_params_current(pcm_handle, sw_params);
 
 	snd_pcm_sw_params_set_start_threshold(pcm_handle, sw_params, (buffer_size_as_uframes_t / period_size) * period_size);
 	snd_pcm_sw_params_set_avail_min(pcm_handle, sw_params, period_size);
@@ -90,7 +89,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 	snd_pcm_sw_params(pcm_handle, sw_params);
 
 	//snd_pcm_sw_params_free (sw_params);
-/*--↑*/
+	/*--↑*/
 
 	/* Resume information */
 	printf("PCM name: '%s'\n", snd_pcm_name(pcm_handle));
@@ -126,7 +125,7 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_getMinBufferSize(JNIEnv *en
 
 	// TODO: clean up
 	unsigned int num_channels;
-	switch(channelConfig) {
+	switch (channelConfig) {
 		case 2:
 			num_channels = 1;
 			break;
@@ -150,48 +149,54 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_getMinBufferSize(JNIEnv *en
 	if (ret < 0)
 		printf("Error calling snd_pcm_hw_params_get_period_size: %s\n", snd_strerror(ret));
 
-// TODO: snd_pcm_hw_params_free(params) causes segfault, is it not supposed to be called?
+	// TODO: snd_pcm_hw_params_free(params) causes segfault, is it not supposed to be called?
 	snd_pcm_close(pcm_handle);
 
 	_SET_STATIC_INT_FIELD(this_class, "frames", frames);
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
 	printf("\n\nJava_android_media_AudioTrack_getMinBufferSize is returning: %ld\n\n\n", frames * num_channels * 2);
 	return frames * num_channels * 2; // FIXME: 2 bytes = 16 bits (s16)
 }
 
-struct jni_callback_data { JavaVM *jvm; jobject this; jclass this_class; jobject listener; jint period_time;};
+struct jni_callback_data {
+	JavaVM *jvm;
+	jobject this;
+	jclass this_class;
+	jobject listener;
+	jint period_time;
+};
 void periodic_update_callback(snd_async_handler_t *pcm_callback)
 {
 	struct jni_callback_data *d = snd_async_handler_get_callback_private(pcm_callback);
 	int getenv_ret;
 	int attach_ret = -1;
 
-//	printf("periodic_update_callback called!\n");
+	//	printf("periodic_update_callback called!\n");
 
 	JNIEnv *env;
-	getenv_ret = (*d->jvm)->GetEnv(d->jvm, (void**)&env, JNI_VERSION_1_6);
+	getenv_ret = (*d->jvm)->GetEnv(d->jvm, (void **)&env, JNI_VERSION_1_6);
 
-//	printf("!!!! GetEnv: %p getenv_ret: %d\n",env, getenv_ret);
-	if(getenv_ret == JNI_EDETACHED) {
+	//	printf("!!!! GetEnv: %p getenv_ret: %d\n",env, getenv_ret);
+	if (getenv_ret == JNI_EDETACHED) {
 		printf("!!!! JNI_EDETACHED\n");
-		attach_ret = (*d->jvm)->AttachCurrentThread(d->jvm, (void**)&env, NULL);
+		attach_ret = (*d->jvm)->AttachCurrentThread(d->jvm, (void **)&env, NULL);
 		// TODO error checking
 	}
 
 	if (d->listener)
 		(*env)->CallVoidMethod(env, d->listener, handle_cache.audio_track_periodic_listener.onPeriodicNotification, d->this);
 
-	if((*env)->ExceptionCheck(env))
+	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	if(attach_ret == JNI_OK) // if we (succesfully) attached a thread, we should probably detach it now
+	if (attach_ret == JNI_OK) // if we (succesfully) attached a thread, we should probably detach it now
 		(*d->jvm)->DetachCurrentThread(d->jvm);
 
 	// microseconds to milliseconds
-//	g_timeout_add (d->period_time / 1000 - 2, G_SOURCE_FUNC(helper_loop), d);
-//	return G_SOURCE_REMOVE;
+	//	g_timeout_add (d->period_time / 1000 - 2, G_SOURCE_FUNC(helper_loop), d);
+	//	return G_SOURCE_REMOVE;
 }
 
 JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1play(JNIEnv *env, jobject this)
@@ -213,7 +218,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1play(JNIEnv *env, j
 	// microseconds to milliseconds
 	//g_timeout_add (period_time / 1000, G_SOURCE_FUNC(helper_loop), callback_data);
 
-/*--↓*/
+	/*--↓*/
 	snd_pcm_t *pcm_handle = _PTR(_GET_LONG_FIELD(this, "pcm_handle"));
 
 	snd_async_handler_t *pcm_callback;
@@ -221,7 +226,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1play(JNIEnv *env, j
 	snd_async_add_pcm_handler(&pcm_callback, pcm_handle, periodic_update_callback, callback_data);
 	snd_pcm_start(pcm_handle);
 	snd_pcm_pause(pcm_handle, FALSE);
-/*--↑*/
+	/*--↑*/
 }
 
 JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write(JNIEnv *env, jobject this, jbyteArray audio_data, jint offset_in_bytes, jint frames_to_write)
@@ -246,7 +251,7 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write(JNIEnv *env, 
 		}
 	}
 
-//	printf("::::> tried to write %d frames, actually wrote %d frames.\n", frames_to_write, frames_written);
+	//	printf("::::> tried to write %d frames, actually wrote %d frames.\n", frames_to_write, frames_written);
 
 	_RELEASE_BYTE_ARRAY_ELEMENTS(audio_data, buffer);
 	return frames_written;

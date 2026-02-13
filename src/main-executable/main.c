@@ -22,19 +22,19 @@
 #include <sys/stat.h>
 
 #ifndef DEFFILEMODE
-#define DEFFILEMODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) /* 0666*/
+	#define DEFFILEMODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) /* 0666*/
 #endif
 
 #ifdef __x86_64__
-#define NATIVE_ARCH "x86_64"
+	#define NATIVE_ARCH "x86_64"
 #elifdef __i386__
-#define NATIVE_ARCH "x86"
+	#define NATIVE_ARCH "x86"
 #elifdef __aarch64__
-#define NATIVE_ARCH "arm64-v8a"
+	#define NATIVE_ARCH "arm64-v8a"
 #elifdef __arm__
-#define NATIVE_ARCH "armeabi-v7a"
+	#define NATIVE_ARCH "armeabi-v7a"
 #else
-#error unknown native architecture
+	#error unknown native architecture
 #endif
 
 GtkWidget *window;
@@ -76,7 +76,7 @@ char *construct_classpath(char *prefix, char **cp_array, size_t len)
 	return result;
 }
 
-#define JDWP_ARG "-XjdwpOptions:transport=dt_socket,server=y,suspend=y,address="
+#define JDWP_ARG    "-XjdwpOptions:transport=dt_socket,server=y,suspend=y,address="
 #define SDK_INT_ARG "-DBuild.VERSION.SDK_INT="
 
 JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *framework_res_apk, char *test_runner_jar, char *api_impl_natives_dir, char *app_lib_dir, char *sdk_int, char **extra_jvm_options)
@@ -91,7 +91,7 @@ JNIEnv *create_vm(char *api_impl_jar, char *apk_classpath, char *framework_res_a
 
 	int option_counter = args.nOptions;
 
-	char jdwp_option_string[sizeof(JDWP_ARG) + 5] = JDWP_ARG; // 5 chars for port number, NULL byte is counted by sizeof
+	char jdwp_option_string[sizeof(JDWP_ARG) + 5] = JDWP_ARG;          // 5 chars for port number, NULL byte is counted by sizeof
 	char sdk_int_option_string[sizeof(SDK_INT_ARG) + 2] = SDK_INT_ARG; // 2 chars for SDK_INT, NULL byte is counted by sizeof
 
 	const char *jdwp_port = getenv("JDWP_LISTEN");
@@ -162,7 +162,10 @@ gboolean hacky_on_window_focus_changed_callback(JNIEnv *env)
 	return G_SOURCE_CONTINUE;
 }
 
-struct dynamic_launcher_callback_data {char *desktop_file_id; char *desktop_entry;};
+struct dynamic_launcher_callback_data {
+	char *desktop_file_id;
+	char *desktop_entry;
+};
 static void dynamic_launcher_ready_callback(GObject *portal, GAsyncResult *res, gpointer user_data)
 {
 	struct dynamic_launcher_callback_data *data = user_data;
@@ -273,7 +276,7 @@ static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, do
 	return TRUE;
 }
 
-char * find_jar_or_die(char *builddir_path, char *installed_path, char *install_prefix)
+char *find_jar_or_die(char *builddir_path, char *installed_path, char *install_prefix)
 {
 	char *path;
 
@@ -285,7 +288,7 @@ char * find_jar_or_die(char *builddir_path, char *installed_path, char *install_
 
 	if (access(path, F_OK) < 0) {
 		fprintf(stderr, "error: can't stat %s (%s)\n",
-		                path, strerror(errno));
+		        path, strerror(errno));
 		exit(1);
 	}
 
@@ -294,14 +297,14 @@ char * find_jar_or_die(char *builddir_path, char *installed_path, char *install_
 
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
-// TODO: pass all files to classpath
-/*
+	// TODO: pass all files to classpath
+	/*
 	printf("nfiles: %d\n", nfiles);
 	for(int i = 0; i < nfiles; i++) {
 		printf(">- [%s]\n", g_file_get_path(files[i]));
 	}
 */
-	if (window) {  // this is not the first launch, but a DBus request to open an URI in the running app
+	if (window) { // this is not the first launch, but a DBus request to open an URI in the running app
 		fprintf(stderr, "opening uri over DBus %p\n", files[0]);
 		char *uri = g_file_get_uri(files[0]);
 		JNIEnv *env = get_jni_env();
@@ -384,7 +387,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	// check for jars and apks  in './' (if running from builddir), or in system install path
 	api_impl_jar = find_jar_or_die(API_IMPL_JAR_PATH_LOCAL, REL_API_IMPL_JAR_INSTALL_PATH, dex_install_dir);
 	framework_res_apk = find_jar_or_die(FRAMEWORK_RES_PATH_LOCAL, REL_FRAMEWORK_RES_INSTALL_PATH, dex_install_dir);
-	if(d->apk_instrumentation_class)
+	if (d->apk_instrumentation_class)
 		test_runner_jar = find_jar_or_die(TEST_RUNNER_JAR_PATH_LOCAL, REL_TEST_RUNNER_JAR_INSTALL_PATH, dex_install_dir);
 
 	char *api_impl_natives_dir = g_strdup_printf("%s/%s", dex_install_dir, REL_API_IMPL_NATIVES_INSTALL_PATH);
@@ -440,12 +443,12 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	gboolean decorated;
 	if (disable_decoration_env)
 		decorated = !strcmp(disable_decoration_env, "0") || !strcmp(disable_decoration_env, "false");
-	else {     // by default only enable decorations if there are any action buttons to show in the title bar
+	else { // by default only enable decorations if there are any action buttons to show in the title bar
 		char *decoration_layout;
 		g_object_get(G_OBJECT(gtk_settings_get_default()), "gtk-decoration-layout", &decoration_layout, NULL);
 		GString *gstring = g_string_new_take(decoration_layout);
-		g_string_replace(gstring, "menu", "", 0);  // ignore menu button
-		g_string_replace(gstring, ":", "", 0);  // ignore leading or trailing colon
+		g_string_replace(gstring, "menu", "", 0); // ignore menu button
+		g_string_replace(gstring, ":", "", 0);    // ignore leading or trailing colon
 		decorated = gstring->len > 0;
 		g_string_free(gstring, TRUE);
 	}
@@ -455,7 +458,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		gtk_window_fullscreen(GTK_WINDOW(window));
 
 	// Load default css stylesheet
-	GtkCssProvider * cssProvider = gtk_css_provider_new();
+	GtkCssProvider *cssProvider = gtk_css_provider_new();
 	gtk_css_provider_load_from_resource(cssProvider, "/com/gitlab/android-translation-layer/android-translation-layer/default-stylesheet.css");
 	gtk_style_context_add_provider_for_display(gdk_display_get_default(), GTK_STYLE_PROVIDER(cssProvider), GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
@@ -497,8 +500,8 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		}
 
 		(*env)->CallStaticObjectMethod(env, handle_cache.instrumentation.class,
-		                                    _STATIC_METHOD(handle_cache.instrumentation.class, "create", "(Ljava/lang/String;Landroid/content/Intent;)Landroid/app/Instrumentation;"),
-		                                    _JSTRING(d->apk_instrumentation_class), intent);
+		                               _STATIC_METHOD(handle_cache.instrumentation.class, "create", "(Ljava/lang/String;Landroid/content/Intent;)Landroid/app/Instrumentation;"),
+		                               _JSTRING(d->apk_instrumentation_class), intent);
 
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
@@ -507,8 +510,8 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	// construct main Activity
 	if (!d->apk_instrumentation_class && !d->install_internal) {
 		activity_object = (*env)->CallStaticObjectMethod(env, handle_cache.activity.class,
-			                                         _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
-			                                         _JSTRING(d->apk_main_activity_class), _INTPTR(window), (uri_option && *uri_option) ? _JSTRING(uri_option) : NULL);
+		                                                 _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
+		                                                 _JSTRING(d->apk_main_activity_class), _INTPTR(window), (uri_option && *uri_option) ? _JSTRING(uri_option) : NULL);
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 		if (uri_option)
@@ -590,10 +593,10 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		g_file_make_directory(g_file_get_parent(dest), NULL, NULL);
 		GError *err = NULL;
 		g_file_copy(files[0], dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, &err);
-		if(err)
+		if (err)
 			fprintf(stderr, "error copying apk: %s\n", err->message);
 
-		if(d->install_internal)
+		if (d->install_internal)
 			exit(0);
 
 		jmethodID get_supported_mime_types = _METHOD(handle_cache.application.class, "get_supported_mime_types", "()Ljava/lang/String;");
@@ -718,7 +721,7 @@ static void activate(GtkApplication *app, struct jni_callback_data *d)
 	exit(1);
 }
 
-static gboolean option_uri_cb(const gchar* option_name, const gchar* value, gpointer data, GError** error)
+static gboolean option_uri_cb(const gchar *option_name, const gchar *value, gpointer data, GError **error)
 {
 	fprintf(stderr, "option_uri_cb: %s %s, %p, %p\n", option_name, value, data, error);
 	uri_option = g_strdup(value);
@@ -729,16 +732,16 @@ void init_cmd_parameters(GApplication *app, struct jni_callback_data *d)
 {
 	const GOptionEntry cmd_params[] = {
 		/* long_name | short_name | flags | arg                 | arg_data                     | description                                                                                   | arg_desc */
-		{ "launch-activity",  'l', 0, G_OPTION_ARG_STRING,       &d->apk_main_activity_class,   "the fully qualifed name of the activity you wish to launch (usually the apk's main activity)", "ACTIVITY_NAME" },
-		{ "instrument",        0,  0, G_OPTION_ARG_STRING,       &d->apk_instrumentation_class, "the fully qualifed name of the instrumentation you wish to launch",                            "CLASS_NAME"    },
-		{ "window-width",     'w', 0, G_OPTION_ARG_INT,          &d->window_width,              "window width to launch with (some apps react poorly to runtime window size adjustments)",      "WIDTH"         },
-		{ "window-height",    'h', 0, G_OPTION_ARG_INT,          &d->window_height,             "window height to launch with (some apps react poorly to runtime window size adjustments)",     "HEIGHT"        },
-		{ "install",          'i', 0, G_OPTION_ARG_NONE,         &d->install,                   "install .desktop file for the given apk",                                                      NULL            },
-		{ "install-internal",  0 , 0, G_OPTION_ARG_NONE,         &d->install_internal,          "copy an apk to _installed_apks_ but don't create a desktop entry",                             NULL            },
-		{ "extra-jvm-option", 'X', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_jvm_options,         "pass an additional option directly to art (e.g -X \"-verbose:jni\")",                          "\"OPTION\""    },
-		{ "extra-string-key", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_string_keys,         "pass a string extra (-e key=value)",                                                           "\"KEY=VALUE\"" },
-		{ "uri",              'u', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, option_uri_cb, "open the given URI inside the application",                                               "URI"           },
-		{ "sdk-int",           0 , 0, G_OPTION_ARG_STRING,       &d->sdk_int,                   "pass a string extra (-e key=value)",                                                           "\"KEY=VALUE\"" },
+		{"launch-activity", 'l', 0, G_OPTION_ARG_STRING, &d->apk_main_activity_class, "the fully qualifed name of the activity you wish to launch (usually the apk's main activity)", "ACTIVITY_NAME"},
+		{"instrument", 0, 0, G_OPTION_ARG_STRING, &d->apk_instrumentation_class, "the fully qualifed name of the instrumentation you wish to launch", "CLASS_NAME"},
+		{"window-width", 'w', 0, G_OPTION_ARG_INT, &d->window_width, "window width to launch with (some apps react poorly to runtime window size adjustments)", "WIDTH"},
+		{"window-height", 'h', 0, G_OPTION_ARG_INT, &d->window_height, "window height to launch with (some apps react poorly to runtime window size adjustments)", "HEIGHT"},
+		{"install", 'i', 0, G_OPTION_ARG_NONE, &d->install, "install .desktop file for the given apk", NULL},
+		{"install-internal", 0, 0, G_OPTION_ARG_NONE, &d->install_internal, "copy an apk to _installed_apks_ but don't create a desktop entry", NULL},
+		{"extra-jvm-option", 'X', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_jvm_options, "pass an additional option directly to art (e.g -X \"-verbose:jni\")", "\"OPTION\""},
+		{"extra-string-key", 'e', 0, G_OPTION_ARG_STRING_ARRAY, &d->extra_string_keys, "pass a string extra (-e key=value)", "\"KEY=VALUE\""},
+		{"uri", 'u', G_OPTION_FLAG_OPTIONAL_ARG, G_OPTION_ARG_CALLBACK, option_uri_cb, "open the given URI inside the application", "URI"},
+		{"sdk-int", 0, 0, G_OPTION_ARG_STRING, &d->sdk_int, "pass a string extra (-e key=value)", "\"KEY=VALUE\""},
 		{NULL}
 	};
 
@@ -748,7 +751,7 @@ void init_cmd_parameters(GApplication *app, struct jni_callback_data *d)
 void init__r_debug();
 void remove_ongoing_notifications();
 
-typedef bool (apply_path_overrides_func_type)(char **);
+typedef bool(apply_path_overrides_func_type)(char **);
 void libc_bio_set_apply_path_overrides_func(apply_path_overrides_func_type *func);
 
 int main(int argc, char **argv)

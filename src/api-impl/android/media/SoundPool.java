@@ -1,10 +1,9 @@
 package android.media;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.content.res.AssetFileDescriptor;
 import android.content.res.AssetManager;
+import java.io.IOException;
 
 public class SoundPool {
 

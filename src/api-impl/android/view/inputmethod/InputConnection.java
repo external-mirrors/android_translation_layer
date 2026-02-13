@@ -131,7 +131,7 @@ public interface InputConnection {
 	 * text view and containing the extracted text itself.
 	 */
 	public ExtractedText getExtractedText(ExtractedTextRequest request,
-					      int flags);
+	                                      int flags);
 	/**
 	 * Delete <var>beforeLength</var> characters of text before the current cursor
 	 * position, and delete <var>afterLength</var> characters of text after the

@@ -31,7 +31,7 @@ JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1create_1texture(JNI
 		if (g_thread_self() == main_thread_id) {
 			GObject *default_display = G_OBJECT(gdk_display_get_default());
 			while (default_display->ref_count < 100)
-				g_object_ref(default_display);  // workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/7848
+				g_object_ref(default_display); // workaround for https://gitlab.gnome.org/GNOME/gtk/-/issues/7848
 			if (!off_screen_display) {
 				off_screen_display = gdk_display_open(NULL);
 				// Create and destroy a dummy surface to get the renderer type
@@ -96,7 +96,7 @@ JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1get_1pixels(JNIEnv *
 		exit(1);
 	}
 	jint *array = (*env)->GetIntArrayElements(env, pixels, NULL);
-	gdk_texture_download(texture, (guchar *)(array + offset), stride*4);
+	gdk_texture_download(texture, (guchar *)(array + offset), stride * 4);
 	(*env)->ReleaseIntArrayElements(env, pixels, array, 0);
 }
 

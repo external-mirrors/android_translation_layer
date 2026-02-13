@@ -13,5 +13,4 @@ public class Toolbar extends View {
 	public Toolbar(Context context, AttributeSet attributeSet) {
 		super(context, attributeSet);
 	}
-
 }

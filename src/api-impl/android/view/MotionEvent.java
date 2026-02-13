@@ -1195,38 +1195,38 @@ public final class MotionEvent extends InputEvent {
 	// Symbolic names of all button states in bit order from least significant
 	// to most significant.
 	private static final String[] BUTTON_SYMBOLIC_NAMES = new String[] {
-	    "BUTTON_PRIMARY",
-	    "BUTTON_SECONDARY",
-	    "BUTTON_TERTIARY",
-	    "BUTTON_BACK",
-	    "BUTTON_FORWARD",
-	    "0x00000020",
-	    "0x00000040",
-	    "0x00000080",
-	    "0x00000100",
-	    "0x00000200",
-	    "0x00000400",
-	    "0x00000800",
-	    "0x00001000",
-	    "0x00002000",
-	    "0x00004000",
-	    "0x00008000",
-	    "0x00010000",
-	    "0x00020000",
-	    "0x00040000",
-	    "0x00080000",
-	    "0x00100000",
-	    "0x00200000",
-	    "0x00400000",
-	    "0x00800000",
-	    "0x01000000",
-	    "0x02000000",
-	    "0x04000000",
-	    "0x08000000",
-	    "0x10000000",
-	    "0x20000000",
-	    "0x40000000",
-	    "0x80000000",
+		"BUTTON_PRIMARY",
+		"BUTTON_SECONDARY",
+		"BUTTON_TERTIARY",
+		"BUTTON_BACK",
+		"BUTTON_FORWARD",
+		"0x00000020",
+		"0x00000040",
+		"0x00000080",
+		"0x00000100",
+		"0x00000200",
+		"0x00000400",
+		"0x00000800",
+		"0x00001000",
+		"0x00002000",
+		"0x00004000",
+		"0x00008000",
+		"0x00010000",
+		"0x00020000",
+		"0x00040000",
+		"0x00080000",
+		"0x00100000",
+		"0x00200000",
+		"0x00400000",
+		"0x00800000",
+		"0x01000000",
+		"0x02000000",
+		"0x04000000",
+		"0x08000000",
+		"0x10000000",
+		"0x20000000",
+		"0x40000000",
+		"0x80000000",
 	};
 
 	/**
@@ -1313,16 +1313,16 @@ public final class MotionEvent extends InputEvent {
 	private MotionEvent mNext;
 
 	private static native int nativeInitialize(int nativePtr,
-						   int deviceId, int source, int action, int flags, int edgeFlags,
-						   int metaState, int buttonState,
-						   float xOffset, float yOffset, float xPrecision, float yPrecision,
-						   long downTimeNanos, long eventTimeNanos,
-						   int pointerCount, PointerProperties[] pointerIds, PointerCoords[] pointerCoords);
+	                                           int deviceId, int source, int action, int flags, int edgeFlags,
+	                                           int metaState, int buttonState,
+	                                           float xOffset, float yOffset, float xPrecision, float yPrecision,
+	                                           long downTimeNanos, long eventTimeNanos,
+	                                           int pointerCount, PointerProperties[] pointerIds, PointerCoords[] pointerCoords);
 	private static native int nativeCopy(int destNativePtr, int sourceNativePtr,
-					     boolean keepHistory);
+	                                     boolean keepHistory);
 	private static native void nativeDispose(int nativePtr);
 	private static native void nativeAddBatch(int nativePtr, long eventTimeNanos,
-						  PointerCoords[] pointerCoords, int metaState);
+	                                          PointerCoords[] pointerCoords, int metaState);
 
 	private static native int nativeGetDeviceId(int nativePtr);
 	private static native int nativeGetSource(int nativePtr);
@@ -1352,15 +1352,20 @@ public final class MotionEvent extends InputEvent {
 	private static native int nativeGetHistorySize(int nativePtr);
 	private static native long nativeGetEventTimeNanos(int nativePtr, int historyPos);
 	private static native float nativeGetRawAxisValue(int nativePtr,
-							  int axis, int pointerIndex, int historyPos);
+	                                                  int axis, int pointerIndex, int historyPos);
 	private static /*native*/ float nativeGetAxisValue(int nativePtr, int axis, int pointerIndex, int historyPos) {
-		try { throw new Exception(); } catch(Exception e) { e.printStackTrace(); System.exit(69); }
+		try {
+			throw new Exception();
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.exit(69);
+		}
 		return 0;
 	}
 	private static native void nativeGetPointerCoords(int nativePtr,
-							  int pointerIndex, int historyPos, PointerCoords outPointerCoords);
+	                                                  int pointerIndex, int historyPos, PointerCoords outPointerCoords);
 	private static native void nativeGetPointerProperties(int nativePtr,
-							      int pointerIndex, PointerProperties outPointerProperties);
+	                                                      int pointerIndex, PointerProperties outPointerProperties);
 
 	private static native void nativeScale(int nativePtr, float scale);
 	private static /* native */ void nativeTransform(int nativePtr, Matrix matrix) {
@@ -1381,7 +1386,7 @@ public final class MotionEvent extends InputEvent {
 	}
 
 	public MotionEvent(int source, int action, long eventTime, float x, float y, float raw_x, float raw_y) {
-		this(source, action, eventTime, new int[]{0}, new float[]{x, y, raw_x, raw_y});
+		this(source, action, eventTime, new int[] {0}, new float[] {x, y, raw_x, raw_y});
 	}
 
 	public MotionEvent(int source, int action, long eventTime, int[] ids, float[] coords) {
@@ -1449,16 +1454,16 @@ public final class MotionEvent extends InputEvent {
 	 * @param flags The motion event flags.
 	 */
 	static public MotionEvent obtain(long downTime, long eventTime,
-					 int action, int pointerCount, PointerProperties[] pointerProperties,
-					 PointerCoords[] pointerCoords, int metaState, int buttonState,
-					 float xPrecision, float yPrecision, int deviceId,
-					 int edgeFlags, int source, int flags) {
+	                                 int action, int pointerCount, PointerProperties[] pointerProperties,
+	                                 PointerCoords[] pointerCoords, int metaState, int buttonState,
+	                                 float xPrecision, float yPrecision, int deviceId,
+	                                 int edgeFlags, int source, int flags) {
 		MotionEvent ev = obtain();
 		ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-						 deviceId, source, action, flags, edgeFlags, metaState, buttonState,
-						 0, 0, xPrecision, yPrecision,
-						 downTime * NS_PER_MS, eventTime * NS_PER_MS,
-						 pointerCount, pointerProperties, pointerCoords);
+		                                 deviceId, source, action, flags, edgeFlags, metaState, buttonState,
+		                                 0, 0, xPrecision, yPrecision,
+		                                 downTime * NS_PER_MS, eventTime * NS_PER_MS,
+		                                 pointerCount, pointerProperties, pointerCoords);
 		return ev;
 	}
 
@@ -1493,9 +1498,9 @@ public final class MotionEvent extends InputEvent {
 	 */
 	@Deprecated
 	static public MotionEvent obtain(long downTime, long eventTime,
-					 int action, int pointerCount, int[] pointerIds, PointerCoords[] pointerCoords,
-					 int metaState, float xPrecision, float yPrecision, int deviceId,
-					 int edgeFlags, int source, int flags) {
+	                                 int action, int pointerCount, int[] pointerIds, PointerCoords[] pointerCoords,
+	                                 int metaState, float xPrecision, float yPrecision, int deviceId,
+	                                 int edgeFlags, int source, int flags) {
 		synchronized (gSharedTempLock) {
 			ensureSharedTempPointerCapacity(pointerCount);
 			final PointerProperties[] pp = gSharedTempPointerProperties;
@@ -1504,8 +1509,8 @@ public final class MotionEvent extends InputEvent {
 				pp[i].id = pointerIds[i];
 			}
 			return obtain(downTime, eventTime, action, pointerCount, pp,
-				      pointerCoords, metaState, 0, xPrecision, yPrecision, deviceId,
-				      edgeFlags, source, flags);
+			              pointerCoords, metaState, 0, xPrecision, yPrecision, deviceId,
+			              edgeFlags, source, flags);
 		}
 	}
 
@@ -1539,8 +1544,8 @@ public final class MotionEvent extends InputEvent {
 	 * MotionEvent.
 	 */
 	static public MotionEvent obtain(long downTime, long eventTime, int action,
-					 float x, float y, float pressure, float size, int metaState,
-					 float xPrecision, float yPrecision, int deviceId, int edgeFlags) {
+	                                 float x, float y, float pressure, float size, int metaState,
+	                                 float xPrecision, float yPrecision, int deviceId, int edgeFlags) {
 		MotionEvent ev = obtain();
 		synchronized (gSharedTempLock) {
 			ensureSharedTempPointerCapacity(1);
@@ -1555,13 +1560,13 @@ public final class MotionEvent extends InputEvent {
 			pc[0].pressure = pressure;
 			pc[0].size = size;*/
 
-//			ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-//							 deviceId, /*InputDevice.SOURCE_UNKNOWN*/ 0, action, 0, edgeFlags, metaState, 0,
-//							 0, 0, xPrecision, yPrecision,
-//							 downTime * NS_PER_MS, eventTime * NS_PER_MS,
-//							 1, pp, pc);
+			//			ev.mNativePtr = nativeInitialize(ev.mNativePtr,
+			//							 deviceId, /*InputDevice.SOURCE_UNKNOWN*/ 0, action, 0, edgeFlags, metaState, 0,
+			//							 0, 0, xPrecision, yPrecision,
+			//							 downTime * NS_PER_MS, eventTime * NS_PER_MS,
+			//							 1, pp, pc);
 			ev.action = action;
-			ev.ids = new int[]{1};
+			ev.ids = new int[] {1};
 			ev.coords = new float[] {x, y, 0, 0};
 			ev.eventTime = eventTime;
 			return ev;
@@ -1603,10 +1608,10 @@ public final class MotionEvent extends InputEvent {
 	 */
 	@Deprecated
 	static public MotionEvent obtain(long downTime, long eventTime, int action,
-					 int pointerCount, float x, float y, float pressure, float size, int metaState,
-					 float xPrecision, float yPrecision, int deviceId, int edgeFlags) {
+	                                 int pointerCount, float x, float y, float pressure, float size, int metaState,
+	                                 float xPrecision, float yPrecision, int deviceId, int edgeFlags) {
 		return obtain(downTime, eventTime, action, x, y, pressure, size,
-			      metaState, xPrecision, yPrecision, deviceId, edgeFlags);
+		              metaState, xPrecision, yPrecision, deviceId, edgeFlags);
 	}
 
 	/**
@@ -1625,9 +1630,9 @@ public final class MotionEvent extends InputEvent {
 	 * the event was generated.
 	 */
 	static public MotionEvent obtain(long downTime, long eventTime, int action,
-					 float x, float y, int metaState) {
+	                                 float x, float y, int metaState) {
 		return obtain(downTime, eventTime, action, x, y, 1.0f, 1.0f,
-			      metaState, 1.0f, 1.0f, 0, 0);
+		              metaState, 1.0f, 1.0f, 0, 0);
 	}
 
 	/**
@@ -1719,7 +1724,7 @@ public final class MotionEvent extends InputEvent {
 	@Override
 	public final int getSource() {
 		return source;
-						    //		return nativeGetSource(mNativePtr);
+		//		return nativeGetSource(mNativePtr);
 	}
 
 	/**
@@ -1811,7 +1816,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final long getDownTime() {
 		return getEventTime(); // FIXME?
-//		return nativeGetDownTimeNanos(mNativePtr) / NS_PER_MS;
+				       //		return nativeGetDownTimeNanos(mNativePtr) / NS_PER_MS;
 	}
 
 	/**
@@ -1999,7 +2004,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final int getToolType(int pointerIndex) {
 		return 0x1; // TOOL_TYPE_FINGER
-//		return nativeGetToolType(mNativePtr, pointerIndex);
+			    //		return nativeGetToolType(mNativePtr, pointerIndex);
 	}
 
 	/**
@@ -2026,7 +2031,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_X
 	 */
 	public final float getX(int pointerIndex) {
-		return coords[4*pointerIndex + X_OFFSET];
+		return coords[4 * pointerIndex + X_OFFSET];
 	}
 
 	/**
@@ -2041,15 +2046,15 @@ public final class MotionEvent extends InputEvent {
 	 * @see #AXIS_Y
 	 */
 	public final float getY(int pointerIndex) {
-		return coords[4*pointerIndex + Y_OFFSET];
+		return coords[4 * pointerIndex + Y_OFFSET];
 	}
 
 	public final float getRawX(int pointerIndex) {
-		return coords[4*pointerIndex + RAW_X_OFFSET];
+		return coords[4 * pointerIndex + RAW_X_OFFSET];
 	}
 
 	public final float getRawY(int pointerIndex) {
-		return coords[4*pointerIndex + RAW_Y_OFFSET];
+		return coords[4 * pointerIndex + RAW_Y_OFFSET];
 	}
 
 	/**
@@ -2086,7 +2091,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final float getSize(int pointerIndex) {
 		return 1; // arbitrary
-//		return nativeGetAxisValue(mNativePtr, AXIS_SIZE, pointerIndex, HISTORY_CURRENT);
+			  //		return nativeGetAxisValue(mNativePtr, AXIS_SIZE, pointerIndex, HISTORY_CURRENT);
 	}
 
 	/**
@@ -2101,7 +2106,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final float getTouchMajor(int pointerIndex) {
 		return 2.5f; // arbitrary
-//		return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MAJOR, pointerIndex, HISTORY_CURRENT);
+			     //		return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MAJOR, pointerIndex, HISTORY_CURRENT);
 	}
 
 	/**
@@ -2116,7 +2121,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final float getTouchMinor(int pointerIndex) {
 		return 2.5f; // arbitrary
-//		return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MINOR, pointerIndex, HISTORY_CURRENT);
+			     //		return nativeGetAxisValue(mNativePtr, AXIS_TOUCH_MINOR, pointerIndex, HISTORY_CURRENT);
 	}
 
 	/**
@@ -2168,7 +2173,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final float getOrientation(int pointerIndex) {
 		return 0; // arbitrary
-//		return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, pointerIndex, HISTORY_CURRENT);
+			  //		return nativeGetAxisValue(mNativePtr, AXIS_ORIENTATION, pointerIndex, HISTORY_CURRENT);
 	}
 
 	/**
@@ -2212,7 +2217,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see PointerProperties
 	 */
 	public final void getPointerProperties(int pointerIndex,
-					       PointerProperties outPointerProperties) {
+	                                       PointerProperties outPointerProperties) {
 		nativeGetPointerProperties(mNativePtr, pointerIndex, outPointerProperties);
 	}
 
@@ -2307,7 +2312,7 @@ public final class MotionEvent extends InputEvent {
 	 */
 	public final int getHistorySize() {
 		return 0;
-//		return nativeGetHistorySize(mNativePtr);
+		//		return nativeGetHistorySize(mNativePtr);
 	}
 
 	/**
@@ -2706,7 +2711,7 @@ public final class MotionEvent extends InputEvent {
 	 * @see PointerCoords
 	 */
 	public final void getHistoricalPointerCoords(int pointerIndex, int pos,
-						     PointerCoords outPointerCoords) {
+	                                             PointerCoords outPointerCoords) {
 		nativeGetPointerCoords(mNativePtr, pointerIndex, pos, outPointerCoords);
 	}
 
@@ -2800,7 +2805,7 @@ public final class MotionEvent extends InputEvent {
 	 * @param metaState Meta key state.
 	 */
 	public final void addBatch(long eventTime, float x, float y,
-				   float pressure, float size, int metaState) {
+	                           float pressure, float size, int metaState) {
 		synchronized (gSharedTempLock) {
 			ensureSharedTempPointerCapacity(1);
 			final PointerCoords[] pc = gSharedTempPointerCoords;
@@ -2893,7 +2898,7 @@ public final class MotionEvent extends InputEvent {
 	 * @hide
 	 */
 	public final boolean isWithinBoundsNoHistory(float left, float top,
-						     float right, float bottom) {
+	                                             float right, float bottom) {
 		final int pointerCount = nativeGetPointerCount(mNativePtr);
 		for (int i = 0; i < pointerCount; i++) {
 			final float x = nativeGetAxisValue(mNativePtr, AXIS_X, i, HISTORY_CURRENT);
@@ -2934,15 +2939,15 @@ public final class MotionEvent extends InputEvent {
 				pc[i].y = clamp(pc[i].y, top, bottom);
 			}
 			ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-							 nativeGetDeviceId(mNativePtr), nativeGetSource(mNativePtr),
-							 nativeGetAction(mNativePtr), nativeGetFlags(mNativePtr),
-							 nativeGetEdgeFlags(mNativePtr), nativeGetMetaState(mNativePtr),
-							 nativeGetButtonState(mNativePtr),
-							 nativeGetXOffset(mNativePtr), nativeGetYOffset(mNativePtr),
-							 nativeGetXPrecision(mNativePtr), nativeGetYPrecision(mNativePtr),
-							 nativeGetDownTimeNanos(mNativePtr),
-							 nativeGetEventTimeNanos(mNativePtr, HISTORY_CURRENT),
-							 pointerCount, pp, pc);
+			                                 nativeGetDeviceId(mNativePtr), nativeGetSource(mNativePtr),
+			                                 nativeGetAction(mNativePtr), nativeGetFlags(mNativePtr),
+			                                 nativeGetEdgeFlags(mNativePtr), nativeGetMetaState(mNativePtr),
+			                                 nativeGetButtonState(mNativePtr),
+			                                 nativeGetXOffset(mNativePtr), nativeGetYOffset(mNativePtr),
+			                                 nativeGetXPrecision(mNativePtr), nativeGetYPrecision(mNativePtr),
+			                                 nativeGetDownTimeNanos(mNativePtr),
+			                                 nativeGetEventTimeNanos(mNativePtr, HISTORY_CURRENT),
+			                                 pointerCount, pp, pc);
 			return ev;
 		}
 	}
@@ -3004,8 +3009,8 @@ public final class MotionEvent extends InputEvent {
 				} else if (newPointerCount == 1) {
 					// The first/last pointer went down/up.
 					newAction = oldActionMasked == ACTION_POINTER_DOWN
-							? ACTION_DOWN
-							: ACTION_UP;
+					              ? ACTION_DOWN
+					              : ACTION_UP;
 				} else {
 					// A secondary pointer went down/up.
 					newAction = oldActionMasked | (newActionPointerIndex << ACTION_POINTER_INDEX_SHIFT);
@@ -3026,14 +3031,14 @@ public final class MotionEvent extends InputEvent {
 				final long eventTimeNanos = nativeGetEventTimeNanos(mNativePtr, historyPos);
 				if (h == 0) {
 					ev.mNativePtr = nativeInitialize(ev.mNativePtr,
-									 nativeGetDeviceId(mNativePtr), nativeGetSource(mNativePtr),
-									 newAction, nativeGetFlags(mNativePtr),
-									 nativeGetEdgeFlags(mNativePtr), nativeGetMetaState(mNativePtr),
-									 nativeGetButtonState(mNativePtr),
-									 nativeGetXOffset(mNativePtr), nativeGetYOffset(mNativePtr),
-									 nativeGetXPrecision(mNativePtr), nativeGetYPrecision(mNativePtr),
-									 nativeGetDownTimeNanos(mNativePtr), eventTimeNanos,
-									 newPointerCount, pp, pc);
+					                                 nativeGetDeviceId(mNativePtr), nativeGetSource(mNativePtr),
+					                                 newAction, nativeGetFlags(mNativePtr),
+					                                 nativeGetEdgeFlags(mNativePtr), nativeGetMetaState(mNativePtr),
+					                                 nativeGetButtonState(mNativePtr),
+					                                 nativeGetXOffset(mNativePtr), nativeGetYOffset(mNativePtr),
+					                                 nativeGetXPrecision(mNativePtr), nativeGetYPrecision(mNativePtr),
+					                                 nativeGetDownTimeNanos(mNativePtr), eventTimeNanos,
+					                                 newPointerCount, pp, pc);
 				} else {
 					nativeAddBatch(ev.mNativePtr, eventTimeNanos, pc, 0);
 				}
@@ -3482,13 +3487,13 @@ public final class MotionEvent extends InputEvent {
 							if (count < values.length) {
 								if (index != count) {
 									System.arraycopy(values, index, values, index + 1,
-											 count - index);
+									                 count - index);
 								}
 							} else {
 								float[] newValues = new float[count * 2];
 								System.arraycopy(values, 0, newValues, 0, index);
 								System.arraycopy(values, index, newValues, index + 1,
-										 count - index);
+								                 count - index);
 								values = newValues;
 								mPackedAxisValues = values;
 							}

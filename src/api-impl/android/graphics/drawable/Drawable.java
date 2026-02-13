@@ -1,20 +1,11 @@
 package android.graphics.drawable;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-
+import android.atl.GskCanvas;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
-import android.content.res.XmlResourceParser;
 import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
+import android.content.res.XmlResourceParser;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BlendMode;
@@ -22,7 +13,6 @@ import android.graphics.BlendModeColorFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
-import android.atl.GskCanvas;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
@@ -30,6 +20,14 @@ import android.util.AttributeSet;
 import android.util.DisplayMetrics;
 import android.util.LayoutDirection;
 import android.util.TypedValue;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class Drawable {
 	public static interface Callback {
@@ -63,7 +61,6 @@ public class Drawable {
 
 	public ConstantState getConstantState() {
 		return new ConstantState() {
-
 			@Override
 			public Drawable newDrawable(Resources res) {
 				return Drawable.this;
@@ -78,7 +75,6 @@ public class Drawable {
 			public int getChangingConfigurations() {
 				return Drawable.this.getChangingConfigurations();
 			}
-
 		};
 	}
 
@@ -165,7 +161,7 @@ public class Drawable {
 		return false;
 	}
 
-	public boolean setVisible (boolean visible, boolean restart) {
+	public boolean setVisible(boolean visible, boolean restart) {
 		return false;
 	}
 
@@ -178,8 +174,8 @@ public class Drawable {
 
 	public void clearColorFilter() {}
 
-	public final int getLevel() {return 0;}
-	public final boolean setLevel(int level) {return false;}
+	public final int getLevel() { return 0; }
+	public final boolean setLevel(int level) { return false; }
 
 	public void setColorFilter(int color, PorterDuff.Mode mode) {
 		setColorFilter(new PorterDuffColorFilter(color, mode));
@@ -190,8 +186,8 @@ public class Drawable {
 		return this;
 	}
 
-	public int getIntrinsicWidth() {return -1;}
-	public int getIntrinsicHeight() {return -1;}
+	public int getIntrinsicWidth() { return -1; }
+	public int getIntrinsicHeight() { return -1; }
 
 	public void setTintList(ColorStateList tint) {}
 
@@ -206,20 +202,20 @@ public class Drawable {
 	/* Copyright (C) 2006 The Android Open Source Project */
 	BlendModeColorFilter updateBlendModeFilter(BlendModeColorFilter blendFilter, ColorStateList tint, BlendMode blendMode) {
 		if (tint == null || blendMode == null) {
-		    return null;
+			return null;
 		}
 
 		final int color = tint.getColorForState(getState(), Color.TRANSPARENT);
 		if (blendFilter == null || blendFilter.getColor() != color
-			|| blendFilter.getMode() != blendMode) {
-		    return new BlendModeColorFilter(color, blendMode);
+		    || blendFilter.getMode() != blendMode) {
+			return new BlendModeColorFilter(color, blendMode);
 		}
 		return blendFilter;
 	}
 
 	/* Copyright (C) 2006 The Android Open Source Project */
 	PorterDuffColorFilter updateTintFilter(PorterDuffColorFilter tintFilter, ColorStateList tint, PorterDuff.Mode tintMode) {
-		System.out.println("updateTintFilter("+tintFilter+", "+tint+", "+tintMode+")");
+		System.out.println("updateTintFilter(" + tintFilter + ", " + tint + ", " + tintMode + ")");
 		if (tint == null || tintMode == null) {
 			return null;
 		}
@@ -236,7 +232,7 @@ public class Drawable {
 
 	public void setTintMode(PorterDuff.Mode tintMode) {}
 
-	public boolean isProjected () {return false;}
+	public boolean isProjected() { return false; }
 
 	public static Drawable createFromXml(Resources resources, XmlResourceParser parser) throws XmlPullParserException, IOException {
 		return createFromXml(resources, parser, null);
@@ -244,7 +240,8 @@ public class Drawable {
 
 	public static Drawable createFromXml(Resources resources, XmlResourceParser parser, Theme theme) throws XmlPullParserException, IOException {
 		int type;
-		while ((type=parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT);
+		while ((type = parser.next()) != XmlPullParser.START_TAG && type != XmlPullParser.END_DOCUMENT)
+			;
 		if (type != XmlPullParser.START_TAG)
 			throw new XmlPullParserException("No start tag found");
 
@@ -266,7 +263,8 @@ public class Drawable {
 				GradientDrawable drawable = new GradientDrawable();
 				drawable.inflate(resources, parser, attrs, theme);
 				return drawable;
-			} case "bitmap": {
+			}
+			case "bitmap": {
 				BitmapDrawable drawable = new BitmapDrawable();
 				drawable.inflate(resources, parser, attrs, theme);
 				return drawable;
@@ -311,7 +309,7 @@ public class Drawable {
 	}
 
 	public static Drawable createFromResourceStream(Resources resources, TypedValue value, InputStream is, String file,
-			Object object) {
+	                                                Object object) {
 		if (!file.endsWith(".9.png")) {
 			final Bitmap bm = BitmapFactory.decodeStream(is);
 			if (bm == null)

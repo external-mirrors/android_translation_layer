@@ -2,6 +2,7 @@ package android.view;
 
 import android.R;
 import android.animation.StateListAnimator;
+import android.atl.GskCanvas;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.Configuration;
@@ -9,7 +10,6 @@ import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.atl.GskCanvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Point;
@@ -33,7 +33,6 @@ import android.util.Slog;
 import android.util.SparseArray;
 import android.view.animation.Animation;
 import android.view.autofill.AutofillId;
-
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
@@ -286,7 +285,8 @@ public class View implements Drawable.Callback {
 	public static final int DRAWING_CACHE_QUALITY_AUTO = 0x00000000;
 
 	private static final int[] DRAWING_CACHE_QUALITY_FLAGS = {
-	    DRAWING_CACHE_QUALITY_AUTO, DRAWING_CACHE_QUALITY_LOW, DRAWING_CACHE_QUALITY_HIGH};
+		DRAWING_CACHE_QUALITY_AUTO, DRAWING_CACHE_QUALITY_LOW, DRAWING_CACHE_QUALITY_HIGH
+	};
 
 	/**
 	 * <p>Mask for use with setFlags indicating bits used for the cache
@@ -538,9 +538,11 @@ public class View implements Drawable.Callback {
 
 	// --- apparently there's more...
 
-	@Deprecated public static final int STATUS_BAR_HIDDEN = 1; // 0x1
+	@Deprecated
+	public static final int STATUS_BAR_HIDDEN = 1; // 0x1
 
-	@Deprecated public static final int STATUS_BAR_VISIBLE = 0; // 0x0
+	@Deprecated
+	public static final int STATUS_BAR_VISIBLE = 0; // 0x0
 
 	public static final int SYSTEM_UI_FLAG_FULLSCREEN = 4; // 0x4
 
@@ -686,7 +688,7 @@ public class View implements Drawable.Callback {
 		 *            context menu should be shown. This information will vary
 		 *            depending on the class of v.
 		 */
-//		void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo);
+		//		void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo);
 	}
 
 	public interface OnDragListener {}
@@ -870,9 +872,9 @@ public class View implements Drawable.Callback {
 	public AttributeSet attrs;
 	protected ViewGroup.LayoutParams layout_params;
 	private Context context;
-	private Map<Integer,Object> tags = new HashMap<>();
+	private Map<Integer, Object> tags = new HashMap<>();
 	private Object tag;
-	int gravity = -1;  // fallback gravity for layout children
+	int gravity = -1; // fallback gravity for layout children
 
 	int measuredWidth = 0;
 	int measuredHeight = 0;
@@ -975,14 +977,16 @@ public class View implements Drawable.Callback {
 			try {
 				Drawable background = a.getDrawable(com.android.internal.R.styleable.View_background);
 
-				if(background != null) {
-					if(background instanceof ColorDrawable) {
+				if (background != null) {
+					if (background instanceof ColorDrawable) {
 						setBackgroundColor(((ColorDrawable)background).getColor());
 					} else {
 						setBackgroundDrawable(background);
 					}
 				}
-			} catch (Exception e) { e.printStackTrace(); }
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		if (a.hasValue(com.android.internal.R.styleable.View_visibility)) {
 			setVisibility(VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)]);
@@ -1002,13 +1006,13 @@ public class View implements Drawable.Callback {
 		int paddingStart = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingStart, -1);
 		int paddingEnd = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingEnd, -1);
 
-		if(padding >= 0) {
+		if (padding >= 0) {
 			paddingLeft = padding;
 			paddingTop = padding;
 			paddingRight = padding;
 			paddingBottom = padding;
 		} else {
-			if(paddingVertical >= 0) {
+			if (paddingVertical >= 0) {
 				paddingTop = paddingVertical;
 				paddingBottom = paddingVertical;
 			} else {
@@ -1016,18 +1020,18 @@ public class View implements Drawable.Callback {
 				paddingBottom = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingBottom, 0);
 			}
 
-			if(paddingHorizontal >= 0) {
+			if (paddingHorizontal >= 0) {
 				paddingLeft = paddingHorizontal;
 				paddingRight = paddingHorizontal;
 			} else {
 				paddingLeft = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingLeft, 0);
 				paddingRight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingRight, 0);
 
-				if(paddingStart >= 0) {
+				if (paddingStart >= 0) {
 					paddingLeft = paddingStart;
 				}
 
-				if(paddingEnd >= 0) {
+				if (paddingEnd >= 0) {
 					paddingRight = paddingEnd;
 				}
 			}
@@ -1038,7 +1042,7 @@ public class View implements Drawable.Callback {
 		if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
 			tag = a.getText(com.android.internal.R.styleable.View_tag);
 		}
-		if(a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
+		if (a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
 			int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
 			setTextAlignment(textAlignment);
 		}
@@ -1105,10 +1109,10 @@ public class View implements Drawable.Callback {
 		int rightMargin = 0;
 		int bottomMargin = 0;
 		if (params instanceof ViewGroup.MarginLayoutParams) {
-			leftMargin = ((ViewGroup.MarginLayoutParams) params).leftMargin;
-			topMargin = ((ViewGroup.MarginLayoutParams) params).topMargin;
-			rightMargin = ((ViewGroup.MarginLayoutParams) params).rightMargin;
-			bottomMargin = ((ViewGroup.MarginLayoutParams) params).bottomMargin;
+			leftMargin = ((ViewGroup.MarginLayoutParams)params).leftMargin;
+			topMargin = ((ViewGroup.MarginLayoutParams)params).topMargin;
+			rightMargin = ((ViewGroup.MarginLayoutParams)params).rightMargin;
+			bottomMargin = ((ViewGroup.MarginLayoutParams)params).bottomMargin;
 		}
 
 		native_setLayoutParams(widget, params.width, params.height, gravity, params.weight, leftMargin, topMargin, rightMargin, bottomMargin);
@@ -1164,7 +1168,7 @@ public class View implements Drawable.Callback {
 		on_click_listener = l;
 	}
 	protected native void nativeSetOnClickListener(long widget);
-	
+
 	private OnScrollChangeListener on_scroll_change_listener = null;
 	public void setOnScrollChangeListener(OnScrollChangeListener l) {}
 
@@ -1193,7 +1197,7 @@ public class View implements Drawable.Callback {
 
 	protected native void native_drawBackground(long widget, long snapshot);
 	protected native void native_drawContent(long widget, long snapshot);
-	protected void native_drawChildren(long widget, long snapshot) {}  // override in ViewGroup
+	protected void native_drawChildren(long widget, long snapshot) {} // override in ViewGroup
 
 	// --- stubs
 
@@ -1504,28 +1508,28 @@ public class View implements Drawable.Callback {
 	public static int resolveSizeAndState(int size, int measureSpec, int childMeasuredState) {
 		int result = size;
 		int specMode = MeasureSpec.getMode(measureSpec);
-		int specSize =  MeasureSpec.getSize(measureSpec);
+		int specSize = MeasureSpec.getSize(measureSpec);
 		switch (specMode) {
-		case MeasureSpec.UNSPECIFIED:
-			result = size;
-			break;
-		case MeasureSpec.AT_MOST:
-			if (specSize < size) {
-				result = specSize | MEASURED_STATE_TOO_SMALL;
-			} else {
+			case MeasureSpec.UNSPECIFIED:
 				result = size;
-			}
-			break;
-		case MeasureSpec.EXACTLY:
-			result = specSize;
-			break;
+				break;
+			case MeasureSpec.AT_MOST:
+				if (specSize < size) {
+					result = specSize | MEASURED_STATE_TOO_SMALL;
+				} else {
+					result = size;
+				}
+				break;
+			case MeasureSpec.EXACTLY:
+				result = specSize;
+				break;
 		}
-		return result | (childMeasuredState&MEASURED_STATE_MASK);
+		return result | (childMeasuredState & MEASURED_STATE_MASK);
 	}
 
 	public static int resolveSize(int size, int measureSpec) {
-        return resolveSizeAndState(size, measureSpec, 0) & MEASURED_SIZE_MASK;
-    }
+		return resolveSizeAndState(size, measureSpec, 0) & MEASURED_SIZE_MASK;
+	}
 
 	public final int getMeasuredWidth() {
 		return this.measuredWidth & MEASURED_SIZE_MASK;
@@ -1584,12 +1588,12 @@ public class View implements Drawable.Callback {
 
 	public void setBackgroundDrawable(Drawable backgroundDrawable) {
 		this.background = backgroundDrawable;
-		if(backgroundDrawable != null)
+		if (backgroundDrawable != null)
 			backgroundDrawable.setCallback(this);
 		native_setBackgroundDrawable(widget, backgroundDrawable != null ? backgroundDrawable.paintable : 0);
 	}
 
-	public int getOverScrollMode() {return 0;}
+	public int getOverScrollMode() { return 0; }
 
 	public void setFitsSystemWindows(boolean fitsSystemWindows) {}
 
@@ -1597,7 +1601,7 @@ public class View implements Drawable.Callback {
 
 	public void setScrollContainer(boolean isScrollContainer) {}
 
-	public boolean removeCallbacks(Runnable action) {return false;}
+	public boolean removeCallbacks(Runnable action) { return false; }
 
 	public void requestLayout() {
 		native_requestLayout(widget);
@@ -1613,9 +1617,9 @@ public class View implements Drawable.Callback {
 
 	public void setOverScrollMode(int mode) {}
 
-	public int getId() {return id;}
+	public int getId() { return id; }
 	public String getIdName() {
-		if(this.id == View.NO_ID) {
+		if (this.id == View.NO_ID) {
 			return "NO_ID";
 		}
 
@@ -1624,7 +1628,6 @@ public class View implements Drawable.Callback {
 		} catch (Resources.NotFoundException e) {
 			return "NOT_FOUND";
 		}
-
 	}
 	public String getAllSuperClasses() {
 		StringBuilder sb = new StringBuilder();
@@ -1668,7 +1671,7 @@ public class View implements Drawable.Callback {
 	public void addOnLayoutChangeListener(OnLayoutChangeListener listener) {}
 	public void removeOnLayoutChangeListener(OnLayoutChangeListener listener) {}
 
-	public boolean isSelected() {return false;}
+	public boolean isSelected() { return false; }
 
 	public void sendAccessibilityEvent(int eventType) {}
 
@@ -1679,11 +1682,11 @@ public class View implements Drawable.Callback {
 		this.minWidth = minWidth;
 	}
 
-	public void setActivated (boolean activated) {}
+	public void setActivated(boolean activated) {}
 
-	public int getVisibility() {return visibility;}
+	public int getVisibility() { return visibility; }
 
-	public boolean isInEditMode() {return false;}
+	public boolean isInEditMode() { return false; }
 
 	@Override
 	@SuppressWarnings("deprecation")
@@ -1704,15 +1707,15 @@ public class View implements Drawable.Callback {
 		return state;
 	}
 
-	public float getRotation() {return 0.f;}
+	public float getRotation() { return 0.f; }
 
 	public void bringToFront() {}
 
-	public boolean isEnabled() {return true;}
-	public boolean hasFocus() {return false;}
-	public boolean isLayoutRequested() {return layoutRequested;}
-	public int getBaseline() {return -1;}
-	public boolean hasFocusable() {return false;}
+	public boolean isEnabled() { return true; }
+	public boolean hasFocus() { return false; }
+	public boolean isLayoutRequested() { return layoutRequested; }
+	public int getBaseline() { return -1; }
+	public boolean hasFocusable() { return false; }
 	private static native boolean nativeIsFocused(long widget);
 	public boolean isFocused() {
 		return nativeIsFocused(widget);
@@ -1751,20 +1754,18 @@ public class View implements Drawable.Callback {
 		setTranslationX(x - left);
 	}
 
-
 	public void setY(float y) {
 		setTranslationY(y - top);
 	}
-
 
 	public void setAlpha(float alpha) {
 		native_setVisibility(widget, visibility, alpha);
 		this.alpha = alpha;
 	}
 
-	public boolean onGenericMotionEvent(MotionEvent event) {return false;}
+	public boolean onGenericMotionEvent(MotionEvent event) { return false; }
 
-	protected boolean awakenScrollBars() {return false;}
+	protected boolean awakenScrollBars() { return false; }
 
 	protected native boolean native_getMatrix(long widget, long matrix);
 	public Matrix getMatrix() {
@@ -1773,9 +1774,9 @@ public class View implements Drawable.Callback {
 
 	protected static final int[] EMPTY_STATE_SET = new int[0];
 
-	protected static final int[] PRESSED_ENABLED_STATE_SET = new int[]{R.attr.state_pressed, R.attr.state_enabled};
+	protected static final int[] PRESSED_ENABLED_STATE_SET = new int[] {R.attr.state_pressed, R.attr.state_enabled};
 
-	protected static final int[] SELECTED_STATE_SET = new int[]{R.attr.state_selected};
+	protected static final int[] SELECTED_STATE_SET = new int[] {R.attr.state_selected};
 
 	/**
 	 * Utility to return a default size. Uses the supplied size if the
@@ -1791,13 +1792,13 @@ public class View implements Drawable.Callback {
 		int specMode = MeasureSpec.getMode(measureSpec);
 		int specSize = MeasureSpec.getSize(measureSpec);
 		switch (specMode) {
-		case MeasureSpec.UNSPECIFIED:
-			result = size;
-			break;
-		case MeasureSpec.AT_MOST:
-		case MeasureSpec.EXACTLY:
-			result = specSize;
-			break;
+			case MeasureSpec.UNSPECIFIED:
+				result = size;
+				break;
+			case MeasureSpec.AT_MOST:
+			case MeasureSpec.EXACTLY:
+				result = specSize;
+				break;
 		}
 		return result;
 	}
@@ -1831,15 +1832,15 @@ public class View implements Drawable.Callback {
 
 	public void jumpDrawablesToCurrentState() {}
 
-	public void setOnFocusChangeListener (View.OnFocusChangeListener l) {}
+	public void setOnFocusChangeListener(View.OnFocusChangeListener l) {}
 
-	public boolean hasWindowFocus() {return true;}
+	public boolean hasWindowFocus() { return true; }
 
-	public void setSaveEnabled (boolean enabled) {}
+	public void setSaveEnabled(boolean enabled) {}
 
-	public boolean willNotDraw() {return false;}
+	public boolean willNotDraw() { return false; }
 
-	public void setOnCreateContextMenuListener (View.OnCreateContextMenuListener l) {}
+	public void setOnCreateContextMenuListener(View.OnCreateContextMenuListener l) {}
 
 	protected void onAnimationStart() {}
 
@@ -1872,15 +1873,15 @@ public class View implements Drawable.Callback {
 		return importantForAccessibility;
 	}
 
-	public boolean getFitsSystemWindows() {return true;}
+	public boolean getFitsSystemWindows() { return true; }
 
 	public void setOnApplyWindowInsetsListener(View.OnApplyWindowInsetsListener l) {}
 
-	public final boolean isFocusable() {return true;}
-	public boolean isClickable() {return true;}
-	public boolean isLongClickable() {return true;}
+	public final boolean isFocusable() { return true; }
+	public boolean isClickable() { return true; }
+	public boolean isLongClickable() { return true; }
 
-	public int getLayoutDirection() {return LAYOUT_DIRECTION_LTR;}
+	public int getLayoutDirection() { return LAYOUT_DIRECTION_LTR; }
 
 	public void setBackground(Drawable background) {
 		setBackgroundDrawable(background);
@@ -1894,7 +1895,7 @@ public class View implements Drawable.Callback {
 		return elevation;
 	}
 
-	public boolean isLaidOut() {return true;}
+	public boolean isLaidOut() { return true; }
 
 	public void postOnAnimation(Runnable action) {
 		postDelayed(action, 1000 / 60);
@@ -1909,7 +1910,6 @@ public class View implements Drawable.Callback {
 	public void setHorizontalScrollBarEnabled(boolean enabled) {}
 
 	public void setVerticalScrollBarEnabled(boolean enabled) {}
-
 
 	public void postInvalidateOnAnimation() {
 		postInvalidate();
@@ -1932,26 +1932,26 @@ public class View implements Drawable.Callback {
 		return view;
 	}
 
-	public boolean isShown() {return true;}
+	public boolean isShown() { return true; }
 
-	public int getWindowVisibility() {return VISIBLE;}
+	public int getWindowVisibility() { return VISIBLE; }
 
-	public float getAlpha() {return alpha;}
+	public float getAlpha() { return alpha; }
 
-	public View findFocus() {return this;}
+	public View findFocus() { return this; }
 
-	public int getMinimumHeight() {return minHeight;}
-	public int getMinimumWidth() {return minWidth;}
+	public int getMinimumHeight() { return minHeight; }
+	public int getMinimumWidth() { return minWidth; }
 
-	public boolean isNestedScrollingEnabled() {return false;}
+	public boolean isNestedScrollingEnabled() { return false; }
 
 	public void setClipToOutline(boolean clipToOutline) {}
 
-	public boolean hasTransientState() {return false;}
+	public boolean hasTransientState() { return false; }
 
 	public final void cancelPendingInputEvents() {}
 
-	public ViewOutlineProvider getOutlineProvider() {return new ViewOutlineProvider();}
+	public ViewOutlineProvider getOutlineProvider() { return new ViewOutlineProvider(); }
 	public void setOutlineProvider(ViewOutlineProvider provider) {}
 
 	public void setStateListAnimator(StateListAnimator stateListAnimator) {}
@@ -1963,27 +1963,28 @@ public class View implements Drawable.Callback {
      *
      * @return a generated ID value
      */
-    public static int generateViewId() {
-        for (;;) {
-            final int result = nextGeneratedId.get();
-            // aapt-generated IDs have the high byte nonzero; clamp to the range under that.
-            int newValue = result + 1;
-            if (newValue > 0x00FFFFFF) newValue = 1; // Roll over to 1, not 0.
-            if (nextGeneratedId.compareAndSet(result, newValue)) {
-                return result;
-            }
-        }
-    }
+	public static int generateViewId() {
+		for (;;) {
+			final int result = nextGeneratedId.get();
+			// aapt-generated IDs have the high byte nonzero; clamp to the range under that.
+			int newValue = result + 1;
+			if (newValue > 0x00FFFFFF)
+				newValue = 1; // Roll over to 1, not 0.
+			if (nextGeneratedId.compareAndSet(result, newValue)) {
+				return result;
+			}
+		}
+	}
 
-	public boolean isLayoutDirectionResolved() {return true;}
+	public boolean isLayoutDirectionResolved() { return true; }
 
-	public boolean isPaddingRelative() {return false;}
+	public boolean isPaddingRelative() { return false; }
 
 	public void setForeground(Drawable foreground) {}
 
-	public boolean canScrollVertically(int value) {return false;}
+	public boolean canScrollVertically(int value) { return false; }
 
-	public boolean isInTouchMode() {return false;}
+	public boolean isInTouchMode() { return false; }
 
 	public void stopNestedScroll() {}
 
@@ -2005,7 +2006,7 @@ public class View implements Drawable.Callback {
 		}
 		if (keepScreenOn)
 			native_keep_screen_on(widget, true);
-		if(floating_observer != null) {
+		if (floating_observer != null) {
 			getViewTreeObserver().merge(floating_observer);
 			floating_observer = null;
 		}
@@ -2020,7 +2021,7 @@ public class View implements Drawable.Callback {
 
 	public void setLayerType(int layerType, Paint paint) {}
 
-	public float getZ() {return 0.f;}
+	public float getZ() { return 0.f; }
 
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {}
 
@@ -2051,7 +2052,7 @@ public class View implements Drawable.Callback {
 	}
 
 	public void forceLayout() {
-		if(Looper.myLooper() == Looper.getMainLooper()) {
+		if (Looper.myLooper() == Looper.getMainLooper()) {
 			requestLayout();
 		} else {
 			new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -2070,11 +2071,11 @@ public class View implements Drawable.Callback {
 		}
 	}
 
-	public boolean onInterceptTouchEvent(MotionEvent event) {return false;}
+	public boolean onInterceptTouchEvent(MotionEvent event) { return false; }
 
-	public boolean dispatchTouchEvent(MotionEvent event) {return false;}
+	public boolean dispatchTouchEvent(MotionEvent event) { return false; }
 
-	public boolean canScrollHorizontally(int direction) {return false;}
+	public boolean canScrollHorizontally(int direction) { return false; }
 
 	protected native boolean native_getGlobalVisibleRect(long widget, Rect visibleRect);
 
@@ -2082,15 +2083,15 @@ public class View implements Drawable.Callback {
 		return native_getGlobalVisibleRect(widget, visibleRect);
 	}
 
-	public boolean onCheckIsTextEditor() {return false;}
+	public boolean onCheckIsTextEditor() { return false; }
 
-	public boolean hasOnClickListeners() {return false;}
+	public boolean hasOnClickListeners() { return false; }
 
 	public void setTextAlignment(int textAlignment) {
 		String[] classesToRemove = {"ATL-text-align-left", "ATL-text-align-center", "ATL-text-align-right"};
 		native_removeClasses(widget, classesToRemove);
 
-		switch(textAlignment) {
+		switch (textAlignment) {
 			case TEXT_ALIGNMENT_CENTER:
 				native_addClass(widget, "ATL-text-align-center");
 				break;
@@ -2107,11 +2108,11 @@ public class View implements Drawable.Callback {
 
 	public void setHapticFeedbackEnabled(boolean hapticFeedbackEnabled) {}
 
-	public StateListAnimator getStateListAnimator() {return null;}
+	public StateListAnimator getStateListAnimator() { return null; }
 
 	public void requestFitSystemWindows() {}
 
-	public boolean isPressed() {return false;}
+	public boolean isPressed() { return false; }
 
 	public void getWindowVisibleDisplayFrame(Rect rect) {}
 
@@ -2119,22 +2120,22 @@ public class View implements Drawable.Callback {
 	public void setRotationX(float deg) {}
 	public void setRotationY(float deg) {}
 
-	public float getRotationX() {return 0.f;}
-	public float getRotationY() {return 0.f;}
+	public float getRotationX() { return 0.f; }
+	public float getRotationY() { return 0.f; }
 
 	public void setScaleX(float scaleX) {}
 	public void setScaleY(float scaleY) {}
 
-	public float getScaleX() {return 1.f;}
-	public float getScaleY() {return 1.f;}
+	public float getScaleX() { return 1.f; }
+	public float getScaleY() { return 1.f; }
 
 	public void setPivotX(float pivot_x) {}
 	public void setPivotY(float pivot_y) {}
 
-	public float getPivotX() {return 0.f;}
-	public float getPivotY() {return 0.f;}
+	public float getPivotX() { return 0.f; }
+	public float getPivotY() { return 0.f; }
 
-	public float getTranslationZ() {return 0.f;}
+	public float getTranslationZ() { return 0.f; }
 
 	public void setTranslationZ(float translationZ) {}
 
@@ -2146,13 +2147,13 @@ public class View implements Drawable.Callback {
 
 	public void setLayoutDirection(int layoutDirection) {}
 
-	public ColorStateList getBackgroundTintList() {return null;}
+	public ColorStateList getBackgroundTintList() { return null; }
 
-	public PorterDuff.Mode getBackgroundTintMode() {return null;}
+	public PorterDuff.Mode getBackgroundTintMode() { return null; }
 
-	public String getTransitionName() {return null;}
+	public String getTransitionName() { return null; }
 
-	public WindowId getWindowId() {return null;}
+	public WindowId getWindowId() { return null; }
 
 	public boolean isInLayout() {
 		return false; // FIXME
@@ -2160,7 +2161,7 @@ public class View implements Drawable.Callback {
 
 	public void setTextDirection(int textDirection) {}
 
-	public Drawable getForeground() {return null;}
+	public Drawable getForeground() { return null; }
 
 	public void setScrollbarFadingEnabled(boolean fadeEnabled) {}
 
@@ -2176,7 +2177,7 @@ public class View implements Drawable.Callback {
 
 	public void setTransitionName(String transitionName) {}
 
-	public Animation getAnimation() {return null;}
+	public Animation getAnimation() { return null; }
 
 	public ViewOverlay getOverlay() {
 		return new ViewOverlay();
@@ -2184,7 +2185,7 @@ public class View implements Drawable.Callback {
 
 	public void cancelLongPress() {}
 
-	public int getTextAlignment() {return 0;}
+	public int getTextAlignment() { return 0; }
 
 	public View findViewWithTag(Object tag) {
 		if (Objects.equals(tag, this.tag))
@@ -2195,7 +2196,7 @@ public class View implements Drawable.Callback {
 
 	public void setTooltipText(CharSequence tooltip) {}
 
-	public int getImportantForAutofill() {return 0;}
+	public int getImportantForAutofill() { return 0; }
 
 	public void setImportantForAutofill(int flag) {}
 
@@ -2213,7 +2214,7 @@ public class View implements Drawable.Callback {
 
 	public void setClipBounds(Rect clipBounds) {}
 
-	public boolean getClipToOutline() {return false;}
+	public boolean getClipToOutline() { return false; }
 
 	public void setLeft(int left) {
 		layout(left, top, right, bottom);
@@ -2233,9 +2234,9 @@ public class View implements Drawable.Callback {
 
 	public void setCameraDistance(float distance) {}
 
-	public boolean requestRectangleOnScreen(Rect rectangle, boolean immediate) {return false;}
+	public boolean requestRectangleOnScreen(Rect rectangle, boolean immediate) { return false; }
 
-	public boolean requestRectangleOnScreen(Rect rectangle) {return false;}
+	public boolean requestRectangleOnScreen(Rect rectangle) { return false; }
 
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		return false;
@@ -2248,16 +2249,16 @@ public class View implements Drawable.Callback {
 			return false;
 	}
 
-	public WindowInsets getRootWindowInsets() {return null;}
+	public WindowInsets getRootWindowInsets() { return null; }
 
-	public PointerIcon getPointerIcon() {return null;}
+	public PointerIcon getPointerIcon() { return null; }
 
 	public void setPointerIcon(PointerIcon pointerIcon) {}
 
-	public IBinder getApplicationWindowToken() {return null;}
+	public IBinder getApplicationWindowToken() { return null; }
 
-	public int getVerticalFadingEdgeLength() {return 0;}
-	public int getVerticalScrollbarWidth() {return 0;}
+	public int getVerticalFadingEdgeLength() { return 0; }
+	public int getVerticalScrollbarWidth() { return 0; }
 
 	public void saveAttributeDataForStyleable(Context ctxt, int[] styleable, AttributeSet attrs, TypedArray t, int defStyleAttr, int defStyleRes) {}
 

@@ -11,7 +11,7 @@ public class AudioTrack {
 	public static final int ERROR_BAD_VALUE = -2; // basically EINVAL
 
 	public static final int PLAYSTATE_STOPPED = 1;
-	public static final int PLAYSTATE_PAUSED  = 2;
+	public static final int PLAYSTATE_PAUSED = 2;
 	public static final int PLAYSTATE_PLAYING = 3;
 
 	int streamType;
@@ -59,7 +59,7 @@ public class AudioTrack {
 		native_constructor(streamType, sampleRateInHz, num_channels, audioFormat, bufferSizeInBytes, mode);
 	}
 
-	public AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioFormat, int bufferSizeInBytes, int mode, int sessionId)  {
+	public AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioFormat, int bufferSizeInBytes, int mode, int sessionId) {
 		this(streamType, sampleRateInHz, channelConfig, audioFormat, bufferSizeInBytes, mode);
 		this.sessionId = sessionId;
 	}
@@ -116,7 +116,7 @@ public class AudioTrack {
 			return ERROR_BAD_VALUE;
 		}
 
-		int framesToWrite = sizeInBytes / channels / 2;  // 2 means PCM16
+		int framesToWrite = sizeInBytes / channels / 2; // 2 means PCM16
 		int ret = native_write(audioData, offsetInBytes, framesToWrite);
 		if (ret > 0) {
 			playbackHeadPosition += ret;
@@ -179,7 +179,7 @@ public class AudioTrack {
 
 		public Builder() {}
 
-		public AudioTrack build () {
+		public AudioTrack build() {
 			return new AudioTrack(mAttributes, mFormat, mBufferSizeInBytes, mTransferMode, 0);
 		}
 

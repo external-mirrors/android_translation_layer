@@ -38,11 +38,11 @@ public class AudioManager {
 	}
 
 	public int requestAudioFocus(OnAudioFocusChangeListener listener, int streamType, int durationHint) {
-		return /*AUDIOFOCUS_REQUEST_GRANTED*/1;
+		return /*AUDIOFOCUS_REQUEST_GRANTED*/ 1;
 	}
 
 	public int abandonAudioFocus(OnAudioFocusChangeListener listener) {
-		return /*AUDIOFOCUS_REQUEST_GRANTED*/1;
+		return /*AUDIOFOCUS_REQUEST_GRANTED*/ 1;
 	}
 
 	public boolean isWiredHeadsetOn() {

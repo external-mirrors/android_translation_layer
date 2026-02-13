@@ -293,7 +293,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 * @return An ObjectAnimator object that is set up to animate between the given values.
 	 */
 	public static <T> ObjectAnimator ofArgb(T target, Property<T, Integer> property,
-			int... values) {
+	                                        int... values) {
 		ObjectAnimator animator = ofInt(target, property, values);
 		animator.setEvaluator(ArgbEvaluator.getInstance());
 		return animator;
@@ -338,7 +338,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 * @return An ObjectAnimator object that is set up to animate along <code>path</code>.
 	 */
 	public static ObjectAnimator ofFloat(Object target, String xPropertyName, String yPropertyName,
-			Path path) {
+	                                     Path path) {
 		// PathKeyframes keyframes = KeyframeSet.ofPath(path);
 		// PropertyValuesHolder x = PropertyValuesHolder.ofKeyframes(xPropertyName,
 		// 		keyframes.createXFloatKeyframes());
@@ -362,7 +362,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 * @return An ObjectAnimator object that is set up to animate between the given values.
 	 */
 	public static <T> ObjectAnimator ofFloat(T target, Property<T, Float> property,
-			float... values) {
+	                                         float... values) {
 		ObjectAnimator anim = new ObjectAnimator(target, property);
 		anim.setFloatValues(values);
 		return anim;
@@ -382,7 +382,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 * @return An ObjectAnimator object that is set up to animate along <code>path</code>.
 	 */
 	public static <T> ObjectAnimator ofFloat(T target, Property<T, Float> xProperty,
-			Property<T, Float> yProperty, Path path) {
+	                                         Property<T, Float> yProperty, Path path) {
 		// PathKeyframes keyframes = KeyframeSet.ofPath(path);
 		// PropertyValuesHolder x = PropertyValuesHolder.ofKeyframes(xProperty,
 		// 		keyframes.createXFloatKeyframes());
@@ -416,7 +416,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 * @return An ObjectAnimator object that is set up to animate between the given values.
 	 */
 	public static ObjectAnimator ofObject(Object target, String propertyName,
-			TypeEvaluator evaluator, Object... values) {
+	                                      TypeEvaluator evaluator, Object... values) {
 		ObjectAnimator anim = new ObjectAnimator(target, propertyName);
 		anim.setObjectValues(values);
 		anim.setEvaluator(evaluator);
@@ -442,7 +442,7 @@ public final class ObjectAnimator extends ValueAnimator {
 	 */
 	@NonNull
 	public static ObjectAnimator ofPropertyValuesHolder(Object target,
-			PropertyValuesHolder... values) {
+	                                                    PropertyValuesHolder... values) {
 		ObjectAnimator anim = new ObjectAnimator();
 		anim.setTarget(target);
 		anim.setValues(values);
@@ -485,10 +485,10 @@ public final class ObjectAnimator extends ValueAnimator {
 			// No values yet - this animator is being constructed piecemeal. Init the values with
 			// whatever the current propertyName is
 			if (mProperty != null) {
-				setValues(PropertyValuesHolder.ofObject(mProperty, (TypeEvaluator) null, values));
+				setValues(PropertyValuesHolder.ofObject(mProperty, (TypeEvaluator)null, values));
 			} else {
 				setValues(PropertyValuesHolder.ofObject(mPropertyName,
-						(TypeEvaluator) null, values));
+				                                        (TypeEvaluator)null, values));
 			}
 		} else {
 			super.setObjectValues(values);
@@ -512,14 +512,12 @@ public final class ObjectAnimator extends ValueAnimator {
 
 	private boolean hasSameTargetAndProperties(@Nullable Animator anim) {
 		if (anim instanceof ObjectAnimator) {
-			PropertyValuesHolder[] theirValues = ((ObjectAnimator) anim).getValues();
-			if (((ObjectAnimator) anim).getTarget() == getTarget() &&
-					mValues.length == theirValues.length) {
+			PropertyValuesHolder[] theirValues = ((ObjectAnimator)anim).getValues();
+			if (((ObjectAnimator)anim).getTarget() == getTarget() && mValues.length == theirValues.length) {
 				for (int i = 0; i < mValues.length; ++i) {
 					PropertyValuesHolder pvhMine = mValues[i];
 					PropertyValuesHolder pvhTheirs = theirValues[i];
-					if (pvhMine.getProperty_name() == null ||
-							!pvhMine.getProperty_name().equals(pvhTheirs.getProperty_name())) {
+					if (pvhMine.getProperty_name() == null || !pvhMine.getProperty_name().equals(pvhTheirs.getProperty_name())) {
 						return false;
 					}
 				}
@@ -550,7 +548,7 @@ public final class ObjectAnimator extends ValueAnimator {
 		}
 
 		if (anim instanceof ObjectAnimator) {
-			ObjectAnimator objAnim = (ObjectAnimator) anim;
+			ObjectAnimator objAnim = (ObjectAnimator)anim;
 			if (objAnim.mAutoCancel && hasSameTargetAndProperties(objAnim)) {
 				return true;
 			}
@@ -601,7 +599,6 @@ public final class ObjectAnimator extends ValueAnimator {
 		super.setDuration(duration);
 		return this;
 	}
-
 
 	/**
 	 * The target object whose property will be animated by this animation
@@ -683,15 +680,14 @@ public final class ObjectAnimator extends ValueAnimator {
 
 	@Override
 	public ObjectAnimator clone() {
-		final ObjectAnimator anim = (ObjectAnimator) super.clone();
+		final ObjectAnimator anim = (ObjectAnimator)super.clone();
 		return anim;
 	}
 
 	@Override
 	@NonNull
 	public String toString() {
-		String returnVal = "ObjectAnimator@" + Integer.toHexString(hashCode()) + ", target " +
-			getTarget();
+		String returnVal = "ObjectAnimator@" + Integer.toHexString(hashCode()) + ", target " + getTarget();
 		if (mValues != null) {
 			for (int i = 0; i < mValues.length; ++i) {
 				returnVal += "\n    " + mValues[i].toString();

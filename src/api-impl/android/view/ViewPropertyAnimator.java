@@ -1,12 +1,11 @@
 package android.view;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ViewPropertyAnimator {
 

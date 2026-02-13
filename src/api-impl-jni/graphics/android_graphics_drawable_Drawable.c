@@ -3,10 +3,11 @@
 
 #include "../defines.h"
 #include "../util.h"
-#include "NinePatchPaintable.h"
 #include "../generated_headers/android_graphics_drawable_Drawable.h"
+#include "NinePatchPaintable.h"
 
-JNIEXPORT jlong JNICALL Java_android_graphics_drawable_Drawable_native_1paintable_1from_1path(JNIEnv *env, jclass class, jstring pathStr) {
+JNIEXPORT jlong JNICALL Java_android_graphics_drawable_Drawable_native_1paintable_1from_1path(JNIEnv *env, jclass class, jstring pathStr)
+{
 	const char *path = (*env)->GetStringUTFChars(env, pathStr, NULL);
 	GdkPaintable *paintable = NULL;
 
@@ -77,9 +78,10 @@ static void java_paintable_class_init(JavaPaintableClass *class)
 }
 
 G_DEFINE_TYPE_WITH_CODE(JavaPaintable, java_paintable, G_TYPE_OBJECT,
-		G_IMPLEMENT_INTERFACE(GDK_TYPE_PAINTABLE, java_paintable_paintable_init))
+                        G_IMPLEMENT_INTERFACE(GDK_TYPE_PAINTABLE, java_paintable_paintable_init))
 
-JNIEXPORT jlong JNICALL Java_android_graphics_drawable_Drawable_native_1constructor(JNIEnv *env, jobject this) {
+JNIEXPORT jlong JNICALL Java_android_graphics_drawable_Drawable_native_1constructor(JNIEnv *env, jobject this)
+{
 	JavaPaintable *paintable = NULL;
 	if (handle_cache.drawable.draw != _METHOD(_CLASS(this), "draw", "(Landroid/graphics/Canvas;)V")) {
 		paintable = g_object_new(java_paintable_get_type(), NULL);
@@ -94,12 +96,14 @@ static guint queue_invalidate_contents(GdkPaintable *paintable)
 	return G_SOURCE_REMOVE;
 }
 
-JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1invalidate(JNIEnv *env, jobject this, jlong paintable_ptr) {
+JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1invalidate(JNIEnv *env, jobject this, jlong paintable_ptr)
+{
 	// GTK doesn't allow invalidating a paintable while it's being drawn, so we need to queue it up
 	g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_invalidate_contents), GDK_PAINTABLE(_PTR(paintable_ptr)), NULL);
 }
 
-JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1draw(JNIEnv *env, jobject this, jlong paintable_ptr, jlong snapshot_ptr, jint width, jint height) {
+JNIEXPORT void JNICALL Java_android_graphics_drawable_Drawable_native_1draw(JNIEnv *env, jobject this, jlong paintable_ptr, jlong snapshot_ptr, jint width, jint height)
+{
 	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
 	GdkPaintable *paintable = GDK_PAINTABLE(_PTR(paintable_ptr));
 	if (!JAVA_IS_PAINTABLE(paintable))

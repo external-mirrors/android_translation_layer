@@ -2,10 +2,10 @@ package android.view;
 
 import android.R;
 import android.animation.LayoutTransition;
+import android.atl.GskCanvas;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.atl.GskCanvas;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Slog;
@@ -87,7 +87,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public boolean dispatchTouchEvent(MotionEvent event) {
 		return native_dispatchTouchEvent(widget, event, event.getX(), event.getY());
 	}
-
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params) {
 		addViewInternal(child, index, params);
@@ -178,7 +177,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		if (children == null) // happens if this gets called during super constructor
 			return;
 
-		for (View child: children) {
+		for (View child : children) {
 			child.dispatchVisibilityChanged(changedView, visibility);
 		}
 	}
@@ -310,8 +309,8 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected void measureChildWithMargins(View child,
-					       int parentWidthMeasureSpec, int widthUsed,
-					       int parentHeightMeasureSpec, int heightUsed) {
+	                                       int parentWidthMeasureSpec, int widthUsed,
+	                                       int parentHeightMeasureSpec, int heightUsed) {
 		final MarginLayoutParams lp = (MarginLayoutParams)child.getLayoutParams();
 		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, paddingLeft + paddingRight + lp.leftMargin + lp.rightMargin + widthUsed, lp.width);
 		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, paddingTop + paddingBottom + lp.topMargin + lp.bottomMargin + heightUsed, lp.height);
@@ -319,7 +318,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected void measureChild(View child, int parentWidthMeasureSpec,
-				    int parentHeightMeasureSpec) {
+	                            int parentHeightMeasureSpec) {
 		final LayoutParams lp = child.getLayoutParams();
 		final int childWidthMeasureSpec = getChildMeasureSpec(parentWidthMeasureSpec, paddingLeft + paddingRight, lp.width);
 		final int childHeightMeasureSpec = getChildMeasureSpec(parentHeightMeasureSpec, paddingTop + paddingBottom, lp.height);
@@ -327,7 +326,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected void measureChildren(int widthMeasureSpec, int heightMeasureSpec) {
-		for (View child: children) {
+		for (View child : children) {
 			measureChild(child, widthMeasureSpec, heightMeasureSpec);
 		}
 	}
@@ -351,7 +350,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void setGravity(int gravity) {
 		super.setGravity(gravity);
 		// update children as necessary
-		for (View child: children) {
+		for (View child : children) {
 			LayoutParams params = child.getLayoutParams();
 			if (params.gravity == -1)
 				child.setLayoutParams(params);
@@ -382,12 +381,13 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void setClipToPadding(boolean clipToPadding) {}
 
 	public View findViewById(int id) {
-		Slog.v(TAG, "findViewById: looking for id: " + String.format("%x", id) + "(" + getResources().getAssets().getResourceName(id) + ")" + " | checking: " + this + ",id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
+		Slog.v(TAG, "findViewById: looking for id: " + String.format("%x", id) + "(" + getResources().getAssets().getResourceName(id) + ")"
+		            + " | checking: " + this + ",id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
 		if (this.id == id) {
-			Slog.v(TAG, "findViewById: found: "+this+" | id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
+			Slog.v(TAG, "findViewById: found: " + this + " | id: " + String.format("%x", this.getId()) + ", id_str: " + this.getIdName());
 			return this;
 		}
-		for (View child: children) {
+		for (View child : children) {
 			View result = child.findViewById(id);
 			if (result != null)
 				return result;
@@ -411,7 +411,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public View findViewWithTag(Object tag) {
 		if (Objects.equals(tag, getTag()))
 			return this;
-		for (View child: children) {
+		for (View child : children) {
 			View result = child.findViewWithTag(tag);
 			if (result != null)
 				return result;
@@ -480,7 +480,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.ViewGroup_Layout);
 			setBaseAttributes(a, R.styleable.ViewGroup_Layout_layout_width, R.styleable.ViewGroup_Layout_layout_height);
 			a.recycle();
-			a = context.obtainStyledAttributes(attrs, new int[] { android.R.attr.layout_gravity });
+			a = context.obtainStyledAttributes(attrs, new int[] {android.R.attr.layout_gravity});
 			gravity = a.getInt(0, -1);
 			a.recycle();
 		}
@@ -542,10 +542,10 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			if (margin >= 0) {
 				leftMargin = margin;
 				topMargin = margin;
-				rightMargin= margin;
+				rightMargin = margin;
 				bottomMargin = margin;
 			} else {
-				if(marginVertical >= 0){
+				if (marginVertical >= 0) {
 					topMargin = marginVertical;
 					bottomMargin = marginVertical;
 				} else {

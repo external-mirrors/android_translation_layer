@@ -20,7 +20,7 @@ public abstract class AbsSeekBar extends ProgressBar {
 
 	public void setKeyProgressIncrement(int keyProgressIncrement) {}
 
-	public int getKeyProgressIncrement() {return 0;}
+	public int getKeyProgressIncrement() { return 0; }
 
-	public int getThumbOffset() {return 0;}
+	public int getThumbOffset() { return 0; }
 }

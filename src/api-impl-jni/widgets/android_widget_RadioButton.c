@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 
-#include "WrapperWidget.h"
 #include "../util.h"
+#include "WrapperWidget.h"
 
 #include "../generated_headers/android_widget_RadioButton.h"
 #include "jni.h"
@@ -27,7 +27,7 @@ JNIEXPORT jboolean JNICALL Java_android_widget_RadioButton_isChecked(JNIEnv *env
 	return gtk_check_button_get_active(GTK_CHECK_BUTTON(_PTR(_GET_LONG_FIELD(this, "widget"))));
 }
 
-static gboolean on_toggled(GtkCheckButton* self, jobject listener)
+static gboolean on_toggled(GtkCheckButton *self, jobject listener)
 {
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(self)));

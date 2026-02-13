@@ -3,8 +3,8 @@
 #include "../defines.h"
 #include "../util.h"
 
-#include "WrapperWidget.h"
 #include "AdapterView.h"
+#include "WrapperWidget.h"
 
 #include "../generated_headers/android_widget_Spinner.h"
 
@@ -33,10 +33,10 @@ static void range_list_model_model_init(GListModelInterface *iface)
 }
 
 G_DEFINE_TYPE_WITH_CODE(RangeListModel, range_list_model, G_TYPE_OBJECT,
-		G_IMPLEMENT_INTERFACE(G_TYPE_LIST_MODEL, range_list_model_model_init))
+                        G_IMPLEMENT_INTERFACE(G_TYPE_LIST_MODEL, range_list_model_model_init))
 
-static void range_list_item_class_init(RangeListItemClass *cls){}
-static void range_list_item_init(RangeListItem *self){}
+static void range_list_item_class_init(RangeListItemClass *cls) {}
+static void range_list_item_init(RangeListItem *self) {}
 G_DEFINE_TYPE(RangeListItem, range_list_item, G_TYPE_OBJECT)
 
 static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item)

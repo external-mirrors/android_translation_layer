@@ -117,7 +117,7 @@ public class Window {
 	public void setFormat(int format) {}
 
 	public void setLayout(int width, int height) {
-		if (height == 0)  // FIXME: remove this hack once measurement error with composeUI dialogs is fixed
+		if (height == 0) // FIXME: remove this hack once measurement error with composeUI dialogs is fixed
 			height = 500;
 		set_layout(native_window, width, height);
 	}
@@ -129,7 +129,7 @@ public class Window {
 	public void setSoftInputMode(int dummy) {}
 
 	public int getNavigationBarColor() {
-		return 0xFF888888;  // gray
+		return 0xFF888888; // gray
 	}
 
 	public void setBackgroundDrawableResource(int resId) {}

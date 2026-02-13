@@ -30,8 +30,7 @@ public class TimePicker extends FrameLayout {
 		super(context, attrs, defStyleAttr, defStyleRes);
 	}
 
-
-	public Integer getCurrentHour()  {
+	public Integer getCurrentHour() {
 		return getHour();
 	}
 
@@ -56,10 +55,9 @@ public class TimePicker extends FrameLayout {
 	}
 
 	public void setEnabled(boolean enabled) {
-
 	}
 
-	public void setCurrentHour(Integer currentHour)  {
+	public void setCurrentHour(Integer currentHour) {
 		setHour(currentHour);
 	}
 
@@ -94,9 +92,7 @@ public class TimePicker extends FrameLayout {
 	private native void nativeSetSpinBtnValue(long widget, int value);
 	private native int nativeGetSpinBtnValue(long widget);
 
-
-	 public static interface OnTimeChangedListener  {
+	public static interface OnTimeChangedListener {
 		void onTimeChanged(TimePicker view, int hourOfDay, int minute);
-	 }
+	}
 }
-
