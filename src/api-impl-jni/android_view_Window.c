@@ -58,3 +58,8 @@ JNIEXPORT void JNICALL Java_android_view_Window_set_1jobject(JNIEnv *env, jclass
 {
 	g_object_set_data(G_OBJECT(window), "jobject", _WEAK_REF(window_jobj));
 }
+
+JNIEXPORT void JNICALL Java_android_view_Window_remove_1gtk_1background(JNIEnv *env, jobject this, jlong window)
+{
+	gtk_widget_add_css_class(GTK_WIDGET(_PTR(window)), "ATL-no-background");
+}

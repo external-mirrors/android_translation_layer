@@ -92,6 +92,7 @@ public class Window {
 	}
 
 	public void setBackgroundDrawable(Drawable drawable) {
+		remove_gtk_background(native_window);
 		decorView.setBackgroundDrawable(drawable);
 	}
 
@@ -124,7 +125,9 @@ public class Window {
 		return 0xFF888888; // gray
 	}
 
-	public void setBackgroundDrawableResource(int resId) {}
+	public void setBackgroundDrawableResource(int resId) {
+		setBackgroundDrawable(context.getDrawable(resId));
+	}
 
 	public int getStatusBarColor() { return 0xFFFF0000; }
 
@@ -179,4 +182,5 @@ public class Window {
 	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);
 	public native void set_layout(long native_window, int width, int height);
 	private static native void set_jobject(long ptr, Window obj);
+	private native void remove_gtk_background(long native_window);
 }
