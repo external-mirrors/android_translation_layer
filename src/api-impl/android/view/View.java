@@ -2122,7 +2122,7 @@ public class View implements Drawable.Callback {
 
 	public boolean isPressed() { return false; }
 
-	public void getWindowVisibleDisplayFrame(Rect rect) {}
+	public native void getWindowVisibleDisplayFrame(Rect rect);
 
 	public void setRotation(float rotation) {}
 	public void setRotationX(float deg) {}

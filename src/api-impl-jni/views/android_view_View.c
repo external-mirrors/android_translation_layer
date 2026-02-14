@@ -941,3 +941,16 @@ JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window(JNIEnv *env
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 	return g_object_get_data(G_OBJECT(gtk_widget_get_root(widget)), "jobject");
 }
+
+extern GtkWindow *window;
+
+JNIEXPORT void JNICALL Java_android_view_View_getWindowVisibleDisplayFrame(JNIEnv *env, jobject this, jobject rect)
+{
+	int width;
+	int height;
+	gtk_window_get_default_size(window, &width, &height);
+	_SET_INT_FIELD(rect, "left", 0);
+	_SET_INT_FIELD(rect, "top", 0);
+	_SET_INT_FIELD(rect, "right", width);
+	_SET_INT_FIELD(rect, "bottom", height);
+}
