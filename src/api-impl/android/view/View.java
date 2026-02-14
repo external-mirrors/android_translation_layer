@@ -1556,6 +1556,7 @@ public class View implements Drawable.Callback {
 	private void layoutInternal(int width, int height) {
 		// if the layout is triggered from a native widget, we might not have measured yet
 		if (width != getMeasuredWidth() || height != getMeasuredHeight()) {
+			requestLayout();
 			measure(width | MeasureSpec.EXACTLY, height | MeasureSpec.EXACTLY);
 		}
 		boolean changed = oldWidth != width || oldHeight != height;
