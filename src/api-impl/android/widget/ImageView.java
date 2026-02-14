@@ -58,8 +58,7 @@ public class ImageView extends View {
 			return;
 		}
 		bitmap = BitmapFactory.decodeResource(Context.this_application.getResources(), resid);
-		if (bitmap != null)
-			native_setDrawable(widget, bitmap.getTexture());
+		native_setDrawable(widget, bitmap != null ? bitmap.getTexture() : 0);
 	}
 	public void setAdjustViewBounds(boolean adjustViewBounds) {}
 
@@ -94,8 +93,7 @@ public class ImageView extends View {
 	public void setImageMatrix(Matrix matrix) {}
 
 	public void setImageBitmap(Bitmap bitmap) {
-		if (bitmap != null)
-			native_setDrawable(widget, bitmap.getTexture());
+		native_setDrawable(widget, bitmap != null ? bitmap.getTexture() : 0);
 	}
 
 	/**
