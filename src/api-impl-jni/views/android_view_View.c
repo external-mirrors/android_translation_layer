@@ -279,6 +279,7 @@ static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy
 {
 	JNIEnv *env = get_jni_env();
 	GdkScrollUnit scroll_unit = gtk_event_controller_scroll_get_unit(self);
+	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(self)));
 
 	if (scroll_unit == GDK_SCROLL_UNIT_SURFACE) {
 		dx /= MAGIC_SCROLL_FACTOR;
@@ -290,12 +291,18 @@ static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
+	// HACK: replay last hover event to work around scrolling issues in composeUI apps
+	if (wrapper->hover_x && wrapper->hover_y)
+		call_hover_callback(this, ACTION_HOVER_MOVE, wrapper->hover_x, wrapper->hover_y);
+
 	return ret;
 }
 
 static void hover_enter_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
 {
 	wrapper->hover_exit_pending = FALSE;
+	wrapper->hover_x = x;
+	wrapper->hover_y = y;
 	call_hover_callback(wrapper->jobj, ACTION_HOVER_ENTER, x, y);
 }
 
@@ -309,6 +316,8 @@ static void hover_leave_cb(GtkEventControllerMotion *controller, WrapperWidget *
 
 static void hover_motion_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
 {
+	wrapper->hover_x = x;
+	wrapper->hover_y = y;
 	call_hover_callback(wrapper->jobj, ACTION_HOVER_MOVE, x, y);
 }
 

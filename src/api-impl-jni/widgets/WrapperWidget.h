@@ -24,6 +24,8 @@ struct _WrapperWidget {
 	gboolean intercepting_touch;
 	gboolean custom_dispatch_touch;
 	gboolean hover_exit_pending;
+	int hover_x;
+	int hover_y;
 };
 
 struct _WrapperWidgetClass {
