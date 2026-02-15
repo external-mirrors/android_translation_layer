@@ -1,6 +1,5 @@
 package android.app;
 
-import android.R;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -9,8 +8,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageParser;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -194,16 +191,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		for (Fragment fragment : fragments) {
 			fragment.onStart();
 		}
-
-		TypedArray ta = obtainStyledAttributes(new int[] {R.attr.windowBackground});
-		try {
-			Drawable background = ta.getDrawable(0);
-			if (background != null)
-				window.setBackgroundDrawable(background);
-		} catch (Exception e) {
-			Slog.e(TAG, "Error setting window background", e);
-		}
-		ta.recycle();
 
 		return;
 	}

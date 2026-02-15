@@ -1,6 +1,8 @@
 package android.view;
 
+import android.R;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.transition.Transition;
 import android.widget.FrameLayout;
@@ -60,6 +62,12 @@ public class Window {
 	}
 
 	public void setContentView(View view) {
+		if (decorView.getBackground() == null) {
+			TypedArray ta = context.obtainStyledAttributes(new int[] {R.attr.windowBackground});
+			if (ta.hasValue(0))
+				setBackgroundDrawable(ta.getDrawable(0));
+			ta.recycle();
+		}
 		decorView.removeAllViews();
 		decorView.addView(view);
 		if (view != null) {
