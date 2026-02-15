@@ -53,7 +53,7 @@ JNIEXPORT void JNICALL Java_android_widget_TextView_native_1setText(JNIEnv *env,
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 JNIEXPORT void JNICALL Java_android_widget_TextView_native_1setTextColor(JNIEnv *env, jobject this, jint color)
 {
-	GtkWidget *widget = GTK_WIDGET(box_get_label(env, _PTR(_GET_LONG_FIELD(this, "widget"))));
+	GtkWidget *widget = GTK_WIDGET(_PTR(_GET_LONG_FIELD(this, "widget")));
 
 	GtkStyleContext *style_context = gtk_widget_get_style_context(widget);
 
