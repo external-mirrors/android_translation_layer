@@ -40,7 +40,7 @@ static void range_list_item_class_init(RangeListItemClass *cls) {}
 static void range_list_item_init(RangeListItem *self) {}
 G_DEFINE_TYPE(RangeListItem, range_list_item, G_TYPE_OBJECT)
 
-static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item)
+static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item, jobject this)
 {
 	JNIEnv *env = get_jni_env();
 
@@ -56,14 +56,18 @@ static void bind_listitem_cb(GtkListItemFactory *factory, GtkListItem *list_item
 	jobject view = (*env)->CallObjectMethod(env, model->adapter, getView, index, wrapper ? wrapper->jobj : NULL, model->jobject);
 	view = _REF(view);
 	GtkWidget *child = gtk_widget_get_parent(GTK_WIDGET(_PTR(_GET_LONG_FIELD(view, "widget"))));
+	jobject background_drawable = _GET_OBJ_FIELD(this, "popupBackground", "Landroid/graphics/drawable/Drawable;");
+	GdkPaintable *background_paintable = background_drawable ? GDK_PAINTABLE(_PTR(_GET_LONG_FIELD(background_drawable, "paintable"))) : NULL;
+	wrapper_widget_set_background(WRAPPER_WIDGET(child), background_paintable);
 	gtk_list_item_set_child(list_item, child);
 }
 
 JNIEXPORT jlong JNICALL Java_android_widget_Spinner_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
-	GtkWidget *wrapper = g_object_ref(wrapper_widget_new());
+	WrapperWidget *wrapper = g_object_ref(WRAPPER_WIDGET(wrapper_widget_new()));
+	wrapper_widget_set_jobject(wrapper, env, this);
 	GtkListItemFactory *factory = gtk_signal_list_item_factory_new();
-	g_signal_connect(factory, "bind", G_CALLBACK(bind_listitem_cb), NULL);
+	g_signal_connect(factory, "bind", G_CALLBACK(bind_listitem_cb), wrapper->jobj);
 	RangeListModel *model = g_object_new(range_list_model_get_type(), NULL);
 	GtkWidget *dropdown = gtk_drop_down_new(G_LIST_MODEL(model), NULL);
 	gtk_drop_down_set_factory(GTK_DROP_DOWN(dropdown), factory);
