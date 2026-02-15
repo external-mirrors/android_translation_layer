@@ -1299,6 +1299,7 @@ public class View implements Drawable.Callback {
 
 	protected native void native_setBackgroundColor(long widget, int color);
 	public void setBackgroundColor(int color) {
+		background = new ColorDrawable(color);
 		native_setBackgroundColor(widget, color);
 	}
 

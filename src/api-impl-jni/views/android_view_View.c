@@ -694,6 +694,8 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1requestLayout(JNIEnv *env,
 JNIEXPORT void JNICALL Java_android_view_View_native_1setBackgroundColor(JNIEnv *env, jobject this, long widget_ptr, jint color)
 {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
+	wrapper_widget_set_background(wrapper, NULL);
 
 	GtkStyleContext *style_context = gtk_widget_get_style_context(widget);
 
