@@ -25,6 +25,10 @@ public class Spinner extends AbsSpinner {
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	protected native void native_setAdapter(long widget, SpinnerAdapter adapter);
+	@Override
+	protected native void native_setBackgroundDrawable(long widget, long paintable);
+	@Override
+	protected native void native_setBackgroundColor(long widget, int color);
 
 	public void setAdapter(SpinnerAdapter adapter) {
 		if (observer == null)

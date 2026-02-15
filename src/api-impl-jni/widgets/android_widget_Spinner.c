@@ -6,6 +6,7 @@
 #include "AdapterView.h"
 #include "WrapperWidget.h"
 
+#include "../generated_headers/android_view_View.h"
 #include "../generated_headers/android_widget_Spinner.h"
 
 static void range_list_model_init(RangeListModel *list_model) {}
@@ -99,4 +100,18 @@ JNIEXPORT void JNICALL Java_android_widget_Spinner_setOnItemSelectedListener(JNI
 {
 	GtkDropDown *dropdown = GTK_DROP_DOWN(_PTR(_GET_LONG_FIELD(this, "widget")));
 	g_signal_connect(dropdown, "notify::selected", G_CALLBACK(on_selected_changed), _REF(listener));
+}
+
+JNIEXPORT void JNICALL Java_android_widget_Spinner_native_1setBackgroundDrawable(JNIEnv *env, jobject this, jlong widget_ptr, jlong paintable_ptr)
+{
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	// background must be set to the GtkToggleButton which is the first child of the GtkDropDown
+	Java_android_view_View_native_1setBackgroundDrawable(env, this, _INTPTR(gtk_widget_get_first_child(widget)), paintable_ptr);
+}
+
+JNIEXPORT void JNICALL Java_android_widget_Spinner_native_1setBackgroundColor(JNIEnv *env, jobject this, jlong widget_ptr, jint color)
+{
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
+	// background must be set to the GtkToggleButton which is the first child of the GtkDropDown
+	Java_android_view_View_native_1setBackgroundColor(env, this, _INTPTR(gtk_widget_get_first_child(widget)), color);
 }

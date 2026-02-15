@@ -691,9 +691,9 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1requestLayout(JNIEnv *env,
 /* we kinda need per-widget css */
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
-JNIEXPORT void JNICALL Java_android_view_View_setBackgroundColor(JNIEnv *env, jobject this, jint color)
+JNIEXPORT void JNICALL Java_android_view_View_native_1setBackgroundColor(JNIEnv *env, jobject this, long widget_ptr, jint color)
 {
-	GtkWidget *widget = GTK_WIDGET(_PTR(_GET_LONG_FIELD(this, "widget")));
+	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 
 	GtkStyleContext *style_context = gtk_widget_get_style_context(widget);
 

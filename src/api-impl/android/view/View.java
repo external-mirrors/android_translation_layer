@@ -1297,7 +1297,11 @@ public class View implements Drawable.Callback {
 	}
 	private static native void nativeInvalidate(long widget);
 
-	public native void setBackgroundColor(int color);
+	protected native void native_setBackgroundColor(long widget, int color);
+	public void setBackgroundColor(int color) {
+		native_setBackgroundColor(widget, color);
+	}
+
 	public native void native_setVisibility(long widget, int visibility, float alpha);
 
 	protected void onVisibilityChanged(View changedView, int visibility) {
