@@ -997,15 +997,14 @@ public class View implements Drawable.Callback {
 				e.printStackTrace();
 			}
 		}
-		if (a.hasValue(com.android.internal.R.styleable.View_visibility)) {
+		if (a.hasValue(com.android.internal.R.styleable.View_visibility))
 			setVisibility(VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)]);
-		}
-		if (a.hasValue(com.android.internal.R.styleable.View_minWidth)) {
+
+		if (a.hasValue(com.android.internal.R.styleable.View_minWidth))
 			minWidth = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minWidth, 0);
-		}
-		if (a.hasValue(com.android.internal.R.styleable.View_minHeight)) {
+
+		if (a.hasValue(com.android.internal.R.styleable.View_minHeight))
 			minHeight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minHeight, 0);
-		}
 
 		int padding = a.getDimensionPixelSize(com.android.internal.R.styleable.View_padding, -1);
 
@@ -1036,30 +1035,28 @@ public class View implements Drawable.Callback {
 				paddingLeft = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingLeft, 0);
 				paddingRight = a.getDimensionPixelSize(com.android.internal.R.styleable.View_paddingRight, 0);
 
-				if (paddingStart >= 0) {
+				if (paddingStart >= 0)
 					paddingLeft = paddingStart;
-				}
 
-				if (paddingEnd >= 0) {
+				if (paddingEnd >= 0)
 					paddingRight = paddingEnd;
-				}
 			}
 		}
 
 		native_setPadding(widget, paddingLeft, paddingTop, paddingRight, paddingBottom);
 
-		if (a.hasValue(com.android.internal.R.styleable.View_tag)) {
+		if (a.hasValue(com.android.internal.R.styleable.View_tag))
 			tag = a.getText(com.android.internal.R.styleable.View_tag);
-		}
+
 		if (a.hasValue(com.android.internal.R.styleable.View_textAlignment)) {
 			int textAlignment = a.getInt(com.android.internal.R.styleable.View_textAlignment, 0);
 			setTextAlignment(textAlignment);
 		}
 
 		String handlerName = a.getString(com.android.internal.R.styleable.View_onClick);
-		if (handlerName != null) {
+		if (handlerName != null)
 			setOnClickListener(new DeclaredOnClickListener(this, handlerName));
-		}
+
 		a.recycle();
 		onCreateDrawableState(0);
 	}
@@ -2405,9 +2402,8 @@ public class View implements Drawable.Callback {
 		}
 		@Override
 		public void onClick(@NonNull View v) {
-			if (mResolvedMethod == null) {
+			if (mResolvedMethod == null)
 				resolveMethod(mHostView.getContext(), mMethodName);
-			}
 			try {
 				mResolvedMethod.invoke(mResolvedContext, v);
 			} catch (IllegalAccessException e) {
