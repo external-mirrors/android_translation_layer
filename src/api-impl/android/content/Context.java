@@ -480,9 +480,16 @@ public abstract class Context {
 	}
 
 	public int checkCallingOrSelfPermission(String permission) {
+		if ("android.permission.RECORD_AUDIO".equals(permission) && System.getenv("ATL_UGLY_ENABLE_MICROPHONE") != null) {
+			return PackageManager.PERMISSION_GRANTED;
+		}
 		Slog.w(TAG, "!!! app wants to know if it has a permission: >" + permission + "< (returning PERMISSION_DENIED)");
 
 		return PackageManager.PERMISSION_DENIED;
+	}
+
+	public int checkSelfPermission(String permission) {
+		return checkCallingOrSelfPermission(permission);
 	}
 
 	public void registerComponentCallbacks(ComponentCallbacks callbacks) {}

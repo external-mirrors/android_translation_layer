@@ -6,40 +6,17 @@
 
 #include "../defines.h"
 #include "../util.h"
+#include "audio.h"
 
 #include "../generated_headers/android_media_AudioTrack.h"
 
-#define PCM_DEVICE "default"
-
-void helper_hw_params_init(snd_pcm_t *pcm_handle, snd_pcm_hw_params_t *params, unsigned int rate, unsigned int channels, snd_pcm_format_t format)
-{
-	int ret;
-
-	snd_pcm_hw_params_any(pcm_handle, params);
-
-	ret = snd_pcm_hw_params_set_access(pcm_handle, params, SND_PCM_ACCESS_RW_INTERLEAVED);
-	if (ret < 0)
-		printf("ERROR: Can't set interleaved mode. %s\n", snd_strerror(ret));
-
-	ret = snd_pcm_hw_params_set_format(pcm_handle, params, format);
-	if (ret < 0)
-		printf("ERROR: Can't set format. %s\n", snd_strerror(ret));
-
-	ret = snd_pcm_hw_params_set_channels(pcm_handle, params, channels);
-	if (ret < 0)
-		printf("ERROR: Can't set channels number. %s\n", snd_strerror(ret));
-
-	ret = snd_pcm_hw_params_set_rate_near(pcm_handle, params, &rate, 0);
-	if (ret < 0)
-		printf("ERROR: Can't set rate. %s\n", snd_strerror(ret));
-}
-
-JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv *env, jobject this, jint streamType, jint rate, jint channels, jint audioFormat, jint buffer_size, jint mode)
+JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv *env, jobject this, jint streamType, jint rate, jint channel_config, jint audioFormat, jint buffer_size, jint mode)
 {
 
 	snd_pcm_t *pcm_handle;
 	snd_pcm_hw_params_t *params;
 
+	unsigned int channels;
 	unsigned int channels_out;
 	unsigned int period_time;
 	unsigned int buffer_time;
@@ -52,7 +29,7 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1constructor(JNIEnv 
 		printf("ERROR: Can't open \"%s\" PCM device. %s\n", PCM_DEVICE, snd_strerror(ret));
 
 	snd_pcm_hw_params_alloca(&params);
-	helper_hw_params_init(pcm_handle, params, rate, channels, SND_PCM_FORMAT_S16_LE);
+	helper_hw_params_init(pcm_handle, params, rate, channel_config, SND_PCM_FORMAT_S16_LE, &channels);
 
 	/*--↓*/
 	snd_pcm_uframes_t buffer_size_as_uframes_t = buffer_size / channels / 2; // 2 means PCM16
@@ -122,24 +99,14 @@ JNIEXPORT jint JNICALL Java_android_media_AudioTrack_getMinBufferSize(JNIEnv *en
 	snd_pcm_hw_params_t *params;
 	snd_pcm_uframes_t frames;
 	int ret;
-
-	// TODO: clean up
 	unsigned int num_channels;
-	switch (channelConfig) {
-		case 2:
-			num_channels = 1;
-			break;
-		default:
-			num_channels = 1;
-	}
-	// ---
 
 	ret = snd_pcm_open(&pcm_handle, PCM_DEVICE, SND_PCM_STREAM_PLAYBACK, 0);
 	if (ret < 0)
 		printf("Error calling snd_pcm_open: %s\n", snd_strerror(ret));
 
 	snd_pcm_hw_params_alloca(&params);
-	helper_hw_params_init(pcm_handle, params, sampleRateInHz, num_channels, SND_PCM_FORMAT_S16_LE); // FIXME: a switch?
+	helper_hw_params_init(pcm_handle, params, sampleRateInHz, channelConfig, SND_PCM_FORMAT_S16_LE, &num_channels); // FIXME: a switch?
 
 	ret = snd_pcm_hw_params(pcm_handle, params);
 	if (ret < 0)

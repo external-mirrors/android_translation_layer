@@ -43,20 +43,7 @@ public class AudioTrack {
 		this.mode = mode;
 
 		System.out.println("\n\n\nAudioTrack(" + streamType + ", " + sampleRateInHz + ", " + channelConfig + ", " + audioFormat + ", " + bufferSizeInBytes + ", " + mode + "); called\n\n\n\n");
-
-		int num_channels;
-		switch (channelConfig) {
-			case 2:
-				num_channels = 1;
-				break;
-			case 12:
-				num_channels = 2;
-				break;
-			default:
-				num_channels = 1;
-		}
-
-		native_constructor(streamType, sampleRateInHz, num_channels, audioFormat, bufferSizeInBytes, mode);
+		native_constructor(streamType, sampleRateInHz, channelConfig, audioFormat, bufferSizeInBytes, mode);
 	}
 
 	public AudioTrack(int streamType, int sampleRateInHz, int channelConfig, int audioFormat, int bufferSizeInBytes, int mode, int sessionId) {
