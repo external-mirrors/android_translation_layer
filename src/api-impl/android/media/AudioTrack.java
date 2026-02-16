@@ -130,6 +130,23 @@ public class AudioTrack {
 		return ret;
 	}
 
+	public int write(short audioData[], int offsetInShorts, int sizeInShorts) {
+		/* sanity check the parameters before calling native_write */
+		if ((audioData == null)
+		    || (offsetInShorts < 0) || (sizeInShorts < 0)
+		    || (offsetInShorts + sizeInShorts < 0)
+		    || (offsetInShorts + sizeInShorts > audioData.length)) {
+			return ERROR_BAD_VALUE;
+		}
+
+		int framesToWrite = sizeInShorts / channels;
+		int ret = native_write(audioData, offsetInShorts, framesToWrite);
+		if (ret > 0) {
+			playbackHeadPosition += ret;
+		}
+		return ret * channels;
+	}
+
 	public int getAudioSessionId() {
 		return sessionId;
 	}
@@ -167,7 +184,8 @@ public class AudioTrack {
 	private native int native_getPlaybackHeadPosition();
 	public native void native_play();
 	public native void native_pause();
-	private native int native_write(byte[] audioData, int offsetInBytes, int sizeInBytes);
+	private native int native_write(byte[] audioData, int offsetInBytes, int framesToWrite);
+	private native int native_write(short[] audioData, int offsetInShorts, int framesToWrite);
 	public native void native_release();
 
 	// nested classes
