@@ -1265,6 +1265,15 @@ public class PackageManager {
 	@SdkConstant(SdkConstantType.FEATURE)
 	public static final String FEATURE_TELEVISION = "android.hardware.type.television";
 
+	@SdkConstant(SdkConstantType.FEATURE)
+	public static final String FEATURE_LEANBACK = "android.software.leanback";
+
+	@SdkConstant(SdkConstantType.FEATURE)
+	public static final String FEATURE_AUTOMOTIVE = "android.hardware.type.automotive";
+
+	@SdkConstant(SdkConstantType.FEATURE)
+	public static final String FEATURE_WATCH = "android.hardware.type.watch";
+
 	/**
 	 * Action to external storage service to clean out removed apps.
 	 * @hide
@@ -2153,6 +2162,13 @@ public class PackageManager {
 		switch (name) {
 			case "android.hardware.touchscreen.multitouch.distinct":
 				return true;
+			case FEATURE_AUTOMOTIVE:
+				return System.getenv("ATL_IS_AUTOMOTIVE") != null;
+			case FEATURE_LEANBACK:
+			case FEATURE_TELEVISION:
+				return System.getenv("ATL_IS_TELEVISION") != null;
+			case FEATURE_WATCH:
+				return System.getenv("ATL_IS_WATCH") != null;
 			default:
 				Slog.e(TAG, "!!!!!!! hasSystemFeature: case >" + name + "< is not implemented yet");
 				return false;
