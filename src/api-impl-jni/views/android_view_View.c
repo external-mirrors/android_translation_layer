@@ -557,6 +557,18 @@ static void java_method_cb(WrapperWidget *wrapper, jmethodID method)
 		(*env)->ExceptionDescribe(env);
 }
 
+static GtkWidget *currently_unmapping = NULL;
+
+static void unmap_cb(WrapperWidget *wrapper, jmethodID method)
+{
+	JNIEnv *env = get_jni_env();
+	currently_unmapping = wrapper->child;
+	(*env)->CallVoidMethod(env, wrapper->jobj, method);
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+	currently_unmapping = NULL;
+}
+
 JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
 	WrapperWidget *wrapper = g_object_ref(WRAPPER_WIDGET(wrapper_widget_new()));
@@ -589,7 +601,7 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 	}
 
 	g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
-	g_signal_connect(wrapper, "unmap", G_CALLBACK(java_method_cb), handle_cache.view.onDetachedFromWindow);
+	g_signal_connect(wrapper, "unmap", G_CALLBACK(unmap_cb), handle_cache.view.onDetachedFromWindow);
 
 	return _INTPTR(widget);
 }
@@ -944,7 +956,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *e
 JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsAttachedToWindow(JNIEnv *env, jobject this, jlong widget_ptr)
 {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
-	return gtk_widget_get_mapped(widget);
+	return currently_unmapping == widget || gtk_widget_get_mapped(widget);
 }
 
 JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window(JNIEnv *env, jobject this, jlong widget_ptr)
