@@ -62,11 +62,14 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void addView(View child, int index, LayoutParams params) {
-		addViewInternal(child, index, params);
+		addViewInternal(child, index, params, true);
 		requestLayout();
 	}
 
-	protected void addViewInternal(View child, int index, LayoutParams params) {
+	public void onViewAdded(View view) {}
+	public void onViewRemoved(View view) {}
+
+	protected void addViewInternal(View child, int index, LayoutParams params, boolean callOnViewAdded) {
 		if (child.parent == this)
 			return;
 		if (!checkLayoutParams(params))
@@ -78,8 +81,11 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			index = children.size();
 		children.add(index, child);
 		native_addView(widget, child.widget, index, params);
-		if (onHierarchyChangeListener != null)
-			onHierarchyChangeListener.onChildViewAdded(this, child);
+		if (callOnViewAdded) {
+			onViewAdded(child);
+			if (onHierarchyChangeListener != null)
+				onHierarchyChangeListener.onChildViewAdded(this, child);
+		}
 	}
 
 	/* We never call this ourselves */
@@ -89,12 +95,12 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params) {
-		addViewInternal(child, index, params);
+		addViewInternal(child, index, params, true);
 		return true;
 	}
 
 	protected boolean addViewInLayout(View child, int index, LayoutParams params, boolean preventRequestLayout) {
-		addViewInternal(child, index, params);
+		addViewInternal(child, index, params, true);
 		if (!preventRequestLayout)
 			requestLayout();
 		return true;
@@ -109,6 +115,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		child.parent = null;
 		children.remove(child);
 		native_removeView(widget, child.widget);
+		onViewRemoved(child);
 		if (onHierarchyChangeListener != null) {
 			onHierarchyChangeListener.onChildViewRemoved(this, child);
 		}
@@ -133,6 +140,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 			child.parent = null;
 			it.remove();
 			native_removeView(widget, child.widget);
+			onViewRemoved(child);
 			if (onHierarchyChangeListener != null) {
 				onHierarchyChangeListener.onChildViewRemoved(this, child);
 			}
@@ -149,7 +157,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	public void attachViewToParent(View view, int index, LayoutParams params) {
 		if (!detachedChildren.remove(view)) {
-			addViewInternal(view, index, params);
+			addViewInternal(view, index, params, false);
 		}
 		if (!checkLayoutParams(params))
 			params = generateLayoutParams(params);
