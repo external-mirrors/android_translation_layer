@@ -9,6 +9,12 @@ of clang-format with our patches here: https://gitlab.com/android_translation_la
   single dimensional arrays into a 2D grid
 - when commenting out code, don't put the start of the comment at the start of the line, otherwise
   clang-format will indent it and there will be double indents
+- make sure to properly format the inside of multi-line comments, we can't make clang-format indent
+  them because otherwise it would break formatting of commented out code
+- if borrowing code from AOSP, you can use
+  `clang-format --style="{BasedOnStyle: InheritParentConfig, ReflowComments: IndentOnly}"`
+  since there shouldn't be commented out code (yet). This will correctly indent the plentitude
+  of javadoc comments.
 
 #### manual formatting rules
 - aim for ~100 columns
