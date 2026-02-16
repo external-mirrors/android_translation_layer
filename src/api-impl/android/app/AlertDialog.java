@@ -63,6 +63,16 @@ public class AlertDialog extends Dialog implements DialogInterface {
 			return setNegativeButton(dialog.getContext().getText(textId), listener);
 		}
 
+		public AlertDialog.Builder setNeutralButton(CharSequence text, DialogInterface.OnClickListener listener) {
+			System.out.println("AlertDialog.Builder setNeutralButton called with text: '" + text + "'");
+			dialog.setButton(DialogInterface.BUTTON_NEUTRAL, text, listener);
+			return this;
+		}
+
+		public AlertDialog.Builder setNeutralButton(int textId, DialogInterface.OnClickListener listener) {
+			return setNeutralButton(dialog.getContext().getText(textId), listener);
+		}
+
 		public AlertDialog.Builder setCancelable(boolean cancelable) {
 			return this;
 		}

@@ -2372,4 +2372,8 @@ public class View implements Drawable.Callback {
 	public ActionMode startActionMode(ActionMode.Callback callback, int type) { return null; }
 
 	public InputConnection onCreateInputConnection(EditorInfo outAttrs) { return null; }
+
+	public ActionMode startActionMode(ActionMode.Callback callback) { return null; }
+
+	public void getFocusedRect(Rect r) {}
 }

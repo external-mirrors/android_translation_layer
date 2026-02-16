@@ -664,4 +664,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public boolean dispatchKeyEvent(KeyEvent event) {
 		return false;
 	}
+
+	public void requestPermissions(String[] permissions, int requestCode) {
+		Slog.w(TAG, "requestPermissions(" + Arrays.toString(permissions) + "): not handled");
+	}
 }

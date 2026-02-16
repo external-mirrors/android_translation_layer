@@ -483,17 +483,6 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	}
 
 	/**
-	 * Inserts an int array value into the mapping of this Bundle, replacing
-	 * any existing value for the given key.  Either key or value may be null.
-	 *
-	 * @param key a String, or null
-	 * @param value an int array object, or null
-	 */
-	public void putIntArray(String key, int[] value) {
-		mMap.put(key, value);
-	}
-
-	/**
 	 * Inserts a float array value into the mapping of this Bundle, replacing
 	 * any existing value for the given key.  Either key or value may be null.
 	 *

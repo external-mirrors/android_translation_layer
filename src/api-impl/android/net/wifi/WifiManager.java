@@ -30,4 +30,8 @@ public class WifiManager {
 	public int getWifiState() {
 		return WIFI_STATE_UNKNOWN;
 	}
+
+	public boolean isWifiEnabled() {
+		return false;
+	}
 }

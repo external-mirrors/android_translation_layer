@@ -113,6 +113,10 @@ public class TextView extends View {
 			requestLayout();
 	}
 
+	public void setText(char[] text, int start, int len) {
+		setText(new String(text, start, len));
+	}
+
 	private native final void native_set_markup(int bool);
 
 	public native final void native_setText(String text);
@@ -430,4 +434,9 @@ public class TextView extends View {
 	public void setKeyListener(KeyListener keyListener) {}
 
 	public int getAutoLinkMask() { return 0; }
+
+	public void setWidth(int width) {}
+	public void setHeight(int height) {}
+
+	public void setFreezesText(boolean freezesText) {}
 }

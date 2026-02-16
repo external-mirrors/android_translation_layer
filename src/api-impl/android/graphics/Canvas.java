@@ -161,6 +161,10 @@ public class Canvas {
 		}*/
 	}
 
+	public void drawText(char text[], int start, int end, float x, float y, Paint paint) {
+		drawText(new String(text), start, end, x, y, paint);
+	}
+
 	public void drawTextOnPath(String text, Path path, float x_offset, float y_offset, Paint paint) {
 		Log.w("Canvas", "STUB: drawTextOnPath");
 	}
@@ -465,7 +469,9 @@ public class Canvas {
 	}
 
 	public void drawColor(int color) {
-		Log.w("Canvas", "STUB: drawColor(" + String.format("0x%08x", color) + ")");
+		Paint paint = new Paint();
+		paint.setColor(color);
+		drawRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, paint);
 	}
 
 	public void drawARGB(int a, int r, int g, int b) {

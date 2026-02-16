@@ -64,4 +64,8 @@ public abstract class ContentProvider {
 	}
 
 	public void attachInfo(Context context, ProviderInfo provider) {}
+
+	public String getCallingPackage() {
+		return Context.pkg.packageName;
+	}
 }

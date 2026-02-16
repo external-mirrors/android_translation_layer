@@ -90,6 +90,8 @@ public class MediaPlayer {
 
 	public int getAudioSessionId() { return 0; }
 
+	public void setWakeMode(Context context, int mode) {}
+
 	public static native void native_prepare(long gtk_media_stream);
 	public native long native_setDataSource(String path);
 	public static native void native_setOnCompletionListener(long gtk_media_stream, MediaPlayer.OnCompletionListener listener);

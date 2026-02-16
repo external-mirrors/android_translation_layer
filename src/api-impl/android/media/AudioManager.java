@@ -60,4 +60,32 @@ public class AudioManager {
 	public boolean isMusicActive() {
 		return false;
 	}
+
+	public void setSpeakerphoneOn(boolean on) {}
+
+	public boolean isSpeakerphoneOn() {
+		return false;
+	}
+
+	public void setBluetoothScoOn(boolean on) {}
+
+	public boolean isBluetoothScoOn() {
+		return false;
+	}
+
+	public void stopBluetoothSco() {}
+
+	public void setMode(int mode) {}
+
+	public int getMode() {
+		return /*MODE_NORMAL*/ 0;
+	}
+
+	public boolean isMicrophoneMute() {
+		return false;
+	}
+
+	public void setMicrophoneMute(boolean on) {
+		System.out.println("AudioManager.setMicrophoneMute(" + on + ")");
+	}
 }

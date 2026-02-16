@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.transition.Transition;
 import android.widget.FrameLayout;
+import android.widget.Toolbar;
 
 public class Window {
 	public static final int FEATURE_OPTIONS_PANEL = 0;
@@ -88,6 +89,8 @@ public class Window {
 	}
 
 	public View findViewById(int id) {
+		if (id == com.android.internal.R.id.action_bar)
+			return new Toolbar(context);
 		return decorView.findViewById(id);
 	}
 

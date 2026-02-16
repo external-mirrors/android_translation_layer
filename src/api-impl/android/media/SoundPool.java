@@ -29,6 +29,12 @@ public class SoundPool {
 		return nativeLoad(nativePool, android.os.Environment.getExternalStorageDirectory().getPath() + "/" + afd.fileName);
 	}
 
+	public int load(Context context, int resId, int priority) throws IOException {
+		String fileName = context.getResources().getResourceEntryName(resId);
+		AssetManager.extractFromAPK(context.getPackageCodePath(), fileName, fileName);
+		return nativeLoad(nativePool, android.os.Environment.getExternalStorageDirectory().getPath() + "/" + fileName);
+	}
+
 	/**
 	 * Sets the callback hook for the OnLoadCompleteListener.
 	 */
@@ -65,6 +71,8 @@ public class SoundPool {
 			return new SoundPool(0, 0, 0); // FIXME
 		}
 	}
+
+	public void release() {}
 
 	private static native long native_constructor();
 	private static native int nativeLoad(long nativePool, String path);
