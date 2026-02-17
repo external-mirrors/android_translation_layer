@@ -1708,6 +1708,8 @@ public class View implements Drawable.Callback {
 
 	public void setActivated(boolean activated) {}
 
+	public boolean isActivated() { return false; }
+
 	public int getVisibility() { return visibility; }
 
 	public boolean isInEditMode() { return false; }

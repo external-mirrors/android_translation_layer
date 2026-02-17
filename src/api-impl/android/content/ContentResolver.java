@@ -12,6 +12,7 @@ import android.os.ParcelFileDescriptor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,6 +77,11 @@ public class ContentResolver {
 	public InputStream openInputStream(Uri uri) throws FileNotFoundException {
 		ParcelFileDescriptor fd = openFileDescriptor(uri, "r");
 		return fd != null ? new ParcelFileDescriptor.AutoCloseInputStream(fd) : null;
+	}
+
+	public OutputStream openOutputStream(Uri uri) throws FileNotFoundException {
+		ParcelFileDescriptor fd = openFileDescriptor(uri, "w");
+		return fd != null ? new ParcelFileDescriptor.AutoCloseOutputStream(fd) : null;
 	}
 
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {

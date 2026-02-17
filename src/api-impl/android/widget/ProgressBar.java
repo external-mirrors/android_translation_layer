@@ -118,4 +118,6 @@ public class ProgressBar extends View {
 	public void setIndeterminateTintList(ColorStateList tint) {}
 
 	public void setIndeterminateTintMode(PorterDuff.Mode tintMode) {}
+
+	public void setProgressTintList(ColorStateList tint) {}
 }

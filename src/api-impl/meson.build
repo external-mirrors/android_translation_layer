@@ -462,6 +462,7 @@ srcs = [
 	'android/text/format/Formatter.java',
 	'android/text/format/Time.java',
 	'android/text/method/BaseMovementMethod.java',
+	'android/text/method/DigitsKeyListener.java',
 	'android/text/method/KeyListener.java',
 	'android/text/method/LinkMovementMethod.java',
 	'android/text/method/MovementMethod.java',

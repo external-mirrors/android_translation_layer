@@ -10,6 +10,7 @@ import android.content.pm.ApplicationInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.hardware.SensorManager;
+import android.hardware.camera2.CameraManager;
 import android.hardware.display.ColorDisplayManager;
 import android.hardware.display.DisplayManager;
 import android.hardware.input.InputManager;
@@ -144,6 +145,8 @@ public final class ContextImpl extends Context {
 				return new CaptioningManager();
 			case "statusbar":
 				return new StatusBarManager();
+			case "camera":
+				return new CameraManager();
 			case "color_display":
 				return new ColorDisplayManager();
 			case "search":
