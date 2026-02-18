@@ -110,7 +110,7 @@ public class Environment {
 		/**
 		 * External storage dirs, as visible to apps
 		 */
-		private final File[] mExternalDirsForApp = null;
+		private final File[] mExternalDirsForApp = {Environment.getExternalStorageDirectory()};
 		/**
 		 * Primary emulated storage dir for direct access
 		 */
@@ -122,7 +122,7 @@ public class Environment {
 
 		@Deprecated
 		public File getExternalStorageDirectory() {
-			return Environment.getExternalStorageDirectory(); /*mExternalDirsForApp[0];*/
+			return mExternalDirsForApp[0];
 		}
 
 		@Deprecated
@@ -803,4 +803,7 @@ public class Environment {
 	public static String getExternalStorageState(File path) {
 		return Environment.MEDIA_MOUNTED;
 	}
+
+	public static boolean isExternalStorageManager() { return false; }
+	public static boolean isExternalStorageManager(File path) { return false; }
 }

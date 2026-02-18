@@ -1515,4 +1515,6 @@ public final class Configuration implements Comparable<Configuration> {
 	private static int getScreenLayoutNoDirection(int screenLayout) {
 		return screenLayout & ~SCREENLAYOUT_LAYOUTDIR_MASK;
 	}
+
+	public int fontWeightAdjustment;
 }

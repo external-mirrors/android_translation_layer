@@ -23,6 +23,7 @@ import android.net.wifi.WifiManager;
 import android.os.PowerManager;
 import android.os.UserManager;
 import android.os.Vibrator;
+import android.os.storage.StorageManager;
 import android.telephony.TelephonyManager;
 import android.util.Slog;
 import android.view.Display;
@@ -151,6 +152,8 @@ public final class ContextImpl extends Context {
 				return new ColorDisplayManager();
 			case "search":
 				return new SearchManager();
+			case "storage":
+				return new StorageManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;
@@ -189,5 +192,10 @@ public final class ContextImpl extends Context {
 	@Override
 	public Context createDeviceProtectedStorageContext() {
 		return this;
+	}
+
+	@Override
+	public int getThemeResId() {
+		return mThemeResource;
 	}
 }

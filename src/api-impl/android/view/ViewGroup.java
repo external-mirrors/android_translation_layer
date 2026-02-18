@@ -18,6 +18,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	private ArrayList<View> detachedChildren;
 	private OnHierarchyChangeListener onHierarchyChangeListener;
 	private LayoutTransition transition;
+	private ViewGroupOverlay viewGroupOverlay;
 
 	public ViewGroup(Context context) {
 		this(context, null);
@@ -657,4 +658,10 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	public void onDescendantInvalidated(View child, View target) {}
 
 	public boolean getTouchscreenBlocksFocus() { return false; }
+
+	public ViewGroupOverlay getOverlay() {
+		if (viewGroupOverlay == null)
+			viewGroupOverlay = new ViewGroupOverlay();
+		return viewGroupOverlay;
+	}
 }

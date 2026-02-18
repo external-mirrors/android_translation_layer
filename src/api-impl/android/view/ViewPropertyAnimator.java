@@ -139,4 +139,8 @@ public class ViewPropertyAnimator {
 		this.startAction = runnable;
 		return this;
 	}
+
+	public ViewPropertyAnimator withLayer() {
+		return this;
+	}
 }

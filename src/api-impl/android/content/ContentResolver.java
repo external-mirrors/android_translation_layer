@@ -84,6 +84,18 @@ public class ContentResolver {
 		return fd != null ? new ParcelFileDescriptor.AutoCloseOutputStream(fd) : null;
 	}
 
+	public Cursor query(Uri uri, String[] projection, Bundle queryArgs, CancellationSignal cancellationSignal) {
+		if ("file".equals(uri.getScheme())) {
+			MatrixCursor cursor = new MatrixCursor(projection);
+			Object[] row = new Object[projection.length];
+			native_query_file_info(uri.getPath(), projection, row);
+			cursor.addRow(row);
+			return cursor;
+		} else {
+			return null;
+		}
+	}
+
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		ContentProvider provider = ContentProvider.providers.get(uri.getAuthority());
 		if (provider != null) {

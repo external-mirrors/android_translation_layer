@@ -38,6 +38,7 @@ import android.view.animation.Animation;
 import android.view.autofill.AutofillId;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
+import android.view.translation.ViewTranslationCallback;
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -2446,5 +2447,13 @@ public class View implements Drawable.Callback {
 			                                + "(View) in a parent or ancestor Context for android:onClick "
 			                                + "attribute defined on view " + mHostView.getClass() + idText);
 		}
+	}
+	public void setForceDarkAllowed(boolean forceDark) {}
+	public void setWindowInsetsAnimationCallback(WindowInsetsAnimation.Callback callback) {}
+	public void setViewTranslationCallback(ViewTranslationCallback callback) {}
+	public void clearViewTranslationCallback() {}
+	public void transformMatrixToGlobal(Matrix matrix) {}
+	public boolean isShowingLayoutBounds() {
+		return true;
 	}
 }

@@ -798,4 +798,6 @@ public abstract class Context {
 	public String getPackageResourcePath() {
 		return native_get_apk_path();
 	}
+
+	public abstract int getThemeResId();
 }

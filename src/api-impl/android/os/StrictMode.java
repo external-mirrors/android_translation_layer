@@ -5,6 +5,7 @@ import java.util.concurrent.Executor;
 public final class StrictMode {
 	public static void setThreadPolicy(final ThreadPolicy policy) {}
 	public static void setVmPolicy(final VmPolicy policy) {}
+	public static VmPolicy getVmPolicy() { return new VmPolicy.Builder().build(); }
 	public static ThreadPolicy allowThreadDiskWrites() {
 		return new ThreadPolicy();
 	}

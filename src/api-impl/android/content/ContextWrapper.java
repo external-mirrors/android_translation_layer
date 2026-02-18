@@ -70,4 +70,9 @@ public class ContextWrapper extends Context {
 	public Context createDeviceProtectedStorageContext() {
 		return this.baseContext.createDeviceProtectedStorageContext();
 	}
+
+	@Override
+	public int getThemeResId() {
+		return this.baseContext.getThemeResId();
+	}
 }

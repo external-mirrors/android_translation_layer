@@ -100,7 +100,7 @@ public class TextView extends View {
 	}
 
 	public void setText(CharSequence text) {
-		setText(text, null);
+		setText(text, BufferType.NORMAL);
 	}
 
 	public void setText(CharSequence text, BufferType type) {
