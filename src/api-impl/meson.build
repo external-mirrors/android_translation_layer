@@ -357,6 +357,7 @@ srcs = [
 	'android/opengl/GLES10.java',
 	'android/opengl/GLES20.java',
 	'android/opengl/GLSurfaceView.java',
+	'android/opengl/GLU.java',
 	'android/opengl/Matrix.java',
 	'android/os/AsyncTask.java',
 	'android/os/BaseBundle.java',
