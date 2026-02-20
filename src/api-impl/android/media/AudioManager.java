@@ -88,4 +88,5 @@ public class AudioManager {
 	public void setMicrophoneMute(boolean on) {
 		System.out.println("AudioManager.setMicrophoneMute(" + on + ")");
 	}
+	public void unloadSoundEffects() {}
 }

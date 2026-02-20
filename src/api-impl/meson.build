@@ -408,6 +408,8 @@ srcs = [
 	'android/os/ext/SdkExtensions.java',
 	'android/os/storage/StorageManager.java',
 	'android/os/storage/StorageVolume.java',
+	'android/preference/ListPreference.java',
+	'android/preference/Preference.java',
 	'android/preference/PreferenceActivity.java',
 	'android/preference/PreferenceManager.java',
 	'android/print/PrintManager.java',
