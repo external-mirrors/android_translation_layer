@@ -37,6 +37,10 @@ static void changed_cb(GtkEditable *self, jobject listener)
 	jclass spannable_string_builder = (*env)->FindClass(env, "android/text/SpannableStringBuilder");
 	jmethodID spannable_string_builder_constructor = _METHOD(spannable_string_builder, "<init>", "(Ljava/lang/CharSequence;)V");
 	jobject text_obj = (*env)->NewObject(env, spannable_string_builder, spannable_string_builder_constructor, _JSTRING(text));
+	jmethodID onTextChanged = _METHOD(_CLASS(listener), "onTextChanged", "(Ljava/lang/CharSequence;III)V");
+	(*env)->CallVoidMethod(env, listener, onTextChanged, text_obj, 0, 0, strlen(text));
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
 	jmethodID listener_method = _METHOD(_CLASS(listener), "afterTextChanged", "(Landroid/text/Editable;)V");
 	(*env)->CallVoidMethod(env, listener, listener_method, text_obj);
 	if ((*env)->ExceptionCheck(env))
