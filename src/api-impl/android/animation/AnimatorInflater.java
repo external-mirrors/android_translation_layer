@@ -160,11 +160,10 @@ public class AnimatorInflater {
 
 	public static StateListAnimator loadStateListAnimator(Context context, int id)
 	    throws NotFoundException {
-		return new StateListAnimator();
-		/*final Resources resources = context.getResources();
+		final Resources resources = context.getResources();
 		//final ConfigurationBoundResourceCache<StateListAnimator> cache = resources.getStateListAnimatorCache();
 		final Theme theme = context.getTheme();
-		StateListAnimator animator = null;//cache.getInstance(id, resources, theme);
+		StateListAnimator animator = null; //cache.getInstance(id, resources, theme);
 		if (animator != null) {
 			return animator;
 		}
@@ -175,6 +174,7 @@ public class AnimatorInflater {
 			animator =
 			    createStateListAnimatorFromXml(context, parser, Xml.asAttributeSet(parser));
 			if (animator != null) {
+				/*
 				animator.appendChangingConfigurations(getChangingConfigs(resources, id));
 				final ConstantState<StateListAnimator> constantState = animator.createConstantState();
 				if (constantState != null) {
@@ -182,27 +182,24 @@ public class AnimatorInflater {
 					// return a clone so that the animator in constant state is never used.
 					animator = constantState.newInstance(resources, theme);
 				}
+				*/
 			}
 			return animator;
 		} catch (XmlPullParserException ex) {
 			Resources.NotFoundException rnf =
-			    new Resources.NotFoundException(
-				"Can't load state list animator resource ID #0x" +
-				Integer.toHexString(id));
+			    new Resources.NotFoundException("Can't load state list animator resource ID #0x" + Integer.toHexString(id));
 			rnf.initCause(ex);
 			throw rnf;
 		} catch (IOException ex) {
 			Resources.NotFoundException rnf =
-			    new Resources.NotFoundException(
-				"Can't load state list animator resource ID #0x" +
-				Integer.toHexString(id));
+			    new Resources.NotFoundException("Can't load state list animator resource ID #0x" + Integer.toHexString(id));
 			rnf.initCause(ex);
 			throw rnf;
 		} finally {
 			if (parser != null) {
 				parser.close();
 			}
-		}*/
+		}
 	}
 
 	private static StateListAnimator createStateListAnimatorFromXml(Context context,
@@ -271,8 +268,7 @@ public class AnimatorInflater {
 		}
 	}*/
 
-	/*private static PropertyValuesHolder getPVH(TypedArray styledAttributes, int valueType,
-						   int valueFromId, int valueToId, String propertyName) {
+	private static PropertyValuesHolder getPVH(TypedArray styledAttributes, int valueType, int valueFromId, int valueToId, String propertyName) {
 
 		TypedValue tvFrom = styledAttributes.peekValue(valueFromId);
 		boolean hasFrom = (tvFrom != null);
@@ -295,6 +291,7 @@ public class AnimatorInflater {
 		PropertyValuesHolder returnValue = null;
 
 		if (valueType == VALUE_TYPE_PATH) {
+			/*
 			String fromString = styledAttributes.getString(valueFromId);
 			String toString = styledAttributes.getString(valueToId);
 			PathParser.PathData nodesFrom = fromString == null
@@ -324,6 +321,7 @@ public class AnimatorInflater {
 										    (Object)nodesTo);
 				}
 			}
+			*/
 		} else {
 			TypeEvaluator evaluator = null;
 			// Integer and float value types are handled here.
@@ -346,8 +344,7 @@ public class AnimatorInflater {
 						} else {
 							valueTo = styledAttributes.getFloat(valueToId, 0f);
 						}
-						returnValue = PropertyValuesHolder.ofFloat(propertyName,
-											   valueFrom, valueTo);
+						returnValue = PropertyValuesHolder.ofFloat(propertyName, valueFrom, valueTo);
 					} else {
 						returnValue = PropertyValuesHolder.ofFloat(propertyName, valueFrom);
 					}
@@ -401,7 +398,7 @@ public class AnimatorInflater {
 		}
 
 		return returnValue;
-	}*/
+	}
 
 	/**
 	 * @param anim The animator, must not be null
@@ -423,11 +420,11 @@ public class AnimatorInflater {
 			valueType = inferValueTypeFromValues(arrayAnimator, R.styleable.Animator_valueFrom,
 			                                     R.styleable.Animator_valueTo);
 		}
-		/*PropertyValuesHolder pvh = getPVH(arrayAnimator, valueType,
-						  R.styleable.Animator_valueFrom, R.styleable.Animator_valueTo, "");
+		PropertyValuesHolder pvh = getPVH(arrayAnimator, valueType, R.styleable.Animator_valueFrom,
+		                                  R.styleable.Animator_valueTo, "");
 		if (pvh != null) {
 			anim.setValues(pvh);
-		}*/
+		}
 
 		anim.setDuration(duration);
 		anim.setStartDelay(startDelay);
@@ -442,9 +439,9 @@ public class AnimatorInflater {
 			                         ValueAnimator.RESTART));
 		}
 
-		/*if (arrayObjectAnimator != null) {
+		if (arrayObjectAnimator != null) {
 			setupObjectAnimator(anim, arrayObjectAnimator, valueType, pixelSize);
-		}*/
+		}
 	}
 
 	/**
@@ -497,8 +494,7 @@ public class AnimatorInflater {
 	 * @param pixelSize The relative pixel size, used to calculate the
 	 *                  maximum error for path animations.
 	 */
-	/*private static void setupObjectAnimator(ValueAnimator anim, TypedArray arrayObjectAnimator,
-						int valueType, float pixelSize) {
+	private static void setupObjectAnimator(ValueAnimator anim, TypedArray arrayObjectAnimator, int valueType, float pixelSize) {
 		ObjectAnimator oa = (ObjectAnimator)anim;
 		String pathData = arrayObjectAnimator.getString(R.styleable.PropertyAnimator_pathData);
 
@@ -511,6 +507,7 @@ public class AnimatorInflater {
 		// 3) PathInterpolator can also define a path (in pathData) for its interpolation curve.
 		// Here we are dealing with case 2:
 		if (pathData != null) {
+			/*
 			String propertyXName =
 			    arrayObjectAnimator.getString(R.styleable.PropertyAnimator_propertyXName);
 			String propertyYName =
@@ -552,12 +549,13 @@ public class AnimatorInflater {
 					oa.setValues(x, y);
 				}
 			}
+			*/
 		} else {
 			String propertyName =
 			    arrayObjectAnimator.getString(R.styleable.PropertyAnimator_propertyName);
 			oa.setPropertyName(propertyName);
 		}
-	}*/
+	}
 
 	/**
 	 * Setup ValueAnimator's values.

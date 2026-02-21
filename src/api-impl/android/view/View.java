@@ -1,6 +1,7 @@
 package android.view;
 
 import android.R;
+import android.animation.AnimatorInflater;
 import android.animation.StateListAnimator;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
@@ -34,6 +35,7 @@ import android.util.LayoutDirection;
 import android.util.Property;
 import android.util.Slog;
 import android.util.SparseArray;
+import android.util.TypedValue;
 import android.view.animation.Animation;
 import android.view.autofill.AutofillId;
 import android.view.inputmethod.EditorInfo;
@@ -1058,6 +1060,10 @@ public class View implements Drawable.Callback {
 		if (handlerName != null)
 			setOnClickListener(new DeclaredOnClickListener(this, handlerName));
 
+		if (a.hasValue(com.android.internal.R.styleable.View_stateListAnimator)) {
+			int resId = a.getResourceId(com.android.internal.R.styleable.View_stateListAnimator, 0);
+			setStateListAnimator(AnimatorInflater.loadStateListAnimator(context, resId));
+		}
 		a.recycle();
 		onCreateDrawableState(0);
 	}
@@ -1980,7 +1986,12 @@ public class View implements Drawable.Callback {
 	public ViewOutlineProvider getOutlineProvider() { return new ViewOutlineProvider(); }
 	public void setOutlineProvider(ViewOutlineProvider provider) {}
 
-	public void setStateListAnimator(StateListAnimator stateListAnimator) {}
+	public void setStateListAnimator(StateListAnimator stateListAnimator) {
+		if (stateListAnimator != null && stateListAnimator.enabledAnimator != null) {
+			stateListAnimator.enabledAnimator.setTarget(this);
+			stateListAnimator.enabledAnimator.start();
+		}
+	}
 
 	private static final AtomicInteger nextGeneratedId = new AtomicInteger(1);
 	/**

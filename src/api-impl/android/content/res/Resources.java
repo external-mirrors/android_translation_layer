@@ -995,7 +995,7 @@ public class Resources {
 	 *
 	 * @see #getXml
 	 */
-	public XmlResourceParser getAnimation(int id) throws /*NotFound*/ Exception {
+	public XmlResourceParser getAnimation(int id) throws NotFoundException {
 		return loadXmlResourceParser(id, "anim");
 	}
 
