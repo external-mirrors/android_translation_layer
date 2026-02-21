@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Slog;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -81,7 +82,22 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		if (index < 0)
 			index = children.size();
 		children.add(index, child);
-		native_addView(widget, child.widget, index, params);
+		int sortedIndex = index;
+		for (View v : children) {
+			if (v.getZ() != 0.0f) {
+				// sort children by z-order
+				ArrayList<View> sortedChildren = new ArrayList<View>(children);
+				sortedChildren.sort(new Comparator<View>() {
+					@Override
+					public int compare(View o1, View o2) {
+						return (int)(o1.getZ() - o2.getZ());
+					}
+				});
+				sortedIndex = sortedChildren.indexOf(child);
+				break;
+			}
+		}
+		native_addView(widget, child.widget, sortedIndex, params);
 		if (callOnViewAdded) {
 			onViewAdded(child);
 			if (onHierarchyChangeListener != null)

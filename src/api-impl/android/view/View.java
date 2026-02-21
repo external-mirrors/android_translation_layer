@@ -2047,7 +2047,9 @@ public class View implements Drawable.Callback {
 
 	public void setLayerType(int layerType, Paint paint) {}
 
-	public float getZ() { return 0.f; }
+	public float getZ() {
+		return elevation;
+	}
 
 	protected void onSizeChanged(int w, int h, int oldw, int oldh) {}
 
