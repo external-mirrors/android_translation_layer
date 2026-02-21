@@ -319,6 +319,7 @@ srcs = [
 	'android/media/MediaMetadata.java',
 	'android/media/MediaMetadataRetriever.java',
 	'android/media/MediaPlayer.java',
+	'android/media/MediaRecorder.java',
 	'android/media/MediaRouter.java',
 	'android/media/MediaScannerConnection.java',
 	'android/media/Ringtone.java',

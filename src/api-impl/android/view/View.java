@@ -1849,12 +1849,7 @@ public class View implements Drawable.Callback {
 	public void setDuplicateParentStateEnabled(boolean enabled) {}
 
 	public boolean performClick() {
-		if (on_click_listener != null) {
-			on_click_listener.onClick(this);
-			return true;
-		} else {
-			return false;
-		}
+		return callOnClick();
 	}
 
 	public void playSoundEffect(int soundConstant) {}
@@ -2455,5 +2450,14 @@ public class View implements Drawable.Callback {
 	public void transformMatrixToGlobal(Matrix matrix) {}
 	public boolean isShowingLayoutBounds() {
 		return true;
+	}
+
+	public boolean callOnClick() {
+		if (on_click_listener != null) {
+			on_click_listener.onClick(this);
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

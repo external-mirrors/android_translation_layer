@@ -1865,6 +1865,11 @@ public class PackageManager {
 					return PERMISSION_GRANTED;
 				else
 					return PERMISSION_DENIED;
+			case "android.permission.RECORD_AUDIO":
+				if (System.getenv("ATL_UGLY_ENABLE_MICROPHONE") != null)
+					return PERMISSION_GRANTED;
+				else
+					return PERMISSION_DENIED;
 			default:
 				System.out.println("PackageManager.checkPermission: >" + permName + "< not handled\n");
 				return PERMISSION_DENIED;
