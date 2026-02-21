@@ -146,7 +146,7 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1color_1filter(JN
 		0, 0, 0, 0,
 		0, 0, 0, 0,
 		0, 0, 0, 0,
-		0, 0, 0, 1,
+		0, 0, 0, ((color >> 24) & 0xFF) / 255.f,
 	});
 	/* clang-format on */
 	graphene_vec4_init(&paint->color_offset, ((color >> 16) & 0xFF) / 255.f, ((color >> 8) & 0xFF) / 255.f, ((color >> 0) & 0xFF) / 255.f, 0);
