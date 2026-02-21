@@ -212,7 +212,9 @@ public final class Bitmap {
 		}
 	}
 
-	public void setPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {}
+	public void setPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
+		native_set_pixels(getSnapshot(), pixels, offset, stride, x, y, width, height);
+	}
 
 	public void reconfigure(int width, int height, Bitmap.Config config) {}
 
@@ -241,4 +243,5 @@ public final class Bitmap {
 	private static native void native_get_pixels(long texture, int[] pixels, int offset, int stride, int x, int y, int width, int height);
 	private static native void native_copy_to_buffer(long texture, Buffer buffer, int memory_format, int stride);
 	private static native byte[] native_save_to_png(long texture);
+	private static native void native_set_pixels(long snapshot, int[] pixels, int offset, int stride, int x, int y, int width, int height);
 }

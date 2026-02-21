@@ -2,6 +2,8 @@
 
 #include "../defines.h"
 #include "../util.h"
+#include "gdk/gdk.h"
+#include "glib.h"
 
 #include "../generated_headers/android_graphics_Bitmap.h"
 
@@ -123,4 +125,18 @@ JNIEXPORT jbyteArray JNICALL Java_android_graphics_Bitmap_native_1save_1to_1png(
 	(*env)->SetByteArrayRegion(env, result, 0, size, data);
 	g_bytes_unref(bytes);
 	return result;
+}
+
+JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1set_1pixels(JNIEnv *env, jclass class, jlong snapshot_ptr, jintArray pixels, jint offset, jint stride, jint x, jint y, jint width, jint height)
+{
+	GtkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	gpointer data = g_malloc0(height * stride * 4);
+	jint *array = (*env)->GetIntArrayElements(env, pixels, NULL);
+	memcpy(data, array + offset, height * stride * 4);
+	(*env)->ReleaseIntArrayElements(env, pixels, array, 0);
+	GBytes *bytes = g_bytes_new_take(data, height * stride * 4);
+	GdkTexture *texture = gdk_memory_texture_new(width, height, GDK_MEMORY_R8G8B8A8, bytes, stride * 4);
+	g_bytes_unref(bytes);
+	gtk_snapshot_append_texture(snapshot, texture, &GRAPHENE_RECT_INIT(x, y, width, height));
+	g_object_unref(texture);
 }
