@@ -1,5 +1,6 @@
 package android.media;
 
+import android.media.MediaCodec.BufferInfo;
 import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -203,7 +204,30 @@ public class MediaCodec {
 	private native void native_releaseOutputBuffer(long codec, ByteBuffer buffer, boolean render);
 	private native void native_release(long codec);
 
-	public static final class CryptoInfo {}
+	public static final class CryptoInfo {
+		public static final class Pattern {
+			private int blocksToEncrypt;
+			private int blocksToSkip;
+
+			public Pattern(int blocksToEncrypt, int blocksToSkip) {
+				this.blocksToEncrypt = blocksToEncrypt;
+				this.blocksToSkip = blocksToSkip;
+			}
+
+			public void set(int blocksToEncrypt, int blocksToSkip) {
+				this.blocksToEncrypt = blocksToEncrypt;
+				this.blocksToSkip = blocksToSkip;
+			}
+
+			public int getEncryptBlocks() {
+				return blocksToEncrypt;
+			}
+
+			public int getSkipBlocks() {
+				return blocksToSkip;
+			}
+		}
+	}
 
 	public static final class BufferInfo {
 		public int size;

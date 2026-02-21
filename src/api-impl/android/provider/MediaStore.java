@@ -46,6 +46,18 @@ public class MediaStore {
 
 			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/audio/media");
 		}
+
+		public static class Artists {
+			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/audio/artists");
+		}
+
+		public static class Albums {
+			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/audio/albums");
+		}
+
+		public static class Genres {
+			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/audio/genres");
+		}
 	}
 
 	public static class Files {

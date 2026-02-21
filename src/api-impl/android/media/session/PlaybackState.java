@@ -47,6 +47,8 @@ public class PlaybackState {
 
 		public Builder addCustomAction(CustomAction action) { return this; }
 
+		public Builder setExtras(Bundle bundle) { return this; }
+
 		public PlaybackState build() {
 			return state;
 		}

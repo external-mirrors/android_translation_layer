@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.view.GestureDetector;
 
 public class PendingIntent implements Parcelable {
 
@@ -66,5 +67,9 @@ public class PendingIntent implements Parcelable {
 
 	public int getCreatorUid() {
 		return Context.this_application.getApplicationInfo().uid;
+	}
+
+	public static PendingIntent getForegroundService(Context context, int requestCode, Intent intent, int flags) {
+		return getService(context, requestCode, intent, flags);
 	}
 }

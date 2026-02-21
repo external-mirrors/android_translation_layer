@@ -81,6 +81,8 @@ public class MediaSession {
 		return true;
 	}
 
+	public void setRatingType(int ratingType) {}
+
 	protected native void nativeSetState(int state, long actions, long position, long updateTime, String title, String subTitle, String artUrl);
 	protected native void nativeSetCallback(Callback callback);
 }

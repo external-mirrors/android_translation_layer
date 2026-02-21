@@ -100,4 +100,8 @@ public class NotificationManager {
 	public StatusBarNotification[] getActiveNotifications() {
 		return new StatusBarNotification[0];
 	}
+
+	public NotificationChannel getNotificationChannel(String channel) {
+		return null;
+	}
 }

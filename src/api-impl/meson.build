@@ -328,6 +328,7 @@ srcs = [
 	'android/media/ThumbnailUtils.java',
 	'android/media/ToneGenerator.java',
 	'android/media/audiofx/AudioEffect.java',
+	'android/media/audiofx/Equalizer.java',
 	'android/media/projection/MediaProjectionManager.java',
 	'android/media/session/MediaController.java',
 	'android/media/session/MediaSession.java',
