@@ -491,6 +491,13 @@ void wrapper_widget_set_layout_params(WrapperWidget *wrapper, int width, int hei
 
 void wrapper_widget_set_background(WrapperWidget *wrapper, GdkPaintable *paintable)
 {
+	if (!paintable) {
+		if (wrapper->background) {
+			gtk_widget_unparent(wrapper->background);
+			wrapper->background = NULL;
+		}
+		return;
+	}
 	if (!wrapper->background) {
 		wrapper->background = gtk_picture_new();
 		gtk_widget_insert_after(wrapper->background, GTK_WIDGET(wrapper), NULL);
