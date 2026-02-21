@@ -119,7 +119,7 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 	return ret;
 }
 
-static void call_hover_callback(jobject this, int action, float x, float y)
+static void call_hover_callback(jobject this, int action, float x, float y, float raw_x, float raw_y)
 {
 	JNIEnv *env = get_jni_env();
 	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor_single, SOURCE_CLASS_POINTER, action, 0, x, y, x, y);
@@ -234,8 +234,8 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 
 	pointers[id].coord_x = x;
 	pointers[id].coord_y = y;
-	pointers[id].raw_x = x;
-	pointers[id].raw_y = y;
+	pointers[id].raw_x = raw_x;
+	pointers[id].raw_y = raw_y;
 
 	if (event == canceled_event && cancel_triggerer != wrapper) {
 		action = ACTION_CANCEL;
@@ -247,7 +247,7 @@ static gboolean on_event(GtkEventControllerLegacy *event_controller, GdkEvent *e
 	}
 	if (pointer_indices->len == 0 && wrapper->hover_exit_pending) {
 		wrapper->hover_exit_pending = FALSE;
-		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, x, y);
+		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, x, y, raw_x, raw_y);
 	}
 	return ret;
 }
@@ -293,17 +293,21 @@ static gboolean scroll_cb(GtkEventControllerScroll *self, gdouble dx, gdouble dy
 
 	// HACK: replay last hover event to work around scrolling issues in composeUI apps
 	if (wrapper->hover_x && wrapper->hover_y)
-		call_hover_callback(this, ACTION_HOVER_MOVE, wrapper->hover_x, wrapper->hover_y);
+		call_hover_callback(this, ACTION_HOVER_MOVE, wrapper->hover_x, wrapper->hover_y, wrapper->hover_x, wrapper->hover_y);
 
 	return ret;
 }
 
 static void hover_enter_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
 {
+	double raw_x;
+	double raw_y;
+	GdkEvent *event = gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(controller));
+	gdk_event_get_position(event, &raw_x, &raw_y);
 	wrapper->hover_exit_pending = FALSE;
 	wrapper->hover_x = x;
 	wrapper->hover_y = y;
-	call_hover_callback(wrapper->jobj, ACTION_HOVER_ENTER, x, y);
+	call_hover_callback(wrapper->jobj, ACTION_HOVER_ENTER, x, y, raw_x, raw_y);
 }
 
 static void hover_leave_cb(GtkEventControllerMotion *controller, WrapperWidget *wrapper)
@@ -311,14 +315,18 @@ static void hover_leave_cb(GtkEventControllerMotion *controller, WrapperWidget *
 	if (pointer_indices->len) // composeUI apps don't like ACTION_HOVER_EXIT events while a pointer is down
 		wrapper->hover_exit_pending = TRUE;
 	else
-		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, 0, 0);
+		call_hover_callback(wrapper->jobj, ACTION_HOVER_EXIT, 0, 0, 0, 0);
 }
 
 static void hover_motion_cb(GtkEventControllerMotion *controller, double x, double y, WrapperWidget *wrapper)
 {
+	double raw_x;
+	double raw_y;
+	GdkEvent *event = gtk_event_controller_get_current_event(GTK_EVENT_CONTROLLER(controller));
+	gdk_event_get_position(event, &raw_x, &raw_y);
 	wrapper->hover_x = x;
 	wrapper->hover_y = y;
-	call_hover_callback(wrapper->jobj, ACTION_HOVER_MOVE, x, y);
+	call_hover_callback(wrapper->jobj, ACTION_HOVER_MOVE, x, y, raw_x, raw_y);
 }
 
 void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
