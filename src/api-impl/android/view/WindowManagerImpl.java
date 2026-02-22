@@ -95,6 +95,9 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 	@Override
 	public void updateViewLayout(View view, android.view.ViewGroup.LayoutParams params) {
 		Slog.v(TAG, "updateViewLayout(" + view + ", " + params + ") called");
+		Rect displayFrame = new Rect();
+		view.getWindowVisibleDisplayFrame(displayFrame);
+		view.internalSetDefaultMeasureSpec(View.MeasureSpec.AT_MOST | displayFrame.width(), View.MeasureSpec.AT_MOST | displayFrame.height());
 		WindowManager.LayoutParams windowParams = (WindowManager.LayoutParams)params;
 		view.setLayoutParams(params);
 		native_updateViewLayout(view.widget, windowParams.x, windowParams.y, params.width, params.height);
