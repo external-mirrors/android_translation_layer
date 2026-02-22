@@ -129,6 +129,14 @@ JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1clipRect
 JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1pop
   (JNIEnv *, jobject, jlong, jint);
 
+/*
+ * Class:     android_atl_GskCanvas
+ * Method:    native_drawRenderNode
+ * Signature: (JJ)V
+ */
+JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawRenderNode
+  (JNIEnv *, jobject, jlong, jlong);
+
 #ifdef __cplusplus
 }
 #endif

@@ -1,13 +1,15 @@
 package android.atl;
 
 import android.graphics.*;
+import android.view.DisplayListCanvas;
+import android.view.RenderNode;
 import java.util.Arrays;
 
 /**
  * GskCanvas:
  *   - implements Canvas for onscreen rendering inside GTKs snapshot function
  */
-public class GskCanvas extends Canvas {
+public class GskCanvas extends DisplayListCanvas {
 	public long snapshot;
 	private int save_count = 1;
 	private int[] push_history = null;
@@ -170,6 +172,11 @@ public class GskCanvas extends Canvas {
 		return save_count;
 	}
 
+	@Override
+	public void drawRenderNode(RenderNode node) {
+		native_drawRenderNode(snapshot, node.getGskNode());
+	}
+
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
 	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, long paint);
 	protected native void native_drawPath(long snapshot, long path, long paint);
@@ -185,4 +192,5 @@ public class GskCanvas extends Canvas {
 	protected native void native_concat(long snapshot, long matrix);
 	protected native void native_clipRect(long snapshot, float left, float top, float right, float bottom);
 	protected native void native_pop(long snapshot, int pop_count);
+	protected native void native_drawRenderNode(long snapshot, long render_node);
 }

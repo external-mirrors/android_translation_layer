@@ -186,3 +186,10 @@ JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1pop(JNIEnv *env, jclas
 	while (count--)
 		gtk_snapshot_pop(snapshot);
 }
+
+JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawRenderNode(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong node_ptr)
+{
+	GdkSnapshot *snapshot = GTK_SNAPSHOT(_PTR(snapshot_ptr));
+	GskRenderNode *node = _PTR(node_ptr);
+	gtk_snapshot_append_node(snapshot, node);
+}
