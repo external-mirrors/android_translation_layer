@@ -75,7 +75,12 @@ public class Canvas {
 	 */
 	public void drawRect(float left, float top, float right, float bottom, Paint paint) {
 		if (paint != null && paint.getXfermode() instanceof PorterDuffXfermode && ((PorterDuffXfermode)paint.getXfermode()).porterDuffMode == PorterDuff.Mode.CLEAR.nativeInt) {
+			int oldSaveCount = gsk_canvas.getSaveCount();
+			gsk_canvas.restoreToCount(1);
 			bitmap.eraseColor(0);
+			gsk_canvas.snapshot = bitmap.getSnapshot();
+			while (gsk_canvas.getSaveCount() < oldSaveCount)
+				gsk_canvas.save();
 			return;
 		}
 		gsk_canvas.snapshot = bitmap.getSnapshot();
@@ -430,6 +435,13 @@ public class Canvas {
 		if (paint.getShader() instanceof BitmapShader) {
 			BitmapShader shader = (BitmapShader)paint.getShader();
 			drawBitmap(shader.bitmap, 0, 0, paint);
+		} else if (paint.getXfermode() instanceof PorterDuffXfermode && ((PorterDuffXfermode)paint.getXfermode()).porterDuffMode == PorterDuff.Mode.CLEAR.nativeInt) {
+			int oldSaveCount = gsk_canvas.getSaveCount();
+			gsk_canvas.restoreToCount(1);
+			bitmap.eraseColor(0);
+			gsk_canvas.snapshot = bitmap.getSnapshot();
+			while (gsk_canvas.getSaveCount() < oldSaveCount)
+				gsk_canvas.save();
 		} else {
 			gsk_canvas.snapshot = bitmap.getSnapshot();
 			gsk_canvas.drawRoundRect(left, top, right, bottom, rx, ry, paint);
@@ -556,7 +568,9 @@ public class Canvas {
 		return true;
 	}
 
-	public void drawPaint(Paint paint) {}
+	public void drawPaint(Paint paint) {
+		drawRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, paint);
+	}
 
 	public void drawPicture(Picture picture) {
 		Log.w("Canvas", "STUB: drawPicture");

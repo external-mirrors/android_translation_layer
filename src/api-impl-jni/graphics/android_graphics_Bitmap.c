@@ -77,6 +77,20 @@ JNIEXPORT jint JNICALL Java_android_graphics_Bitmap_native_1get_1height(JNIEnv *
 	return gdk_texture_get_height(GDK_TEXTURE(_PTR(texture_ptr)));
 }
 
+JNIEXPORT jlong JNICALL Java_android_graphics_Bitmap_native_1erase_1color(JNIEnv *env, jclass class, jint color, jint width, jint height)
+{
+	GdkRGBA rgba = {
+		.red = ((color >> 16) & 0xFF) / 255.f,
+		.green = ((color >> 8) & 0xFF) / 255.f,
+		.blue = ((color >> 0) & 0xFF) / 255.f,
+		.alpha = ((color >> 24) & 0xFF) / 255.f,
+	};
+	graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, width, height);
+	GtkSnapshot *snapshot = gtk_snapshot_new();
+	gtk_snapshot_append_color(snapshot, &rgba, &bounds);
+	return _INTPTR(snapshot);
+}
+
 JNIEXPORT void JNICALL Java_android_graphics_Bitmap_native_1recycle(JNIEnv *env, jclass class, jlong texture_ptr, jlong snapshot_ptr)
 {
 	if (texture_ptr)
