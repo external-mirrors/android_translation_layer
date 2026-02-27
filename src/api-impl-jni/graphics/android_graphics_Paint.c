@@ -165,6 +165,11 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1get_1text_1bounds(JNI
 	(*env)->ReleaseStringUTFChars(env, text_ptr, str);
 	PangoRectangle rect;
 	pango_layout_get_pixel_extents(layout, NULL, &rect);
+	rect.y -= (float)pango_layout_get_baseline(layout) / PANGO_SCALE;
+	if (paint->alignment == PANGO_ALIGN_CENTER)
+		rect.x -= rect.width / 2.f;
+	else if (paint->alignment == PANGO_ALIGN_RIGHT)
+		rect.x -= rect.width;
 	_SET_INT_FIELD(bounds, "left", rect.x);
 	_SET_INT_FIELD(bounds, "top", rect.y);
 	_SET_INT_FIELD(bounds, "right", rect.x + rect.width);
