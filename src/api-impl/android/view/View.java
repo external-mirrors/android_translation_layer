@@ -912,6 +912,7 @@ public class View implements Drawable.Callback {
 	private int oldWidth;
 	private int oldHeight;
 	protected boolean haveCustomMeasure = true;
+	public boolean disallowIntercept = false;
 
 	private int visibility = View.VISIBLE;
 	private float alpha = 1.0f;

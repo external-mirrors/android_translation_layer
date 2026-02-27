@@ -382,7 +382,10 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 
 	protected void setChildrenDrawingOrderEnabled(boolean enabled) {}
 
-	public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {}
+	public void requestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+		for (ViewGroup iter = this; iter != null; iter = iter.parent instanceof ViewGroup ? (ViewGroup)iter.parent : null)
+			iter.disallowIntercept = disallowIntercept;
+	}
 
 	protected boolean isChildrenDrawingOrderEnabled() { return false; }
 
