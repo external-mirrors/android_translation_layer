@@ -196,8 +196,12 @@ JNIEXPORT void JNICALL Java_android_media_AudioTrack_native_1play(JNIEnv *env, j
 	/*--↑*/
 }
 
-static int write_frames(snd_pcm_t *pcm_handle, const void *buffer, int frames_to_write)
+static int write_frames(snd_pcm_t *pcm_handle, const void *buffer, int frames_to_write, float volume)
 {
+	if (volume != 1.f) {
+		for (int i = 0; i < frames_to_write * 2; i++)
+			((jshort *)(buffer))[i] *= volume;
+	}
 	snd_pcm_sframes_t frames_written = snd_pcm_writei(pcm_handle, buffer, frames_to_write);
 	if (frames_written == -EPIPE) {
 		printf("XRUN.\n");
@@ -212,23 +216,23 @@ static int write_frames(snd_pcm_t *pcm_handle, const void *buffer, int frames_to
 	return frames_written;
 }
 
-JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write___3BII(JNIEnv *env, jobject this, jbyteArray audio_data, jint offset_in_bytes, jint frames_to_write)
+JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write___3BIIF(JNIEnv *env, jobject this, jbyteArray audio_data, jint offset_in_bytes, jint frames_to_write, jfloat volume)
 {
 	snd_pcm_t *pcm_handle = _PTR(_GET_LONG_FIELD(this, "pcm_handle"));
 
 	jbyte *buffer = _GET_BYTE_ARRAY_ELEMENTS(audio_data);
-	snd_pcm_sframes_t frames_written = write_frames(pcm_handle, buffer + offset_in_bytes, frames_to_write);
+	snd_pcm_sframes_t frames_written = write_frames(pcm_handle, buffer + offset_in_bytes, frames_to_write, volume);
 	_RELEASE_BYTE_ARRAY_ELEMENTS(audio_data, buffer);
 
 	return frames_written;
 }
 
-JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write___3SII(JNIEnv *env, jobject this, jshortArray audio_data, jint offset_in_shorts, jint frames_to_write)
+JNIEXPORT jint JNICALL Java_android_media_AudioTrack_native_1write___3SIIF(JNIEnv *env, jobject this, jshortArray audio_data, jint offset_in_shorts, jint frames_to_write, jfloat volume)
 {
 	snd_pcm_t *pcm_handle = _PTR(_GET_LONG_FIELD(this, "pcm_handle"));
 
 	jshort *buffer = (*env)->GetShortArrayElements(env, audio_data, NULL);
-	snd_pcm_sframes_t frames_written = write_frames(pcm_handle, buffer + offset_in_shorts, frames_to_write);
+	snd_pcm_sframes_t frames_written = write_frames(pcm_handle, buffer + offset_in_shorts, frames_to_write, volume);
 	(*env)->ReleaseShortArrayElements(env, audio_data, buffer, 0);
 
 	return frames_written;

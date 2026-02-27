@@ -23,6 +23,7 @@ public class AudioTrack {
 	private int sessionId;
 	private int playbackState = PLAYSTATE_STOPPED;
 	private int playbackHeadPosition = 0;
+	private float volume = 1.f;
 
 	// for native code's use
 	long pcm_handle;
@@ -104,7 +105,7 @@ public class AudioTrack {
 		}
 
 		int framesToWrite = sizeInBytes / channels / 2; // 2 means PCM16
-		int ret = native_write(audioData, offsetInBytes, framesToWrite);
+		int ret = native_write(audioData, offsetInBytes, framesToWrite, volume);
 		if (ret > 0) {
 			playbackHeadPosition += ret;
 		}
@@ -127,7 +128,7 @@ public class AudioTrack {
 		}
 
 		int framesToWrite = sizeInShorts / channels;
-		int ret = native_write(audioData, offsetInShorts, framesToWrite);
+		int ret = native_write(audioData, offsetInShorts, framesToWrite, volume);
 		if (ret > 0) {
 			playbackHeadPosition += ret;
 		}
@@ -143,6 +144,7 @@ public class AudioTrack {
 	}
 
 	public int setStereoVolume(float leftVolume, float rightVolume) {
+		this.volume = (leftVolume + rightVolume) / 2;
 		return 0;
 	}
 
@@ -161,6 +163,7 @@ public class AudioTrack {
 	}
 
 	public int setVolume(float volume) {
+		this.volume = volume;
 		return 0;
 	}
 
@@ -171,8 +174,8 @@ public class AudioTrack {
 	private native int native_getPlaybackHeadPosition();
 	public native void native_play();
 	public native void native_pause();
-	private native int native_write(byte[] audioData, int offsetInBytes, int framesToWrite);
-	private native int native_write(short[] audioData, int offsetInShorts, int framesToWrite);
+	private native int native_write(byte[] audioData, int offsetInBytes, int framesToWrite, float volume);
+	private native int native_write(short[] audioData, int offsetInShorts, int framesToWrite, float volume);
 	public native void native_release();
 
 	// nested classes

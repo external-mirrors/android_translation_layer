@@ -6,6 +6,8 @@ public class AudioManager {
 
 	public static final int STREAM_MUSIC = 0x3;
 
+	private native void nativeSetStreamVolume(int volume);
+
 	public boolean isBluetoothA2dpOn() {
 		return false;
 	}
@@ -50,7 +52,7 @@ public class AudioManager {
 	}
 
 	public void setStreamVolume(int streamType, int index, int flags) {
-		System.out.println("AudioManager.setStreamVolume: >" + streamType + "< >" + index + "< >" + flags + "<");
+		nativeSetStreamVolume(index);
 	}
 
 	public boolean isStreamMute(int streamType) {

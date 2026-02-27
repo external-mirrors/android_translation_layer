@@ -111,6 +111,8 @@ public class Window {
 	}
 
 	public void setAttributes(WindowManager.LayoutParams params) {
+		if (params.screenBrightness != -1)
+			set_screen_brightness(params.screenBrightness);
 		this.params = params;
 		setLayout(params.width, params.height);
 	}
@@ -197,4 +199,5 @@ public class Window {
 	public native void set_layout(long native_window, int width, int height);
 	private static native void set_jobject(long ptr, Window obj);
 	private native void remove_gtk_background(long native_window);
+	private native void set_screen_brightness(float brightness);
 }

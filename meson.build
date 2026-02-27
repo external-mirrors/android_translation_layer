@@ -99,6 +99,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/app/android_app_WallpaperManager.c',
                                                                         'src/api-impl-jni/android_inputmethodservice_InputMethodService.c',
                                                                   	'src/api-impl-jni/AssetInputStream.c',
+                                                                  	'src/api-impl-jni/audio/android_media_AudioManager.c',
                                                                   	'src/api-impl-jni/audio/android_media_AudioRecord.c',
                                                                   	'src/api-impl-jni/audio/android_media_AudioTrack.c',
                                                                   	'src/api-impl-jni/audio/android_media_SoundPool.c',
