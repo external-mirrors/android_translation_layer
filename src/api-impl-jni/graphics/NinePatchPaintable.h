@@ -21,6 +21,7 @@ struct Res_png_9patch {
 
 struct _NinePatchPaintable {
 	GObject parent_instance;
+	GdkTexture *texture;
 	struct Res_png_9patch *chunk;
 	int width;
 	int height;
@@ -29,4 +30,4 @@ struct _NinePatchPaintable {
 };
 G_DECLARE_FINAL_TYPE(NinePatchPaintable, ninepatch_paintable, NINEPATCH, PAINTABLE, GObject)
 
-GdkPaintable *ninepatch_paintable_new(const char *path);
+GdkPaintable *ninepatch_paintable_new(struct Res_png_9patch *chunk, uint32_t chunk_size, GdkTexture *texture);

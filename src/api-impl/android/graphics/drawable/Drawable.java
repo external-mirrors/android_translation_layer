@@ -336,14 +336,15 @@ public class Drawable {
 				e.printStackTrace();
 			}
 		}
-		long paintable = native_paintable_from_path(path.toString());
-		return new Drawable(paintable);
+		return new NinePatchDrawable(path.toString());
 	}
 
 	public static Drawable createFromPath(String path) {
 		if (path == null)
 			return null;
 
+		if (path.endsWith(".9.png"))
+			return new NinePatchDrawable(path);
 		long paintable = native_paintable_from_path(path);
 		return new Drawable(paintable);
 	}

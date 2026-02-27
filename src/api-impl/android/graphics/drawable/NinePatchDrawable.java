@@ -6,5 +6,15 @@ import android.graphics.Rect;
 
 public class NinePatchDrawable extends Drawable {
 
-	public NinePatchDrawable(Resources res, Bitmap bitmap, byte[] data, Rect padding, String name) {}
+	public NinePatchDrawable(Resources res, Bitmap bitmap, byte[] data, Rect padding, String name) {
+		if (bitmap != null && data != null)
+			setPaintable(nativeCreate(data, bitmap.getTexture()));
+	}
+
+	NinePatchDrawable(String path) {
+		setPaintable(nativeCreate(path));
+	}
+
+	private native long nativeCreate(byte[] data, long texture);
+	private native long nativeCreate(String path);
 }
