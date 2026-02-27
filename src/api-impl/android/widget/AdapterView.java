@@ -1063,7 +1063,7 @@ public abstract class AdapterView<T extends Adapter> extends ViewGroup {
 		if (getChildCount() > 0) {
 			mNeedSync = true;
 			mSyncHeight = mLayoutHeight;
-			if (mSelectedPosition >= 0) {
+			if (mSelectedPosition - mFirstPosition >= 0 && mSelectedPosition - mFirstPosition < getChildCount()) {
 				// Sync the selection state
 				View v = getChildAt(mSelectedPosition - mFirstPosition);
 				mSyncRowId = mNextSelectedRowId;
