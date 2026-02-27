@@ -208,9 +208,7 @@ public class Canvas {
 		if (oval == null) {
 			throw new NullPointerException();
 		}
-		Log.w("Canvas", "STUB: drawArc");
-		/*native_drawArc(mNativeCanvas, oval, startAngle, sweepAngle,
-			useCenter, paint.mNativePaint);*/
+		drawArc(oval.left, oval.top, oval.right, oval.bottom, startAngle, sweepAngle, useCenter, paint);
 	}
 	// ---
 	/**
@@ -558,7 +556,10 @@ public class Canvas {
 	}
 
 	public void drawArc(float left, float top, float right, float bottom, float startAngle, float sweepAngle, boolean includeCenter, Paint paint) {
-		Log.w("Canvas", "STUB: drawArc");
+		Path path = new Path();
+		path.addArc(left, top, right, bottom, startAngle, sweepAngle);
+		drawPath(path, paint);
+		path.reset();
 	}
 
 	public boolean getClipBounds(Rect outRect) {
