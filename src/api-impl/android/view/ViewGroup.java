@@ -17,6 +17,7 @@ import java.util.Objects;
 public class ViewGroup extends View implements ViewParent, ViewManager {
 	public ArrayList<View> children;
 	private ArrayList<View> detachedChildren;
+	private boolean pendingHideDetachedChildren = false;
 	private OnHierarchyChangeListener onHierarchyChangeListener;
 	private LayoutTransition transition;
 	private ViewGroupOverlay viewGroupOverlay;
@@ -166,10 +167,7 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void detachViewFromParent(int index) {
-		View child = children.remove(index);
-		child.native_setVisibility(child.widget, GONE, 0);
-		child.parent = null;
-		detachedChildren.add(child);
+		detachViewFromParent(getChildAt(index));
 	}
 
 	public void attachViewToParent(View view, int index, LayoutParams params) {
@@ -424,6 +422,17 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		children.remove(view);
 		view.parent = null;
 		detachedChildren.add(view);
+		if (!pendingHideDetachedChildren) {
+			pendingHideDetachedChildren = true;
+			post(new Runnable() {
+				@Override
+				public void run() {
+					pendingHideDetachedChildren = false;
+					for (View child : detachedChildren)
+						child.native_setVisibility(child.widget, GONE, 0);
+				}
+			});
+		}
 	}
 
 	public void setTouchscreenBlocksFocus(boolean touchscreenBlocksFocus) {}
