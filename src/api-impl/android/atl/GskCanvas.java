@@ -58,7 +58,10 @@ public class GskCanvas extends DisplayListCanvas {
 
 	@Override
 	public void drawBitmap(Bitmap bitmap, Rect src, Rect dst, Paint paint) {
-		native_drawBitmap(snapshot, bitmap.getTexture(), dst.left, dst.top, dst.width(), dst.height(), paint != null ? paint.paint : default_paint.paint);
+		if (src == null)
+			native_drawBitmap(snapshot, bitmap.getTexture(), dst.left, dst.top, dst.width(), dst.height(), paint != null ? paint.paint : default_paint.paint);
+		else
+			native_drawBitmap(snapshot, bitmap.getTexture(), dst.left, dst.top, dst.width(), dst.height(), src.left, src.top, src.width(), src.height(), paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
@@ -111,26 +114,6 @@ public class GskCanvas extends DisplayListCanvas {
 	}
 
 	@Override
-	public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
-		Rect src = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
-		Rect dst = new Rect((int)left, (int)top, (int)left + bitmap.getWidth(), (int)top + bitmap.getHeight());
-		drawBitmap(bitmap, src, dst, paint);
-	}
-
-	@Override
-	public void drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint) {
-		drawBitmap(bitmap, src, new Rect((int)dst.left, (int)dst.top, (int)dst.right, (int)dst.bottom), paint);
-	}
-
-	@Override
-	public void drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint) {
-		save();
-		concat(matrix);
-		drawBitmap(bitmap, 0, 0, paint);
-		restore();
-	}
-
-	@Override
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
 		native_drawRoundRect(snapshot, left, top, right, bottom, rx, ry, paint != null ? paint.paint : default_paint.paint);
 	}
@@ -178,6 +161,7 @@ public class GskCanvas extends DisplayListCanvas {
 	}
 
 	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, long paint);
+	protected native void native_drawBitmap(long snapshot, long texture, int x, int y, int width, int height, int src_x, int src_y, int src_width, int src_height, long paint);
 	protected native void native_drawRect(long snapshot, float left, float top, float right, float bottom, long paint);
 	protected native void native_drawPath(long snapshot, long path, long paint);
 	protected native void native_translate(long snapshot, float dx, float dy);

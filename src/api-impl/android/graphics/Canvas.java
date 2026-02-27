@@ -258,8 +258,8 @@ public class Canvas {
 	 * @param paint  The paint used to draw the bitmap (may be null)
 	 */
 	public void drawBitmap(Bitmap bitmap, float left, float top, Paint paint) {
-		gsk_canvas.snapshot = this.bitmap.getSnapshot();
-		gsk_canvas.drawBitmap(bitmap, left, top, paint);
+		Rect dst = new Rect((int)left, (int)top, (int)left + bitmap.getWidth(), (int)top + bitmap.getHeight());
+		drawBitmap(bitmap, null, dst, paint);
 	}
 
 	/**
@@ -285,8 +285,7 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(Bitmap bitmap, Rect src, RectF dst, Paint paint) {
-		gsk_canvas.snapshot = this.bitmap.getSnapshot();
-		gsk_canvas.drawBitmap(bitmap, src, dst, paint);
+		drawBitmap(bitmap, src, new Rect((int)dst.left, (int)dst.top, (int)dst.right, (int)dst.bottom), paint);
 	}
 
 	/**
@@ -381,10 +380,10 @@ public class Canvas {
 	 * @param paint  May be null. The paint used to draw the bitmap
 	 */
 	public void drawBitmap(Bitmap bitmap, Matrix matrix, Paint paint) {
-		gsk_canvas.snapshot = this.bitmap.getSnapshot();
-		gsk_canvas.drawBitmap(bitmap, matrix, paint);
-		/*       nativeDrawBitmapMatrix(mNativeCanvas, bitmap.ni(), matrix.ni(),
-			       paint != null ? paint.mNativePaint : 0);*/
+		save();
+		concat(matrix);
+		drawBitmap(bitmap, 0, 0, paint);
+		restore();
 	}
 	// ---
 	/**

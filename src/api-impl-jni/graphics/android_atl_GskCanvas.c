@@ -7,7 +7,7 @@
 
 #include "../generated_headers/android_atl_GskCanvas.h"
 
-JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawBitmap(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong texture_ptr, jint x, jint y, jint width, jint height, jlong paint_ptr)
+JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawBitmap__JJIIIIJ(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong texture_ptr, jint x, jint y, jint width, jint height, jlong paint_ptr)
 {
 	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
 	GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
@@ -16,6 +16,25 @@ JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawBitmap(JNIEnv *env
 		gtk_snapshot_push_color_matrix(snapshot, &paint->color_matrix, &paint->color_offset);
 	}
 	gtk_snapshot_append_texture(snapshot, texture, &GRAPHENE_RECT_INIT(x, y, width, height));
+	if (paint->use_color_filter)
+		gtk_snapshot_pop(snapshot);
+}
+
+JNIEXPORT void JNICALL Java_android_atl_GskCanvas_native_1drawBitmap__JJIIIIIIIIJ(JNIEnv *env, jclass this_class, jlong snapshot_ptr, jlong texture_ptr, jint x, jint y, jint width, jint height, jint src_x, jint src_y, jint src_width, jint src_height, jlong paint_ptr)
+{
+	GdkSnapshot *snapshot = (GdkSnapshot *)_PTR(snapshot_ptr);
+	GdkTexture *texture = GDK_TEXTURE(_PTR(texture_ptr));
+	struct AndroidPaint *paint = _PTR(paint_ptr);
+	if (paint->use_color_filter) {
+		gtk_snapshot_push_color_matrix(snapshot, &paint->color_matrix, &paint->color_offset);
+	}
+	gtk_snapshot_push_clip(snapshot, &GRAPHENE_RECT_INIT(x, y, width, height));
+	float xscale = width / (float)src_width;
+	float yscale = height / (float)src_height;
+	float scaled_width = gdk_texture_get_width(texture) * xscale;
+	float scaled_height = gdk_texture_get_height(texture) * yscale;
+	gtk_snapshot_append_texture(snapshot, texture, &GRAPHENE_RECT_INIT(x - src_x * xscale, y - src_y * yscale, scaled_width, scaled_height));
+	gtk_snapshot_pop(snapshot);
 	if (paint->use_color_filter)
 		gtk_snapshot_pop(snapshot);
 }
