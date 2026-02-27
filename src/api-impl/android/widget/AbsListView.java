@@ -2936,23 +2936,23 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 				// Otherwise, check containment within list bounds. If we're
 				// outside bounds, cancel any active presses.
 				final View motionView = getChildAt(mMotionPosition - mFirstPosition);
-				// final float x = ev.getX(pointerIndex);
-				// if (!pointInView(x, y, mTouchSlop)) {
-				setPressed(false);
-				if (motionView != null) {
-					motionView.setPressed(false);
-				}
-				removeCallbacks(mTouchMode == TOUCH_MODE_DOWN ? mPendingCheckForTap : mPendingCheckForLongPress);
-				mTouchMode = TOUCH_MODE_DONE_WAITING;
-				updateSelectorState();
-				// } else if (motionView != null) {
-				// 	// Still within bounds, update the hotspot.
-				// 	final float[] point = mTmpPoint;
-				// 	point[0] = x;
-				// 	point[1] = y;
-				// 	transformPointToViewLocal(point, motionView);
-				// 	motionView.drawableHotspotChanged(point[0], point[1]);
-				// }
+				final float x = ev.getX(pointerIndex);
+				if (!(x >= -mTouchSlop && y >= -mTouchSlop && x < (getWidth() + mTouchSlop) && y < (getHeight() + mTouchSlop))) {
+					setPressed(false);
+					if (motionView != null) {
+						motionView.setPressed(false);
+					}
+					removeCallbacks(mTouchMode == TOUCH_MODE_DOWN ? mPendingCheckForTap : mPendingCheckForLongPress);
+					mTouchMode = TOUCH_MODE_DONE_WAITING;
+					updateSelectorState();
+				} /* else if (motionView != null) {
+					// Still within bounds, update the hotspot.
+					final float[] point = mTmpPoint;
+					point[0] = x;
+					point[1] = y;
+					transformPointToViewLocal(point, motionView);
+					motionView.drawableHotspotChanged(point[0], point[1]);
+				}*/
 				break;
 			case TOUCH_MODE_SCROLL:
 			case TOUCH_MODE_OVERSCROLL:
@@ -3062,15 +3062,15 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 						         || (mFirstPosition + childCount == mItemCount
 						             && lastChildBottom == contentBottom + mOverscrollDistance))) {
 							// if (!dispatchNestedPreFling(0, -initialVelocity)) {
-							// 	if (mFlingRunnable == null) {
-							// 		mFlingRunnable = new FlingRunnable();
-							// 	}
-							// 	reportScrollStateChange(OnScrollListener.SCROLL_STATE_FLING);
-							// 	mFlingRunnable.start(-initialVelocity);
+							if (mFlingRunnable == null) {
+								mFlingRunnable = new FlingRunnable();
+							}
+							reportScrollStateChange(OnScrollListener.SCROLL_STATE_FLING);
+							mFlingRunnable.start(-initialVelocity);
 							// 	dispatchNestedFling(0, -initialVelocity, true);
 							// } else {
-							mTouchMode = TOUCH_MODE_REST;
-							reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
+							// 	mTouchMode = TOUCH_MODE_REST;
+							// 	reportScrollStateChange(OnScrollListener.SCROLL_STATE_IDLE);
 							// }
 						} else {
 							mTouchMode = TOUCH_MODE_REST;
@@ -3261,7 +3261,7 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 				mFlingRunnable = new FlingRunnable();
 			}
 			// if (!dispatchNestedPreFling(0, velocityY)) {
-			// 	mFlingRunnable.start((int) velocityY);
+			mFlingRunnable.start((int)velocityY);
 			// }
 			return true;
 		}
@@ -3575,12 +3575,12 @@ public abstract class AbsListView extends AdapterView<ListAdapter> implements Te
 			if (overscrollMode == 0 /*OVER_SCROLL_ALWAYS*/
 			    || (overscrollMode == 1 /*OVER_SCROLL_IF_CONTENT_SCROLLS*/ && !contentFits())) {
 				mTouchMode = TOUCH_MODE_OVERFLING;
-				final int vel = (int)mScroller.getCurrVelocity();
-				if (delta > 0) {
-					mEdgeGlowTop.onAbsorb(vel);
-				} else {
-					mEdgeGlowBottom.onAbsorb(vel);
-				}
+				// final int vel = (int)mScroller.getCurrVelocity();
+				// if (delta > 0) {
+				// 	mEdgeGlowTop.onAbsorb(vel);
+				// } else {
+				// 	mEdgeGlowBottom.onAbsorb(vel);
+				// }
 			} else {
 				mTouchMode = TOUCH_MODE_REST;
 				if (mPositionScroller != null) {
