@@ -1191,8 +1191,12 @@ public class View implements Drawable.Callback {
 	public void setOnScrollChangeListener(OnScrollChangeListener l) {}
 
 	public /*native*/ void setOnSystemUiVisibilityChangeListener(OnSystemUiVisibilityChangeListener l) {}
-	public native final int getWidth();
-	public native final int getHeight();
+	public final int getWidth() {
+		return right - left;
+	}
+	public final int getHeight() {
+		return bottom - top;
+	}
 
 	protected native long native_constructor(Context context, AttributeSet attrs); // will create a custom GtkWidget with a custom drawing function
 	public native void native_setLayoutParams(long widget, int width, int height, int gravity, float weight, int leftMargin, int topMargin, int rightMargin, int bottomMargin);

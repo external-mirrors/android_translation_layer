@@ -217,22 +217,6 @@ JNIEXPORT void JNICALL Java_android_view_View_nativeSetOnClickListener
 
 /*
  * Class:     android_view_View
- * Method:    getWidth
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_android_view_View_getWidth
-  (JNIEnv *, jobject);
-
-/*
- * Class:     android_view_View
- * Method:    getHeight
- * Signature: ()I
- */
-JNIEXPORT jint JNICALL Java_android_view_View_getHeight
-  (JNIEnv *, jobject);
-
-/*
- * Class:     android_view_View
  * Method:    native_constructor
  * Signature: (Landroid/content/Context;Landroid/util/AttributeSet;)J
  */

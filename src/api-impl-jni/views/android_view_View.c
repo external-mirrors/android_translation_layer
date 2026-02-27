@@ -843,6 +843,8 @@ JNIEXPORT void JNICALL Java_android_view_View_nativeSetFullscreen(JNIEnv *env, j
 				if (layout->real_width <= geometry.width && layout->real_width > geometry.width - 200 && layout->real_height <= geometry.height && layout->real_height > geometry.height - 200) {
 					layout->real_width = geometry.width;
 					layout->real_height = geometry.height;
+					_SET_INT_FIELD(this, "right", geometry.width);
+					_SET_INT_FIELD(this, "bottom", geometry.height);
 				}
 			}
 		} else {
