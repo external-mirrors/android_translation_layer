@@ -918,6 +918,7 @@ public class View implements Drawable.Callback {
 	private float alpha = 1.0f;
 	private boolean pressed = false;
 	private Drawable background;
+	private int backgroundTint = 0;
 
 	private int minWidth = 0;
 	private int minHeight = 0;
@@ -986,6 +987,8 @@ public class View implements Drawable.Callback {
 
 		TypedArray a = context.obtainStyledAttributes(attrs, com.android.internal.R.styleable.View, defStyle, defStyleRes);
 		this.id = a.getResourceId(com.android.internal.R.styleable.View_id, View.NO_ID);
+		if (a.hasValue(com.android.internal.R.styleable.View_backgroundTint))
+			backgroundTint = a.getColor(com.android.internal.R.styleable.View_backgroundTint, 0);
 		if (a.hasValue(com.android.internal.R.styleable.View_background)) {
 			try {
 				Drawable background = a.getDrawable(com.android.internal.R.styleable.View_background);
@@ -1626,8 +1629,11 @@ public class View implements Drawable.Callback {
 
 	public void setBackgroundDrawable(Drawable backgroundDrawable) {
 		this.background = backgroundDrawable;
-		if (backgroundDrawable != null)
+		if (backgroundDrawable != null) {
 			backgroundDrawable.setCallback(this);
+			if (backgroundTint != 0)
+				backgroundDrawable.setTint(backgroundTint);
+		}
 		native_setBackgroundDrawable(widget, backgroundDrawable != null ? backgroundDrawable.paintable : 0);
 	}
 

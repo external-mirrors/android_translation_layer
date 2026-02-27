@@ -27,6 +27,7 @@ struct _NinePatchPaintable {
 	int height;
 	int strechy_width;
 	int strechy_height;
+	int tint;
 };
 G_DECLARE_FINAL_TYPE(NinePatchPaintable, ninepatch_paintable, NINEPATCH, PAINTABLE, GObject)
 

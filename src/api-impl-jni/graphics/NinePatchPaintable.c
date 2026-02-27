@@ -25,6 +25,20 @@ static void ninepatch_paintable_snapshot(GdkPaintable *paintable, GdkSnapshot *s
 
 		graphene_rect_t rect;
 		GdkRGBA rgba;
+		if (ninepatch->tint) {
+			graphene_matrix_t color_matrix;
+			graphene_vec4_t color_offset;
+			/* clang-format off */
+			graphene_matrix_init_from_float(&color_matrix, (float[]){
+				0, 0, 0, 0,
+				0, 0, 0, 0,
+				0, 0, 0, 0,
+				0, 0, 0, ((ninepatch->tint >> 24) & 0xFF) / 255.f,
+			});
+			/* clang-format on */
+			graphene_vec4_init(&color_offset, ((ninepatch->tint >> 16) & 0xFF) / 255.f, ((ninepatch->tint >> 8) & 0xFF) / 255.f, ((ninepatch->tint >> 0) & 0xFF) / 255.f, 0);
+			gtk_snapshot_push_color_matrix(snapshot, &color_matrix, &color_offset);
+		}
 		for (j = 0, rect.origin.y = 0; j < chunk->numYDivs + 1; j++, rect.origin.y += rect.size.height) {
 			int ydiv_start = j ? yDivs[j - 1] : 0;
 			int ydiv_end = (j == chunk->numYDivs) ? ninepatch->height : yDivs[j];
@@ -63,6 +77,8 @@ static void ninepatch_paintable_snapshot(GdkPaintable *paintable, GdkSnapshot *s
 				color++;
 			}
 		}
+		if (ninepatch->tint)
+			gtk_snapshot_pop(snapshot);
 	}
 }
 

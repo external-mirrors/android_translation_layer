@@ -23,6 +23,14 @@ JNIEXPORT jlong JNICALL Java_android_graphics_drawable_NinePatchDrawable_nativeC
 JNIEXPORT jlong JNICALL Java_android_graphics_drawable_NinePatchDrawable_nativeCreate__Ljava_lang_String_2
   (JNIEnv *, jobject, jstring);
 
+/*
+ * Class:     android_graphics_drawable_NinePatchDrawable
+ * Method:    nativeSetTint
+ * Signature: (JI)V
+ */
+JNIEXPORT void JNICALL Java_android_graphics_drawable_NinePatchDrawable_nativeSetTint
+  (JNIEnv *, jobject, jlong, jint);
+
 #ifdef __cplusplus
 }
 #endif

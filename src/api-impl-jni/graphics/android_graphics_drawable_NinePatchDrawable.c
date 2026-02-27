@@ -74,3 +74,9 @@ JNIEXPORT jlong JNICALL Java_android_graphics_drawable_NinePatchDrawable_nativeC
 
 	return _INTPTR(paintable);
 }
+
+JNIEXPORT void JNICALL Java_android_graphics_drawable_NinePatchDrawable_nativeSetTint(JNIEnv *env, jobject this, jlong paintable_ptr, jint color)
+{
+	NinePatchPaintable *paintable = NINEPATCH_PAINTABLE(_PTR(paintable_ptr));
+	paintable->tint = color;
+}

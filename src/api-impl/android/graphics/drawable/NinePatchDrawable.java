@@ -15,6 +15,12 @@ public class NinePatchDrawable extends Drawable {
 		setPaintable(nativeCreate(path));
 	}
 
+	@Override
+	public void setTint(int tint) {
+		nativeSetTint(paintable, tint);
+	}
+
 	private native long nativeCreate(byte[] data, long texture);
 	private native long nativeCreate(String path);
+	private native void nativeSetTint(long paintable, int tint);
 }
