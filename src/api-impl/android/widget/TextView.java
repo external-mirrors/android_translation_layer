@@ -289,6 +289,7 @@ public class TextView extends View {
 	public int getMinHeight() { return 0; }
 	public int getMinWidth() { return 0; }
 	public void setMinHeight(int minHeight) {}
+	public void setMaxHeight(int maxHeight) {}
 
 	public void setHorizontallyScrolling(boolean whether) {}
 	public boolean getHorizontallyScrolling() {

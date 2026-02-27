@@ -474,6 +474,11 @@ public class Canvas {
 		gsk_canvas.concat(matrix);
 	}
 
+	public void setMatrix(Matrix matrix) {
+		// fixme: GtkSnapshot doesn't support setMatrix. This is only correct if the current matrix is identity
+		concat(matrix);
+	}
+
 	public int getWidth() {
 		return (bitmap == null) ? 0 : bitmap.getWidth();
 	}

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -53,6 +54,10 @@ public class Dialog implements Window.Callback, DialogInterface {
 
 	public void setContentView(View view) {
 		getWindow().setContentView(view);
+	}
+
+	public void setContentView(int layoutResId) {
+		setContentView(LayoutInflater.from(context).inflate(layoutResId, null));
 	}
 
 	public void setTitle(CharSequence title) {

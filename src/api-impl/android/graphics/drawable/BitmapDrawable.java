@@ -61,11 +61,15 @@ public class BitmapDrawable extends Drawable {
 
 	@Override
 	public int getIntrinsicWidth() {
+		if (bitmap == null)
+			return 0;
 		return bitmap.getWidth();
 	}
 
 	@Override
 	public int getIntrinsicHeight() {
+		if (bitmap == null)
+			return 0;
 		return bitmap.getHeight();
 	}
 

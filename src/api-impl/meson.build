@@ -220,6 +220,7 @@ srcs = [
 	'android/graphics/BlendMode.java',
 	'android/graphics/BlendModeColorFilter.java',
 	'android/graphics/BlurMaskFilter.java',
+	'android/graphics/Camera.java',
 	'android/graphics/Canvas.java',
 	'android/graphics/Color.java',
 	'android/graphics/ColorFilter.java',

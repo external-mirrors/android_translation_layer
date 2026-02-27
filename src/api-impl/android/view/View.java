@@ -1000,8 +1000,10 @@ public class View implements Drawable.Callback {
 				e.printStackTrace();
 			}
 		}
-		if (a.hasValue(com.android.internal.R.styleable.View_visibility))
-			setVisibility(VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)]);
+		if (a.hasValue(com.android.internal.R.styleable.View_visibility)) {
+			visibility = VISIBILITY_FLAGS[a.getInt(com.android.internal.R.styleable.View_visibility, 0)];
+			native_setVisibility(widget, visibility, alpha);
+		}
 
 		if (a.hasValue(com.android.internal.R.styleable.View_minWidth))
 			minWidth = a.getDimensionPixelSize(com.android.internal.R.styleable.View_minWidth, 0);
@@ -2388,7 +2390,12 @@ public class View implements Drawable.Callback {
 
 	public AccessibilityDelegate getAccessibilityDelegate() { return null; }
 
-	public void setScrollY(int value) {}
+	public void setScrollX(int value) {
+		this.scrollX = value;
+	}
+	public void setScrollY(int value) {
+		this.scrollY = value;
+	}
 
 	protected boolean dispatchHoverEvent(MotionEvent event) { return false; }
 

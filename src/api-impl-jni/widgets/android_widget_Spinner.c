@@ -95,7 +95,10 @@ static void on_selected_changed(GtkDropDown *dropdown, GParamSpec *pspec, jobjec
 {
 	JNIEnv *env = get_jni_env();
 	int index = gtk_drop_down_get_selected(dropdown);
-	RangeListModel *model = RANGE_LIST_ITEM(gtk_drop_down_get_selected_item(dropdown))->model;
+	gpointer selected = gtk_drop_down_get_selected_item(dropdown);
+	if (!selected)
+		return;
+	RangeListModel *model = RANGE_LIST_ITEM(selected)->model;
 	jmethodID onItemSelected = _METHOD(_CLASS(listener), "onItemSelected", "(Landroid/widget/AdapterView;Landroid/view/View;IJ)V");
 	(*env)->CallVoidMethod(env, listener, onItemSelected, model->jobject, NULL, index, (long)0);
 }

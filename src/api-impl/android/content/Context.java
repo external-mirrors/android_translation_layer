@@ -595,8 +595,10 @@ public abstract class Context {
 				Slog.i(TAG, "starting extern activity with intent: " + intent);
 				if (intent.getData().getScheme().equals("content")) {
 					try (ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(intent.getData(), "r")) {
-						nativeOpenFile(fd.getFd());
-						return;
+						if (fd != null) {
+							nativeOpenFile(fd.getFd());
+							return;
+						}
 					} catch (IOException e) {
 						e.printStackTrace();
 					}
