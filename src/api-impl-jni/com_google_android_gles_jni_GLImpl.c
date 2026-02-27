@@ -1,6 +1,6 @@
 #include "defines.h"
 #include "util.h"
-#include <GLES/gl.h>
+#include <GLES3/gl3.h>
 #include <jni.h>
 #include <stdint.h>
 
