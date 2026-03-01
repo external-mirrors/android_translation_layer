@@ -557,26 +557,6 @@ static void java_widget_class_init(JavaWidgetClass *class)
 }
 G_DEFINE_TYPE(JavaWidget, java_widget, GTK_TYPE_WIDGET)
 
-static void java_method_cb(WrapperWidget *wrapper, jmethodID method)
-{
-	JNIEnv *env = get_jni_env();
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
-	if ((*env)->ExceptionCheck(env))
-		(*env)->ExceptionDescribe(env);
-}
-
-static GtkWidget *currently_unmapping = NULL;
-
-static void unmap_cb(WrapperWidget *wrapper, jmethodID method)
-{
-	JNIEnv *env = get_jni_env();
-	currently_unmapping = wrapper->child;
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
-	if ((*env)->ExceptionCheck(env))
-		(*env)->ExceptionDescribe(env);
-	currently_unmapping = NULL;
-}
-
 JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
 	WrapperWidget *wrapper = g_object_ref(WRAPPER_WIDGET(wrapper_widget_new()));
@@ -607,9 +587,6 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 		g_signal_connect(controller, "motion", G_CALLBACK(hover_motion_cb), wrapper);
 		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	}
-
-	g_signal_connect(wrapper, "map", G_CALLBACK(java_method_cb), handle_cache.view.onAttachedToWindow);
-	g_signal_connect(wrapper, "unmap", G_CALLBACK(unmap_cb), handle_cache.view.onDetachedFromWindow);
 
 	return _INTPTR(widget);
 }
