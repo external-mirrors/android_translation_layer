@@ -5,6 +5,12 @@ import android.os.IBinder;
 public interface WindowManager {
 	public android.view.Display getDefaultDisplay();
 
+	public void addView(View view, ViewGroup.LayoutParams params);
+
+	public void updateViewLayout(View view, ViewGroup.LayoutParams params);
+
+	public void removeView(View view);
+
 	public void removeViewImmediate(View view);
 
 	public class LayoutParams extends ViewGroup.LayoutParams {
