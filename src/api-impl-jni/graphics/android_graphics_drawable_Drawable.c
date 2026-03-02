@@ -73,8 +73,16 @@ static void java_paintable_paintable_init(GdkPaintableInterface *iface)
 	iface->get_intrinsic_width = java_paintable_get_intrinsic_width;
 }
 
+static void java_paintable_dispose(GObject *object)
+{
+	JavaPaintable *java_paintable = JAVA_PAINTABLE(object);
+	JNIEnv *env = get_jni_env();
+	_WEAK_UNREF(java_paintable->drawable);
+}
+
 static void java_paintable_class_init(JavaPaintableClass *class)
 {
+	G_OBJECT_CLASS(class)->dispose = java_paintable_dispose;
 }
 
 G_DEFINE_TYPE_WITH_CODE(JavaPaintable, java_paintable, G_TYPE_OBJECT,
