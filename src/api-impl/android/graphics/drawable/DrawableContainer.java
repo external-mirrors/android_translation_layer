@@ -12,7 +12,7 @@ public class DrawableContainer extends Drawable {
 	protected native void native_selectChild(long container, long child);
 
 	public DrawableContainer() {
-		paintable = native_constructor();
+		setPaintable(native_constructor());
 	}
 
 	public boolean selectDrawable(int idx) {

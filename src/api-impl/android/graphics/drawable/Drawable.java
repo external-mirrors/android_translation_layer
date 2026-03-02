@@ -50,6 +50,15 @@ public class Drawable {
 	}
 
 	public Drawable(long paintable) {
+		native_ref(paintable);
+		this.paintable = paintable;
+	}
+
+	protected void setPaintable(long paintable) {
+		if (this.paintable != 0)
+			native_unref(this.paintable);
+		if (paintable != 0)
+			native_ref(paintable);
 		this.paintable = paintable;
 	}
 
@@ -387,8 +396,21 @@ public class Drawable {
 
 	public void setHotspotBounds(int left, int top, int right, int bottom) {}
 
+	@SuppressWarnings("removal")
+	protected void finalize() throws Throwable {
+		try {
+			if (paintable != 0)
+				native_unref(paintable);
+			paintable = 0;
+		} finally {
+			super.finalize();
+		}
+	}
+
 	protected static native long native_paintable_from_path(String path);
 	protected native long native_constructor();
 	protected native void native_invalidate(long paintable);
 	protected native void native_draw(long paintable, long snapshot, int width, int height);
+	protected native void native_ref(long paintable);
+	protected native void native_unref(long paintable);
 }
