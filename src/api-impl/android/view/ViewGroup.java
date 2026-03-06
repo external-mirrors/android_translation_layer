@@ -2,6 +2,7 @@ package android.view;
 
 import android.R;
 import android.animation.LayoutTransition;
+import android.annotation.UnsupportedAppUsage;
 import android.atl.GskCanvas;
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -15,6 +16,27 @@ import java.util.Iterator;
 import java.util.Objects;
 
 public class ViewGroup extends View implements ViewParent, ViewManager {
+	/* clang-format off */
+	static final int FLAG_CLIP_CHILDREN        = (1 << 0);
+	static final int FLAG_INVALIDATE_REQUIRED  = (1 << 2);
+	static final int FLAG_ANIMATION_DONE       = (1 << 4);
+	static final int FLAG_OPTIMIZE_INVALIDATE  = (1 << 7);
+	static final int FLAG_CLEAR_TRANSFORMATION = (1 << 8);
+	@UnsupportedAppUsage
+	protected static final int FLAG_USE_CHILD_DRAWING_ORDER = (1 << 10);
+	@UnsupportedAppUsage
+	protected static final int FLAG_SUPPORT_STATIC_TRANSFORMATIONS = (1 << 11);
+	private static final int FLAG_MASK_FOCUSABILITY  = (3 << 17);
+	public static final int FOCUS_BEFORE_DESCENDANTS = (1 << 17);
+	public static final int FOCUS_AFTER_DESCENDANTS  = (2 << 17);
+	public static final int FOCUS_BLOCK_DESCENDANTS  = (3 << 17);
+	@UnsupportedAppUsage
+	protected static final int FLAG_DISALLOW_INTERCEPT = (1 << 19);
+	static final int FLAG_IS_TRANSITION_GROUP          = (1 << 24);
+	static final int FLAG_IS_TRANSITION_GROUP_SET      = (1 << 25);
+	static final int FLAG_TOUCHSCREEN_BLOCKS_FOCUS     = (1 << 26);
+	/* clang-format on */
+
 	public ArrayList<View> children;
 	private ArrayList<View> detachedChildren;
 	private boolean pendingHideDetachedChildren = false;
