@@ -548,6 +548,47 @@ public class View implements Drawable.Callback {
 	 */
 	static final int PFLAG2_LAYOUT_DIRECTION_RESOLVED_MASK = 0x0000000C << PFLAG2_LAYOUT_DIRECTION_MASK_SHIFT;
 
+	/**
+	 * Indicates no axis of view scrolling.
+	 */
+	public static final int SCROLL_AXIS_NONE = 0;
+
+	/**
+	 * Indicates scrolling along the horizontal axis.
+	 */
+	public static final int SCROLL_AXIS_HORIZONTAL = 1 << 0;
+
+	/**
+	 * Indicates scrolling along the vertical axis.
+	 */
+	public static final int SCROLL_AXIS_VERTICAL = 1 << 1;
+
+	/**
+	 * Always allow a user to over-scroll this view, provided it is a
+	 * view that can scroll.
+	 *
+	 * @see #getOverScrollMode()
+	 * @see #setOverScrollMode(int)
+	 */
+	public static final int OVER_SCROLL_ALWAYS = 0;
+
+	/**
+	 * Allow a user to over-scroll this view only if the content is large
+	 * enough to meaningfully scroll, provided it is a view that can scroll.
+	 *
+	 * @see #getOverScrollMode()
+	 * @see #setOverScrollMode(int)
+	 */
+	public static final int OVER_SCROLL_IF_CONTENT_SCROLLS = 1;
+
+	/**
+	 * Never allow a user to over-scroll this view.
+	 *
+	 * @see #getOverScrollMode()
+	 * @see #setOverScrollMode(int)
+	 */
+	public static final int OVER_SCROLL_NEVER = 2;
+
 	// --- apparently there's more...
 
 	@Deprecated

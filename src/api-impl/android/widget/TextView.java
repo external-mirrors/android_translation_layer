@@ -1,5 +1,6 @@
 package android.widget;
 
+import android.annotation.UnsupportedAppUsage;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -12,6 +13,8 @@ import android.text.Editable;
 import android.text.InputFilter;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
+import android.text.TextDirectionHeuristic;
+import android.text.TextDirectionHeuristics;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -31,6 +34,10 @@ public class TextView extends View {
 	private ColorStateList colors = new ColorStateList(new int[][] {new int[0]}, new int[1]);
 	private CharSequence text = "";
 	private TextPaint paint = new TextPaint();
+	private boolean include_padding = false;
+	private int break_strategy = 0 /*BREAK_STRATEGY_SIMPLE*/;
+	private int hyphenation_frequency = 0 /*HYPHENATION_FREQUENCY_NONE*/;
+	private int gravity = Gravity.CENTER;
 
 	public TextView(Context context, AttributeSet attrs) {
 		this(context, attrs, 0);
@@ -211,7 +218,7 @@ public class TextView extends View {
 	public float getTextSize() { return 10; }
 
 	public int getGravity() {
-		return Gravity.CENTER;
+		return gravity;
 	}
 
 	public int getCompoundPaddingTop() { return 0; }
@@ -404,9 +411,27 @@ public class TextView extends View {
 
 	public void setCompoundDrawableTintList(ColorStateList tint) {}
 
-	public void setIncludeFontPadding(boolean includePadding) {}
+	public int getHyphenationFrequency() {
+		return hyphenation_frequency;
+	}
+
+	public void setHyphenationFrequency(int hyphenationFrequency) {
+		hyphenation_frequency = hyphenationFrequency;
+	}
+
+	public boolean getIncludeFontPadding() { return include_padding; }
+
+	public void setIncludeFontPadding(boolean includePadding) {
+		include_padding = includePadding;
+	}
 
 	public float getLineSpacingExtra() { return 0.f; }
+
+	public float getLineSpacingMultiplier() { return 1.f; }
+
+	public TextDirectionHeuristic getTextDirectionHeuristic() {
+		return TextDirectionHeuristics.LTR;
+	}
 
 	public Bundle getInputExtras(boolean key) {
 		return new Bundle();
@@ -428,7 +453,13 @@ public class TextView extends View {
 
 	public void setShadowLayer(float radius, float dx, float dy, int color) {}
 
-	public void setBreakStrategy(int strategy) {}
+	public int getBreakStrategy() {
+		return break_strategy;
+	}
+
+	public void setBreakStrategy(int strategy) {
+		break_strategy = strategy;
+	}
 
 	public void clearComposingText() {}
 
@@ -444,4 +475,56 @@ public class TextView extends View {
 	public void setLetterSpacing(float letterSpacing) {}
 
 	public void setMarqueeRepeatLimit(int marqueeLimit) {}
+
+	@UnsupportedAppUsage /* androidx ACTVAutoSizeHelper seems to love this */
+	/* Copyright (C) 2006 The Android Open Source Project */
+	private Layout.Alignment getLayoutAlignment() {
+		Layout.Alignment alignment;
+		switch (getTextAlignment()) {
+			case TEXT_ALIGNMENT_GRAVITY:
+				switch (gravity & Gravity.RELATIVE_HORIZONTAL_GRAVITY_MASK) {
+					case Gravity.START:
+						alignment = Layout.Alignment.ALIGN_NORMAL;
+						break;
+					case Gravity.END:
+						alignment = Layout.Alignment.ALIGN_OPPOSITE;
+						break;
+					case Gravity.LEFT:
+						alignment = Layout.Alignment.ALIGN_LEFT;
+						break;
+					case Gravity.RIGHT:
+						alignment = Layout.Alignment.ALIGN_RIGHT;
+						break;
+					case Gravity.CENTER_HORIZONTAL:
+						alignment = Layout.Alignment.ALIGN_CENTER;
+						break;
+					default:
+						alignment = Layout.Alignment.ALIGN_NORMAL;
+						break;
+				}
+				break;
+			case TEXT_ALIGNMENT_TEXT_START:
+				alignment = Layout.Alignment.ALIGN_NORMAL;
+				break;
+			case TEXT_ALIGNMENT_TEXT_END:
+				alignment = Layout.Alignment.ALIGN_OPPOSITE;
+				break;
+			case TEXT_ALIGNMENT_CENTER:
+				alignment = Layout.Alignment.ALIGN_CENTER;
+				break;
+			case TEXT_ALIGNMENT_VIEW_START:
+				alignment = (getLayoutDirection() == LAYOUT_DIRECTION_RTL) ? Layout.Alignment.ALIGN_RIGHT : Layout.Alignment.ALIGN_LEFT;
+				break;
+			case TEXT_ALIGNMENT_VIEW_END:
+				alignment = (getLayoutDirection() == LAYOUT_DIRECTION_RTL) ? Layout.Alignment.ALIGN_LEFT : Layout.Alignment.ALIGN_RIGHT;
+				break;
+			case TEXT_ALIGNMENT_INHERIT:
+				// This should never happen as we have already resolved the text alignment
+				// but better safe than sorry so we just fall through
+			default:
+				alignment = Layout.Alignment.ALIGN_NORMAL;
+				break;
+		}
+		return alignment;
+	}
 }
