@@ -60,7 +60,7 @@ public class ViewConfiguration {
 	}
 
 	public float getScaledVerticalScrollFactor() {
-		return 1;
+		return 32;
 	}
 
 	public static int getScrollBarFadeDuration() {
