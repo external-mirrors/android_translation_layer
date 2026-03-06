@@ -5,6 +5,10 @@
 
 #define DEG2RAD(deg)    ((deg) * M_PI / 180)
 
+#define KiB 1024
+#define MiB 1024 * KiB
+#define GiB 1024 * MiB
+
 #define __likely__(x)   __builtin_expect(x, 1)
 #define __unlikely__(x) __builtin_expect(x, 0)
 
