@@ -74,6 +74,10 @@ public class Settings {
 		public static float getFloat(ContentResolver cr, String key, float def) {
 			return 0.0f;
 		}
+
+		public static float getFloat(ContentResolver cr, String key) {
+			return 0.0f;
+		}
 	}
 
 	public static final class Global {

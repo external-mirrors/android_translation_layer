@@ -173,6 +173,8 @@ public class PopupWindow {
 	public void setOverlapAnchor(boolean overlap) {
 	}
 
+	public void setSoftInputMode(int mode) {}
+
 	protected native long native_constructor();
 	protected native void native_setContentView(long widget, long contentView);
 	protected native void native_showAsDropDown(long widget, long anchor, int xoff, int yoff, int gravity);

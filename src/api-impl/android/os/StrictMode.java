@@ -94,6 +94,7 @@ public final class StrictMode {
 		}
 	}
 	public static final class VmPolicy {
+		public static final VmPolicy LAX;
 		public static final class Builder {
 			public Builder detectActivityLeaks() {
 				return this;
@@ -125,6 +126,10 @@ public final class StrictMode {
 			public VmPolicy build() {
 				return new VmPolicy();
 			}
+		}
+
+		static {
+			LAX = (new Builder()).build();
 		}
 	}
 }

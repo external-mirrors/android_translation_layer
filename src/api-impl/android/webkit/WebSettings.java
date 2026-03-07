@@ -62,4 +62,14 @@ public class WebSettings {
 	public void setMediaPlaybackRequiresUserGesture(boolean require) {}
 
 	public void setJavaScriptCanOpenWindowsAutomatically(boolean flag) {}
+
+	public void setAppCacheMaxSize(long size) {}
+
+	public void setDatabaseEnabled(boolean enabled) {}
+
+	public void setDatabasePath(String path) {}
+
+	public void setAllowUniversalAccessFromFileURLs(boolean allow) {}
+
+	public void setGeolocationDatabasePath(String path) {}
 }

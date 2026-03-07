@@ -22,6 +22,8 @@ public class CookieManager {
 
 	public void removeSessionCookies(ValueCallback callback) {}
 
+	public void removeExpiredCookie() {}
+
 	public void flush() {}
 
 	public String getCookie(String url) {

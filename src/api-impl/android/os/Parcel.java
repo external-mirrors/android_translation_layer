@@ -115,6 +115,8 @@ public class Parcel {
 		return creator.createFromParcel(this);
 	}
 
+	public IBinder readStrongBinder() { return null; }
+
 	public void writeStrongBinder(IBinder binder) {}
 
 	public void readException() {}

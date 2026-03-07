@@ -78,4 +78,6 @@ public class BitmapDrawable extends Drawable {
 	public Paint getPaint() {
 		return new Paint();
 	}
+
+	public void setGravity(int g) {}
 }
