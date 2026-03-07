@@ -403,3 +403,51 @@ JNIEXPORT void JNICALL Java_android_opengl_GLES20_glGetFloatv__ILjava_nio_FloatB
 	glGetFloatv((GLenum)pname, (GLfloat *)params);
 	release_nio_buffer(env, array_ref, array);
 }
+
+JNIEXPORT void JNICALL Java_android_opengl_GLES20_glGenerateMipmap(JNIEnv *env, jclass this, jint pname)
+{
+	glGenerateMipmap((GLenum)pname);
+}
+
+JNIEXPORT void JNICALL Java_android_opengl_GLES20_glLineWidth(JNIEnv *env, jclass this, jfloat width)
+{
+	glLineWidth((GLfloat)width);
+}
+
+JNIEXPORT void JNICALL Java_android_opengl_GLES20_glColorMask(JNIEnv *env, jclass this, jboolean red, jboolean green, jboolean blue, jboolean alpha)
+{
+	glColorMask((GLboolean)red, (GLboolean)green, (GLboolean)blue, (GLboolean)alpha);
+}
+
+JNIEXPORT void JNICALL Java_android_opengl_GLES20_glBufferSubData(JNIEnv *env, jclass this, jint target, jint offset, jint size, jobject data)
+{
+	glBufferSubData((GLenum)target, (GLintptr)offset, (GLsizeiptr)size, (void *)data);
+}
+
+JNIEXPORT jstring JNICALL Java_android_opengl_GLES20_glGetShaderInfoLog(JNIEnv *env, jclass this, jint shader)
+{
+	GLsizei bufSize;
+	glGetShaderiv((GLuint)shader, GL_INFO_LOG_LENGTH, &bufSize);
+
+	jstring output;
+	if (bufSize == 0) {
+		char cstring = 0;
+		output = _JSTRING(&cstring);
+	} else {
+		GLchar *infoLog = malloc(sizeof(GLchar) * bufSize + 1);
+		GLsizei length;
+		glGetShaderInfoLog((GLuint)shader, bufSize, &length, infoLog);
+		output = _JSTRING(infoLog);
+		free(infoLog);
+	}
+	return output;
+}
+
+JNIEXPORT jstring JNICALL Java_android_opengl_GLES20_glGetActiveUniform__IILjava_nio_IntBuffer_2Ljava_nio_IntBuffer_2(JNIEnv *env, jclass this, jint program, jint index, jobject buffer_1, jobject buffer_2)
+{
+	char *name = malloc(512);
+	glGetActiveUniform((GLuint)program, (GLuint)index, 512, NULL, NULL, NULL, name);
+	jstring output = _JSTRING(name);
+	free(name);
+	return output;
+}

@@ -4,16 +4,9 @@
 
 // FIXME: put the header in a common place
 #include "../api-impl-jni/defines.h"
+#include "bitmap.h"
 
 #define ANDROID_BITMAP_RESULT_SUCCESS 0
-
-struct AndroidBitmapInfo {
-	uint32_t width;
-	uint32_t height;
-	uint32_t stride;
-	int32_t format;
-	uint32_t flags;
-};
 
 int AndroidBitmap_getInfo(JNIEnv *env, jobject bitmap, struct AndroidBitmapInfo *info)
 {
