@@ -717,6 +717,10 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 static void activate(GtkApplication *app, struct jni_callback_data *d)
 {
+	if (window) { // this is not the first launch, but a DBus activate request to the running app
+		gtk_window_present(GTK_WINDOW(window));
+		return;
+	}
 	fprintf(stderr, "error: usage: ./android-translation-layer [app.apk] [-l path/to/activity]\n"
 	                "you can specify --help to see the list of options\n");
 	exit(1);
