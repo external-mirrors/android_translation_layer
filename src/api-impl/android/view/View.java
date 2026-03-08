@@ -1865,6 +1865,8 @@ public class View implements Drawable.Callback {
 
 	protected static final int[] EMPTY_STATE_SET = new int[0];
 
+	protected static final int[] ENABLED_STATE_SET = new int[] {R.attr.state_enabled};
+
 	protected static final int[] PRESSED_ENABLED_STATE_SET = new int[] {R.attr.state_pressed, R.attr.state_enabled};
 
 	protected static final int[] SELECTED_STATE_SET = new int[] {R.attr.state_selected};

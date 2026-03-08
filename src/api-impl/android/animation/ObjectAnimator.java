@@ -424,6 +424,36 @@ public final class ObjectAnimator extends ValueAnimator {
 	}
 
 	/**
+	 * Constructs and returns an ObjectAnimator that animates between Object values. A single
+	 * value implies that that value is the one being animated to, in which case the start value
+	 * will be derived from the property being animated and the target object when {@link #start()}
+	 * is called for the first time. Two values imply starting and ending values. More than two
+	 * values imply a starting value, values to animate through along the way, and an ending value
+	 * (these values will be distributed evenly across the duration of the animation).
+	 *
+	 * <p><strong>Note:</strong> The values are stored as references to the original
+	 * objects, which means that changes to those objects after this method is called will
+	 * affect the values on the animator. If the objects will be mutated externally after
+	 * this method is called, callers should pass a copy of those objects instead.
+	 *
+	 * @param target The object whose property is to be animated.
+	 * @param property The property being animated.
+	 * @param evaluator A TypeEvaluator that will be called on each animation frame to
+	 * provide the necessary interpolation between the Object values to derive the animated
+	 * value.
+	 * @param values A set of values that the animation will animate between over time.
+	 * @return An ObjectAnimator object that is set up to animate between the given values.
+	 */
+	@NonNull
+	@SafeVarargs
+	public static <T, V> ObjectAnimator ofObject(T target, Property<T, V> property, TypeEvaluator<V> evaluator, V... values) {
+		ObjectAnimator anim = new ObjectAnimator(target, property);
+		anim.setObjectValues(values);
+		anim.setEvaluator(evaluator);
+		return anim;
+	}
+
+	/**
 	 * Constructs and returns an ObjectAnimator that animates between the sets of values specified
 	 * in <code>PropertyValueHolder</code> objects. This variant should be used when animating
 	 * several properties at once with the same ObjectAnimator, since PropertyValuesHolder allows
