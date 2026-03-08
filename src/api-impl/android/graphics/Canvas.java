@@ -106,8 +106,9 @@ public class Canvas {
 	 * @param py The y-coord for the pivot point (unchanged by the rotation)
 	 */
 	public void rotate(float degrees, float px, float py) {
-		gsk_canvas.snapshot = bitmap.getSnapshot();
-		gsk_canvas.rotate(degrees, px, py);
+		translate(px, py);
+		rotate(degrees);
+		translate(-px, -py);
 	}
 	// ---
 	/**
@@ -136,8 +137,7 @@ public class Canvas {
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
 	public void drawText(String text, int start, int end, float x, float y, Paint paint) {
-		gsk_canvas.snapshot = bitmap.getSnapshot();
-		gsk_canvas.drawText(text, start, end, x, y, paint);
+		drawText(text.substring(start, end), x, y, paint);
 	}
 
 	/**
@@ -154,7 +154,7 @@ public class Canvas {
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
 	public void drawText(CharSequence text, int start, int end, float x, float y, Paint paint) {
-		drawText(text.toString(), start, end, x, y, paint);
+		drawText(text.toString().substring(start, end), x, y, paint);
 		/*if (text instanceof String || text instanceof SpannedString
 		      || text instanceof SpannableString) {
 		    native_drawText(mNativeCanvas, text.toString(), start, end, x, y,
@@ -424,8 +424,10 @@ public class Canvas {
 	}
 
 	public void restoreToCount(int count) {
-		gsk_canvas.snapshot = bitmap.getSnapshot();
-		gsk_canvas.restoreToCount(count);
+		if (count < 1)
+			throw new IllegalArgumentException("count must be >= 1");
+		while (getSaveCount() > count)
+			restore();
 	}
 
 	public void drawRoundRect(float left, float top, float right, float bottom, float rx, float ry, Paint paint) {
@@ -450,7 +452,14 @@ public class Canvas {
 	}
 
 	public void getMatrix(Matrix matrix) {
-		matrix.reset();
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.getMatrix(matrix);
+	}
+
+	public Matrix getMatrix() {
+		Matrix matrix = new Matrix();
+		getMatrix(matrix);
+		return matrix;
 	}
 
 	public void translate(float dx, float dy) {
@@ -475,8 +484,14 @@ public class Canvas {
 	}
 
 	public void setMatrix(Matrix matrix) {
-		// fixme: GtkSnapshot doesn't support setMatrix. This is only correct if the current matrix is identity
-		concat(matrix);
+		Matrix transform = getMatrix();
+		if (transform.isIdentity()) {
+			transform = matrix;
+		} else {
+			getMatrix().invert(transform); // revert the current matrix
+			transform.preConcat(matrix);   // apply the new matrix
+		}
+		concat(transform);
 	}
 
 	public int getWidth() {

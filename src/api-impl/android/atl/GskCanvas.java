@@ -4,6 +4,7 @@ import android.graphics.*;
 import android.view.DisplayListCanvas;
 import android.view.RenderNode;
 import java.util.Arrays;
+import java.util.Stack;
 
 /**
  * GskCanvas:
@@ -11,49 +12,82 @@ import java.util.Arrays;
  */
 public class GskCanvas extends DisplayListCanvas {
 	public long snapshot;
-	private int save_count = 1;
 	private int[] push_history = null;
+	private Stack<Matrix> state_stack = new Stack<>();
 
 	private static Paint default_paint = new Paint();
 
 	public GskCanvas(long snapshot) {
 		this.snapshot = snapshot;
+		state_stack.push(new Matrix());
 	}
 
 	@Override
 	public int save() {
 		native_save(snapshot);
-		return save_count++;
+		state_stack.push(new Matrix(state_stack.peek()));
+		return getSaveCount() - 1;
 	}
 
 	@Override
 	public void restore() {
+		int save_count = getSaveCount();
+		if (save_count <= 1)
+			throw new IllegalStateException("No more saves to restore");
 		if (push_history != null && push_history.length > save_count && push_history[save_count] > 0) {
 			native_pop(snapshot, push_history[save_count]);
 			push_history[save_count] = 0;
 		}
-		save_count--;
+		state_stack.pop();
 		native_restore(snapshot);
 	}
 
 	@Override
-	public void restoreToCount(int count) {
-		if (count < 1) {
-			throw new IllegalArgumentException("count must be >= 1");
-		}
-		while (save_count > count) {
-			restore();
-		}
+	public int getSaveCount() {
+		return state_stack.size();
 	}
 
 	@Override
 	public void translate(float dx, float dy) {
 		native_translate(snapshot, dx, dy);
+		state_stack.peek().preTranslate(dx, dy);
 	}
 
 	@Override
 	public void rotate(float degrees) {
 		native_rotate(snapshot, degrees);
+		state_stack.peek().preRotate(degrees);
+	}
+
+	@Override
+	public void scale(float sx, float sy) {
+		native_scale(snapshot, sx, sy);
+		state_stack.peek().preScale(sx, sy);
+	}
+
+	@Override
+	public void concat(Matrix matrix) {
+		if (matrix != null) {
+			native_concat(snapshot, matrix.native_instance);
+			state_stack.peek().preConcat(matrix);
+		}
+	}
+
+	@Override
+	public void getMatrix(Matrix matrix) {
+		matrix.set(state_stack.peek());
+	}
+
+	@Override
+	public boolean clipRect(float left, float top, float right, float bottom) {
+		native_clipRect(snapshot, left, top, right, bottom);
+		int save_count = getSaveCount();
+		if (push_history == null)
+			push_history = new int[save_count + 1];
+		else if (push_history.length <= save_count)
+			push_history = Arrays.copyOf(push_history, save_count + 1);
+		push_history[save_count]++;
+		return right > left && bottom > top;
 	}
 
 	@Override
@@ -76,13 +110,6 @@ public class GskCanvas extends DisplayListCanvas {
 	}
 
 	@Override
-	public void rotate(float degrees, float px, float py) {
-		native_translate(snapshot, px, py);
-		native_rotate(snapshot, degrees);
-		native_translate(snapshot, -px, -py);
-	}
-
-	@Override
 	public void drawText(String text, float x, float y, Paint paint) {
 		if (text == null) {
 			new Exception("drawText: text is null; stack trace:").printStackTrace();
@@ -92,24 +119,14 @@ public class GskCanvas extends DisplayListCanvas {
 	}
 
 	@Override
-	public void drawText(String text, int start, int end, float x, float y, Paint paint) {
-		drawText(text.substring(start, end), x, y, paint);
-	}
-
-	@Override
 	public void drawLine(float startX, float startY, float stopX, float stopY, Paint paint) {
 		native_drawLine(snapshot, startX, startY, stopX, stopY, paint != null ? paint.paint : default_paint.paint);
 	}
 
 	@Override
-	public void drawLines(float[] points, Paint paint) {
-		drawLines(points, 0, points.length, paint);
-	}
-
-	@Override
 	public void drawLines(float[] points, int offset, int count, Paint paint) {
 		if (offset + count < 0 /* overflow */ || offset + count > points.length)
-			throw new IndexOutOfBoundsException();
+			throw new ArrayIndexOutOfBoundsException();
 		native_drawLines(snapshot, points, offset, count, paint != null ? paint.paint : default_paint.paint);
 	}
 
@@ -121,38 +138,6 @@ public class GskCanvas extends DisplayListCanvas {
 	@Override
 	public void drawCircle(float cx, float cy, float radius, Paint paint) {
 		drawRoundRect(cx - radius, cy - radius, cx + radius, cy + radius, radius, radius, paint);
-	}
-
-	@Override
-	public void scale(float sx, float sy) {
-		native_scale(snapshot, sx, sy);
-	}
-
-	@Override
-	public void concat(Matrix matrix) {
-		if (matrix != null)
-			native_concat(snapshot, matrix.native_instance);
-	}
-
-	@Override
-	public void drawText(CharSequence text, int start, int end, float x, float y, Paint paint) {
-		drawText(text.toString().substring(start, end), x, y, paint);
-	}
-
-	@Override
-	public boolean clipRect(float left, float top, float right, float bottom) {
-		native_clipRect(snapshot, left, top, right, bottom);
-		if (push_history == null)
-			push_history = new int[save_count + 1];
-		else if (push_history.length <= save_count)
-			push_history = Arrays.copyOf(push_history, save_count + 1);
-		push_history[save_count]++;
-		return right > left && bottom > top;
-	}
-
-	@Override
-	public int getSaveCount() {
-		return save_count;
 	}
 
 	@Override

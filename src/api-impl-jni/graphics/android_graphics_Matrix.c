@@ -15,15 +15,16 @@ JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1getValues(JNIEnv *en
 {
 	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(src);
 	jfloat *value = (*env)->GetFloatArrayElements(env, values_ref, NULL);
-	value[android_graphics_Matrix_MSCALE_X] = graphene_matrix_get_value(matrix, 0, 0);
-	value[android_graphics_Matrix_MSKEW_X] = graphene_matrix_get_value(matrix, 1, 0);
-	value[android_graphics_Matrix_MTRANS_X] = graphene_matrix_get_value(matrix, 3, 0);
-	value[android_graphics_Matrix_MSKEW_Y] = graphene_matrix_get_value(matrix, 0, 1);
-	value[android_graphics_Matrix_MSCALE_Y] = graphene_matrix_get_value(matrix, 1, 1);
-	value[android_graphics_Matrix_MTRANS_Y] = graphene_matrix_get_value(matrix, 3, 1);
-	value[android_graphics_Matrix_MPERSP_0] = graphene_matrix_get_value(matrix, 0, 3);
-	value[android_graphics_Matrix_MPERSP_1] = graphene_matrix_get_value(matrix, 1, 3);
-	value[android_graphics_Matrix_MPERSP_2] = graphene_matrix_get_value(matrix, 3, 3);
+	// add 0.f to all values to avoid failing CTS tests with "expected:<0.0> but was:<-0.0>"
+	value[android_graphics_Matrix_MSCALE_X] = graphene_matrix_get_value(matrix, 0, 0) + 0.f;
+	value[android_graphics_Matrix_MSKEW_X] = graphene_matrix_get_value(matrix, 1, 0) + 0.f;
+	value[android_graphics_Matrix_MTRANS_X] = graphene_matrix_get_value(matrix, 3, 0) + 0.f;
+	value[android_graphics_Matrix_MSKEW_Y] = graphene_matrix_get_value(matrix, 0, 1) + 0.f;
+	value[android_graphics_Matrix_MSCALE_Y] = graphene_matrix_get_value(matrix, 1, 1) + 0.f;
+	value[android_graphics_Matrix_MTRANS_Y] = graphene_matrix_get_value(matrix, 3, 1) + 0.f;
+	value[android_graphics_Matrix_MPERSP_0] = graphene_matrix_get_value(matrix, 0, 3) + 0.f;
+	value[android_graphics_Matrix_MPERSP_1] = graphene_matrix_get_value(matrix, 1, 3) + 0.f;
+	value[android_graphics_Matrix_MPERSP_2] = graphene_matrix_get_value(matrix, 3, 3) + 0.f;
 	(*env)->ReleaseFloatArrayElements(env, values_ref, value, 0);
 }
 
@@ -46,6 +47,14 @@ JNIEXPORT jboolean JNICALL Java_android_graphics_Matrix_native_1preConcat(JNIEnv
 	graphene_matrix_t *other = (graphene_matrix_t *)_PTR(other_ptr);
 	graphene_matrix_multiply(other, matrix, matrix);
 
+	return true;
+}
+
+JNIEXPORT jboolean JNICALL Java_android_graphics_Matrix_native_1postConcat(JNIEnv *env, jclass class, jlong matrix_ptr, jlong other_ptr)
+{
+	graphene_matrix_t *matrix = (graphene_matrix_t *)_PTR(matrix_ptr);
+	graphene_matrix_t *other = (graphene_matrix_t *)_PTR(other_ptr);
+	graphene_matrix_multiply(matrix, other, matrix);
 	return true;
 }
 
@@ -270,10 +279,10 @@ JNIEXPORT void JNICALL Java_android_graphics_Matrix_native_1setValues(JNIEnv *en
 	jfloat *values = (*env)->GetFloatArrayElements(env, values_ref, NULL);
 	float values4x4[4][4] = {
 		/* clang-format off */
-		{values[android_graphics_Matrix_MSCALE_X],  values[android_graphics_Matrix_MSKEW_X], 0, values[android_graphics_Matrix_MTRANS_X]},
-		{ values[android_graphics_Matrix_MSKEW_Y], values[android_graphics_Matrix_MSCALE_Y], 0, values[android_graphics_Matrix_MTRANS_Y]},
+		{values[android_graphics_Matrix_MSCALE_X],  values[android_graphics_Matrix_MSKEW_Y], 0, values[android_graphics_Matrix_MPERSP_0]},
+		{ values[android_graphics_Matrix_MSKEW_X], values[android_graphics_Matrix_MSCALE_Y], 0, values[android_graphics_Matrix_MPERSP_1]},
 		{                                       0,                                        0, 1,                                        0},
-		{values[android_graphics_Matrix_MPERSP_0], values[android_graphics_Matrix_MPERSP_1], 0, values[android_graphics_Matrix_MPERSP_2]},
+		{values[android_graphics_Matrix_MTRANS_X], values[android_graphics_Matrix_MTRANS_Y], 0, values[android_graphics_Matrix_MPERSP_2]},
 		/* clang-format on */
 	};
 	graphene_matrix_init_from_float(matrix, *values4x4);
