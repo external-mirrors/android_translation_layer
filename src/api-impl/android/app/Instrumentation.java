@@ -161,11 +161,7 @@ public class Instrumentation {
 		Slog.i(TAG, "startActivitySync(" + intent + ", " + options + ") called");
 		if (intent.getComponent() != null) {
 			try {
-				Class<? extends Activity> cls = Class.forName(intent.getComponent().getClassName()).asSubclass(Activity.class);
-				Constructor<? extends Activity> constructor = cls.getConstructor();
-				final Activity activity = constructor.newInstance();
-				activity.intent = intent;
-				activity.getWindow().set_native_window(Context.this_application.native_window);
+				final Activity activity = Activity.internalCreateActivity(intent.getComponent().getClassName(), Context.this_application.native_window, intent);
 				runOnMainSync(new Runnable() {
 					@Override
 					public void run() {
@@ -174,7 +170,7 @@ public class Instrumentation {
 				});
 
 				return activity;
-			} catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			} catch (ReflectiveOperationException e) {
 				/* not sure what to do here */
 			}
 		} /*else if (FILE_CHOOSER_ACTIONS.contains(intent.getAction())) { // not sure what to do here either
