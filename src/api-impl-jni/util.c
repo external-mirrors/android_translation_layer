@@ -272,7 +272,7 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent)
 		} else if ((*env)->IsInstanceOf(env, value_jobj, parcelable_class)) {
 			GVariantBuilder parcel_builder;
 			g_variant_builder_init(&parcel_builder, G_VARIANT_TYPE_TUPLE);
-			jobject parcel = (*env)->NewObject(env, handle_cache.parcel.class, handle_cache.parcel.constructor, _INTPTR(&parcel_builder), 0);
+			jobject parcel = (*env)->NewObject(env, handle_cache.builder_parcel.class, handle_cache.builder_parcel.constructor, _INTPTR(&parcel_builder), 0);
 			(*env)->CallVoidMethod(env, parcel, handle_cache.parcel.writeParcelable, value_jobj, 0);
 			GVariant *parcel_variant = g_variant_builder_end(&parcel_builder);
 			g_variant_builder_add(&extras_builder, "{sv}", key, parcel_variant);
@@ -337,7 +337,7 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant)
 		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_TUPLE)) {
 			GVariantIter parcel_iter;
 			g_variant_iter_init(&parcel_iter, value);
-			jobject parcel = (*env)->NewObject(env, handle_cache.parcel.class, handle_cache.parcel.constructor, 0, _INTPTR(&parcel_iter));
+			jobject parcel = (*env)->NewObject(env, handle_cache.iter_parcel.class, handle_cache.iter_parcel.constructor, 0, _INTPTR(&parcel_iter));
 			jmethodID getClassLoader = _METHOD((*env)->FindClass(env, "java/lang/Class"), "getClassLoader", "()Ljava/lang/ClassLoader;");
 			jobject class_loader = (*env)->CallObjectMethod(env, handle_cache.parcel.class, getClassLoader);
 			jobject parcelable = (*env)->CallObjectMethod(env, parcel, handle_cache.parcel.readParcelable, class_loader);

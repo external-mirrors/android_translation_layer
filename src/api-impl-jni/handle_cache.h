@@ -164,10 +164,17 @@ struct handle_cache {
 	} set;
 	struct {
 		jclass class;
-		jmethodID constructor;
 		jmethodID writeParcelable;
 		jmethodID readParcelable;
 	} parcel;
+	struct {
+		jclass class;
+		jmethodID constructor;
+	} builder_parcel;
+	struct {
+		jclass class;
+		jmethodID constructor;
+	} iter_parcel;
 	struct {
 		jclass class;
 		jmethodID dispatchOnGlobalLayout;

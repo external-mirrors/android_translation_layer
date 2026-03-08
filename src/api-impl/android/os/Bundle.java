@@ -1145,6 +1145,10 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 		return mask;
 	}
 
+	public void readFromParcel(Parcel in) throws ReflectiveOperationException {
+		in.readMap(mMap, getClassLoader());
+	}
+
 	@Override
 	public synchronized String toString() {
 		return "Bundle[" + mMap.toString() + "]";
