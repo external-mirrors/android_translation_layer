@@ -427,6 +427,7 @@ srcs = [
 	'android/print/PrintManager.java',
 	'android/provider/BaseColumns.java',
 	'android/provider/CalendarContract.java',
+	'android/provider/Contacts.java',
 	'android/provider/ContactsContract.java',
 	'android/provider/DocumentsContract.java',
 	'android/provider/MediaStore.java',
