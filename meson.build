@@ -238,4 +238,4 @@ subdir('res/framework-res')
 install_data([
              	'res/fonts.xml'
              ],
-             install_dir: join_paths(get_option('prefix'), get_option('datadir')) + '/atl')
+             install_dir: join_paths(get_option('prefix'), get_option('datadir')) + '/atl/system/etc')
