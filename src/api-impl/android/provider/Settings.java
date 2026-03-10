@@ -200,6 +200,8 @@ public class Settings {
 
 		protected static Float getFloatOrNull(ContentResolver cr, String key) {
 			switch (key) {
+				case "animator_duration_scale":
+					return 1.f;
 				default:
 					Slog.w(TAG, "!!!! getFloat: unknown key: >" + key + "<");
 					return null;
