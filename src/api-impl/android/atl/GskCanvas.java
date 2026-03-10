@@ -141,6 +141,11 @@ public class GskCanvas extends DisplayListCanvas {
 	}
 
 	@Override
+	public void drawOval(float left, float top, float right, float bottom, Paint paint) {
+		drawRoundRect(left, top, right, bottom, (right - left) / 2, (bottom - top) / 2, paint);
+	}
+
+	@Override
 	public void drawRenderNode(RenderNode node) {
 		native_drawRenderNode(snapshot, node.getGskNode());
 	}

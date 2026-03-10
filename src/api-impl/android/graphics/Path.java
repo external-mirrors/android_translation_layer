@@ -170,7 +170,9 @@ public class Path {
 	}
 
 	public void addOval(float left, float top, float right, float bottom, Direction direction) {
-		Log.w("Path", "STUB: addOval");
+		float rx = (right - left) / 2;
+		float ry = (bottom - top) / 2;
+		addRoundRect(left, top, right, bottom, new float[] {rx, ry, rx, ry, rx, ry, rx, ry}, direction);
 	}
 
 	public void addOval(RectF rect, Direction direction) {

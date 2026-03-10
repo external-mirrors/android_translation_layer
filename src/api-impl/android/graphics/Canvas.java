@@ -472,6 +472,11 @@ public class Canvas {
 		gsk_canvas.drawCircle(cx, cy, radius, paint);
 	}
 
+	public void drawOval(float left, float top, float right, float bottom, Paint paint) {
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		gsk_canvas.drawOval(left, top, right, bottom, paint);
+	}
+
 	public Rect getClipBounds() {
 		Rect rect = new Rect();
 		getClipBounds(rect);
