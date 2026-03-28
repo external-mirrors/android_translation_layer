@@ -530,6 +530,15 @@ EGLBoolean bionic_eglChooseConfig(EGLDisplay display, EGLint *attrib_list, EGLCo
 {
 	GdkDisplay *gdk_display = gtk_root_get_display(GTK_ROOT(window));
 
+	fprintf(stderr, "=================================================================================\n");
+	fprintf(stderr, "### %s(disp, &%d, cfgs, %d, &%d)\n", __func__, *attrib_list, config_size, *num_config);
+	fprintf(stderr, "attrib_list: ");
+	EGLint *attrib_list2 = attrib_list;
+	do{
+		fprintf(stderr, "%d ", *attrib_list2);
+	} while (*attrib_list2++);
+	fprintf(stderr, "\n");
+
 	if(GDK_IS_X11_DISPLAY (gdk_display)) {
 		/* X11 supports pbuffers just fine */
 		return eglChooseConfig(display, attrib_list, configs, config_size, num_config);
@@ -728,9 +737,22 @@ XrResult bionic_xrCreateSession(XrInstance instance, XrSessionCreateInfo *create
 	XrGraphicsBindingEGLMNDX egl_bind = {XR_TYPE_GRAPHICS_BINDING_EGL_MNDX};
 
 	if (android_bind->type == XR_TYPE_GRAPHICS_BINDING_OPENGL_ES_ANDROID_KHR) {
+
+		EGLint attribs[] = {
+			EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
+			EGL_NONE
+		};
+
+		EGLConfig config;
+		EGLint num_configs;
+		if (!bionic_eglChooseConfig(android_bind->display, attribs, &config, 1, &num_configs)) {
+			fprintf(stderr, "\n\nsad\n\n");
+		}
+
 		egl_bind.getProcAddress = eglGetProcAddress;
 		egl_bind.display = android_bind->display;
 		egl_bind.config = android_bind->config;
+		egl_bind.config = config;
 		egl_bind.context = android_bind->context;
 		createInfo->next = &egl_bind;
 		PrintConfigAttributes(egl_bind.display, egl_bind.config);
