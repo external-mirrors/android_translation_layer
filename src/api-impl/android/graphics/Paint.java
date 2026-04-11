@@ -378,6 +378,8 @@ public class Paint {
 		return false;
 	}
 
+	public void setFontFeatureSettings(String settings) {}
+
 	public void reset() {
 		native_recycle(paint);
 		paint = native_create();

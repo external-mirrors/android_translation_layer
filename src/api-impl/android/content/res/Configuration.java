@@ -1588,4 +1588,9 @@ public final class Configuration implements Comparable<Configuration> {
 	}
 
 	public int fontWeightAdjustment;
+
+	public boolean isScreenRound() {
+		// HACK: return true when hardware is identifying as a watch
+		return System.getenv("ATL_IS_WATCH") != null;
+	}
 }
