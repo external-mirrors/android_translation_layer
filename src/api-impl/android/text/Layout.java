@@ -191,6 +191,10 @@ public class Layout {
 		return spacing_mult;
 	}
 
+	public float getSpacingAdd() {
+		return spacing_add;
+	}
+
 	public float getSpacing_add() {
 		return spacing_add;
 	}
@@ -209,6 +213,10 @@ public class Layout {
 	}
 
 	public Alignment getParagraphAlignment(int line) {
+		return align;
+	}
+
+	public Alignment getAlignment() {
 		return align;
 	}
 
