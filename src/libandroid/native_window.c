@@ -409,6 +409,8 @@ VkResult bionic_vkCreateAndroidSurfaceKHR(VkInstance instance, const VkAndroidSu
 			.surface = pCreateInfo->window->wayland_surface,
 		};
 
+		fprintf(stderr, "display = %p display = %p surface = %p\n", display, wayland_create_info.display, wayland_create_info.surface);
+
 		return vkCreateWaylandSurfaceKHR(instance, &wayland_create_info, pAllocator, pSurface);
 	} else if (GDK_IS_X11_DISPLAY(display)) {
 		VkXlibSurfaceCreateInfoKHR x11_create_info = {

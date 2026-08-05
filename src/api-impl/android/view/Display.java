@@ -71,4 +71,10 @@ public final class Display {
 	public DisplayCutout getCutout() {
 		return DisplayCutout.NO_CUTOUT;
 	}
+
+	public static final class Mode /* implements Parcelable */ {}
+
+	public Mode[] getSupportedModes() {
+		return new Mode[0];
+	}
 }

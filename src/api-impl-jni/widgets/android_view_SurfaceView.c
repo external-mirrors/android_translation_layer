@@ -127,7 +127,7 @@ static gboolean on_resize_delayed(struct jni_callback_data *d)
 
 	// TODO: are there cases where returning RGBA_8888 is a bad idea?
 	// NOTE: we want to call the private method of android.view.SurfaceView, not the related method with this name in the API
-	(*env)->CallVoidMethod(env, d->this, handle_cache.surface_view.surfaceChanged, 1 /*RGBA_8888*/, d->resize_width, d->resize_height);
+	//(*env)->CallVoidMethod(env, d->this, handle_cache.surface_view.surfaceChanged, 1 /*RGBA_8888*/, d->resize_width, d->resize_height);
 
 	return G_SOURCE_REMOVE;
 }

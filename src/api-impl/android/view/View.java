@@ -41,6 +41,8 @@ import android.view.autofill.AutofillId;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.translation.ViewTranslationCallback;
+import android.view.ViewRootImpl;
+import android.view.WindowInsets;
 import java.lang.CharSequence;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -2040,6 +2042,8 @@ public class View implements Drawable.Callback {
 		return view;
 	}
 
+	public ViewRootImpl getViewRootImpl() { return new ViewRootImpl(); }
+
 	public boolean isShown() { return true; }
 
 	public int getWindowVisibility() { return VISIBLE; }
@@ -2366,7 +2370,7 @@ public class View implements Drawable.Callback {
 			return false;
 	}
 
-	public WindowInsets getRootWindowInsets() { return null; }
+	public WindowInsets getRootWindowInsets() { return new WindowInsets(); }
 
 	public PointerIcon getPointerIcon() { return null; }
 
@@ -2570,4 +2574,12 @@ public class View implements Drawable.Callback {
 	public void setLabelFor(int id) {}
 
 	public ArrayList<View> getFocusables(int direction) { return new ArrayList<View>(); }
+
+	public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+		return insets;
+	}
+
+	final static class AttachInfo {
+		final Rect mVisibleInsets = new Rect();
+	}
 }

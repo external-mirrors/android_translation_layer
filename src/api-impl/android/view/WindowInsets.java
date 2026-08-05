@@ -1,5 +1,11 @@
 package android.view;
 
+import android.view.DisplayCutout;
+import android.graphics.Insets;
+import android.graphics.Rect;
+
+import java.util.List;
+
 public class WindowInsets {
 
 	public static final WindowInsets CONSUMED = new WindowInsets();
@@ -52,6 +58,14 @@ public class WindowInsets {
 		return 0;
 	}
 
+	public Insets getInsets(int typeMask) {
+		return Insets.NONE;
+	}
+
+	public DisplayCutout getDisplayCutout() {
+		return null;
+	}
+
 	public boolean isRound() {
 		return false;
 	}
@@ -60,8 +74,98 @@ public class WindowInsets {
 		return false;
 	}
 
+	public boolean isVisible(int typeMask) {
+		return false;
+	}
+
 	public WindowInsets consumeDisplayCutout() {
 		return this;
+	}
+
+	public static final class Builder {
+
+		public Builder() {}
+
+		public Builder(WindowInsets insets) {}
+
+		public Builder setSystemWindowInsets(Insets systemWindowInsets) {
+			return this;
+		}
+
+		public Builder setSystemGestureInsets(Insets insets) {
+			return this;
+		}
+
+		public Builder setMandatorySystemGestureInsets(Insets insets) {
+			return this;
+		}
+
+		public Builder setTappableElementInsets(Insets insets) {
+			return this;
+		}
+
+		public Builder setInsets(int typeMask, Insets insets) {
+			return this;
+		}
+
+		public Builder setInsetsIgnoringVisibility(int typeMask, Insets insets)
+				throws IllegalArgumentException{
+			return this;
+		}
+
+		public Builder setVisible(int typeMask, boolean visible) {
+			return this;
+		}
+
+		public Builder setStableInsets(Insets stableInsets) {
+			return this;
+		}
+
+		public Builder setDisplayCutout(DisplayCutout displayCutout) {
+			return this;
+		}
+
+		public Builder setPrivacyIndicatorBounds(Rect bounds) {
+			return this;
+		}
+
+		public Builder setRound(boolean round) {
+			return this;
+		}
+
+		public Builder setAlwaysConsumeSystemBars(boolean alwaysConsumeSystemBars) {
+			return this;
+		}
+
+		public Builder setForceConsumingTypes(int forceConsumingTypes) {
+			return this;
+		}
+
+		/** @hide */
+		public Builder setForceConsumingOpaqueCaptionBar(boolean forceConsumingOpaqueCaptionBar) {
+			return this;
+		}
+
+		/** @hide */
+		public Builder setSuppressScrimTypes(int suppressScrimTypes) {
+			return this;
+		}
+
+		public Builder setBoundingRects(int typeMask, List<Rect> rects) {
+			return this;
+		}
+
+		public Builder setBoundingRectsIgnoringVisibility( int typeMask, List<Rect> rects) {
+			return this;
+		}
+
+		public Builder setFrame(int width, int height) {
+			return this;
+		}
+
+		public WindowInsets build() {
+			return new WindowInsets();
+		}
 	}
 
 	/* Copyright (C) 2014 The Android Open Source Project */

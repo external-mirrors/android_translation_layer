@@ -17,7 +17,11 @@ JNIEXPORT jlong JNICALL Java_android_widget_CheckBox_native_1constructor(JNIEnv 
 
 JNIEXPORT void JNICALL Java_android_widget_CheckBox_setChecked(JNIEnv *env, jobject this, jboolean checked)
 {
-	gtk_check_button_set_active(GTK_CHECK_BUTTON(_PTR(_GET_LONG_FIELD(this, "widget"))), checked);
+	fprintf(stderr, "POOP! entry %d\n", checked);
+	jlong widget = _GET_LONG_FIELD(this, "widget");
+	fprintf(stderr, "POOP2 0x%08x\n", widget);
+	gtk_check_button_set_active(GTK_CHECK_BUTTON(_PTR(widget)), checked);
+	fprintf(stderr, "UN-POOP! %d\n", checked);
 }
 
 JNIEXPORT jboolean JNICALL Java_android_widget_CheckBox_isChecked(JNIEnv *env, jobject this)
@@ -27,11 +31,17 @@ JNIEXPORT jboolean JNICALL Java_android_widget_CheckBox_isChecked(JNIEnv *env, j
 
 static gboolean on_toggled(GtkCheckButton *self, jobject listener)
 {
+	fprintf(stderr, "POOP! %d\n", __LINE__);
 	JNIEnv *env = get_jni_env();
+	fprintf(stderr, "POOP! %d\n", __LINE__);
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(self)));
+	fprintf(stderr, "POOP! %d\n", __LINE__);
 	jmethodID on_check_changed = _METHOD(_CLASS(listener), "onCheckedChanged", "(Landroid/widget/CompoundButton;Z)V");
+	fprintf(stderr, "POOP! %d\n", __LINE__);
 	gboolean state = gtk_check_button_get_active(self);
-	(*env)->CallVoidMethod(env, listener, on_check_changed, wrapper->jobj, state);
+	fprintf(stderr, "POOP! %d\n", __LINE__);
+	//(*env)->CallVoidMethod(env, listener, on_check_changed, wrapper->jobj, 0);
+	fprintf(stderr, "POOP! %d\n", __LINE__);
 	return FALSE;
 }
 

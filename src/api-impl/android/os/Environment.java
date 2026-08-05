@@ -804,6 +804,6 @@ public class Environment {
 		return Environment.MEDIA_MOUNTED;
 	}
 
-	public static boolean isExternalStorageManager() { return false; }
-	public static boolean isExternalStorageManager(File path) { return false; }
+	public static boolean isExternalStorageManager() { return true; }
+	public static boolean isExternalStorageManager(File path) { return true; }
 }
