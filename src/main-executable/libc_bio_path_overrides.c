@@ -5,6 +5,7 @@
 #include <unistd.h>
 
 #include <fontconfig/fontconfig.h>
+#include <glib.h>
 
 /* helpers */
 static bool starts_with(const char *string, const char *substring)
@@ -83,6 +84,8 @@ static char *fonts_overrides[] = {
 	NULL,
 };
 
+extern char *get_app_data_dir(void);
+
 bool apply_path_overrides(char **path)
 {
 	bool free_path = false;
@@ -108,6 +111,17 @@ bool apply_path_overrides(char **path)
 			*path = new_path;
 		else
 			fprintf(stderr, "%s: !!! app trying to access a font at >%s<, but there is no >%s< in the fontconfig cache\n", __func__, *path, font_filename);
+	}
+
+	/* Some apps literally hardcode the external storage path (even with assumed userid=0). */
+	if (starts_with(*path, "/storage/emulated/0/")) {
+		char *suffix = *path + sizeof("/storage/emulated/0");
+		char *new_path = g_strdup_printf("%s/%s", get_app_data_dir(), suffix);
+
+		fprintf(stderr, "%s: !!! app trying to access >%s<, rewriting to >%s<\n", __func__, *path, new_path);
+
+		*path = new_path;
+		free_path = true;
 	}
 
 	if (starts_with(*path, "/system/") || starts_with(*path, "/data/")) {
