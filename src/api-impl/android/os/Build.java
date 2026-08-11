@@ -186,6 +186,12 @@ public class Build {
 		public static final int RESOURCES_SDK_INT;
 
 		public static final String SECURITY_PATCH = getString("ro.build.version.security_patch");
+
+		/**
+		 * The developer preview revision of a prerelease SDK. This value will always
+		 * be <code>0</code> on production platform builds/devices.
+		 */
+		public static final int PREVIEW_SDK_INT = SystemProperties.getInt("ro.build.version.preview_sdk", 0);
 	}
 
 	/**
