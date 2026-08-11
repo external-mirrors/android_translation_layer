@@ -151,6 +151,23 @@ public class ContentResolver {
 		return Collections.emptyList();
 	}
 
+	public final ContentProviderClient acquireContentProviderClient(Uri uri) {
+		return acquireContentProviderClient(uri.getAuthority());
+	}
+
+	public final ContentProviderClient acquireContentProviderClient(String name) {
+		ContentProvider provider = ContentProvider.atl_get_content_provider(name);
+		return provider != null ? new ContentProviderClient(provider) : null;
+	}
+
+	public final ContentProviderClient acquireUnstableContentProviderClient(Uri uri) {
+		return acquireContentProviderClient(uri);
+	}
+
+	public final ContentProviderClient acquireUnstableContentProviderClient(String name) {
+		return acquireContentProviderClient(name);
+	}
+
 	public static void requestSync(Account account, String authority, Bundle extras) {
 	}
 
