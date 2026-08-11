@@ -2091,6 +2091,8 @@ public class View implements Drawable.Callback {
 
 	public boolean isLayoutDirectionResolved() { return true; }
 
+	public boolean canResolveLayoutDirection() { return true; }
+
 	public boolean isPaddingRelative() { return false; }
 
 	public void setForeground(Drawable foreground) {}
