@@ -1,6 +1,7 @@
 package android.widget;
 
 import android.R;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
@@ -78,6 +79,7 @@ public class TimePicker extends FrameLayout {
 		on_time_changed_listener = onTimeChangedListener;
 	}
 
+	@Export
 	private void onTimeChange() {
 		if (on_time_changed_listener != null) {
 			on_time_changed_listener.onTimeChanged(this, getCurrentHour(), getCurrentMinute());

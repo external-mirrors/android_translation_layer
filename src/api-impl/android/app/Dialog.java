@@ -1,6 +1,7 @@
 package android.app;
 
 import android.R;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
@@ -129,6 +130,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 		return nativeIsShowing(nativePtr);
 	}
 
+	@Export
 	public void dismiss() {
 		System.out.println("dismissing the Dialog " + Dialog.this);
 		// HACK: dismissing the Dialog takes some time in AOSP, as the request goes back and forth between the application

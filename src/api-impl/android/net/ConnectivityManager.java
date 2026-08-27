@@ -1,5 +1,6 @@
 package android.net;
 
+import android.atl.annotation.Export;
 import android.os.Handler;
 
 class ProxyInfo {}
@@ -7,7 +8,10 @@ class ProxyInfo {}
 public class ConnectivityManager {
 
 	public class NetworkCallback {
+		@Export
 		public void onAvailable(Network network) {}
+
+		@Export
 		public void onLost(Network network) {}
 	}
 

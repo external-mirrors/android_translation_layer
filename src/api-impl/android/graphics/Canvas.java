@@ -1,6 +1,7 @@
 package android.graphics;
 
 import android.atl.GskCanvas;
+import android.atl.annotation.Export;
 import android.content.res.Resources;
 import android.util.Log;
 
@@ -153,6 +154,7 @@ public class Canvas {
 	 * @param y        The y-coordinate of origin for where to draw the text
 	 * @param paint The paint used for the text (e.g. color, size, style)
 	 */
+	@Export
 	public void drawText(CharSequence text, int start, int end, float x, float y, Paint paint) {
 		drawText(text.toString().substring(start, end), x, y, paint);
 		/*if (text instanceof String || text instanceof SpannedString

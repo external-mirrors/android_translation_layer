@@ -1,5 +1,6 @@
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.util.AttributeSet;
 
@@ -43,6 +44,7 @@ public class DatePicker extends FrameLayout {
 		on_date_changed_listener = onDateChangedListener;
 	}
 
+	@Export
 	private void onDateChange() {
 		if (on_date_changed_listener != null) {
 			on_date_changed_listener.onDateChanged(this, getYear(), getMonth(), getDayOfMonth());

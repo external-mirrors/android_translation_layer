@@ -15,6 +15,7 @@ import android.app.StatusBarManager;
 import android.app.UiModeManager;
 import android.app.job.JobScheduler;
 import android.atl.ATLLoadedApp;
+import android.atl.annotation.Export;
 import android.bluetooth.BluetoothManager;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -146,6 +147,7 @@ public abstract class Context {
 	private static native void nativeRegisterUnifiedPush(String token, String application);
 	protected static native void nativeStartExternalService(Intent service);
 
+	@Export
 	static Application createApplication(long native_window) throws Exception {
 		Application application = ATLLoadedApp.getPrimaryApplication().getApplication();
 		application.native_window = native_window;
@@ -188,6 +190,7 @@ public abstract class Context {
 		return Looper.getMainLooper();
 	}
 
+	@Export
 	public String getPackageName() {
 		return getApplicationInfo().packageName;
 	}
@@ -375,6 +378,7 @@ public abstract class Context {
 
 	public abstract ClassLoader getClassLoader();
 
+	@Export
 	public abstract ComponentName startService(Intent intent);
 
 	// TODO: do these both work? make them look more alike
@@ -405,6 +409,7 @@ public abstract class Context {
 	public abstract boolean bindService(final Intent intent, final ServiceConnection serviceConnection, int flags);
 
 	/* For use from native code */
+	@Export
 	static Activity resolveActivityInternal(Intent intent) throws ReflectiveOperationException {
 		String className = null;
 		ATLLoadedApp primary = ATLLoadedApp.getPrimaryApplication();
@@ -429,6 +434,7 @@ public abstract class Context {
 		}
 	}
 
+	@Export
 	public abstract void startActivity(Intent intent);
 
 	public void startActivity(Intent intent, Bundle options) {
@@ -471,6 +477,7 @@ public abstract class Context {
 		return new File(databaseDir, dbName);
 	}
 
+	@Export
 	public void sendBroadcast(Intent intent) {
 		if ("org.unifiedpush.android.distributor.REGISTER".equals(intent.getAction())) {
 			nativeRegisterUnifiedPush(intent.getStringExtra("token"), intent.getStringExtra("application"));

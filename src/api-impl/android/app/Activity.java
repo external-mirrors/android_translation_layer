@@ -2,6 +2,7 @@ package android.app;
 
 import android.app.ActionBar;
 import android.atl.ATLLoadedApp;
+import android.atl.annotation.Export;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -68,6 +69,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	 * @return  instance of main activity class
 	 * @throws Exception
 	 */
+	@Export
 	private static Activity createMainActivity(String className, long native_window, String uriString) throws ReflectiveOperationException {
 		Uri uri = uriString != null ? Uri.parse(uriString) : null;
 		if (className == null) {
@@ -144,6 +146,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 
 	public final void setVolumeControlStream(int streamType) {}
 
+	@Export
 	protected void onCreate(Bundle savedInstanceState) {
 		Slog.i(TAG, "- onCreate - yay!");
 
@@ -154,11 +157,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	protected void onPostCreate(Bundle savedInstanceState) {
 		Slog.i(TAG, "- onPostCreate - yay!");
 		return;
 	}
 
+	@Export
 	protected void onStart() {
 		Slog.i(TAG, "- onStart - yay!");
 		window.set_widget_as_root(window.native_window, window.getDecorView().widget);
@@ -177,6 +182,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	protected void onResume() {
 		Slog.i(TAG, "- onResume - yay!");
 
@@ -188,11 +194,13 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	protected void onPostResume() {
 		Slog.i(TAG, "- onPostResume - yay!");
 		return;
 	}
 
+	@Export
 	protected void onPause() {
 		Slog.i(TAG, "- onPause - yay!");
 
@@ -204,6 +212,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	protected void onStop() {
 		Slog.i(TAG, "- onStop - yay!");
 
@@ -214,6 +223,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	protected void onDestroy() {
 		Slog.i(TAG, "- onDestroy - yay!");
 
@@ -225,6 +235,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return;
 	}
 
+	@Export
 	public void onWindowFocusChanged(boolean hasFocus) {
 		Slog.i(TAG, "- onWindowFocusChanged - yay! (hasFocus: " + hasFocus + ")");
 
@@ -296,6 +307,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	);
 
 	// callback from native code
+	@Export
 	protected void fileChooserResultCallback(int requestCode, int resultCode, int action, String uri) {
 		onActivityResult(requestCode, resultCode, new Intent(FILE_CHOOSER_ACTIONS.get(action), uri != null ? Uri.parse(uri) : null));
 	}
@@ -490,6 +502,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return title;
 	}
 
+	@Export
 	public void onBackPressed() {
 		System.out.println("onBackPressed() called");
 		finish();
@@ -541,6 +554,7 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		return getSharedPreferences(getLocalClassName(), mode);
 	}
 
+	@Export
 	protected void onNewIntent(Intent intent) {}
 
 	public final Activity getParent() {

@@ -16,6 +16,7 @@
 
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -134,6 +135,7 @@ public class PopupMenu {
 	protected native void native_show(long popover, long anchor);
 
 	// callback from native code
+	@Export
 	protected void menuItemClickCallback(final int id) {
 		if (mMenuItemClickListener != null) {
 			mMenuItemClickListener.onMenuItemClick(getMenu().findItem(id));

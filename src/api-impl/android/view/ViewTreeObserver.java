@@ -16,6 +16,7 @@
 
 package android.view;
 
+import android.atl.annotation.Export;
 import android.graphics.Rect;
 import android.graphics.Region;
 import android.os.Handler;
@@ -820,6 +821,7 @@ public final class ViewTreeObserver {
 	 * manually if you are forcing a layout on a View or a hierarchy of Views that are
 	 * not attached to a Window or in the GONE state.
 	 */
+	@Export
 	public final void dispatchOnGlobalLayout() {
 		// NOTE: because of the use of CopyOnWriteArrayList, we *must* use an iterator to
 		// perform the dispatching. The iterator is a safe guard against listeners that

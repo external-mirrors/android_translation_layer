@@ -1,6 +1,7 @@
 package android.os;
 
 import android.atl.ATLLoadedApp;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.os.Parcelable.Creator;
 import android.util.SparseArray;
@@ -406,12 +407,14 @@ public class Parcel {
 			throw new SecurityException("Interface mismatch");
 	}
 
+	@Export
 	public void writeParcelable(Parcelable p, int flags) {
 		writeString(p != null ? p.getClass().getName() : null);
 		if (p != null)
 			p.writeToParcel(this, flags);
 	}
 
+	@Export
 	public Parcelable readParcelable(ClassLoader loader) throws ReflectiveOperationException {
 		String className = readString();
 		if (className == null)

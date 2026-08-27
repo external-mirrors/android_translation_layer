@@ -3,6 +3,7 @@ package android.content;
 import android.atl.ATLLoadedApp;
 import android.atl.ATLMediaContentProvider;
 import android.atl.ATLProvider;
+import android.atl.annotation.Export;
 import android.content.pm.PackageParser;
 import android.content.pm.ProviderInfo;
 import android.content.res.AssetFileDescriptor;
@@ -19,6 +20,7 @@ public abstract class ContentProvider {
 
 	static final HashMap<String, ATLProvider> atl_providers = new HashMap<>();
 
+	@Export
 	static void createContentProviders() {
 		atl_providers.put("media", new ATLProvider(new ATLMediaContentProvider()));
 		ATLLoadedApp primary = ATLLoadedApp.getPrimaryApplication();

@@ -17,6 +17,7 @@
 package android.net;
 
 import android.annotation.SystemApi;
+import android.atl.annotation.Export;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.util.Log;
@@ -444,6 +445,7 @@ public abstract class Uri implements Parcelable, Comparable<Uri> {
 	 * @throws NullPointerException if uriString is null
 	 * @return Uri for this given uri string
 	 */
+	@Export
 	public static Uri parse(String uriString) {
 		return new StringUri(uriString);
 	}

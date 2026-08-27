@@ -1,5 +1,6 @@
 package android.atl;
 
+import android.atl.annotation.Export;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.res.AssetFileDescriptor;
@@ -20,7 +21,7 @@ public class ATLMediaContentProvider extends ContentProvider {
 	File selectedFile = null;
 	long timestamp = 0;
 
-	// called from native
+	@Export
 	void setSelectedFile(String selectedFile) {
 		this.selectedFile = selectedFile == null ? null : new File(selectedFile);
 		this.waitingForFileChooser = false;

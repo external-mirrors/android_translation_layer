@@ -1,6 +1,7 @@
 package android.graphics.drawable;
 
 import android.atl.GskCanvas;
+import android.atl.annotation.Export;
 import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.content.res.Resources.Theme;
@@ -100,6 +101,7 @@ public class Drawable {
 		public abstract int getChangingConfigurations();
 	}
 
+	@Export
 	public void setBounds(int left, int top, int right, int bottom) {
 		boolean changed = left != mBounds.left || top != mBounds.top || right != mBounds.right || bottom != mBounds.bottom;
 		mBounds.set(left, top, right, bottom);
@@ -115,6 +117,7 @@ public class Drawable {
 		return mBounds;
 	}
 
+	@Export
 	public void draw(Canvas canvas) {
 		if (canvas instanceof GskCanvas) {
 			if (mBounds.left != 0 || mBounds.top != 0)
@@ -195,7 +198,10 @@ public class Drawable {
 		return this;
 	}
 
+	@Export
 	public int getIntrinsicWidth() { return -1; }
+
+	@Export
 	public int getIntrinsicHeight() { return -1; }
 
 	public void setTintList(ColorStateList tint) {}

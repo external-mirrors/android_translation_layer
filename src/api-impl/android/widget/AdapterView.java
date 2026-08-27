@@ -16,6 +16,7 @@
 
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.os.Parcelable;
@@ -355,6 +356,7 @@ public abstract class AdapterView<T extends Adapter> extends ViewGroup {
 		 * @param position The position of the view in the adapter
 		 * @param id The row id of the item that is selected
 		 */
+		@Export
 		void onItemSelected(AdapterView<?> parent, View view, int position, long id);
 
 		/**

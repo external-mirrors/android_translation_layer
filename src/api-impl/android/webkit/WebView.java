@@ -1,5 +1,6 @@
 package android.webkit;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.content.res.AssetManager;
 import android.util.AttributeSet;
@@ -35,6 +36,7 @@ public class WebView extends ViewGroup {
 	}
 
 	// to be used by native code
+	@Export
 	void internalLoadChanged(int loadState, String url) {
 		if (loadState == /*WEBKIT_LOAD_STARTED*/ 0 && webViewClient != null) {
 			webViewClient.onPageStarted(this, url);
@@ -87,6 +89,7 @@ public class WebView extends ViewGroup {
 	public void stopLoading() {}
 
 	// to be used by native code
+	@Export
 	AssetManager internalGetAssetManager() {
 		return getContext().getResources().getAssets();
 	}

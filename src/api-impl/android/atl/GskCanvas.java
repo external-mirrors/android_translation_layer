@@ -1,5 +1,6 @@
 package android.atl;
 
+import android.atl.annotation.Export;
 import android.graphics.*;
 import android.view.DisplayListCanvas;
 import android.view.RenderNode;
@@ -17,6 +18,7 @@ public class GskCanvas extends DisplayListCanvas {
 
 	private static Paint default_paint = new Paint();
 
+	@Export
 	public GskCanvas(long snapshot) {
 		this.snapshot = snapshot;
 		state_stack.push(new Matrix());

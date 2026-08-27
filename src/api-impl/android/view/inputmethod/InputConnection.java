@@ -14,6 +14,7 @@
  * the License.
  */
 package android.view.inputmethod;
+import android.atl.annotation.Export;
 import android.os.Bundle;
 import android.view.KeyEvent;
 
@@ -60,7 +61,9 @@ public interface InputConnection {
 	 * @return Returns the text before the cursor position; the length of the
 	 * returned text might be less than <var>n</var>.
 	 */
+	@Export
 	public CharSequence getTextBeforeCursor(int n, int flags);
+
 	/**
 	 * Get <var>n</var> characters of text after the current cursor position.
 	 *
@@ -76,6 +79,7 @@ public interface InputConnection {
 	 * @return Returns the text after the cursor position; the length of the
 	 * returned text might be less than <var>n</var>.
 	 */
+	@Export
 	public CharSequence getTextAfterCursor(int n, int flags);
 	/**
 	 * Gets the selected text, if any.
@@ -132,6 +136,7 @@ public interface InputConnection {
 	 */
 	public ExtractedText getExtractedText(ExtractedTextRequest request,
 	                                      int flags);
+
 	/**
 	 * Delete <var>beforeLength</var> characters of text before the current cursor
 	 * position, and delete <var>afterLength</var> characters of text after the
@@ -147,6 +152,7 @@ public interface InputConnection {
 	 * @return Returns true on success, false if the input connection is no longer
 	 * valid.
 	 */
+	@Export
 	public boolean deleteSurroundingText(int beforeLength, int afterLength);
 	/**
 	 * Set composing text around the current cursor position with the given text,
@@ -210,6 +216,7 @@ public interface InputConnection {
 	 * @return Returns true on success, false if the input connection is no longer
 	 * valid.
 	 */
+	@Export
 	public boolean commitText(CharSequence text, int newCursorPosition);
 	/**
 	 * Commit a completion the user has selected from the possible ones

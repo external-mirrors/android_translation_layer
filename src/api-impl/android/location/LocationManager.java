@@ -1,5 +1,6 @@
 package android.location;
 
+import android.atl.annotation.Export;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -28,6 +29,7 @@ public class LocationManager {
 
 	private native void nativeGetLocation();
 
+	@Export
 	private static void locationUpdated(double latitude,
 	                                    double longitude,
 	                                    double altitude,

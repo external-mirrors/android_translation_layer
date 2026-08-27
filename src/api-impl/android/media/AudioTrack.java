@@ -1,10 +1,13 @@
 package android.media;
 
+import android.atl.annotation.Export;
 import java.nio.ByteBuffer;
 
 public class AudioTrack {
 	public interface OnPlaybackPositionUpdateListener {
 		void onMarkerReached(AudioTrack track);
+
+		@Export
 		void onPeriodicNotification(AudioTrack track);
 	}
 

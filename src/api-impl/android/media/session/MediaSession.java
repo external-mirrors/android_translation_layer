@@ -3,6 +3,7 @@ package android.media.session;
 import android.annotation.NonNull;
 import android.annotation.Nullable;
 import android.app.PendingIntent;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.content.Intent;
 import android.media.AudioAttributes;
@@ -106,6 +107,7 @@ public class MediaSession {
 
 		public void onPrepareFromUri(Uri uri, Bundle extras) {}
 
+		@Export
 		public void onPlay() {}
 
 		public void onPlayFromSearch(String query, Bundle extras) {}
@@ -116,6 +118,7 @@ public class MediaSession {
 
 		public void onSkipToQueueItem(long id) {}
 
+		@Export
 		public void onPause() {}
 
 		public void onSkipToNext() {}
@@ -128,6 +131,7 @@ public class MediaSession {
 
 		public void onStop() {}
 
+		@Export
 		public void onSeekTo(long pos) {}
 
 		//public void onSetRating(@NonNull Rating rating) {}

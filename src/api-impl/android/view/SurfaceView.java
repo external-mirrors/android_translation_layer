@@ -1,6 +1,7 @@
 package android.view;
 
 import android.atl.GskCanvas;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -29,12 +30,14 @@ public class SurfaceView extends View {
 		mSurface.widget = this.widget;
 	}
 
+	@Export
 	private void surfaceChanged(int format, int width, int height) {
 		for (SurfaceHolder.Callback c : mCallbacks) {
 			c.surfaceChanged(mSurfaceHolder, format, width, height);
 		}
 	}
 
+	@Export
 	private void surfaceCreated() {
 		for (SurfaceHolder.Callback c : mCallbacks) {
 			c.surfaceCreated(mSurfaceHolder);

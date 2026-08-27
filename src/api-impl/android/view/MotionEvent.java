@@ -16,6 +16,7 @@
 
 package android.view;
 
+import android.atl.annotation.Export;
 import android.graphics.Matrix;
 import android.os.SystemClock;
 import android.util.SparseArray;
@@ -1383,16 +1384,19 @@ public final class MotionEvent extends InputEvent {
 	private MotionEvent() {
 	}
 
+	@Export("constructor_scroll")
 	public MotionEvent(int source, int action, long eventTime, float x, float y, float raw_x, float raw_y, float scroll_dx, float scroll_dy) {
 		this(source, action, eventTime, new int[] {0}, new float[] {x, y, raw_x, raw_y});
 		this.scroll_dx = scroll_dx;
 		this.scroll_dy = scroll_dy;
 	}
 
+	@Export("constructor_single")
 	public MotionEvent(int source, int action, long eventTime, float x, float y, float raw_x, float raw_y) {
 		this(source, action, eventTime, new int[] {0}, new float[] {x, y, raw_x, raw_y});
 	}
 
+	@Export("constructor")
 	public MotionEvent(int source, int action, long eventTime, int[] ids, float[] coords) {
 		this.source = source;
 		this.action = action;

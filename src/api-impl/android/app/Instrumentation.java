@@ -1,6 +1,7 @@
 package android.app;
 
 import android.atl.ATLLoadedApp;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -30,6 +31,7 @@ public class Instrumentation {
 	public static final String REPORT_KEY_IDENTIFIER = "id";
 	public static final String REPORT_KEY_STREAMRESULT = "stream";
 
+	@Export
 	private static Instrumentation create(String className, Intent arguments) throws Exception {
 		Thread.setUncaughtExceptionPreHandler(new ExceptionHandler());
 		try {

@@ -16,6 +16,7 @@
 
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.database.DataSetObserver;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,13 @@ public interface Adapter {
 	 * @param observer the object to unregister.
 	 */
 	void unregisterDataSetObserver(DataSetObserver observer);
+
 	/**
 	 * How many items are in the data set represented by this Adapter.
 	 *
 	 * @return Count of items.
 	 */
+	@Export
 	int getCount();
 
 	/**

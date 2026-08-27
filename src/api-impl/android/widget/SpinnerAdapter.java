@@ -16,6 +16,7 @@
 
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -39,5 +40,6 @@ public interface SpinnerAdapter extends Adapter {
 	 * @return a {@link android.view.View} corresponding to the data at the
 	 *         specified position.
 	 */
+	@Export
 	public View getDropDownView(int position, View convertView, ViewGroup parent);
 }

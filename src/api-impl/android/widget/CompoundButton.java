@@ -1,5 +1,6 @@
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
@@ -40,6 +41,7 @@ public abstract class CompoundButton extends Button implements Checkable {
 	public native void native_setText(long widget, String text);
 
 	public static interface OnCheckedChangeListener {
+		@Export
 		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked);
 	}
 

@@ -1,11 +1,13 @@
 package android.atl;
 
+import android.atl.annotation.Export;
 import android.os.Parcel;
 
 public class GVariantBuilderParcel extends Parcel {
 
 	private long builder;
 
+	@Export
 	public GVariantBuilderParcel(long builder) {
 		this.builder = builder;
 	}

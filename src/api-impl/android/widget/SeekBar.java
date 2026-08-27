@@ -1,5 +1,6 @@
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.util.AttributeSet;
 
@@ -41,10 +42,13 @@ public class SeekBar extends AbsSeekBar {
 	}
 
 	public static interface OnSeekBarChangeListener {
+		@Export
 		public void onStartTrackingTouch(SeekBar seekBar);
 
+		@Export
 		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser);
 
+		@Export
 		public void onStopTrackingTouch(SeekBar seekBar);
 	}
 }

@@ -1,5 +1,6 @@
 package android.widget;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -41,6 +42,7 @@ public class PopupWindow {
 	private long popover; // native pointer to GtkPopover
 
 	public interface OnDismissListener {
+		@Export
 		public void onDismiss();
 	}
 

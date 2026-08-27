@@ -20,6 +20,8 @@
 
 package android.database.sqlite;
 
+import android.atl.annotation.Export;
+
 /**
  * Describes a custom SQL function.
  *
@@ -50,6 +52,7 @@ public final class SQLiteCustomFunction {
 	}
 
 	// Called from native.
+	@Export
 	@SuppressWarnings("unused")
 	private void dispatchCallback(String[] args) {
 		callback.callback(args);

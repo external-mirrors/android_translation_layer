@@ -16,6 +16,7 @@
 
 package android.view;
 
+import android.atl.annotation.Export;
 import android.os.Parcelable;
 //import android.text.method.MetaKeyKeyListener;
 import android.util.Log;
@@ -1855,6 +1856,7 @@ public class KeyEvent extends InputEvent implements Parcelable {
 	 * initial down) or event count for multiple events.
 	 * @param metaState Flags indicating which meta keys are currently pressed.
 	 */
+	@Export
 	public KeyEvent(long downTime, long eventTime, int action,
 	                int code, int repeat, int metaState) {
 		mDownTime = downTime;

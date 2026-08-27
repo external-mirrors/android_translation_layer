@@ -16,6 +16,7 @@
 
 package android.text;
 
+import android.atl.annotation.Export;
 import android.graphics.Paint;
 import android.os.Build;
 import android.util.Log;
@@ -24,6 +25,7 @@ import com.android.internal.util.GrowingArrayUtils;
 import java.lang.reflect.Array;
 import java.util.IdentityHashMap;
 import libcore.util.EmptyArray;
+
 /**
  * This is the class for text whose content and markup can both be changed.
  */
@@ -43,6 +45,7 @@ public class SpannableStringBuilder implements CharSequence, GetChars, Spannable
 	 * Create a new SpannableStringBuilder containing a copy of the
 	 * specified text, including its spans if any.
 	 */
+	@Export
 	public SpannableStringBuilder(CharSequence text) {
 		this(text, 0, text.length());
 	}

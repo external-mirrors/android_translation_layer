@@ -1,11 +1,13 @@
 package android.atl;
 
+import android.atl.annotation.Export;
 import android.os.Parcel;
 
 public class GVariantIterParcel extends Parcel {
 
 	private long iter;
 
+	@Export
 	public GVariantIterParcel(long iter) {
 		this.iter = iter;
 	}

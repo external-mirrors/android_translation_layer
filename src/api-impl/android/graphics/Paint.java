@@ -1,5 +1,6 @@
 package android.graphics;
 
+import android.atl.annotation.Export;
 import java.util.Locale;
 
 public class Paint {
@@ -44,6 +45,7 @@ public class Paint {
 		setColor(Color.argb(a, r, g, b));
 	}
 
+	@Export
 	public int getColor() {
 		return native_get_color(paint);
 	}

@@ -1,5 +1,6 @@
 package android.media;
 
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.net.Uri;
 import java.io.FileDescriptor;
@@ -9,6 +10,7 @@ public class MediaPlayer {
 	private long gtk_media_stream;
 
 	public interface OnCompletionListener {
+		@Export
 		void onCompletion(MediaPlayer media_player);
 	}
 	public interface OnErrorListener {

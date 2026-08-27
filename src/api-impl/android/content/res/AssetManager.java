@@ -17,6 +17,7 @@
 package android.content.res;
 
 import android.atl.ATLLoadedApp;
+import android.atl.annotation.Export;
 import android.content.Context;
 import android.os.Build;
 import android.os.Environment;
@@ -631,6 +632,7 @@ public final class AssetManager {
 
 	private native final int addAssetPathNative(String path);
 
+	@Export
 	public static void extractFromAPK(String apk_resource_path, String path, String target) throws IOException {
 		String[] apk_paths = apk_resource_path.split(":");
 		if (path.endsWith("/")) { // directory

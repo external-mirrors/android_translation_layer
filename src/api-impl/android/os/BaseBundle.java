@@ -1,5 +1,6 @@
 package android.os;
 
+import android.atl.annotation.Export;
 import android.util.ArrayMap;
 import android.util.Log;
 import java.util.Set;
@@ -51,6 +52,7 @@ public class BaseBundle {
 	 *
 	 * @return a Set of String keys
 	 */
+	@Export
 	public Set<String> keySet() {
 		return mMap.keySet();
 	}
@@ -81,6 +83,7 @@ public class BaseBundle {
 	 * @param key a String key
 	 * @return an Object, or null
 	 */
+	@Export
 	public Object get(String key) {
 		return mMap.get(key);
 	}

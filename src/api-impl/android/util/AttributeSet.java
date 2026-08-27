@@ -16,6 +16,7 @@
 
 package android.util;
 
+import android.atl.annotation.Export;
 import org.xmlpull.v1.XmlPullParser;
 
 /**
@@ -118,6 +119,7 @@ public interface AttributeSet {
 	 * @return A String containing the value of the attribute, or null if the
 	 *         attribute cannot be found.
 	 */
+	@Export
 	public String getAttributeValue(String namespace, String name);
 
 	/**
@@ -199,6 +201,7 @@ public interface AttributeSet {
 	 *
 	 * @return Resulting value.
 	 */
+	@Export
 	public int getAttributeIntValue(String namespace, String attribute,
 	                                int defaultValue);
 

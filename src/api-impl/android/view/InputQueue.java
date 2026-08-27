@@ -1,5 +1,7 @@
 package android.view;
 
+import android.atl.annotation.Export;
+
 public final class InputQueue {
 	// for now, we will put a GtkEventController for the window here
 	private long native_ptr = 0;
@@ -13,6 +15,7 @@ public final class InputQueue {
 		 * Called when the given InputQueue is now associated with the
 		 * thread making this call, so it can start receiving events from it.
 		 */
+		@Export
 		void onInputQueueCreated(InputQueue queue);
 
 		/**

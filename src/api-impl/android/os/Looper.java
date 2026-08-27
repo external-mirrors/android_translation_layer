@@ -16,6 +16,7 @@
 
 package android.os;
 
+import android.atl.annotation.Export;
 import android.util.Log;
 import android.util.PrefixPrinter;
 import android.util.Printer;
@@ -86,6 +87,7 @@ public final class Looper {
 	 * is created by the Android environment, so you should never need
 	 * to call this function yourself.  See also: {@link #prepare()}
 	 */
+	@Export
 	public static void prepareMainLooper() {
 		prepare(false);
 		synchronized (Looper.class) {
@@ -109,6 +111,7 @@ public final class Looper {
 	 * Run the message queue in this thread. Be sure to call
 	 * {@link #quit()} to end the loop.
 	 */
+	@Export
 	public static void loop() {
 		final Looper me = myLooper();
 		if (me == null) {
