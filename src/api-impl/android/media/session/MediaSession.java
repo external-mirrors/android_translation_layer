@@ -1,12 +1,18 @@
 package android.media.session;
 
+import android.annotation.NonNull;
+import android.annotation.Nullable;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.media.AudioAttributes;
 import android.media.MediaDescription;
 import android.media.MediaMetadata;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.ResultReceiver;
+
 import java.util.List;
 
 public class MediaSession {
@@ -14,8 +20,6 @@ public class MediaSession {
 	private List<QueueItem> queue;
 
 	public static final class Token {}
-
-	public static abstract class Callback {}
 
 	public static class QueueItem {
 		long id;
@@ -86,4 +90,50 @@ public class MediaSession {
 	public void setQueueTitle(CharSequence title) {}
 	protected native void nativeSetState(int state, long actions, long position, long updateTime, String title, String subTitle, String artUrl);
 	protected native void nativeSetCallback(Callback callback);
+
+	public abstract static class Callback {
+		public Callback() {}
+
+		public void onCommand(@NonNull String command, @Nullable Bundle args, @Nullable ResultReceiver cb) {}
+
+		public boolean onMediaButtonEvent(@NonNull Intent mediaButtonIntent) { return false; }
+
+		public void onPrepare() {}
+
+		public void onPrepareFromMediaId(String mediaId, Bundle extras) {}
+
+		public void onPrepareFromSearch(String query, Bundle extras) {}
+
+		public void onPrepareFromUri(Uri uri, Bundle extras) {}
+
+		public void onPlay() {}
+
+		public void onPlayFromSearch(String query, Bundle extras) {}
+
+		public void onPlayFromMediaId(String mediaId, Bundle extras) {}
+
+		public void onPlayFromUri(Uri uri, Bundle extras) {}
+
+		public void onSkipToQueueItem(long id) {}
+
+		public void onPause() {}
+
+		public void onSkipToNext() {}
+
+		public void onSkipToPrevious() {}
+
+		public void onFastForward() {}
+
+		public void onRewind() {}
+
+		public void onStop() {}
+
+		public void onSeekTo(long pos) {}
+
+		//public void onSetRating(@NonNull Rating rating) {}
+
+		public void onSetPlaybackSpeed(float speed) {}
+
+		public void onCustomAction(@NonNull String action, @Nullable Bundle extras) {}
+	}
 }
