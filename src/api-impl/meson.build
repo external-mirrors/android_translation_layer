@@ -802,6 +802,7 @@ java_args = [
 	'-source', '1.8', '-target', '1.8',
 	'-encoding', 'UTF-8',
 	'-Xlint:-deprecation', # we implement deprecated APIs
+	'-parameters', # include parameter names in the class files (needed by upcall wrapper generator)
 	'-h', join_paths(dir_base, 'src/api-impl-jni/generated_headers')
 ]
 

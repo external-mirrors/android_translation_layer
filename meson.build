@@ -52,6 +52,51 @@ if layer_shell_dep.found()
   add_project_arguments('-DATL_HAS_OSK', language: 'c')
 endif
 
+# hax.jar
+subdir('src/api-impl')
+
+# api-impl.jar
+custom_target('api-impl.jar', build_by_default: true, input: [hax_jar], output: ['api-impl.jar'],
+              install: true,
+              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'api-impl.jar'), hax_jar.full_path()])
+
+# gstub.jar
+subdir('src/gstub')
+
+custom_target('gstub.jar', build_by_default: true, input: [gstub_jar], output: ['gstub.jar'],
+              install: true,
+              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'gstub.jar'), gstub_jar.full_path()])
+
+# test-runner.jar
+subdir('src/test-runner')
+
+custom_target('test_runner.jar', build_by_default: false, input: [test_runner_jar], output: ['test_runner.jar'],
+              install: true,
+              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
+
+#framework-res.apk
+subdir('res/framework-res')
+
+install_data([
+             	'res/fonts.xml'
+             ],
+             install_dir: join_paths(get_option('prefix'), get_option('datadir')) + '/atl/system/etc')
+
+#tools
+subdir('tools/jni_upcall_gen')
+
+upcalls_header_tgt = custom_target('upcalls.h', input: [hax_jar, 'extern_upcalls.txt'], output: ['upcalls.h'],
+                                   command: [jni_upcall_gen[0], '--jar-file', '@INPUT0@', '-d', meson.current_build_dir()+'/upcalls.h',
+                                             '--classpath', bootclasspath, '--short-class-names', '@INPUT1@'])
+
+upcalls_header = declare_dependency(sources: upcalls_header_tgt)
+
+# TODO: switch everything over from relative paths and move this to src/shared_includes
+shared_includes_dir = include_directories('src/api-impl-jni/')
+
 # libandroid
 libandroid_so = shared_library('android', [
                                           	'src/libandroid/asset_manager.c',
@@ -65,10 +110,11 @@ libandroid_so = shared_library('android', [
                                           	'src/libandroid/sensor.c',
                                           	'src/libandroid/trace.c',
                                           ],
+                                          include_directories: shared_includes_dir,
                                           install: true,
                                           soversion: 0,
                                           dependencies: [
-                                          	dependency('gtk4'), dependency('jni'), dependency('vulkan'), dependency('openxr').partial_dependency(includes: true)
+                                          	dependency('gtk4'), dependency('jni'), dependency('vulkan'), dependency('openxr').partial_dependency(includes: true), upcalls_header
                                           ],
                                           c_args: [
                                           	'-D_LARGEFILE64_SOURCE',
@@ -173,6 +219,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                         wl_proto_sources,
                                                                         extra_jni_srcs,
                                                                   ] + marshal_files,
+                                                                  include_directories: shared_includes_dir,
                                                                   install: true,
                                                                   install_dir : get_option('libdir') / 'java/dex/android_translation_layer/natives',
                                                                   install_rpath: '$ORIGIN/:' + get_option('prefix') / get_option('libdir') / 'art',
@@ -181,7 +228,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
                                                                   	dependency('libportal'), dependency('sqlite3'), dependency('libavcodec', version: '>=59'), dependency('libdrm'),
                                                                   	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
-                                                                        libart_dep, wayland_protos_dep
+                                                                        libart_dep, wayland_protos_dep, upcalls_header
                                                                   ],
                                                                   link_with: [ libandroid_so ],
                                                                   link_args: [
@@ -202,9 +249,10 @@ executable('android-translation-layer', [
                                         	'src/main-executable/libc_bio_path_overrides.c',
                                         	resources
                                         ],
+                                        include_directories: shared_includes_dir,
                                         install: true,
                                         dependencies: [
-                                        	dependency('gtk4'), dependency('jni'), declare_dependency(link_with: libtranslationlayer_so), libart_dep, dependency('dl'), libdl_bio_dep, libc_bio_dep, dependency('libportal'), dependency('fontconfig'),
+                                        	dependency('gtk4'), dependency('jni'), declare_dependency(link_with: libtranslationlayer_so), libart_dep, dependency('dl'), libdl_bio_dep, libc_bio_dep, dependency('libportal'), dependency('fontconfig'), upcalls_header
                                         ],
                                         link_args: [
                                         	'-rdynamic'
@@ -214,36 +262,3 @@ executable('android-translation-layer', [
                                         c_args: [
 						'-DINSTALL_DATADIR="'+join_paths(get_option('prefix'), get_option('datadir'))+'"'
                                         ])
-
-# hax.jar
-subdir('src/api-impl')
-
-# api-impl.jar
-custom_target('api-impl.jar', build_by_default: true, input: [hax_jar], output: ['api-impl.jar'],
-              install: true,
-              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
-              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'api-impl.jar'), hax_jar.full_path()])
-
-# gstub.jar
-subdir('src/gstub')
-
-custom_target('gstub.jar', build_by_default: true, input: [gstub_jar], output: ['gstub.jar'],
-              install: true,
-              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
-              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'gstub.jar'), gstub_jar.full_path()])
-
-# test-runner.jar
-subdir('src/test-runner')
-
-custom_target('test_runner.jar', build_by_default: false, input: [test_runner_jar], output: ['test_runner.jar'],
-              install: true,
-              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
-              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'test_runner.jar'), test_runner_jar.full_path()])
-
-#framework-res.apk
-subdir('res/framework-res')
-
-install_data([
-             	'res/fonts.xml'
-             ],
-             install_dir: join_paths(get_option('prefix'), get_option('datadir')) + '/atl/system/etc')

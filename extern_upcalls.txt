@@ -1,0 +1,15 @@
+java/io/InputStream.read([BII)I
+java/lang/CharSequence.toString()Ljava/lang/String;
+java/lang/Class.getClassLoader()Ljava/lang/ClassLoader;
+java/lang/Class.getName()Ljava/lang/String;
+java/lang/Runtime.getRuntime()Ljava/lang/Runtime;
+java/lang/Runtime.loadLibrary(Ljava/lang/String;Ljava/lang/ClassLoader;)V
+java/lang/System.exit(I)V
+java/nio/Buffer.array()Ljava/lang/Object;
+java/nio/Buffer.arrayOffset()I
+java/util/ArrayList.add(Ljava/lang/Object;)Z
+java/util/ArrayList.clear()V
+java/util/ArrayList.get(I)Ljava/lang/Object;
+java/util/ArrayList.remove(Ljava/lang/Object;)Z
+java/util/ArrayList.size()I
+java/util/Set.toArray()[Ljava/lang/Object;
