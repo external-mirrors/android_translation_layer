@@ -154,8 +154,7 @@ static int connect_osk_dbus_iface(GtkWidget *dialog)
 static gboolean on_close_request(GtkWidget *dialog, jobject jobj)
 {
 	JNIEnv *env = get_jni_env();
-	jmethodID dismiss = _METHOD(_CLASS(jobj), "dismiss", "()V");
-	(*env)->CallVoidMethod(env, jobj, dismiss);
+	J__DialogInterface__dismiss(env, jobj);
 	return FALSE;
 }
 

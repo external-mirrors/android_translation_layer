@@ -177,7 +177,7 @@ JNIEXPORT void JNICALL Java_android_text_Layout_native_1draw_1custom_1canvas(JNI
 		if (pango_line->length < end)
 			end = pango_line->length;
 		jfloat y = (float)pango_layout_iter_get_baseline(pango_iter) / PANGO_SCALE;
-		(*env)->CallVoidMethod(env, canvas, handle_cache.canvas.drawText, text_jstr, (jint)0, end, (jfloat)0, y, paint);
+		J__Canvas__drawText(env, canvas, text_jstr, (jint)0, end, (jfloat)0, y, paint);
 		(*env)->DeleteLocalRef(env, text_jstr);
 	} while (pango_layout_iter_next_line(pango_iter));
 }

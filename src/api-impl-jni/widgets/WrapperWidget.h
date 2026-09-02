@@ -13,9 +13,6 @@ struct _WrapperWidget {
 	JavaVM *jvm;
 	jobject jobj;
 	jobject canvas;
-	jmethodID draw_method;
-	jmethodID measure_method;
-	jmethodID computeScroll_method;
 	int layout_width;
 	int layout_height;
 	int real_width;
@@ -26,6 +23,8 @@ struct _WrapperWidget {
 	gboolean hover_exit_pending;
 	int hover_x;
 	int hover_y;
+	bool have_custom_draw_method;
+	bool have_custom_computeScroll;
 };
 
 struct _WrapperWidgetClass {

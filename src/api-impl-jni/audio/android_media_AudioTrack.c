@@ -153,7 +153,7 @@ void periodic_update_callback(snd_async_handler_t *pcm_callback)
 	}
 
 	if (d->listener)
-		(*env)->CallVoidMethod(env, d->listener, handle_cache.audio_track_periodic_listener.onPeriodicNotification, d->this);
+		J__AudioTrack__OnPlaybackPositionUpdateListener__onPeriodicNotification(env, d->listener, d->this);
 
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);

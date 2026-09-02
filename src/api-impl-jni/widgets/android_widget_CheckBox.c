@@ -29,9 +29,8 @@ static gboolean on_toggled(GtkCheckButton *self, jobject listener)
 {
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(self)));
-	jmethodID on_check_changed = _METHOD(_CLASS(listener), "onCheckedChanged", "(Landroid/widget/CompoundButton;Z)V");
 	gboolean state = gtk_check_button_get_active(self);
-	(*env)->CallVoidMethod(env, listener, on_check_changed, wrapper->jobj, state);
+	J__CompoundButton__OnCheckedChangeListener__onCheckedChanged(env, listener, wrapper->jobj, state);
 	return FALSE;
 }
 

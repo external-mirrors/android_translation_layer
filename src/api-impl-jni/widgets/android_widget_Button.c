@@ -45,7 +45,7 @@ static void clicked_cb(GtkWidget *button, gpointer user_data)
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(button));
 
-	(*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.performClick);
+	J__View__performClick(env, wrapper->jobj);
 
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);

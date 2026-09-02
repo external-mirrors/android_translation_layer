@@ -25,7 +25,6 @@ JNIEXPORT jstring JNICALL Java_android_widget_EditText_native_1getText(JNIEnv *e
 struct changed_callback_data {
 	jobject this;
 	jobject listener;
-	jmethodID listener_method;
 	jmethodID getText;
 };
 
@@ -34,15 +33,11 @@ static void changed_cb(GtkEditable *self, jobject listener)
 	JNIEnv *env = get_jni_env();
 
 	const char *text = gtk_editable_get_text(self);
-	jclass spannable_string_builder = (*env)->FindClass(env, "android/text/SpannableStringBuilder");
-	jmethodID spannable_string_builder_constructor = _METHOD(spannable_string_builder, "<init>", "(Ljava/lang/CharSequence;)V");
-	jobject text_obj = (*env)->NewObject(env, spannable_string_builder, spannable_string_builder_constructor, _JSTRING(text));
-	jmethodID onTextChanged = _METHOD(_CLASS(listener), "onTextChanged", "(Ljava/lang/CharSequence;III)V");
-	(*env)->CallVoidMethod(env, listener, onTextChanged, text_obj, 0, 0, strlen(text));
+	jobject text_obj = J_new__SpannableStringBuilder(env, _JSTRING(text));
+	J__TextWatcher__onTextChanged(env, listener, text_obj, 0, 0, strlen(text));
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	jmethodID listener_method = _METHOD(_CLASS(listener), "afterTextChanged", "(Landroid/text/Editable;)V");
-	(*env)->CallVoidMethod(env, listener, listener_method, text_obj);
+	J__TextWatcher__afterTextChanged(env, listener, text_obj);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -82,8 +77,8 @@ static void on_activate(GtkText *gtk_text, struct changed_callback_data *d)
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, IME_ACTION_SEARCH, KEYCODE_ENTER, 0, 0);
-	(*env)->CallBooleanMethod(env, d->listener, d->listener_method, d->this, 0, key_event);
+	jobject key_event = J_new__KeyEvent(env, (jlong)0, (jlong)0, IME_ACTION_SEARCH, KEYCODE_ENTER, 0, 0);
+	J__TextView__OnEditorActionListener__onEditorAction(env, d->listener, d->this, 0, key_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -98,7 +93,6 @@ JNIEXPORT void JNICALL Java_android_widget_EditText_native_1setOnEditorActionLis
 	struct changed_callback_data *callback_data = malloc(sizeof(struct changed_callback_data));
 	callback_data->this = _WEAK_REF(this);
 	callback_data->listener = _REF(listener);
-	callback_data->listener_method = _METHOD(_CLASS(listener), "onEditorAction", "(Landroid/widget/TextView;ILandroid/view/KeyEvent;)Z");
 
 	g_signal_handlers_disconnect_matched(gtk_text, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, on_activate, NULL);
 	g_signal_connect(gtk_text, "activate", G_CALLBACK(on_activate), callback_data);

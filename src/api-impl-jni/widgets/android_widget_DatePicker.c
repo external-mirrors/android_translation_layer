@@ -23,7 +23,7 @@ static void day_selected_cb(GtkWidget *calendar, gpointer user_data)
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(calendar));
 
-	(*env)->CallVoidMethod(env, wrapper->jobj, handle_cache.date_picker.onDateChange);
+	J__DatePicker__onDateChange(env, wrapper->jobj);
 
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);

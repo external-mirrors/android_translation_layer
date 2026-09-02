@@ -4,6 +4,7 @@
 
 // FIXME: put the header in a common place
 #include "../api-impl-jni/defines.h"
+#include "../api-impl-jni/util.h"
 #include "bitmap.h"
 
 #define ANDROID_BITMAP_RESULT_SUCCESS 0
@@ -20,7 +21,7 @@ int AndroidBitmap_getInfo(JNIEnv *env, jobject bitmap, struct AndroidBitmapInfo 
 int AndroidBitmap_lockPixels(JNIEnv *env, jobject bitmap, void **pixels)
 {
 	printf("AndroidBitmap_lockPixels\n");
-	GdkTexture *texture = _PTR((*env)->CallLongMethod(env, bitmap, _METHOD(_CLASS(bitmap), "getTexture", "()J")));
+	GdkTexture *texture = _PTR(J__Bitmap__getTexture(env, bitmap));
 	int stride = _GET_INT_FIELD(bitmap, "stride");
 	int format = _GET_INT_FIELD(_GET_OBJ_FIELD(bitmap, "config", "Landroid/graphics/Bitmap$Config;"), "gdk_memory_format");
 	if (format == -1) {
@@ -67,7 +68,7 @@ int AndroidBitmap_unlockPixels(JNIEnv *env, jobject bitmap)
 	}
 	GdkTexture *texture = gdk_memory_texture_new(width, height, format, bytes, stride);
 	g_bytes_unref(bytes);
-	(*env)->CallVoidMethod(env, bitmap, _METHOD(_CLASS(bitmap), "recycle", "()V"));
+	J__Bitmap__recycle(env, bitmap);
 	_SET_LONG_FIELD(bitmap, "texture", _INTPTR(texture));
 	_SET_LONG_FIELD(bitmap, "bytes", 0);
 	return ANDROID_BITMAP_RESULT_SUCCESS;

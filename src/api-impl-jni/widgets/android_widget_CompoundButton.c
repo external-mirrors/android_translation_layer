@@ -34,8 +34,7 @@ static gboolean on_state_set(GtkSwitch *self, gboolean state, jobject listener)
 {
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(gtk_widget_get_parent(GTK_WIDGET(self))));
-	jmethodID on_check_changed = _METHOD(_CLASS(listener), "onCheckedChanged", "(Landroid/widget/CompoundButton;Z)V");
-	(*env)->CallVoidMethod(env, listener, on_check_changed, wrapper->jobj, state);
+	J__CompoundButton__OnCheckedChangeListener__onCheckedChanged(env, listener, wrapper->jobj, state);
 	return FALSE;
 }
 

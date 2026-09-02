@@ -7,7 +7,7 @@
 static void on_global_layout_callback(GdkFrameClock *clock, jobject view_tree_observer)
 {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallVoidMethod(env, view_tree_observer, handle_cache.view_tree_observer.dispatchOnGlobalLayout);
+	J__ViewTreeObserver__dispatchOnGlobalLayout(env, view_tree_observer);
 	if ((*env)->ExceptionCheck(env)) {
 		(*env)->ExceptionDescribe(env);
 		(*env)->ExceptionClear(env);

@@ -26,8 +26,7 @@ static void on_ended(GtkMediaStream *media_stream, GParamSpec *pspec, jobject li
 {
 	JNIEnv *env = get_jni_env();
 
-	jmethodID onCompletion = _METHOD(_CLASS(listener), "onCompletion", "(Landroid/media/MediaPlayer;)V");
-	(*env)->CallVoidMethod(env, listener, onCompletion, g_object_get_data(G_OBJECT(media_stream), "media_player"));
+	J__MediaPlayer__OnCompletionListener__onCompletion(env, listener, g_object_get_data(G_OBJECT(media_stream), "media_player"));
 }
 
 JNIEXPORT void JNICALL Java_android_media_MediaPlayer_native_1setOnCompletionListener(JNIEnv *env, jclass this, jlong media_stream_ptr, jobject listener)

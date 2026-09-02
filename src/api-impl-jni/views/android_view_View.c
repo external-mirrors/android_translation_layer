@@ -66,13 +66,13 @@ bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagati
 	}
 
 	if (wrapper->custom_dispatch_touch) {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
+		ret = J__View__dispatchTouchEvent(env, this, motion_event);
 	} else if (phase == GTK_PHASE_CAPTURE && _GET_BOOL_FIELD(this, "disallowIntercept")) {
 		if (action == ACTION_UP || action == ACTION_CANCEL)
 			_SET_BOOL_FIELD(this, "disallowIntercept", false);
 		ret = false;
 	} else if (phase == GTK_PHASE_CAPTURE && !wrapper->intercepting_touch) {
-		wrapper->intercepting_touch = (*env)->CallBooleanMethod(env, this, handle_cache.view.onInterceptTouchEvent, motion_event);
+		wrapper->intercepting_touch = J__View__onInterceptTouchEvent(env, this, motion_event);
 		if (wrapper->intercepting_touch) {
 			// store the event that was canceled and let it propagate to the child widgets
 			canceled_event = event;
@@ -84,7 +84,7 @@ bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagati
 		}
 		ret = false;
 	} else {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.onTouchEventInternal, motion_event, (jboolean)is_synthetic);
+		ret = J__View__onTouchEventInternal(env, this, motion_event, (jboolean)is_synthetic);
 	}
 
 	if ((*env)->ExceptionCheck(env))
@@ -114,7 +114,7 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 		(*env)->SetFloatArrayRegion(env, coords, 4 * i, 4, &pointer->coord_x);
 	}
 
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor, SOURCE_TOUCHSCREEN, action, timestamp, ids, coords);
+	jobject motion_event = J_new__MotionEvent(env, SOURCE_TOUCHSCREEN, action, timestamp, ids, coords);
 
 	ret = view_dispatch_motionevent(env, wrapper, phase, motion_event, event, action);
 
@@ -126,8 +126,8 @@ static bool call_ontouch_callback(WrapperWidget *wrapper, int action, struct poi
 static void call_hover_callback(jobject this, int action, float x, float y, float raw_x, float raw_y)
 {
 	JNIEnv *env = get_jni_env();
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class, handle_cache.motion_event.constructor_single, SOURCE_CLASS_POINTER, action, 0, x, y, x, y);
-	(*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchHoverEvent, motion_event);
+	jobject motion_event = J_new__MotionEvent__single(env, SOURCE_CLASS_POINTER, action, 0, x, y, x, y);
+	J__View__dispatchHoverEvent(env, this, motion_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -278,7 +278,7 @@ static void on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 	GtkWidget *widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
 
-	jboolean handled = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.performClick);
+	jboolean handled = J__View__performClick(env, wrapper->jobj);
 
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
@@ -333,12 +333,10 @@ static gboolean scroll_cb(GtkEventControllerScroll *controller, gdouble dx, gdou
 		dx /= MAGIC_SCROLL_FACTOR;
 		dy /= MAGIC_SCROLL_FACTOR;
 	}
-	jobject motion_event = (*env)->NewObject(env, handle_cache.motion_event.class,
-	                                         handle_cache.motion_event.constructor_scroll,
-	                                         SOURCE_CLASS_POINTER, ACTION_SCROLL,
-	                                         gdk_event_get_time(event), x, y, raw_x, raw_y, dx, -dy);
+	jobject motion_event = J_new__MotionEvent__scroll(env, SOURCE_CLASS_POINTER, ACTION_SCROLL,
+	                                                  gdk_event_get_time(event), x, y, raw_x, raw_y, dx, -dy);
 
-	gboolean ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchGenericMotionEvent, motion_event);
+	gboolean ret = J__View__dispatchGenericMotionEvent(env, this, motion_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -398,7 +396,7 @@ void _setOnTouchListener(JNIEnv *env, jobject this, GtkWidget *widget)
 
 	WrapperWidget *wrapper = WRAPPER_WIDGET(widget);
 	jmethodID onintercepttouchevent_method = _METHOD(_CLASS(this), "onInterceptTouchEvent", "(Landroid/view/MotionEvent;)Z");
-	if (onintercepttouchevent_method != handle_cache.view.onInterceptTouchEvent || wrapper->custom_dispatch_touch) {
+	if (onintercepttouchevent_method != _CACHED_METHOD(View__onInterceptTouchEvent) || wrapper->custom_dispatch_touch) {
 		GtkEventController *old_controller = g_object_get_data(G_OBJECT(widget), "on_intercept_touch_listener");
 		if (old_controller)
 			gtk_widget_remove_controller(widget, old_controller);
@@ -617,20 +615,19 @@ JNIEXPORT jlong JNICALL Java_android_view_View_native_1constructor(JNIEnv *env, 
 	wrapper_widget_set_jobject(WRAPPER_WIDGET(wrapper), env, this);
 
 	jclass class = _CLASS(this);
-	jstring nameObj = (*env)->CallObjectMethod(env, class,
-	                                           _METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
-	const char *name = (*env)->GetStringUTFChars(env, nameObj, NULL);
+	jstring name_jstr = J__Class__getName(env, class);
+	const char *name = (*env)->GetStringUTFChars(env, name_jstr, NULL);
 	gtk_widget_set_name(widget, name);
-	(*env)->ReleaseStringUTFChars(env, nameObj, name);
+	(*env)->ReleaseStringUTFChars(env, name_jstr, name);
 
-	if (_METHOD(class, "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.onGenericMotionEvent
-	    || _METHOD(class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchGenericMotionEvent) {
+	if (_METHOD(class, "onGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != _CACHED_METHOD(View__onGenericMotionEvent)
+	    || _METHOD(class, "dispatchGenericMotionEvent", "(Landroid/view/MotionEvent;)Z") != _CACHED_METHOD(View__dispatchGenericMotionEvent)) {
 		GtkEventController *controller = gtk_event_controller_scroll_new(GTK_EVENT_CONTROLLER_SCROLL_VERTICAL);
 
 		g_signal_connect(controller, "scroll", G_CALLBACK(scroll_cb), wrapper->jobj);
 		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	}
-	if (_METHOD(class, "dispatchHoverEvent", "(Landroid/view/MotionEvent;)Z") != handle_cache.view.dispatchHoverEvent) {
+	if (_METHOD(class, "dispatchHoverEvent", "(Landroid/view/MotionEvent;)Z") != _CACHED_METHOD(View__dispatchHoverEvent)) {
 		GtkEventController *controller = gtk_event_controller_motion_new();
 
 		g_signal_connect(controller, "enter", G_CALLBACK(hover_enter_cb), wrapper);
@@ -696,7 +693,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1measure(JNIEnv *env, jobje
 			width = width_spec_size;
 	}
 
-	(*env)->CallVoidMethod(env, this, handle_cache.view.setMeasuredDimension, width, height);
+	J__View__setMeasuredDimension(env, this, width, height);
 }
 
 JNIEXPORT void JNICALL Java_android_view_View_native_1layout(JNIEnv *env, jobject this, jlong widget_ptr, jint l, jint t, jint r, jint b)
@@ -765,6 +762,9 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1setBackgroundColor(JNIEnv 
 
 JNIEXPORT void JNICALL Java_android_view_View_native_1setBackgroundDrawable(JNIEnv *env, jobject this, jlong widget_ptr, jlong paintable_ptr)
 {
+	if ((*env)->ExceptionCheck(env))
+		(*env)->ExceptionDescribe(env);
+
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
 	GdkPaintable *paintable = GDK_PAINTABLE(_PTR(paintable_ptr));
 	wrapper_widget_set_background(WRAPPER_WIDGET(gtk_widget_get_parent(widget)), paintable);
@@ -817,7 +817,7 @@ static void on_long_click(GtkGestureLongPress *gesture, double x, double y, gpoi
 	GtkWidget *widget = gtk_event_controller_get_widget(GTK_EVENT_CONTROLLER(gesture));
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(widget));
 
-	bool ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.performLongClick, x, y);
+	bool ret = J__View__performLongClick(env, wrapper->jobj, x, y);
 
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);

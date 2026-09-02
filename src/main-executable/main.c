@@ -251,7 +251,7 @@ static void parse_string_extras(JNIEnv *env, char **extra_string_keys, jobject i
 			fprintf(stderr, "extra string arg not in 'key=value' format: '%s'\n", *arg);
 			exit(1);
 		}
-		(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING(keyval[0]), _JSTRING(keyval[1]));
+		J__Intent__putExtraCharSequence(env, intent, _JSTRING(keyval[0]), _JSTRING(keyval[1]));
 		g_strfreev(keyval);
 	}
 	g_regex_unref(regex);
@@ -266,11 +266,11 @@ static gboolean on_drop(GtkDropTarget *target, const GValue *value, double x, do
 	}
 
 	JNIEnv *env = get_jni_env();
-	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	jobject intent = J_new__Intent(env);
 	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("android.intent.action.SEND"));
-	_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", (*env)->CallStaticObjectMethod(env, handle_cache.uri.class, handle_cache.uri.parse, _JSTRING(data)));
+	_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", J__Uri__parse(env, _JSTRING(data)));
 
-	jobject activity = (*env)->CallStaticObjectMethod(env, handle_cache.context.class, handle_cache.context.resolveActivityInternal, intent);
+	jobject activity = J__Context__resolveActivityInternal(env, intent);
 	if ((*env)->ExceptionCheck(env)) {
 		(*env)->ExceptionDescribe(env);
 	}
@@ -315,9 +315,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		char *uri = g_file_get_uri(files[0]);
 		JNIEnv *env = get_jni_env();
 		fprintf(stderr, "opening uri over DBus: %s\n", uri);
-		jobject activity = (*env)->CallStaticObjectMethod(env, handle_cache.activity.class,
-		                                                  _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
-		                                                  _JSTRING(d->apk_main_activity_class), _INTPTR(window), _JSTRING(uri));
+		jobject activity = J__Activity__createMainActivity(env,
+		                                                   _JSTRING(d->apk_main_activity_class),
+		                                                   _INTPTR(window), _JSTRING(uri));
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 		activity_start(env, activity);
@@ -425,24 +425,18 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 	/* -- register our JNI library under the appropriate classloader -- */
 
-	/* 'android/view/View' is part of the "hax.dex" package, any other function from that package would serve just as well */
-	jmethodID getClassLoader = _METHOD((*env)->FindClass(env, "java/lang/Class"), "getClassLoader", "()Ljava/lang/ClassLoader;");
-	jobject class_loader = (*env)->CallObjectMethod(env, (*env)->FindClass(env, "android/view/View"), getClassLoader);
+	/* 'android/view/View' is part of the "hax.dex" package, any other class from that package would serve just as well */
+	jobject class_loader = J__Class__getClassLoader(env, _CACHED_CLASS(View));
 
-	jclass java_runtime_class = (*env)->FindClass(env, "java/lang/Runtime");
-
-	jmethodID getRuntime = _STATIC_METHOD(java_runtime_class, "getRuntime", "()Ljava/lang/Runtime;");
-	jobject java_runtime = (*env)->CallStaticObjectMethod(env, java_runtime_class, getRuntime);
+	jobject java_runtime = J__Runtime__getRuntime(env);
 
 	/* this method is private, but it seems we get away with calling it from C */
-	jmethodID loadLibrary_with_classloader = _METHOD(java_runtime_class, "loadLibrary", "(Ljava/lang/String;Ljava/lang/ClassLoader;)V");
-	(*env)->CallVoidMethod(env, java_runtime, loadLibrary_with_classloader, _JSTRING("translation_layer_main"), class_loader);
+	J__Runtime__loadLibrary(env, java_runtime, _JSTRING("translation_layer_main"), class_loader);
 
 	// some apps need the apk path since they directly read their apk
 	apk_path = strdup(apk_classpath);
 
 	(*env)->GetJavaVM(env, &jvm);
-	set_up_handle_cache(env);
 
 	/* -- misc -- */
 
@@ -478,20 +472,15 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		extract_from_apk("lib/" NATIVE_ARCH "/", "lib/");
 
 	// construct Application
-	application_object = (*env)->CallStaticObjectMethod(env, handle_cache.context.class,
-	                                                    _STATIC_METHOD(handle_cache.context.class, "createApplication", "(J)Landroid/app/Application;"), window);
+	application_object = J__Context__createApplication(env, _INTPTR(window));
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	jclass content_provider = (*env)->FindClass(env, "android/content/ContentProvider");
-	(*env)->CallStaticVoidMethod(env, content_provider, _STATIC_METHOD(content_provider, "createContentProviders", "()V"));
+	J__ContentProvider__createContentProviders(env);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
-	jmethodID on_create_method = _METHOD(handle_cache.application.class, "onCreate", "()V");
-	if ((*env)->ExceptionCheck(env))
-		(*env)->ExceptionDescribe(env);
-	(*env)->CallVoidMethod(env, application_object, on_create_method);
+	J__Application__onCreate(env, application_object);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -504,13 +493,11 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		jobject intent = NULL;
 
 		if (d->extra_string_keys) {
-			intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+			intent = J_new__Intent(env);
 			parse_string_extras(env, d->extra_string_keys, intent);
 		}
 
-		(*env)->CallStaticObjectMethod(env, handle_cache.instrumentation.class,
-		                               _STATIC_METHOD(handle_cache.instrumentation.class, "create", "(Ljava/lang/String;Landroid/content/Intent;)Landroid/app/Instrumentation;"),
-		                               _JSTRING(d->apk_instrumentation_class), intent);
+		J__Instrumentation__create(env, _JSTRING(d->apk_instrumentation_class), intent);
 
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
@@ -518,9 +505,8 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 	// construct main Activity
 	if (!d->apk_instrumentation_class && !d->install_internal) {
-		activity_object = (*env)->CallStaticObjectMethod(env, handle_cache.activity.class,
-		                                                 _STATIC_METHOD(handle_cache.activity.class, "createMainActivity", "(Ljava/lang/String;JLjava/lang/String;)Landroid/app/Activity;"),
-		                                                 _JSTRING(d->apk_main_activity_class), _INTPTR(window), (uri_option && *uri_option) ? _JSTRING(uri_option) : NULL);
+		activity_object = J__Activity__createMainActivity(env, _JSTRING(d->apk_main_activity_class),
+		                                                 _INTPTR(window), (uri_option && *uri_option) ? _JSTRING(uri_option) : NULL);
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 		if (uri_option)
@@ -535,13 +521,13 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	/* -- set the window title and app icon -- */
 
 	if (!d->apk_instrumentation_class) {
-		jstring package_name_jstr = (*env)->CallObjectMethod(env, application_object, handle_cache.context.get_package_name);
+		jstring package_name_jstr = J__Context__getPackageName(env, application_object);
 		package_name = package_name_jstr ? _CSTRING(package_name_jstr) : NULL;
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 	}
 
-	jstring app_icon_path_jstr = (*env)->CallObjectMethod(env, application_object, handle_cache.application.get_app_icon_path);
+	jstring app_icon_path_jstr = J__Application__get_app_icon_path(env, application_object);
 	const char *app_icon_path = app_icon_path_jstr ? _CSTRING(app_icon_path_jstr) : NULL;
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
@@ -554,7 +540,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 
 		XdpPortal *portal = xdp_portal_new();
 
-		const char *app_label = _CSTRING((*env)->CallObjectMethod(env, application_object, _METHOD(handle_cache.application.class, "get_app_label", "()Ljava/lang/String;")));
+		const char *app_label = _CSTRING(J__Application__get_app_label(env, application_object));
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 
@@ -575,7 +561,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			} else {
 				/* the icon is a generalized Drawable, let's render it into an SVG */
 				_SET_STATIC_BOOL_FIELD((*env)->FindClass(env, "android/graphics/drawable/VectorDrawable"), "direct_draw_override", true);
-				GdkPaintable *icon_paintable = _PTR((*env)->CallLongMethod(env, application_object, handle_cache.application.get_app_icon_paintable));
+				GdkPaintable *icon_paintable = _PTR(J__Application__get_app_icon_paintable(env, application_object));
 				GString *svg_string = g_string_new("");
 				cairo_surface_t *svg_surface = cairo_svg_surface_create_for_stream(cairo_write_func_gstring, svg_string, 108, 108);
 				cairo_t *cr = cairo_create(svg_surface);
@@ -608,8 +594,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if (d->install_internal)
 			exit(0);
 
-		jmethodID get_supported_mime_types = _METHOD(handle_cache.application.class, "get_supported_mime_types", "()Ljava/lang/String;");
-		jstring supported_mime_types_jstr = (*env)->CallObjectMethod(env, application_object, get_supported_mime_types);
+		jstring supported_mime_types_jstr = J__Application__get_supported_mime_types(env, application_object);
 		const char *supported_mime_types = supported_mime_types_jstr ? _CSTRING(supported_mime_types_jstr) : NULL;
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
@@ -697,7 +682,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	if (input_queue_callback) {
 		jobject input_queue = g_object_get_data(G_OBJECT(window), "input_queue");
 
-		(*env)->CallVoidMethod(env, input_queue_callback, handle_cache.input_queue_callback.onInputQueueCreated, input_queue);
+		J__InputQueue__Callback__onInputQueueCreated(env, input_queue_callback, input_queue);
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 	}
@@ -833,9 +818,7 @@ int main(int argc, char **argv)
 
 	if (jvm) {
 		JNIEnv *env = get_jni_env();
-		jobject system = (*env)->FindClass(env, "java/lang/System");
-		jmethodID exit = (*env)->GetStaticMethodID(env, system, "exit", "(I)V");
-		(*env)->CallStaticVoidMethod(env, system, exit, status);
+		J__System__exit(env, status);
 	}
 
 	return status;

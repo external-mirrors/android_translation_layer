@@ -33,8 +33,7 @@ static void activate_cb(GtkListView *list, guint position, gpointer user_data)
 
 	jobject this = g_object_get_data(G_OBJECT(list), "this");
 	jobject on_click = g_object_get_data(G_OBJECT(list), "on_click");
-	jmethodID on_click_method = _METHOD(_CLASS(on_click), "onClick", "(Landroid/content/DialogInterface;I)V");
-	(*env)->CallVoidMethod(env, on_click, on_click_method, this, position);
+	J__DialogInterface__OnClickListener__onClick(env, on_click, this, position);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }

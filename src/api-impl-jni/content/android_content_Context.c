@@ -32,7 +32,7 @@ static void monitor_changed_cb(GdkSurface *surface, GdkMonitor *monitor, jobject
 	GdkRectangle geometry;
 	gdk_monitor_get_geometry(monitor, &geometry);
 	if (!configuration)
-		configuration = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "sys_config", "Landroid/content/res/Configuration;");
+		configuration = _GET_STATIC_OBJ_FIELD(_CACHED_CLASS(Context), "sys_config", "Landroid/content/res/Configuration;");
 
 	_SET_INT_FIELD(configuration, "screenWidthDp", geometry.width);
 	_SET_INT_FIELD(configuration, "screenHeightDp", geometry.height);
@@ -51,7 +51,7 @@ static void settings_changed_cb(XdpSettings *xdp_settings, gchar *namestpace, gc
 		g_object_set(gtk_settings_get_default(), "gtk-application-prefer-dark-theme", color_sheme == 1, NULL);
 		env = get_jni_env();
 		if (!configuration) {
-			configuration = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "sys_config", "Landroid/content/res/Configuration;");
+			configuration = _GET_STATIC_OBJ_FIELD(_CACHED_CLASS(Context), "sys_config", "Landroid/content/res/Configuration;");
 		}
 		if (color_sheme == 1) // Prefer dark appearance
 			_SET_INT_FIELD(configuration, "uiMode", /*UI_MODE_NIGHT_YES*/ 0x20);
@@ -225,13 +225,13 @@ static gboolean on_new_endpoint(Connector1 *connector, GDBusMethodInvocation *in
 	connector1_complete_new_endpoint(connector, invocation);
 
 	JNIEnv *env = get_jni_env();
-	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	jobject intent = J_new__Intent(env);
 	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("org.unifiedpush.android.connector.NEW_ENDPOINT"));
-	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("token"), _JSTRING(token));
-	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("endpoint"), _JSTRING(endpoint));
+	J__Intent__putExtraCharSequence(env, intent, _JSTRING("token"), _JSTRING(token));
+	J__Intent__putExtraCharSequence(env, intent, _JSTRING("endpoint"), _JSTRING(endpoint));
 
-	jobject context = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;");
-	(*env)->CallVoidMethod(env, context, handle_cache.context.sendBroadcast, intent);
+	jobject context = _GET_STATIC_OBJ_FIELD(_CACHED_CLASS(Context), "this_application", "Landroid/app/Application;");
+	J__Context__sendBroadcast(env, context, intent);
 	if ((*env)->ExceptionCheck(env)) {
 		(*env)->ExceptionDescribe(env);
 	}
@@ -248,15 +248,15 @@ static gboolean on_message(Connector1 *connector, GDBusMethodInvocation *invocat
 	connector1_complete_message(connector, invocation);
 
 	JNIEnv *env = get_jni_env();
-	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	jobject intent = J_new__Intent(env);
 	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING("org.unifiedpush.android.connector.MESSAGE"));
-	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING("token"), _JSTRING(token));
+	J__Intent__putExtraCharSequence(env, intent, _JSTRING("token"), _JSTRING(token));
 	jbyteArray bytesMessage = (*env)->NewByteArray(env, size);
 	(*env)->SetByteArrayRegion(env, bytesMessage, 0, size, message);
-	(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraByteArray, _JSTRING("bytesMessage"), bytesMessage);
+	J__Intent__putExtraByteArray(env, intent, _JSTRING("bytesMessage"), bytesMessage);
 
-	jobject context = _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;");
-	(*env)->CallVoidMethod(env, context, handle_cache.context.sendBroadcast, intent);
+	jobject context = _GET_STATIC_OBJ_FIELD(_CACHED_CLASS(Context), "this_application", "Landroid/app/Application;");
+	J__Context__sendBroadcast(env, context, intent);
 	if ((*env)->ExceptionCheck(env)) {
 		(*env)->ExceptionDescribe(env);
 	}

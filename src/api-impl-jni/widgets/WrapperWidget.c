@@ -39,7 +39,7 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 
 	switch ((WrapperWidgetProperty)property_id) {
 		case ATL_ID: {
-			jint id_jint = (*env)->CallIntMethod(env, jobj, handle_cache.view.getId);
+			jint id_jint = J__View__getId(env, jobj);
 			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
@@ -49,7 +49,7 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 		}
 
 		case ATL_ID_NAME: {
-			jstring id_name_jstring = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getIdName);
+			jstring id_name_jstring = J__View__getIdName(env, jobj);
 			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
@@ -61,7 +61,7 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 		}
 
 		case ATL_CLASS_NAME: {
-			jstring class_name_jstring = (*env)->CallObjectMethod(env, class, _METHOD(_CLASS(class), "getName", "()Ljava/lang/String;"));
+			jstring class_name_jstring = J__Class__getName(env, class);
 			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
@@ -73,7 +73,7 @@ static void wrapper_widget_get_property(GObject *object, guint property_id, GVal
 		}
 
 		case ATL_SUPER_CLASS_NAMES: {
-			jstring super_classes_names_obj = (*env)->CallObjectMethod(env, jobj, handle_cache.view.getAllSuperClasses);
+			jstring super_classes_names_obj = J__View__getAllSuperClasses(env, jobj);
 			if ((*env)->ExceptionCheck(env))
 				(*env)->ExceptionDescribe(env);
 
@@ -146,18 +146,18 @@ void wrapper_widget_allocate(GtkWidget *widget, int width, int height, int basel
 		.height = height,
 	};
 
-	if (wrapper->computeScroll_method) {
+	if (wrapper->have_custom_computeScroll) {
 		// The child needs to know its size before calling computeScroll, so we allocate it twice.
 		// second allocate will not trigger onLayout, because of unchanged size
 		gtk_widget_size_allocate(wrapper->child, &allocation, baseline);
 
 		JNIEnv *env;
 		(*wrapper->jvm)->GetEnv(wrapper->jvm, (void **)&env, JNI_VERSION_1_6);
-		(*env)->CallVoidMethod(env, wrapper->jobj, wrapper->computeScroll_method);
+		J__View__computeScroll(env, wrapper->jobj);
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
-		allocation.x = -(*env)->CallIntMethod(env, wrapper->jobj, handle_cache.view.getScrollX);
-		allocation.y = -(*env)->CallIntMethod(env, wrapper->jobj, handle_cache.view.getScrollY);
+		allocation.x = -J__View__getScrollX(env, wrapper->jobj);
+		allocation.y = -J__View__getScrollY(env, wrapper->jobj);
 	}
 
 	if (ATL_IS_ANDROID_LAYOUT(gtk_widget_get_layout_manager(wrapper->child))) {
@@ -189,10 +189,10 @@ static void wrapper_widget_snapshot(GtkWidget *widget, GdkSnapshot *snapshot)
 	if (wrapper->real_height > 0 && wrapper->real_width > 0) {
 		gtk_snapshot_push_clip(snapshot, &GRAPHENE_RECT_INIT(0, 0, wrapper->real_width, wrapper->real_height));
 	}
-	if (wrapper->draw_method) {
+	if (wrapper->have_custom_draw_method) {
 		JNIEnv *env = get_jni_env();
 		_SET_LONG_FIELD(wrapper->canvas, "snapshot", _INTPTR(snapshot));
-		(*env)->CallVoidMethod(env, wrapper->jobj, wrapper->draw_method, wrapper->canvas);
+		J__View__draw(env, wrapper->jobj, wrapper->canvas);
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 	} else {
@@ -254,7 +254,7 @@ static guint queue_queue_redraw(GtkWidget *widget)
 
 void wrapper_widget_queue_draw(WrapperWidget *wrapper)
 {
-	if (wrapper->draw_method) {
+	if (wrapper->have_custom_draw_method) {
 		/* schedule the call to gtk_widget_queue_draw for a future event loop pass in case we're currently inside the snapshot */
 		/* GTK+ uses G_PRIORITY_HIGH_IDLE + 10 for resizing operations, and G_PRIORITY_HIGH_IDLE + 20 for redrawing operations. */
 		g_idle_add_full(G_PRIORITY_HIGH_IDLE + 20, G_SOURCE_FUNC(queue_queue_redraw), g_object_ref(wrapper), NULL);
@@ -262,7 +262,7 @@ void wrapper_widget_queue_draw(WrapperWidget *wrapper)
 
 	if (wrapper->child)
 		gtk_widget_queue_draw(wrapper->child);
-	if (wrapper->computeScroll_method) {
+	if (wrapper->have_custom_computeScroll) {
 		atl_safe_gtk_widget_queue_allocate(GTK_WIDGET(wrapper));
 	}
 }
@@ -271,7 +271,7 @@ static bool on_click(GtkGestureClick *gesture, int n_press, double x, double y, 
 {
 	JNIEnv *env = get_jni_env();
 
-	bool ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.performClick);
+	bool ret = J__View__performClick(env, this);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -414,9 +414,9 @@ static gboolean on_key_pressed(GtkEventControllerKey *controller, guint keyval, 
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, ACTION_DOWN, map_key_code(keyval), 0, map_meta_state(state));
+	jobject key_event = J_new__KeyEvent(env, (jlong)0, (jlong)0, ACTION_DOWN, map_key_code(keyval), 0, map_meta_state(state));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
-	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
+	gboolean ret = J__View__dispatchKeyEvent(env, wrapper->jobj, key_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	return ret;
@@ -426,18 +426,18 @@ static gboolean on_key_released(GtkEventControllerKey *controller, guint keyval,
 {
 	JNIEnv *env = get_jni_env();
 
-	jobject key_event = (*env)->NewObject(env, handle_cache.key_event.class, handle_cache.key_event.constructor, (jlong)0, (jlong)0, ACTION_UP, map_key_code(keyval), 0, map_meta_state(state));
+	jobject key_event = J_new__KeyEvent(env, (jlong)0, (jlong)0, ACTION_UP, map_key_code(keyval), 0, map_meta_state(state));
 	_SET_INT_FIELD(key_event, "unicodeValue", gdk_keyval_to_unicode(keyval));
-	gboolean ret = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.view.dispatchKeyEvent, key_event);
+	gboolean ret = J__View__dispatchKeyEvent(env, wrapper->jobj, key_event);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	return ret;
 }
 
-static void map_cb(WrapperWidget *wrapper, jmethodID method)
+static void map_cb(WrapperWidget *wrapper)
 {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
+	J__View__onAttachedToWindow(env, wrapper->jobj);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -448,7 +448,7 @@ static void unmap_cb(WrapperWidget *wrapper, jmethodID method)
 {
 	JNIEnv *env = get_jni_env();
 	currently_unmapping = wrapper->child;
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
+	J__View__onDetachedFromWindow(env, wrapper->jobj);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	currently_unmapping = NULL;
@@ -463,16 +463,13 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 	jmethodID on_draw_method = _METHOD(_CLASS(jobj), "onDraw", "(Landroid/graphics/Canvas;)V");
 	jmethodID dispatch_draw_method = _METHOD(_CLASS(jobj), "dispatchDraw", "(Landroid/graphics/Canvas;)V");
 	jmethodID draw_method = _METHOD(_CLASS(jobj), "draw", "(Landroid/graphics/Canvas;)V");
-	if (on_draw_method != handle_cache.view.onDraw || draw_method != handle_cache.view.draw || dispatch_draw_method != handle_cache.view.dispatchDraw) {
-		wrapper->draw_method = draw_method;
-		jclass canvas_class = (*env)->FindClass(env, "android/atl/GskCanvas");
-		jmethodID canvas_constructor = _METHOD(canvas_class, "<init>", "(J)V");
-		wrapper->canvas = _REF((*env)->NewObject(env, canvas_class, canvas_constructor, 0));
-		(*env)->DeleteLocalRef(env, canvas_class);
+	if (on_draw_method != _CACHED_METHOD(View__onDraw) || draw_method != _CACHED_METHOD(View__draw) || dispatch_draw_method != _CACHED_METHOD(View__dispatchDraw)) {
+		wrapper->have_custom_draw_method = true;
+		wrapper->canvas = _REF(J_new__GskCanvas(env, 0));
 	}
 
 	jmethodID performClick_method = _METHOD(_CLASS(jobj), "performClick", "()Z");
-	if (performClick_method != handle_cache.view.performClick) {
+	if (performClick_method != _CACHED_METHOD(View__performClick)) {
 		GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_gesture_click_new());
 
 		g_signal_connect(controller, "released", G_CALLBACK(on_click), wrapper->jobj);
@@ -482,27 +479,27 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 
 	jmethodID ontouchevent_method = _METHOD(_CLASS(jobj), "onTouchEvent", "(Landroid/view/MotionEvent;)Z");
 	jmethodID dispatchtouchevent_method = _METHOD(_CLASS(jobj), "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");
-	wrapper->custom_dispatch_touch = (dispatchtouchevent_method != handle_cache.view.dispatchTouchEvent && dispatchtouchevent_method != handle_cache.view_group.dispatchTouchEvent);
-	if (ontouchevent_method != handle_cache.view.onTouchEvent || wrapper->custom_dispatch_touch) {
+	wrapper->custom_dispatch_touch = (dispatchtouchevent_method != _CACHED_METHOD(View__dispatchTouchEvent) && dispatchtouchevent_method != _CACHED_METHOD(ViewGroup__dispatchTouchEvent));
+	if (ontouchevent_method != _CACHED_METHOD(View__onTouchEvent) || wrapper->custom_dispatch_touch) {
 		_setOnTouchListener(env, jobj, GTK_WIDGET(wrapper));
 	}
 
 	jmethodID computeScroll_method = _METHOD(_CLASS(jobj), "computeScroll", "()V");
-	if (computeScroll_method != handle_cache.view.computeScroll) {
-		wrapper->computeScroll_method = computeScroll_method;
+	if (computeScroll_method != _CACHED_METHOD(View__computeScroll)) {
+		wrapper->have_custom_computeScroll = true;
 	}
 
 	jmethodID dispatch_key_event_method = _METHOD(_CLASS(jobj), "dispatchKeyEvent", "(Landroid/view/KeyEvent;)Z");
 	jmethodID on_key_down_method = _METHOD(_CLASS(jobj), "onKeyDown", "(ILandroid/view/KeyEvent;)Z");
-	if (dispatch_key_event_method != handle_cache.view.dispatchKeyEvent || on_key_down_method != handle_cache.view.onKeyDown) {
+	if (dispatch_key_event_method != _CACHED_METHOD(View__dispatchKeyEvent) || on_key_down_method != _CACHED_METHOD(View__onKeyDown)) {
 		GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_event_controller_key_new());
 		g_signal_connect(controller, "key-pressed", G_CALLBACK(on_key_pressed), wrapper);
 		g_signal_connect(controller, "key-released", G_CALLBACK(on_key_released), wrapper);
 		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 		gtk_widget_set_focusable(GTK_WIDGET(wrapper), TRUE);
 	}
-	g_signal_connect(wrapper, "map", G_CALLBACK(map_cb), handle_cache.view.onAttachedToWindow);
-	g_signal_connect(wrapper, "unmap", G_CALLBACK(unmap_cb), handle_cache.view.onDetachedFromWindow);
+	g_signal_connect(wrapper, "map", G_CALLBACK(map_cb), NULL);
+	g_signal_connect(wrapper, "unmap", G_CALLBACK(unmap_cb), NULL);
 }
 
 void wrapper_widget_set_layout_params(WrapperWidget *wrapper, int width, int height)

@@ -6,7 +6,7 @@
 #include <jni.h>
 
 #include "defines.h"
-#include "handle_cache.h"
+#include "upcalls.h"
 
 extern JavaVM *jvm;
 

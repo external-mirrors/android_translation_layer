@@ -46,6 +46,9 @@
 #define _GET_BYTE_ARRAY_ELEMENTS(b_array)                 ((*env)->GetByteArrayElements(env, b_array, NULL))
 #define _RELEASE_BYTE_ARRAY_ELEMENTS(b_array, buffer_ptr) ((*env)->ReleaseByteArrayElements(env, b_array, buffer_ptr, 0))
 
+#define _CACHED_CLASS(x) J_get_class__##x(env)
+#define _CACHED_METHOD(x) J_get_method__##x(env)
+
 /* token pasting with macro expansion */
 
 #define __JOIN(x, y)   x##y

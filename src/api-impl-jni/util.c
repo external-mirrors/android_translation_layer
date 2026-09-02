@@ -15,7 +15,7 @@ const char *attribute_set_get_string(JNIEnv *env, jobject attrs, char *attribute
 	if (!schema)
 		schema = "http://schemas.android.com/apk/res/android";
 
-	jstring string = (jstring)(*env)->CallObjectMethod(env, attrs, handle_cache.attribute_set.getAttributeValue_string, _JSTRING(schema), _JSTRING(attribute));
+	jstring string = J__AttributeSet__getAttributeValue(env, attrs, _JSTRING(schema), _JSTRING(attribute));
 	return string ? _CSTRING(string) : NULL;
 }
 
@@ -27,7 +27,7 @@ int attribute_set_get_int(JNIEnv *env, jobject attrs, char *attribute, char *sch
 	if (!schema)
 		schema = "http://schemas.android.com/apk/res/android";
 
-	return (*env)->CallIntMethod(env, attrs, handle_cache.attribute_set.getAttributeValue_int, _JSTRING(schema), _JSTRING(attribute), default_value);
+	return J__AttributeSet__getAttributeIntValue(env, attrs, _JSTRING(schema), _JSTRING(attribute), default_value);
 }
 
 JavaVM *jvm;
@@ -63,7 +63,7 @@ extern char *apk_path;
 void extract_from_apk(const char *path, const char *target)
 {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallStaticVoidMethod(env, handle_cache.asset_manager.class, handle_cache.asset_manager.extractFromAPK, _JSTRING(apk_path), _JSTRING(path), _JSTRING(target));
+	J__AssetManager__extractFromAPK(env, _JSTRING(apk_path), _JSTRING(path), _JSTRING(target));
 }
 
 /* logging with fallback to stderr */
@@ -131,8 +131,8 @@ void *get_nio_buffer(JNIEnv *env, jobject buffer, jarray *array_ref, jbyte **arr
 		*array_ref = NULL;
 		pointer += position << elementSizeShift;
 	} else { // buffer is indirect
-		*array_ref = (*env)->CallObjectMethod(env, buffer, _METHOD(class, "array", "()Ljava/lang/Object;"));
-		jint offset = (*env)->CallIntMethod(env, buffer, _METHOD(class, "arrayOffset", "()I"));
+		*array_ref = J__Buffer__array(env, buffer);
+		jint offset = J__Buffer__arrayOffset(env, buffer);
 		pointer = *array = (*env)->GetPrimitiveArrayCritical(env, *array_ref, NULL);
 		pointer += (offset + position) << elementSizeShift;
 	}
@@ -148,7 +148,7 @@ void release_nio_buffer(JNIEnv *env, jarray array_ref, jbyte *array)
 int get_nio_buffer_size(JNIEnv *env, jobject buffer)
 {
 	jclass class = _CLASS(buffer);
-	;
+
 	int limit = (*env)->GetIntField(env, buffer, _FIELD_ID(class, "limit", "I"));
 	int position = (*env)->GetIntField(env, buffer, _FIELD_ID(class, "position", "I"));
 
@@ -250,18 +250,18 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent)
 	jstring action_jstr = _GET_OBJ_FIELD(intent, "action", "Ljava/lang/String;");
 	jobject component = _GET_OBJ_FIELD(intent, "component", "Landroid/content/ComponentName;");
 	jstring className_jstr = component ? _GET_OBJ_FIELD(component, "mClass", "Ljava/lang/String;") : NULL;
-	jstring data_jstr = (*env)->CallObjectMethod(env, intent, handle_cache.intent.getDataString);
+	jstring data_jstr =  J__Intent__getDataString(env, intent);
 
 	GVariantBuilder extras_builder;
 	g_variant_builder_init(&extras_builder, G_VARIANT_TYPE_VARDICT);
 	jobject extras = _GET_OBJ_FIELD(intent, "extras", "Landroid/os/Bundle;");
-	jobject extras_key_set = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.keySet);
-	jobjectArray extras_keys = (*env)->CallObjectMethod(env, extras_key_set, handle_cache.set.toArray);
+	jobject extras_key_set = J__BaseBundle__keySet(env, extras);
+	jobjectArray extras_keys = J__Set__toArray(env, extras_key_set);
 	jsize extras_keys_length = (*env)->GetArrayLength(env, extras_keys);
 	jclass parcelable_class = (*env)->FindClass(env, "android/os/Parcelable");
 	for (jint i = 0; i < extras_keys_length; i++) {
 		jstring key_jstr = (*env)->GetObjectArrayElement(env, extras_keys, i);
-		jobject value_jobj = (*env)->CallObjectMethod(env, extras, handle_cache.bundle.get, key_jstr);
+		jobject value_jobj = J__BaseBundle__get(env, extras, key_jstr);
 		if (!key_jstr || !value_jobj)
 			continue;
 		const char *key = (*env)->GetStringUTFChars(env, key_jstr, NULL);
@@ -272,8 +272,8 @@ GVariant *intent_serialize(JNIEnv *env, jobject intent)
 		} else if ((*env)->IsInstanceOf(env, value_jobj, parcelable_class)) {
 			GVariantBuilder parcel_builder;
 			g_variant_builder_init(&parcel_builder, G_VARIANT_TYPE_TUPLE);
-			jobject parcel = (*env)->NewObject(env, handle_cache.builder_parcel.class, handle_cache.builder_parcel.constructor, _INTPTR(&parcel_builder));
-			(*env)->CallVoidMethod(env, parcel, handle_cache.parcel.writeParcelable, value_jobj, 0);
+			jobject parcel = J_new__GVariantBuilderParcel(env, _INTPTR(&parcel_builder));
+			J__Parcel__writeParcelable(env, parcel, value_jobj, 0);
 			GVariant *parcel_variant = g_variant_builder_end(&parcel_builder);
 			g_variant_builder_add(&extras_builder, "{sv}", key, parcel_variant);
 			(*env)->DeleteLocalRef(env, parcel);
@@ -313,39 +313,38 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant)
 	if (data && data[0] == '\0')
 		data = NULL;
 
-	jobject intent = (*env)->NewObject(env, handle_cache.intent.class, handle_cache.intent.constructor);
+	jobject intent = J_new__Intent(env);
 	_SET_OBJ_FIELD(intent, "action", "Ljava/lang/String;", _JSTRING(action));
 	if (className)
-		(*env)->CallObjectMethod(env, intent, handle_cache.intent.setClassName, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), _JSTRING(className));
+		J__Intent__setClassName(env, intent, _GET_STATIC_OBJ_FIELD(_CACHED_CLASS(Context), "this_application", "Landroid/app/Application;"), _JSTRING(className));
 	if (data)
-		_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", (*env)->CallStaticObjectMethod(env, handle_cache.uri.class, handle_cache.uri.parse, _JSTRING(data)));
+		_SET_OBJ_FIELD(intent, "data", "Landroid/net/Uri;", J__Uri__parse(env, _JSTRING(data)));
 	const char *key;
 	GVariant *value;
 	while (g_variant_iter_loop(extras, "{sv}", &key, &value)) {
 		if (g_variant_is_of_type(value, G_VARIANT_TYPE_STRING)) {
-			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraCharSequence, _JSTRING(key), _JSTRING(g_variant_get_string(value, NULL)));
+			J__Intent__putExtraCharSequence(env, intent, _JSTRING(key), _JSTRING(g_variant_get_string(value, NULL)));
 		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_INT32)) {
-			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraInt, _JSTRING(key), g_variant_get_int32(value));
+			J__Intent__putExtraInt(env, intent, _JSTRING(key), g_variant_get_int32(value));
 		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_INT64)) {
-			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraLong, _JSTRING(key), g_variant_get_int64(value));
+			J__Intent__putExtraLong(env, intent, _JSTRING(key), g_variant_get_int64(value));
 		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_BYTESTRING)) {
 			gsize size;
 			const int8_t *message = g_variant_get_fixed_array(value, &size, 1);
 			jbyteArray bytesMessage = (*env)->NewByteArray(env, size);
 			(*env)->SetByteArrayRegion(env, bytesMessage, 0, size, message);
-			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraByteArray, _JSTRING(key), bytesMessage);
+			J__Intent__putExtraByteArray(env, intent, _JSTRING(key), bytesMessage);
 		} else if (g_variant_is_of_type(value, G_VARIANT_TYPE_TUPLE)) {
 			GVariantIter parcel_iter;
 			g_variant_iter_init(&parcel_iter, value);
-			jobject parcel = (*env)->NewObject(env, handle_cache.iter_parcel.class, handle_cache.iter_parcel.constructor, _INTPTR(&parcel_iter));
-			jmethodID getClassLoader = _METHOD((*env)->FindClass(env, "java/lang/Class"), "getClassLoader", "()Ljava/lang/ClassLoader;");
-			jobject class_loader = (*env)->CallObjectMethod(env, handle_cache.parcel.class, getClassLoader);
-			jobject parcelable = (*env)->CallObjectMethod(env, parcel, handle_cache.parcel.readParcelable, class_loader);
+			jobject parcel = J_new__GVariantIterParcel(env, _INTPTR(&parcel_iter));
+			jobject class_loader = J__Class__getClassLoader(env, _CACHED_CLASS(Parcel));
+			jobject parcelable = J__Parcel__readParcelable(env, parcel, class_loader);
 			if ((*env)->ExceptionCheck(env)) {
 				(*env)->ExceptionDescribe(env);
 				(*env)->ExceptionClear(env);
 			}
-			(*env)->CallObjectMethod(env, intent, handle_cache.intent.putExtraParcelable, _JSTRING(key), parcelable);
+			J__Intent__putExtraParcelable(env, intent, _JSTRING(key), parcelable);
 			(*env)->DeleteLocalRef(env, parcelable);
 			(*env)->DeleteLocalRef(env, parcel);
 		}
