@@ -18,13 +18,11 @@ JNIEXPORT jboolean JNICALL Java_android_net_ConnectivityManager_nativeGetNetwork
 static void on_network_changed(GNetworkMonitor *self, gboolean network_available, jobject callback)
 {
 	JNIEnv *env = get_jni_env();
-	jmethodID method;
 	if (network_available) {
-		method = _METHOD(_CLASS(callback), "onAvailable", "(Landroid/net/Network;)V");
+		J__ConnectivityManager__NetworkCallback__onAvailable(env, callback, NULL);
 	} else {
-		method = _METHOD(_CLASS(callback), "onLost", "(Landroid/net/Network;)V");
+		J__ConnectivityManager__NetworkCallback__onLost(env, callback, NULL);
 	}
-	(*env)->CallVoidMethod(env, callback, method, NULL);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }

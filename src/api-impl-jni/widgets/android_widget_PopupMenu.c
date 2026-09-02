@@ -41,8 +41,7 @@ static void popupmenu_activated(GSimpleAction *action, GVariant *parameter, gpoi
 	int id = g_variant_get_int32(parameter);
 	JNIEnv *env = get_jni_env();
 	jobject this = (jobject)user_data;
-	jmethodID onMenuItemClick = _METHOD(_CLASS(this), "menuItemClickCallback", "(I)V");
-	(*env)->CallVoidMethod(env, this, onMenuItemClick, id);
+	J__PopupMenu__menuItemClickCallback(env, this, id);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }

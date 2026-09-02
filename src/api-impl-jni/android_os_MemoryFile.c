@@ -57,24 +57,24 @@ JNIEXPORT jobject JNICALL Java_android_os_MemoryFile_native_1open(JNIEnv *env, j
 	if (name)
 		(*env)->ReleaseStringUTFChars(env, name, cname);
 	if (fd < 0) {
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, "Failed to create memfd");
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), "Failed to create memfd");
 		return NULL;
 	}
 	if (length > 0 && ftruncate(fd, length) < 0) {
 		close(fd);
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, "Failed to set size");
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), "Failed to set size");
 		return NULL;
 	}
 
-	jobject result = (*env)->NewObject(env, handle_cache.file_descriptor.class, handle_cache.file_descriptor.constructor);
-	(*env)->CallVoidMethod(env, result, handle_cache.file_descriptor.setInt, fd);
+	jobject result = J_new__FileDescriptor(env);
+	J__FileDescriptor__setInt(env, result, fd);
 
 	return result;
 }
 
 JNIEXPORT jint JNICALL Java_android_os_MemoryFile_native_1mmap(JNIEnv *env, jclass this, jobject fdObj, jint length, jint mode)
 {
-	int fd = (*env)->CallIntMethod(env, fdObj, handle_cache.file_descriptor.getInt);
+	int fd = J__FileDescriptor__getInt(env, fdObj);
 
 	int prot = 0;
 	if (mode & 0x1)
@@ -84,7 +84,7 @@ JNIEXPORT jint JNICALL Java_android_os_MemoryFile_native_1mmap(JNIEnv *env, jcla
 
 	void *addr = mmap(NULL, length, prot, MAP_SHARED, fd, 0);
 	if (addr == MAP_FAILED) {
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, strerror(errno));
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), strerror(errno));
 		return 0;
 	}
 
@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL Java_android_os_MemoryFile_native_1munmap(JNIEnv *env, jc
 
 JNIEXPORT void JNICALL Java_android_os_MemoryFile_native_1close(JNIEnv *env, jclass this, jobject fdObj)
 {
-	int fd = (*env)->CallIntMethod(env, fdObj, handle_cache.file_descriptor.getInt);
+	int fd = J__FileDescriptor__getInt(env, fdObj);
 
 	if (fd >= 0)
 		close(fd);
@@ -113,7 +113,7 @@ JNIEXPORT jint JNICALL Java_android_os_MemoryFile_native_1read(JNIEnv *env, jcla
 {
 	Mapping *m = get_mapping(address);
 	if (!m) {
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, "Memory file has been purged");
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), "Memory file has been purged");
 		return 0;
 	}
 	jbyte *buf = (*env)->GetByteArrayElements(env, buffer, NULL);
@@ -126,7 +126,7 @@ JNIEXPORT void JNICALL Java_android_os_MemoryFile_native_1write(JNIEnv *env, jcl
 {
 	Mapping *m = get_mapping(address);
 	if (!m) {
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, "Memory file has been purged");
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), "Memory file has been purged");
 		return;
 	}
 	jbyte *buf = (*env)->GetByteArrayElements(env, buffer, NULL);
@@ -140,11 +140,11 @@ JNIEXPORT void JNICALL Java_android_os_MemoryFile_native_1pin(JNIEnv *env, jclas
 
 JNIEXPORT jint JNICALL Java_android_os_MemoryFile_native_1get_1size(JNIEnv *env, jclass this, jobject fdObj)
 {
-	int fd = (*env)->CallIntMethod(env, fdObj, handle_cache.file_descriptor.getInt);
+	int fd = J__FileDescriptor__getInt(env, fdObj);
 
 	struct stat st;
 	if (fstat(fd, &st) < 0) {
-		(*env)->ThrowNew(env, handle_cache.io_exception.class, strerror(errno));
+		(*env)->ThrowNew(env, _CACHED_CLASS(IOException), strerror(errno));
 		return 0;
 	}
 	return st.st_size;

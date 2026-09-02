@@ -12,8 +12,7 @@ static gboolean on_close_request(GtkWidget *dialog, jobject jobj)
 {
 	printf("on_close_request\n");
 	JNIEnv *env = get_jni_env();
-	jmethodID dismiss = _METHOD(_CLASS(jobj), "dismiss", "()V");
-	(*env)->CallVoidMethod(env, jobj, dismiss);
+	J__DialogInterface__dismiss(env, jobj);
 	return FALSE;
 }
 

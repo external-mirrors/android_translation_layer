@@ -6,18 +6,12 @@
 
 #include "../generated_headers/android_view_inputmethod_InputMethodManager.h"
 
-static jmethodID commitText;
-static jmethodID getTextBeforeCursor;
-static jmethodID getTextAfterCursor;
-static jmethodID deleteSurroundingText;
-static jmethodID toString;
-
 static jobject connection;
 
 static void commit_cb(GtkIMContext *context, gchar *str, gpointer user_data)
 {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallBooleanMethod(env, connection, commitText, _JSTRING(str), 1);
+	J__InputConnection__commitText(env, connection, _JSTRING(str), 1);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -25,14 +19,14 @@ static void commit_cb(GtkIMContext *context, gchar *str, gpointer user_data)
 static void retrieve_surrounding_cb(GtkIMContext *context, gpointer user_data)
 {
 	JNIEnv *env = get_jni_env();
-	jobject before = (*env)->CallObjectMethod(env, connection, getTextBeforeCursor, 100, 0);
+	jobject before = J__InputConnection__getTextBeforeCursor(env, connection, 100, 0);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	jobject after = (*env)->CallObjectMethod(env, connection, getTextAfterCursor, 100, 0);
+	jobject after = J__InputConnection__getTextAfterCursor(env, connection, 100, 0);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	jstring before_str = before ? (*env)->CallObjectMethod(env, before, toString) : NULL;
-	jstring after_str = after ? (*env)->CallObjectMethod(env, after, toString) : NULL;
+	jstring before_str = before ? J__CharSequence__toString(env, before) : NULL;
+	jstring after_str = after ? J__CharSequence__toString(env, after) : NULL;
 	const char *before_cstr = before_str ? (*env)->GetStringUTFChars(env, before_str, NULL) : "";
 	const char *after_cstr = after_str ? (*env)->GetStringUTFChars(env, after_str, NULL) : "";
 	char *text = g_strconcat(before_cstr, after_cstr, NULL);
@@ -48,7 +42,7 @@ static void retrieve_surrounding_cb(GtkIMContext *context, gpointer user_data)
 static void delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_chars, gpointer user_data)
 {
 	JNIEnv *env = get_jni_env();
-	(*env)->CallBooleanMethod(env, connection, deleteSurroundingText, -offset, offset + n_chars);
+	J__InputConnection__deleteSurroundingText(env, connection, -offset, offset + n_chars);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }
@@ -56,13 +50,6 @@ static void delete_surrounding_cb(GtkIMContext *context, gint offset, gint n_cha
 JNIEXPORT jlong JNICALL Java_android_view_inputmethod_InputMethodManager_nativeInit(JNIEnv *env, jclass class)
 {
 	GtkIMContext *context = gtk_im_multicontext_new();
-	jclass inputConnection = (*env)->FindClass(env, "android/view/inputmethod/InputConnection");
-	commitText = _METHOD(inputConnection, "commitText", "(Ljava/lang/CharSequence;I)Z");
-	getTextBeforeCursor = _METHOD(inputConnection, "getTextBeforeCursor", "(II)Ljava/lang/CharSequence;");
-	getTextAfterCursor = _METHOD(inputConnection, "getTextAfterCursor", "(II)Ljava/lang/CharSequence;");
-	deleteSurroundingText = _METHOD(inputConnection, "deleteSurroundingText", "(II)Z");
-	jclass charSequence = (*env)->FindClass(env, "java/lang/CharSequence");
-	toString = _METHOD(charSequence, "toString", "()Ljava/lang/String;");
 	g_signal_connect(context, "commit", G_CALLBACK(commit_cb), NULL);
 	g_signal_connect(context, "retrieve-surrounding", G_CALLBACK(retrieve_surrounding_cb), NULL);
 	g_signal_connect(context, "delete-surrounding", G_CALLBACK(delete_surrounding_cb), NULL);

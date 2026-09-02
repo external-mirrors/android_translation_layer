@@ -1,6 +1,7 @@
 #include <libportal/portal.h>
 
 #include "../defines.h"
+#include "../util.h"
 #include "../generated_headers/android_location_LocationManager.h"
 
 static void location_updated(
@@ -18,9 +19,8 @@ static void location_updated(
 {
 	JNIEnv *env;
 	(*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_6);
-	jclass class = (*env)->FindClass(env, "android/location/LocationManager");
 	jlong timestamp = timestamp_s * 1000 + timestamp_ms;
-	(*env)->CallStaticVoidMethod(env, class, _STATIC_METHOD(class, "locationUpdated", "(DDDDDDJ)V"), latitude, longitude, altitude, accuracy, speed, heading, timestamp);
+	J__LocationManager__locationUpdated(env, latitude, longitude, altitude, accuracy, speed, heading, timestamp);
 }
 
 JNIEXPORT void JNICALL Java_android_location_LocationManager_nativeGetLocation(JNIEnv *env, jobject)

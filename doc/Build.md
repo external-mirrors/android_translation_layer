@@ -94,11 +94,37 @@ meson compile
 sudo meson install
 ```
 
+## More Additional Dependencies
+We use some custom tools for header generation (see Upcalls.md).
+
+To compile (and run) those tools, some relatively commonly packaged java libraries are needed.
+Unfortunately, it's much less common for there to be a way to query for java libraries installed
+on a system (pkgconfig solves this for C/C++). To work around this very annoying issue, we support
+two modes:
+- With `-Ddownload_tool_deps=false` (the default), we attemtpt to use xmvn-resolve to locate and
+  use distro-installed dependencies, and if we fail to do so the meson configuration doesn't complete.
+- With `-Ddownload_tool_deps=true`, dependencies that we are not able to resolve will be automagically
+downloaded from maven central using `mvn`. If `mvn` is not found, the configuration doesn't complete.
+
+With this:
+- on most distros, `-Ddownload_tool_deps=true` is necessary because `xmvn-resolve` doesn't exist
+- on OpenSuse, `-Ddownload_tool_deps=true` is necessary because the java-getopt package doesn't
+  properly register with the `xmvn` database
+- on Fedora, `-Ddownload_tool_deps=true` is necessary because the java-getopt package doesn't exist
+  at all anymore (unmaintained and failed to build at some point)
+
+One issue is that `xmvn` is technically somewhat rpm-specific and maintained by Fedora. There is
+similarly a suite of tools Debian uses to maintain their java packages, however that suite doesn't
+include any tool that could be used instead of `xmvn-resolve`.
+
+While being forced to download dependencies from maven-central in all known cases is quite depressing,
+thankfully these are only needed for compilation.
+
 ## Build
 ```sh
 git clone https://gitlab.com/android_translation_layer/android_translation_layer.git
 cd android_translation_layer
-meson setup builddir
+meson setup builddir [-Ddownload_tool_deps=true]
 cd builddir
 meson compile
 ```

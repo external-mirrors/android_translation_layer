@@ -36,13 +36,9 @@ static void on_change_value(GtkRange *self, GtkScrollType *scroll, gdouble value
 {
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(self)));
-	jclass listener_class = _CLASS(listener);
-	jmethodID on_progress_changed = _METHOD(listener_class, "onProgressChanged", "(Landroid/widget/SeekBar;IZ)V");
-	jmethodID on_start_tracking = _METHOD(listener_class, "onStartTrackingTouch", "(Landroid/widget/SeekBar;)V");
-	jmethodID on_stop_tracking = _METHOD(listener_class, "onStopTrackingTouch", "(Landroid/widget/SeekBar;)V");
-	(*env)->CallVoidMethod(env, listener, on_start_tracking, wrapper->jobj);
-	(*env)->CallVoidMethod(env, listener, on_progress_changed, wrapper->jobj, (int)value, TRUE);
-	(*env)->CallVoidMethod(env, listener, on_stop_tracking, wrapper->jobj);
+	J__SeekBar__OnSeekBarChangeListener__onStartTrackingTouch(env, listener, wrapper->jobj);
+	J__SeekBar__OnSeekBarChangeListener__onProgressChanged(env, listener, wrapper->jobj, (int)value, TRUE);
+	J__SeekBar__OnSeekBarChangeListener__onStopTrackingTouch(env, listener, wrapper->jobj);
 }
 
 JNIEXPORT void JNICALL Java_android_widget_SeekBar_setOnSeekBarChangeListener(JNIEnv *env, jobject this, jobject listener)

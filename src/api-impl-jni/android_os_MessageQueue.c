@@ -27,7 +27,7 @@ static gboolean dispatch_func(GSource *source, GSourceFunc callback, gpointer us
 	JNIEnv *env;
 	(*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_6);
 	g_source_set_ready_time(source, -1); // clear previous timeout
-	(*env)->CallStaticVoidMethod(env, handle_cache.looper.class, handle_cache.looper.loop);
+	J__Looper__loop(env);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 
@@ -42,7 +42,7 @@ void prepare_main_looper(JNIEnv *env)
 {
 	main_thread_id = g_thread_self();
 
-	(*env)->CallStaticVoidMethod(env, handle_cache.looper.class, handle_cache.looper.prepareMainLooper);
+	J__Looper__prepareMainLooper(env);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 	source = g_source_new(&source_funcs, sizeof(GSource));

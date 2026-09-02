@@ -23,7 +23,7 @@ static gssize java_input_stream_read(GInputStream *gstream, void *buffer, gsize 
 
 	count = MIN(count, stream->storage_size);
 
-	count = (*env)->CallIntMethod(env, stream->is, _METHOD(_CLASS(stream->is), "read", "([BII)I"), stream->storage, 0, count);
+	count = J__InputStream__read(env, stream->is, stream->storage, 0, count);
 	if (count == -1) { // end of stream
 		return 0;
 	}

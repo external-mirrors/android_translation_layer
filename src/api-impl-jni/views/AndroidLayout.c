@@ -42,7 +42,7 @@ static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *
 		if (heightMeasureSpec == -1)
 			heightMeasureSpec = _GET_INT_FIELD(layout->view, "oldHeightMeasureSpec");
 		if (widthMeasureSpec != -1 && heightMeasureSpec != -1) {
-			(*env)->CallVoidMethod(env, layout->view, handle_cache.view.measure, widthMeasureSpec, heightMeasureSpec);
+			J__View__measure(env, layout->view, widthMeasureSpec, heightMeasureSpec);
 			if ((*env)->ExceptionCheck(env)) {
 				(*env)->ExceptionDescribe(env);
 				(*env)->ExceptionClear(env);
@@ -51,13 +51,13 @@ static void android_layout_measure(GtkLayoutManager *layout_manager, GtkWidget *
 	}
 
 	if (orientation == GTK_ORIENTATION_HORIZONTAL) {
-		*natural = (*env)->CallIntMethod(env, layout->view, handle_cache.view.getMeasuredWidth);
+		*natural = J__View__getMeasuredWidth(env, layout->view);
 		*minimum = heightMeasureSpec && !widthMeasureSpec ? *natural
-		                                                  : (*env)->CallIntMethod(env, layout->view, handle_cache.view.getSuggestedMinimumWidth);
+		                                                  : J__View__getSuggestedMinimumWidth(env, layout->view);
 	} else if (orientation == GTK_ORIENTATION_VERTICAL) {
-		*natural = (*env)->CallIntMethod(env, layout->view, handle_cache.view.getMeasuredHeight);
+		*natural = J__View__getMeasuredHeight(env, layout->view);
 		*minimum = widthMeasureSpec && !heightMeasureSpec ? *natural
-		                                                  : (*env)->CallIntMethod(env, layout->view, handle_cache.view.getSuggestedMinimumHeight);
+		                                                  : J__View__getSuggestedMinimumHeight(env, layout->view);
 	}
 	if (*natural < *minimum)
 		*natural = *minimum;
@@ -79,7 +79,7 @@ static void android_layout_allocate(GtkLayoutManager *layout_manager, GtkWidget 
 		height = layout->real_height;
 	}
 
-	(*env)->CallVoidMethod(env, layout->view, handle_cache.view.layoutInternal, width, height);
+	J__View__layoutInternal(env, layout->view, width, height);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
 }

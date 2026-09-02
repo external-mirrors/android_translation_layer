@@ -21,7 +21,7 @@ static void asset_uri_scheme_request_cb(WebKitURISchemeRequest *request, gpointe
 	path += 1; // remove the leading '/'
 	JNIEnv *env = get_jni_env();
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(webkit_uri_scheme_request_get_web_view(request))));
-	jobject asset_manager_obj = (*env)->CallObjectMethod(env, wrapper->jobj, handle_cache.webview.internalGetAssetManager);
+	jobject asset_manager_obj = J__WebView__internalGetAssetManager(env, wrapper->jobj);
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(asset_manager_obj, "mObject"));
 	struct Asset *asset = AssetManager_openNonAsset(asset_manager, path, ACCESS_STREAMING);
 	GInputStream *stream = asset_input_stream_new(asset);
@@ -33,7 +33,7 @@ static void web_view_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_
 {
 	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(GTK_WIDGET(web_view)));
 	JNIEnv *env = get_jni_env();
-	(*env)->CallVoidMethod(env, wrapper->jobj, handle_cache.webview.internalLoadChanged, load_event, _JSTRING(webkit_web_view_get_uri(web_view)));
+	J__WebView__internalLoadChanged(env, wrapper->jobj, load_event, _JSTRING(webkit_web_view_get_uri(web_view)));
 }
 
 static gboolean decide_policy(WebKitWebView *web_view, WebKitPolicyDecision *decision, WebKitPolicyDecisionType type, WrapperWidget *wrapper)
@@ -45,7 +45,7 @@ static gboolean decide_policy(WebKitWebView *web_view, WebKitPolicyDecision *dec
 		const gchar *uri = webkit_uri_request_get_uri(request);
 
 		JNIEnv *env = get_jni_env();
-		jboolean result = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.webview.internalShouldOverrideUrlLoading, _JSTRING(uri));
+		jboolean result = J__WebView__internalShouldOverrideUrlLoading(env, wrapper->jobj, _JSTRING(uri));
 		if (result)
 			webkit_policy_decision_ignore(decision);
 		else

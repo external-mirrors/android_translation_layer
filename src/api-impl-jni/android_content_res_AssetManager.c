@@ -206,7 +206,7 @@ JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_getArrayStr
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
 	AM_SCOPEDLOCK(asset_manager)
 	const struct ResolvedBag *bag = AssetManager_getBag(asset_manager, ident);
-	jobjectArray array = (*env)->NewObjectArray(env, bag->entry_count, (*env)->FindClass(env, "java/lang/String"), NULL);
+	jobjectArray array = (*env)->NewObjectArray(env, bag->entry_count, _CACHED_CLASS(String), NULL);
 	for (int i = 0; i < bag->entry_count; i++) {
 		const struct ResolvedBag_Entry entry = bag->entries[i];
 		struct Res_value value = entry.value;
@@ -335,7 +335,7 @@ JNIEXPORT jboolean JNICALL Java_android_content_res_AssetManager_resolveAttrs(JN
 	const jsize attrs_len = (*env)->GetArrayLength(env, java_attrs);
 	const jsize out_values_len = (*env)->GetArrayLength(env, out_java_values);
 	if (out_values_len < (attrs_len * STYLE_NUM_ENTRIES)) {
-		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/lang/IndexOutOfBoundsException"), "outValues too small");
+		(*env)->ThrowNew(env, _CACHED_CLASS(IndexOutOfBoundsException), "outValues too small");
 		return false;
 	}
 
@@ -623,13 +623,13 @@ JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_list(JNIEnv
 	struct AssetDir *asset_dir = AssetManager_openDir(asset_manager, path);
 	(*env)->ReleaseStringUTFChars(env, path_jstr, path);
 	if (!asset_dir) {
-		(*env)->ThrowNew(env, (*env)->FindClass(env, "java/io/FileNotFoundException"), path);
+		(*env)->ThrowNew(env, _CACHED_CLASS(FileNotFoundException), path);
 		return NULL;
 	}
 
 	const size_t file_count = AssetDir_getFileCount(asset_dir);
 
-	jobjectArray array = (*env)->NewObjectArray(env, file_count, (*env)->FindClass(env, "java/lang/String"), NULL);
+	jobjectArray array = (*env)->NewObjectArray(env, file_count, _CACHED_CLASS(String), NULL);
 	if (!array)
 		return NULL;
 
@@ -665,7 +665,7 @@ JNIEXPORT jobjectArray JNICALL Java_android_content_res_AssetManager_getLocales(
 	int i = 0;
 	while (locales[i] != NULL)
 		i++;
-	jobjectArray array = (*env)->NewObjectArray(env, i, (*env)->FindClass(env, "java/lang/String"), NULL);
+	jobjectArray array = (*env)->NewObjectArray(env, i, _CACHED_CLASS(String), NULL);
 	for (i = 0; locales[i] != NULL; i++) {
 		(*env)->SetObjectArrayElement(env, array, i, (*env)->NewStringUTF(env, locales[i]));
 		free(locales[i]);

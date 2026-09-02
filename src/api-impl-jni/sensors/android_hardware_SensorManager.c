@@ -44,9 +44,9 @@ gboolean on_accel_data(struct accel_callback_data *d)
 	jfloatArray values = (*env)->NewFloatArray(env, 3);
 	(*env)->SetFloatArrayRegion(env, values, 0, 3, (jfloat[]){graphene_vec3_get_x(vector), graphene_vec3_get_y(vector), graphene_vec3_get_z(vector)});
 	graphene_vec3_free(vector);
-	jobject sensor_event = (*env)->NewObject(env, handle_cache.sensor_event.class, handle_cache.sensor_event.constructor, values, d->sensor);
+	jobject sensor_event = J_new__SensorEvent(env, values, d->sensor);
 
-	(*env)->CallVoidMethod(env, d->listener, _METHOD(d->listener_class, "onSensorChanged", "(Landroid/hardware/SensorEvent;)V"), sensor_event);
+	J__SensorEventListener__onSensorChanged(env, d->listener, sensor_event);
 	(*env)->DeleteLocalRef(env, values);
 	(*env)->DeleteLocalRef(env, sensor_event);
 
