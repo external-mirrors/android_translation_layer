@@ -377,6 +377,7 @@ public abstract class Context {
 		}
 	}
 
+	@Export
 	public abstract ClassLoader getClassLoader();
 
 	@Export

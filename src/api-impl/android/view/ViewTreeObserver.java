@@ -869,6 +869,7 @@ public final class ViewTreeObserver {
 	 * @return True if the current draw should be canceled and resceduled, false otherwise.
 	 */
 	@SuppressWarnings("unchecked")
+	@Export
 	public final boolean dispatchOnPreDraw() {
 		boolean cancelDraw = false;
 		final CopyOnWriteArray<OnPreDrawListener> listeners = mOnPreDrawListeners;

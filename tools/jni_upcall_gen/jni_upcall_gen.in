@@ -1,0 +1,41 @@
+#!/bin/bash
+# Set up prog to be the path of this script, including following symlinks,
+# and set up progdir to be the fully-qualified pathname of its directory.
+prog="$0"
+while [ -h "${{prog}}" ]; do
+    newProg=`/bin/ls -ld "${{prog}}"`
+    newProg=`expr "${{newProg}}" : ".* -> \(.*\)$"`
+    if expr "x${{newProg}}" : 'x/' >/dev/null; then
+        prog="${{newProg}}"
+    else
+        progdir=`dirname "${{prog}}"`
+        prog="${{progdir}}/${{newProg}}"
+    fi
+done
+oldwd=`pwd`
+progdir=`dirname "${{prog}}"`
+cd "${{progdir}}"
+progdir=`pwd`
+prog="${{progdir}}"/`basename "${{prog}}"`
+cd "${{oldwd}}"
+
+classname=JNIUpcallWrapperGenerator
+classfile=${{classname}}.class
+# assume we're running out of build tree
+libdir=${{progdir}}
+
+if [ ! -r "${{libdir}}/${{classfile}}" ]; then
+    # not running out of build tree, assume system-wide install
+    libdir="${{progdir}}/../share/java"
+fi
+
+if [ ! -r "${{libdir}}/${{classfile}}" ]; then
+    echo `basename "$prog"`": can't find ${{classfile}}"
+    echo "looked in: ${{progdir}}:${{progdir}}/../share/java"
+    exit 1
+fi
+
+{define_javadir}{define_vendored_deps_dir}
+classpath={install_classpath}
+
+exec java -cp ${{classpath}}:${{libdir}} ${{classname}} $@

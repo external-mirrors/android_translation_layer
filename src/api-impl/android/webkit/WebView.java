@@ -45,6 +45,7 @@ public class WebView extends ViewGroup {
 		}
 	}
 
+	@Export
 	boolean internalShouldOverrideUrlLoading(String url) {
 		if (webViewClient != null)
 			return webViewClient.shouldOverrideUrlLoading(this, url);

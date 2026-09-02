@@ -1,0 +1,2 @@
+# set this to true if your distro doesn't have xmvn or doesn't (properly) package asm and getopt
+option('download_tool_deps', type : 'boolean', value : false)

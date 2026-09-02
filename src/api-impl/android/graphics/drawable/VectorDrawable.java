@@ -16,6 +16,7 @@ package android.graphics.drawable;
 
 import android.annotation.NonNull;
 import android.annotation.Nullable;
+import android.atl.annotation.Export;
 import android.content.res.ColorStateList;
 import android.content.res.ComplexColor;
 import android.content.res.Resources;
@@ -805,6 +806,7 @@ class PathParser {
  * </pre></li>
  */
 
+@Export
 public class VectorDrawable extends Drawable {
 	private static final String LOGTAG = VectorDrawable.class.getSimpleName();
 

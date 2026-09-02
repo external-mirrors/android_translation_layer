@@ -1,5 +1,8 @@
 package android.os;
 
+import android.atl.annotation.Export;
+
+@Export
 public interface Parcelable {
 	public static final int CONTENTS_FILE_DESCRIPTOR = 1;
 

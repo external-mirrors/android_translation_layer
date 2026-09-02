@@ -8,8 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Used by our tool to generate upcall wrappers with strong typing
  */
-@Retention(RetentionPolicy.RUNTIME) // necessary as long as we use asm on the jar rather than a plugin
-@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Retention(RetentionPolicy.CLASS) // necessary as long as we use asm on the jar rather than a plugin
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.TYPE})
 public @interface Export {
 	/**
 	 * alternative exported name (to disambiguate overloaded methods)

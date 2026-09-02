@@ -1,9 +1,11 @@
 package android.view;
 
+import android.atl.annotation.Export;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 
+@Export
 public final class Display {
 
 	public static int window_width = 960;

@@ -1393,6 +1393,7 @@ public class View implements Drawable.Callback {
 	private static native void nativeInvalidate(long widget);
 
 	// called from native code for GTK widgets or from invalidate() for Java widgets
+	@Export
 	private void propagateInvalidation() {
 		for (View child = this; child.parent instanceof View; child = (View)child.parent)
 			child.parent.onDescendantInvalidated(child, this);
