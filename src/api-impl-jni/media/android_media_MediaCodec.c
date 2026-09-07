@@ -484,6 +484,12 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 	}
 }
 
+JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1flush(JNIEnv *env, jobject this, jlong codec)
+{
+	struct ATL_codec_context *ctx = _PTR(codec);
+	avcodec_flush_buffers(ctx->codec);
+}
+
 JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1release(JNIEnv *env, jobject this, jlong codec)
 {
 	struct ATL_codec_context *ctx = _PTR(codec);

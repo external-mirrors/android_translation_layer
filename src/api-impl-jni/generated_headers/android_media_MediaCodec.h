@@ -67,6 +67,14 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 
 /*
  * Class:     android_media_MediaCodec
+ * Method:    native_flush
+ * Signature: (J)V
+ */
+JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1flush
+  (JNIEnv *, jobject, jlong);
+
+/*
+ * Class:     android_media_MediaCodec
  * Method:    native_release
  * Signature: (J)V
  */

@@ -125,7 +125,17 @@ public class MediaCodec {
 		return mediaFormat;
 	}
 
-	public void flush() {}
+	public void flush() {
+		native_flush(native_codec);
+		freeInputBuffers.clear();
+		for (int i = 0; i < inputBuffers.length; i++)
+			freeInputBuffers.add(i);
+		queuedInputBuffers.clear();
+		freeOutputBuffers.clear();
+		for (int i = 0; i < outputBuffers.length; i++)
+			freeOutputBuffers.add(i);
+		outputFormatSet = false;
+	}
 
 	private void tryProcessInputBuffer() {
 		Integer index = queuedInputBuffers.peek();
@@ -205,6 +215,7 @@ public class MediaCodec {
 	private native int native_queueInputBuffer(long codec, ByteBuffer buffer, long presentationTimeUs);
 	private native int native_dequeueOutputBuffer(long codec, ByteBuffer buffer, BufferInfo info);
 	private native void native_releaseOutputBuffer(long codec, ByteBuffer buffer, boolean render);
+	private native void native_flush(long codec);
 	private native void native_release(long codec);
 
 	public static final class CryptoInfo {
