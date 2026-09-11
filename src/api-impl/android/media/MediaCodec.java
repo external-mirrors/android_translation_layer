@@ -112,12 +112,13 @@ public class MediaCodec {
 	}
 
 	public void releaseOutputBuffer(int index, boolean render) {
-		native_releaseOutputBuffer(native_codec, outputBuffers[index], render);
+		native_releaseOutputBuffer(native_codec, outputBuffers[index], render, 0);
 		freeOutputBuffers.add(index);
 	}
 
-	public void releaseOutputBuffer(int index, long presentationTimeUs) {
-		native_releaseOutputBuffer(native_codec, outputBuffers[index], true);
+	// AOSP calls the parameter `presentationTimeUs`, but actually it is nanoseconds
+	public void releaseOutputBuffer(int index, long releaseTimeNs) {
+		native_releaseOutputBuffer(native_codec, outputBuffers[index], true, releaseTimeNs);
 		freeOutputBuffers.add(index);
 	}
 
@@ -214,7 +215,7 @@ public class MediaCodec {
 	private native void native_start(long codec);
 	private native int native_queueInputBuffer(long codec, ByteBuffer buffer, long presentationTimeUs);
 	private native int native_dequeueOutputBuffer(long codec, ByteBuffer buffer, BufferInfo info);
-	private native void native_releaseOutputBuffer(long codec, ByteBuffer buffer, boolean render);
+	private native void native_releaseOutputBuffer(long codec, ByteBuffer buffer, boolean render, long releaseTimeNs);
 	private native void native_flush(long codec);
 	private native void native_release(long codec);
 

@@ -150,7 +150,22 @@ struct render_frame_data {
 	AVFrame *frame;
 	GdkTexture *texture; // for software decoding
 	SurfaceViewWidget *surface_view_widget;
+	long release_time_ns; // wall-clock (monotonic, ns) at which the frame should be shown; 0 = now
 };
+
+// 5ms lead time (~0.5 vsync) to correct possible GTK + the Wayland compositor latency
+#define RENDER_LEAD_US (5000)
+
+// schedule a render so the frame reaches the screen by (or fractionally before) its release time
+static guint schedule_render(GSourceFunc render_fn, struct render_frame_data *data, GdkTexture *texture)
+{
+	gint64 delay_us = 0;
+	if (data->release_time_ns > 0)
+		delay_us = (data->release_time_ns - RENDER_LEAD_US * 1000 - g_get_monotonic_time() * 1000) / 1000; // all in ns
+	if (delay_us > 0)
+		return g_timeout_add_full(G_PRIORITY_DEFAULT_IDLE, MAX(delay_us / 1000, 1), render_fn, data, NULL);
+	return g_idle_add(render_fn, data);
+}
 
 static void handle_dmabuftexture_destroy(void *data)
 {
@@ -422,7 +437,7 @@ static gboolean render_texture(void *data)
 	return G_SOURCE_REMOVE;
 }
 
-JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer(JNIEnv *env, jobject this, jlong codec, jobject buffer, jboolean render)
+JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer(JNIEnv *env, jobject this, jlong codec, jobject buffer, jboolean render, jlong presentationTimeNs)
 {
 	struct ATL_codec_context *ctx = _PTR(codec);
 	jarray array_ref;
@@ -471,7 +486,8 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 			struct render_frame_data *data = malloc(sizeof(struct render_frame_data));
 			data->texture = texture;
 			data->surface_view_widget = ctx->video.surface_view_widget;
-			g_idle_add(render_texture, data);
+			data->release_time_ns = presentationTimeNs;
+			schedule_render(render_texture, data, texture);
 			g_bytes_unref(bytes);
 			av_frame_free(&frame);
 			return;
@@ -479,8 +495,9 @@ JNIEXPORT void JNICALL Java_android_media_MediaCodec_native_1releaseOutputBuffer
 
 		struct render_frame_data *data = malloc(sizeof(struct render_frame_data));
 		data->frame = frame;
+		data->release_time_ns = presentationTimeNs;
 		data->surface_view_widget = ctx->video.surface_view_widget;
-		g_idle_add(render_frame, data);
+		schedule_render(render_frame, data, NULL);
 	}
 }
 
