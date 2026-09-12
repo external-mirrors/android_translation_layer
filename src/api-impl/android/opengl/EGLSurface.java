@@ -18,11 +18,11 @@
 package android.opengl;
 
 /**
- * Wrapper class for native EGLConfig objects.
+ * Wrapper class for native EGLSurface objects.
  *
  */
-public class EGLConfig extends EGLObjectHandle {
-	EGLConfig(long handle) {
+public class EGLSurface extends EGLObjectHandle {
+	EGLSurface(long handle) {
 		super(handle);
 	}
 
@@ -30,10 +30,10 @@ public class EGLConfig extends EGLObjectHandle {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof EGLConfig))
+		if (!(o instanceof EGLSurface))
 			return false;
 
-		EGLConfig that = (EGLConfig)o;
+		EGLSurface that = (EGLSurface)o;
 		return getNativeHandle() == that.getNativeHandle();
 	}
 }

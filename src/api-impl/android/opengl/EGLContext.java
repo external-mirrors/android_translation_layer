@@ -18,11 +18,11 @@
 package android.opengl;
 
 /**
- * Wrapper class for native EGLConfig objects.
+ * Wrapper class for native EGLContext objects.
  *
  */
-public class EGLConfig extends EGLObjectHandle {
-	EGLConfig(long handle) {
+public class EGLContext extends EGLObjectHandle {
+	EGLContext(long handle) {
 		super(handle);
 	}
 
@@ -30,10 +30,10 @@ public class EGLConfig extends EGLObjectHandle {
 	public boolean equals(Object o) {
 		if (this == o)
 			return true;
-		if (!(o instanceof EGLConfig))
+		if (!(o instanceof EGLContext))
 			return false;
 
-		EGLConfig that = (EGLConfig)o;
+		EGLContext that = (EGLContext)o;
 		return getNativeHandle() == that.getNativeHandle();
 	}
 }

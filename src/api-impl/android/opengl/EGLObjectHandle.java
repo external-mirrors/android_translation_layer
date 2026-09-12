@@ -22,9 +22,13 @@ package android.opengl;
  *
  */
 public abstract class EGLObjectHandle {
-	private final int mHandle;
+	private final long mHandle;
 
 	protected EGLObjectHandle(int handle) {
+		mHandle = handle;
+	}
+
+	protected EGLObjectHandle(long handle) {
 		mHandle = handle;
 	}
 
@@ -37,6 +41,10 @@ public abstract class EGLObjectHandle {
 	 * @return the native handle of the wrapped EGL object.
 	 */
 	public int getHandle() {
+		return (int)mHandle;
+	}
+
+	public long getNativeHandle() {
 		return mHandle;
 	}
 
