@@ -36,6 +36,7 @@ import android.util.Property;
 import android.util.Slog;
 import android.util.SparseArray;
 import android.util.TypedValue;
+import android.view.WindowInsets;
 import android.view.animation.Animation;
 import android.view.autofill.AutofillId;
 import android.view.inputmethod.EditorInfo;
@@ -2366,7 +2367,7 @@ public class View implements Drawable.Callback {
 			return false;
 	}
 
-	public WindowInsets getRootWindowInsets() { return null; }
+	public WindowInsets getRootWindowInsets() { return new WindowInsets(); }
 
 	public PointerIcon getPointerIcon() { return null; }
 
@@ -2570,4 +2571,8 @@ public class View implements Drawable.Callback {
 	public void setLabelFor(int id) {}
 
 	public ArrayList<View> getFocusables(int direction) { return new ArrayList<View>(); }
+
+	public WindowInsets onApplyWindowInsets(WindowInsets insets) {
+		return insets;
+	}
 }
