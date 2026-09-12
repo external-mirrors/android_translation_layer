@@ -338,8 +338,8 @@ jobject intent_deserialize(JNIEnv *env, GVariant *variant)
 			GVariantIter parcel_iter;
 			g_variant_iter_init(&parcel_iter, value);
 			jobject parcel = (*env)->NewObject(env, handle_cache.iter_parcel.class, handle_cache.iter_parcel.constructor, _INTPTR(&parcel_iter));
-			jmethodID getClassLoader = _METHOD((*env)->FindClass(env, "java/lang/Class"), "getClassLoader", "()Ljava/lang/ClassLoader;");
-			jobject class_loader = (*env)->CallObjectMethod(env, handle_cache.parcel.class, getClassLoader);
+			jmethodID getClassLoader = _METHOD(handle_cache.context.class, "getClassLoader", "()Ljava/lang/ClassLoader;");
+			jobject class_loader = (*env)->CallObjectMethod(env, _GET_STATIC_OBJ_FIELD(handle_cache.context.class, "this_application", "Landroid/app/Application;"), getClassLoader);
 			jobject parcelable = (*env)->CallObjectMethod(env, parcel, handle_cache.parcel.readParcelable, class_loader);
 			if ((*env)->ExceptionCheck(env)) {
 				(*env)->ExceptionDescribe(env);
