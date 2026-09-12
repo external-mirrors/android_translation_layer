@@ -86,4 +86,8 @@ public final class Display {
 			return window_height;
 		}
 	}
+
+	public Mode[] getSupportedModes() {
+		return new Mode[] {getMode()};
+	}
 }
