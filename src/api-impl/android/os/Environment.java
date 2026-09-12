@@ -804,6 +804,11 @@ public class Environment {
 		return Environment.MEDIA_MOUNTED;
 	}
 
-	public static boolean isExternalStorageManager() { return false; }
-	public static boolean isExternalStorageManager(File path) { return false; }
+	/*
+	 * Some applications (i.e. file managers) want to be sure they have a
+	 * permission to access external storage. ATL doesn't really restrict
+	 * file access of the apps at this time so we always report true here.
+	 */
+	public static boolean isExternalStorageManager() { return true; }
+	public static boolean isExternalStorageManager(File path) { return true; }
 }
