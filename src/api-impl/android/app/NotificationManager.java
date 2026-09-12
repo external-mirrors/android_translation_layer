@@ -43,7 +43,8 @@ public class NotificationManager {
 			intentType = notification.intent.type;
 			intent = notification.intent.intent;
 		}
-		nativeShowNotification(builder, id, notification.title, notification.text, notification.iconPath, notification.ongoing, intentType, intent);
+		String iconPath = notification.iconPath == null || notification.iconPath.endsWith(".xml") ? null : notification.iconPath;
+		nativeShowNotification(builder, id, notification.title, notification.text, iconPath, notification.ongoing, intentType, intent);
 	}
 
 	public void notify(int id, Notification notification) {

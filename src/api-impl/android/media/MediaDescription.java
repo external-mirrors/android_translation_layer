@@ -37,6 +37,8 @@ public class MediaDescription {
 
 		public Builder setExtras(Bundle extras) { return this; }
 
+		public Builder setMediaUri(Uri mediaUri) { return this; }
+
 		public MediaDescription build() {
 			return description;
 		}

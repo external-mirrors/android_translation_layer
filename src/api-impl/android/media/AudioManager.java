@@ -1,5 +1,7 @@
 package android.media;
 
+import android.os.Handler;
+
 public class AudioManager {
 	public static final String PROPERTY_OUTPUT_FRAMES_PER_BUFFER = "android.media.property.OUTPUT_FRAMES_PER_BUFFER";
 	public static final String PROPERTY_OUTPUT_SAMPLE_RATE = "android.media.property.OUTPUT_SAMPLE_RATE";
@@ -95,4 +97,12 @@ public class AudioManager {
 	public int generateAudioSessionId() {
 		return 0;
 	}
+
+	public AudioDeviceInfo[] getDevices(int mode) {
+		return new AudioDeviceInfo[0];
+	}
+
+	public void registerAudioDeviceCallback(AudioDeviceCallback callback, Handler handler) {}
+
+	public void unregisterAudioDeviceCallback(AudioDeviceCallback callback) {}
 }

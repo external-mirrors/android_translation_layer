@@ -1,5 +1,6 @@
 package android.graphics;
 
+import android.os.Parcelable;
 import android.util.DisplayMetrics;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -9,7 +10,7 @@ import java.nio.Buffer;
  * Bitmap is implemented as GdkTexture or GtkSnapshot. It can only be one of the two at a time.
  * The methods getTexture() and getSnapshot() automatically convert between the two as needed.
  */
-public final class Bitmap {
+public final class Bitmap implements Parcelable {
 
 	public enum Config {
 		RGB_565(2, -1, /*ANDROID_BITMAP_FORMAT_RGB_565*/ 4),

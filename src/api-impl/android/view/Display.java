@@ -71,4 +71,19 @@ public final class Display {
 	public DisplayCutout getCutout() {
 		return DisplayCutout.NO_CUTOUT;
 	}
+
+	public Display.Mode getMode() {
+		return new Display.Mode();
+	}
+
+	public static final class Mode {
+
+		public int getPhysicalWidth() {
+			return window_width;
+		}
+
+		public int getPhysicalHeight() {
+			return window_height;
+		}
+	}
 }

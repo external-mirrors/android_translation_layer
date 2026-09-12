@@ -16,6 +16,10 @@ public class RippleDrawable extends LayerDrawable {
 
 	public void setRadius(int radius) {}
 
+	public int getRadius() {
+		return 0;
+	}
+
 	@Override
 	public void draw(Canvas canvas) {
 		final ChildDrawable[] array = mLayerState.mChildren;

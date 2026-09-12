@@ -192,6 +192,8 @@ public class Build {
 		 * be <code>0</code> on production platform builds/devices.
 		 */
 		public static final int PREVIEW_SDK_INT = SystemProperties.getInt("ro.build.version.preview_sdk", 0);
+
+		public static final String BASE_OS = getString("ro.build.version.base_os");
 	}
 
 	/**

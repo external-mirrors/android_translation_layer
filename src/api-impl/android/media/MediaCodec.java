@@ -185,6 +185,9 @@ public class MediaCodec {
 		native_codec = 0;
 	}
 
+	public void setOutputSurface(Surface surface) {
+	}
+
 	@Override
 	@SuppressWarnings("deprecation")
 	protected void finalize() throws Throwable {
