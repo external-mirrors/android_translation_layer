@@ -241,6 +241,10 @@ public class RenderNode {
 		transformed_node = 0;
 	}
 
+	public void destroyDisplayListData() {
+		discardDisplayList();
+	}
+
 	public boolean setLayerType(int layerType) {
 		return false;
 	}
