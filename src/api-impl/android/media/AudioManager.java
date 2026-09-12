@@ -29,6 +29,10 @@ public class AudioManager {
 	public interface OnAudioFocusChangeListener {
 	}
 
+	public static final int GET_DEVICES_INPUTS = 0x0001;
+	public static final int GET_DEVICES_OUTPUTS = 0x0002;
+	public static final int GET_DEVICES_ALL = GET_DEVICES_OUTPUTS | GET_DEVICES_INPUTS;
+
 	public int getRingerMode() {
 		return 0;
 	}
