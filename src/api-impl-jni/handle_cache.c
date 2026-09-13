@@ -170,4 +170,11 @@ void set_up_handle_cache(JNIEnv *env)
 
 	handle_cache.date_picker.class = _REF((*env)->FindClass(env, "android/widget/DatePicker"));
 	handle_cache.date_picker.onDateChange = _METHOD(handle_cache.date_picker.class, "onDateChange", "()V");
+
+	handle_cache.file_descriptor.class = _REF((*env)->FindClass(env, "java/io/FileDescriptor"));
+	handle_cache.file_descriptor.constructor = _METHOD(handle_cache.file_descriptor.class, "<init>", "()V");
+	handle_cache.file_descriptor.setInt = _METHOD(handle_cache.file_descriptor.class, "setInt$", "(I)V");
+	handle_cache.file_descriptor.getInt = _METHOD(handle_cache.file_descriptor.class, "getInt$", "()I");
+
+	handle_cache.io_exception.class = _REF((*env)->FindClass(env, "java/io/IOException"));
 }
