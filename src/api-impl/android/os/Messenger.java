@@ -97,4 +97,13 @@ public final class Messenger implements Parcelable {
 			}
 		};
 	}
+
+	public static void writeMessengerOrNullToParcel(Messenger messenger, Parcel dest) {
+		dest.writeStrongBinder(messenger != null ? messenger.getBinder() : null);
+	}
+
+	public static Messenger readMessengerOrNullFromParcel(Parcel source) {
+		IBinder binder = source.readStrongBinder();
+		return binder != null ? new Messenger(binder) : null;
+	}
 }

@@ -1,4 +1,13 @@
 package android.os;
 
-public class BadParcelableException extends Exception {
+import android.util.AndroidRuntimeException;
+
+public class BadParcelableException extends AndroidRuntimeException {
+	public BadParcelableException(String msg) {
+		super(msg);
+	}
+
+	public BadParcelableException(Exception cause) {
+		super(cause);
+	}
 }

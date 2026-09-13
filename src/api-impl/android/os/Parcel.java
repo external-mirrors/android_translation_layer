@@ -64,7 +64,7 @@ public class Parcel {
 		if (pos < size)
 			return data[pos++];
 		else
-			return 0;
+			throw new ParcelFormatException("Reading past end of Parcel data");
 	}
 
 	public void writeInt(int value) {
@@ -412,12 +412,16 @@ public class Parcel {
 			p.writeToParcel(this, flags);
 	}
 
-	public Parcelable readParcelable(ClassLoader loader) throws ReflectiveOperationException {
+	public Parcelable readParcelable(ClassLoader loader) {
 		String className = readString();
 		if (className == null)
 			return null;
-		Parcelable.Creator<?> creator = (Parcelable.Creator<?>)loader.loadClass(className).getField("CREATOR").get(null);
-		return (Parcelable)creator.createFromParcel(this);
+		try {
+			Parcelable.Creator<?> creator = (Parcelable.Creator<?>)loader.loadClass(className).getField("CREATOR").get(null);
+			return (Parcelable)creator.createFromParcel(this);
+		} catch (ReflectiveOperationException | IllegalArgumentException e) {
+			throw new BadParcelableException(e);
+		}
 	}
 
 	public void writeStringArray(String[] strings) {

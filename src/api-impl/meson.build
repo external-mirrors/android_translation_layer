@@ -426,6 +426,7 @@ srcs = [
 	'android/os/Parcel.java',
 	'android/os/Parcelable.java',
 	'android/os/ParcelFileDescriptor.java',
+	'android/os/ParcelFormatException.java',
 	'android/os/PatternMatcher.java',
 	'android/os/PersistableBundle.java',
 	'android/os/PowerManager.java',

@@ -16,6 +16,9 @@
 
 package android.os;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  *
  * Defines a message containing a description and arbitrary data object that can be
@@ -27,7 +30,7 @@ package android.os;
  * {@link Handler#obtainMessage Handler.obtainMessage()} methods, which will pull
  * them from a pool of recycled objects.</p>
  */
-public final class Message {
+public final class Message implements Parcelable {
 	/**
 	 * User-defined message code so that the recipient can identify
 	 * what this message is about. Each {@link Handler} has its own name-space
@@ -483,4 +486,53 @@ public final class Message {
 	public int describeContents() {
 		return 0;
 	}
+
+	public void writeToParcel(Parcel dest, int flags) {
+		if (callback != null) {
+			throw new RuntimeException("Can't marshal callbacks across processes.");
+		}
+		dest.writeInt(what);
+		dest.writeInt(arg1);
+		dest.writeInt(arg2);
+		if (obj != null) {
+			try {
+				Parcelable p = (Parcelable)obj;
+				dest.writeInt(1);
+				dest.writeParcelable(p, flags);
+			} catch (ClassCastException e) {
+				throw new RuntimeException("Can't marshal non-Parcelable objects across processes.");
+			}
+		} else {
+			dest.writeInt(0);
+		}
+		dest.writeLong(when);
+		dest.writeBundle(data);
+		Messenger.writeMessengerOrNullToParcel(replyTo, dest);
+	}
+
+	private void readFromParcel(Parcel source) {
+		what = source.readInt();
+		arg1 = source.readInt();
+		arg2 = source.readInt();
+		if (source.readInt() != 0) {
+			obj = source.readParcelable(getClass().getClassLoader());
+		}
+		when = source.readLong();
+		try {
+			data = source.readBundle();
+		} catch (ReflectiveOperationException e) {
+		}
+		replyTo = Messenger.readMessengerOrNullFromParcel(source);
+	}
+
+	public static final Parcelable.Creator<Message> CREATOR = new Parcelable.Creator<Message>() {
+		public Message createFromParcel(Parcel source) {
+			Message msg = new Message();
+			msg.readFromParcel(source);
+			return msg;
+		}
+		public Message[] newArray(int size) {
+			return new Message[size];
+		}
+	};
 }
