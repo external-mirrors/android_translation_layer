@@ -21,7 +21,7 @@ package android.os;
  * not provide full reg-exp support, only simple globbing that can not be
  * used maliciously.
  */
-public class PatternMatcher {
+public class PatternMatcher implements Parcelable {
 	/**
 	 * Pattern type: the given pattern must exactly match the string it is
 	 * tested against.
@@ -84,6 +84,26 @@ public class PatternMatcher {
 	public int describeContents() {
 		return 0;
 	}
+
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(mPattern);
+		dest.writeInt(mType);
+	}
+
+	public PatternMatcher(Parcel in) {
+		mPattern = in.readString();
+		mType = in.readInt();
+	}
+
+	public static final Parcelable.Creator<PatternMatcher> CREATOR = new Parcelable.Creator<PatternMatcher>() {
+		public PatternMatcher createFromParcel(Parcel in) {
+			return new PatternMatcher(in);
+		}
+
+		public PatternMatcher[] newArray(int size) {
+			return new PatternMatcher[size];
+		}
+	};
 
 	static boolean matchPattern(String pattern, String match, int type) {
 		if (match == null)

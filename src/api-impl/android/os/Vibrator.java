@@ -20,21 +20,33 @@ public class Vibrator {
 			Slog.v("Vibrator", "vibration motor go burrrr for " + millis + "ms");
 	}
 
+	private Thread vibrateThread;
+
 	public void vibrate(final long[] pattern, int repeat) {
-		Thread t = new Thread(new Runnable() {
+		if (repeat < -1 || repeat >= pattern.length)
+			throw new ArrayIndexOutOfBoundsException();
+		vibrateThread = new Thread(new Runnable() {
 			public void run() {
 				for (int i = 0; i < pattern.length; i++) {
 					if (i % 2 == 0)
 						try {
 							Thread.sleep(pattern[i]);
 						} catch (InterruptedException e) {
+							return;
 						}
 					else
 						vibrate(pattern[i]);
 				}
 			}
 		});
-		t.start();
+		vibrateThread.start();
+	}
+
+	public void cancel() {
+		if (vibrateThread != null) {
+			vibrateThread.interrupt();
+			vibrateThread = null;
+		}
 	}
 
 	private native void native_vibrate(int fd, long millis);

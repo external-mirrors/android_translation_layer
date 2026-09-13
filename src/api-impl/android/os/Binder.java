@@ -5,7 +5,21 @@ import android.content.Context;
 
 public class Binder implements IBinder {
 
-	public void attachInterface(IInterface owner, String descriptor) {}
+	private String mDescriptor;
+	private IInterface mOwner;
+
+	public void attachInterface(IInterface owner, String descriptor) {
+		mOwner = owner;
+		mDescriptor = descriptor;
+	}
+
+	public String getInterfaceDescriptor() {
+		return mDescriptor;
+	}
+
+	public IInterface getOwner() {
+		return mOwner;
+	}
 
 	public static void flushPendingCommands() {}
 

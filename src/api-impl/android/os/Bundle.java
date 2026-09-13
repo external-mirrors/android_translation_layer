@@ -209,62 +209,62 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	/**
 	 * Reports whether the bundle contains any parcelled file descriptors.
 	 */
-	public boolean hasFileDescriptors() { /*
-	     if (!mFdsKnown) {
-		 boolean fdFound = false;    // keep going until we find one or run out of data
+	public boolean hasFileDescriptors() {
+		if (!mFdsKnown) {
+			boolean fdFound = false; // keep going until we find one or run out of data
 
+			// It's been unparcelled, so we need to walk the map
+			for (int i = mMap.size() - 1; i >= 0; i--) {
+				Object obj = mMap.valueAt(i);
+				if (obj instanceof Parcelable) {
+					if ((((Parcelable)obj).describeContents()
+					     & Parcelable.CONTENTS_FILE_DESCRIPTOR)
+					    != 0) {
+						fdFound = true;
+						break;
+					}
+				} else if (obj instanceof Parcelable[]) {
+					Parcelable[] array = (Parcelable[])obj;
+					for (int n = array.length - 1; n >= 0; n--) {
+						if ((array[n].describeContents()
+						     & Parcelable.CONTENTS_FILE_DESCRIPTOR)
+						    != 0) {
+							fdFound = true;
+							break;
+						}
+					}
+				} else if (obj instanceof SparseArray) {
+					SparseArray<? extends Parcelable> array =
+						(SparseArray<? extends Parcelable>) obj;
+					for (int n = array.size() - 1; n >= 0; n--) {
+						if ((array.get(n).describeContents()
+						     & Parcelable.CONTENTS_FILE_DESCRIPTOR)
+						    != 0) {
+							fdFound = true;
+							break;
+						}
+					}
+				} else if (obj instanceof ArrayList) {
+					ArrayList array = (ArrayList)obj;
+					// an ArrayList here might contain either Strings or
+					// Parcelables; only look inside for Parcelables
+					if ((array.size() > 0)
+					    && (array.get(0) instanceof Parcelable)) {
+						for (int n = array.size() - 1; n >= 0; n--) {
+							Parcelable p = (Parcelable)array.get(n);
+							if (p != null && ((p.describeContents() & Parcelable.CONTENTS_FILE_DESCRIPTOR) != 0)) {
+								fdFound = true;
+								break;
+							}
+						}
+					}
+				}
+			}
 
-		 // It's been unparcelled, so we need to walk the map
-		 for (int i=mMap.size()-1; i>=0; i--) {
-		     Object obj = mMap.valueAt(i);
-		     if (obj instanceof Parcelable) {
-			 if ((((Parcelable)obj).describeContents()
-				 & Parcelable.CONTENTS_FILE_DESCRIPTOR) != 0) {
-			     fdFound = true;
-			     break;
-			 }
-		     } else if (obj instanceof Parcelable[]) {
-			 Parcelable[] array = (Parcelable[]) obj;
-			 for (int n = array.length - 1; n >= 0; n--) {
-			     if ((array[n].describeContents()
-				     & Parcelable.CONTENTS_FILE_DESCRIPTOR) != 0) {
-				 fdFound = true;
-				 break;
-			     }
-			 }
-		     } else if (obj instanceof SparseArray) {
-			 SparseArray<? extends Parcelable> array =
-				 (SparseArray<? extends Parcelable>) obj;
-			 for (int n = array.size() - 1; n >= 0; n--) {
-			     if ((array.get(n).describeContents()
-				     & Parcelable.CONTENTS_FILE_DESCRIPTOR) != 0) {
-				 fdFound = true;
-				 break;
-			     }
-			 }
-		     } else if (obj instanceof ArrayList) {
-			 ArrayList array = (ArrayList) obj;
-			 // an ArrayList here might contain either Strings or
-			 // Parcelables; only look inside for Parcelables
-			 if ((array.size() > 0)
-				 && (array.get(0) instanceof Parcelable)) {
-			     for (int n = array.size() - 1; n >= 0; n--) {
-				 Parcelable p = (Parcelable) array.get(n);
-				 if (p != null && ((p.describeContents()
-					 & Parcelable.CONTENTS_FILE_DESCRIPTOR) != 0)) {
-				     fdFound = true;
-				     break;
-				 }
-			     }
-			 }
-		     }
-		 }
-
-		 mHasFds = fdFound;
-		 mFdsKnown = true;
-	     }
-	     return mHasFds;*/
-		return false;
+			mHasFds = fdFound;
+			mFdsKnown = true;
+		}
+		return mHasFds;
 	}
 
 	/**
@@ -1139,18 +1139,38 @@ public final class Bundle extends BaseBundle implements Cloneable, Parcelable {
 	 */
 	public int describeContents() {
 		int mask = 0;
-		/*       if (hasFileDescriptors()) {
-			   mask |= Parcelable.CONTENTS_FILE_DESCRIPTOR;
-		       }*/
+		if (hasFileDescriptors())
+			mask |= Parcelable.CONTENTS_FILE_DESCRIPTOR;
 		return mask;
 	}
 
 	public void readFromParcel(Parcel in) throws ReflectiveOperationException {
 		in.readMap(mMap, getClassLoader());
+		mFdsKnown = false;
 	}
 
 	@Override
 	public synchronized String toString() {
 		return "Bundle[" + mMap.toString() + "]";
 	}
+
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeMap(mMap);
+	}
+
+	public static final Parcelable.Creator<Bundle> CREATOR = new Parcelable.Creator<Bundle>() {
+		public Bundle createFromParcel(Parcel in) {
+			Bundle b = new Bundle();
+			try {
+				in.readMap(b.mMap, b.getClassLoader());
+			} catch (ReflectiveOperationException e) {
+				throw new RuntimeException(e);
+			}
+			return b;
+		}
+
+		public Bundle[] newArray(int size) {
+			return new Bundle[size];
+		}
+	};
 }

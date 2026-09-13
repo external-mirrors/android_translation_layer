@@ -154,7 +154,7 @@ public class Build {
 		/**
 		 * The user-visible version string.  E.g., "1.0" or "3.4b5".
 		 */
-		public static final String RELEASE = getString("ro.build.version.release");
+		public static final String RELEASE = computeRelease();
 
 		/**
 		 * The user-visible SDK version of the framework; its possible
@@ -194,6 +194,91 @@ public class Build {
 		public static final int PREVIEW_SDK_INT = SystemProperties.getInt("ro.build.version.preview_sdk", 0);
 
 		public static final String BASE_OS = getString("ro.build.version.base_os");
+
+		static String computeIncremental() {
+			return getString("ro.build.version.incremental");
+		}
+
+		static String computeRelease() {
+			String release = getString("ro.build.version.release");
+			if (!UNKNOWN.equals(release)) {
+				return release;
+			}
+			switch (SDK_INT) {
+				case VERSION_CODES.BASE:
+					return "1.0";
+				case VERSION_CODES.BASE_1_1:
+					return "1.1";
+				case VERSION_CODES.CUPCAKE:
+					return "1.5";
+				case VERSION_CODES.DONUT:
+					return "1.6";
+				case VERSION_CODES.ECLAIR:
+					return "2.0";
+				case VERSION_CODES.ECLAIR_0_1:
+					return "2.0.1";
+				case VERSION_CODES.ECLAIR_MR1:
+					return "2.1";
+				case VERSION_CODES.FROYO:
+					return "2.2";
+				case VERSION_CODES.GINGERBREAD:
+					return "2.3";
+				case VERSION_CODES.GINGERBREAD_MR1:
+					return "2.3.3";
+				case VERSION_CODES.HONEYCOMB:
+					return "3.0";
+				case VERSION_CODES.HONEYCOMB_MR1:
+					return "3.1";
+				case VERSION_CODES.HONEYCOMB_MR2:
+					return "3.2";
+				case VERSION_CODES.ICE_CREAM_SANDWICH:
+					return "4.0";
+				case VERSION_CODES.ICE_CREAM_SANDWICH_MR1:
+					return "4.0.3";
+				case VERSION_CODES.JELLY_BEAN:
+					return "4.1";
+				case VERSION_CODES.JELLY_BEAN_MR1:
+					return "4.2";
+				case VERSION_CODES.JELLY_BEAN_MR2:
+					return "4.3";
+				case VERSION_CODES.KITKAT:
+					return "4.4";
+				case VERSION_CODES.KITKAT_WATCH:
+					return "4.4W";
+				case VERSION_CODES.LOLLIPOP:
+					return "5.0";
+				case VERSION_CODES.LOLLIPOP_MR1:
+					return "5.1";
+				case VERSION_CODES.M:
+					return "6.0";
+				case VERSION_CODES.N:
+					return "7.0";
+				case VERSION_CODES.N_MR1:
+					return "7.1";
+				case VERSION_CODES.O:
+					return "8.0";
+				case VERSION_CODES.O_MR1:
+					return "8.1";
+				case VERSION_CODES.P:
+					return "9";
+				case VERSION_CODES.Q:
+					return "10";
+				case VERSION_CODES.R:
+					return "11";
+				case VERSION_CODES.S:
+					return "12";
+				case VERSION_CODES.S_V2:
+					return "12.1";
+				case VERSION_CODES.TIRAMISU:
+					return "13";
+				case VERSION_CODES.UPSIDE_DOWN_CAKE:
+					return "14";
+				case VERSION_CODES.VANILLA_ICE_CREAM:
+					return "15";
+				default:
+					return UNKNOWN;
+			}
+		}
 	}
 
 	/**
@@ -933,7 +1018,15 @@ public class Build {
 	/**
 	 * A string that uniquely identifies this build.  Do not attempt to parse this value.
 	 */
-	public static final String FINGERPRINT = getString("ro.build.fingerprint");
+	public static final String FINGERPRINT = computeFingerprint();
+
+	private static String computeFingerprint() {
+		String fp = getString("ro.build.fingerprint");
+		if (!UNKNOWN.equals(fp)) {
+			return fp;
+		}
+		return BRAND + "/" + PRODUCT + "/" + DEVICE + "/" + BOARD + ":" + VERSION.computeRelease() + "/" + ID + "/" + VERSION.computeIncremental() + ":" + TYPE + "/" + TAGS;
+	}
 
 	// The following properties only make sense for internal engineering builds.
 	public static final long TIME = getLong("ro.build.date.utc") * 1000;

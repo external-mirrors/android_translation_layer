@@ -59,7 +59,7 @@ import libcore.io.Memory;
  * The FileDescriptor returned by {@link Parcel#readFileDescriptor}, allowing
  * you to close it when done with it.
  */
-public class ParcelFileDescriptor implements Closeable {
+public class ParcelFileDescriptor implements Parcelable, Closeable {
 	private static final String TAG = "ParcelFileDescriptor";
 
 	private final FileDescriptor mFd;
@@ -985,6 +985,25 @@ public class ParcelFileDescriptor implements Closeable {
 			}
 		}
 	}
+
+	@Override
+	public int describeContents() {
+		return Parcelable.CONTENTS_FILE_DESCRIPTOR;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeFileDescriptor(mFd);
+	}
+
+	public static final Parcelable.Creator<ParcelFileDescriptor> CREATOR = new Parcelable.Creator<ParcelFileDescriptor>() {
+		public ParcelFileDescriptor createFromParcel(Parcel in) {
+			return in.readFileDescriptor();
+		}
+		public ParcelFileDescriptor[] newArray(int size) {
+			return new ParcelFileDescriptor[size];
+		}
+	};
 
 	/**
 	 * Bridge to watch for remote status, and deliver to listener. Currently
