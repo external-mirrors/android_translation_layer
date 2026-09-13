@@ -55,6 +55,11 @@ public class MediaRecorder {
 	public void prepare() {}
 	public void start() {}
 	public void stop() {}
+	public void reset() {
+		audioSource = 0;
+		outputFormat = 0;
+		audioEncoder = 0;
+	}
 	public void resume() {}
 	public void pause() {}
 	public void release() {}

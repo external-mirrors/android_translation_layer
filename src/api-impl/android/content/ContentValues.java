@@ -104,6 +104,10 @@ public final class ContentValues {
 		mValues.putAll(other.mValues);
 	}
 
+	public void fillIn(ContentValues other) {
+		mValues.putAll(other.mValues);
+	}
+
 	/**
 	 * Adds a value to the set.
 	 *

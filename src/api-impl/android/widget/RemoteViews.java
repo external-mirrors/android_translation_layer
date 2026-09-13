@@ -1,11 +1,18 @@
 package android.widget;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.view.View;
+import android.view.ViewGroup;
 
 public class RemoteViews {
 
 	public RemoteViews(String packageName, int layoutId) {}
+
+	public View apply(Context context, ViewGroup parent) {
+		return null;
+	}
 
 	public void setProgressBar(int viewId, int max, int progress, boolean indeterminate) {}
 

@@ -23,6 +23,10 @@ public class WifiManager {
 		return new WifiLock();
 	}
 
+	public WifiLock createWifiLock(String tag) {
+		return new WifiLock();
+	}
+
 	public WifiInfo getConnectionInfo() {
 		return new WifiInfo();
 	}

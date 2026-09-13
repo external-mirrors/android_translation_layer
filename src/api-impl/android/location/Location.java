@@ -61,6 +61,10 @@ public class Location {
 		return (float)accuracy;
 	}
 
+	public void setAccuracy(float accuracy) {
+		this.accuracy = accuracy;
+	}
+
 	public boolean hasSpeed() {
 		return speed != -1;
 	}

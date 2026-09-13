@@ -10,6 +10,16 @@ import android.util.Slog;
 public class AlarmManager {
 	private static final String TAG = "AlarmManager";
 
+	public static final int RTC = 1;
+	public static final int RTC_WAKEUP = 0;
+	public static final int ELAPSED_REALTIME = 3;
+	public static final int ELAPSED_REALTIME_WAKEUP = 2;
+
+	public void setRepeating(int type, long triggerTime, long interval, PendingIntent operation) {
+		Slog.i(TAG, "setRepeating(" + type + ", " + triggerTime + ", " + interval + ", " + operation + ") called");
+		setInexactRepeating(type, triggerTime, interval, operation);
+	}
+
 	public void cancel(PendingIntent operation) {
 		Slog.i(TAG, "cancel(" + operation + ") called");
 	}

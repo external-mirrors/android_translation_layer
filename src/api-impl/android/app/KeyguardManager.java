@@ -12,4 +12,13 @@ public class KeyguardManager {
 	public boolean isKeyguardSecure() {
 		return true;
 	}
+
+	public KeyguardLock newKeyguardLock(String tag) {
+		return new KeyguardLock();
+	}
+
+	public class KeyguardLock {
+		public void disableKeyguard() {}
+		public void reenableKeyguard() {}
+	}
 }

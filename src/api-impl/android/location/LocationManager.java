@@ -44,6 +44,13 @@ public class LocationManager {
 		return true;
 	}
 
+	public GpsStatus getGpsStatus(GpsStatus status) {
+		if (status == null) {
+			status = new GpsStatus();
+		}
+		return status;
+	}
+
 	public void removeUpdates(LocationListener listener) {
 	}
 

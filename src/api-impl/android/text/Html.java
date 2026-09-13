@@ -28,6 +28,10 @@ public class Html {
 		return fromHtml(source, flags);
 	}
 
+	public static String toHtml(Spanned text) {
+		return text.toString();
+	}
+
 	public static String escapeHtml(CharSequence source) {
 		StringBuilder out = new StringBuilder(source.length());
 		for (int i = 0; i < source.length(); i++) {
