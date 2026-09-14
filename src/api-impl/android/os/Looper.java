@@ -16,6 +16,7 @@
 
 package android.os;
 
+import android.atl.ATLLoadedApp;
 import android.util.Log;
 import android.util.PrefixPrinter;
 import android.util.Printer;
@@ -89,7 +90,9 @@ public final class Looper {
 	public static void prepareMainLooper() {
 		prepare(false);
 		synchronized (Looper.class) {
-			if (sMainLooper != null) {
+			// following check was added in AOSP Jelly Bean release. Disable it based on targetSdk for compatibility with old CTS
+			if (sMainLooper != null
+			    && ATLLoadedApp.getPrimaryApplication().pkg.applicationInfo.targetSdkVersion >= Build.VERSION_CODES.JELLY_BEAN) {
 				throw new IllegalStateException("The main Looper has already been prepared.");
 			}
 			sMainLooper = myLooper();
