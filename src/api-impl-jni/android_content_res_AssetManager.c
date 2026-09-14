@@ -147,16 +147,25 @@ JNIEXPORT void JNICALL Java_android_content_res_AssetManager_native_1setApkAsset
 	struct AssetManager *asset_manager = _PTR(_GET_LONG_FIELD(this, "mObject"));
 	AM_SCOPEDLOCK(asset_manager)
 	const struct ApkAssets *apk_assets[num_assets];
+	int actual_count = 0;
 	for (int i = 0; i < num_assets; i++) {
 		jstring path_jstr = (jstring)((*env)->GetObjectArrayElement(env, paths, i));
+		if (path_jstr == NULL)
+			continue;
 		const char *path = (*env)->GetStringUTFChars(env, path_jstr, NULL);
+		const struct ApkAssets *a;
 		if (path[strlen(path) - 1] == '/')
-			apk_assets[i] = ApkAssets_loadDir(strdup(path));
+			a = ApkAssets_loadDir(strdup(path));
 		else
-			apk_assets[i] = ApkAssets_load(strdup(path), false);
+			a = ApkAssets_load(strdup(path), false);
+		if (a == NULL)
+			android_log_printf(ANDROID_LOG_WARN, "[" __FILE__ "]", "failed to load ApkAssets from %s\n", path);
 		(*env)->ReleaseStringUTFChars(env, path_jstr, path);
+		if (a != NULL)
+			apk_assets[actual_count++] = a;
 	}
-	AssetManager_setApkAssets(asset_manager, apk_assets, num_assets, true, true);
+	if (actual_count > 0)
+		AssetManager_setApkAssets(asset_manager, apk_assets, actual_count, true, true);
 }
 
 JNIEXPORT jint JNICALL Java_android_content_res_AssetManager_loadResourceValue(JNIEnv *env, jobject this, jint ident, jshort density, jobject outValue, jboolean resolve)

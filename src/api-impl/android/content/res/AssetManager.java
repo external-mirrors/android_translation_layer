@@ -624,6 +624,8 @@ public final class AssetManager {
 	 */
 	/* this is not particularly efficient, avoid if possible */
 	public final void addAssetPath(String path) {
+		if (path == null)
+			return;
 		asset_paths.add(path);
 		/*String*/ Object[] asset_paths_arr = asset_paths.toArray();
 		native_setApkAssets(asset_paths_arr, asset_paths_arr.length);
