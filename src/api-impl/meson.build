@@ -583,6 +583,7 @@ srcs = [
 	'android/util/SparseIntArray.java',
 	'android/util/SparseLongArray.java',
 	'android/util/StateSet.java',
+	'android/util/StringBuilderPrinter.java',
 	'android/util/TypedValue.java',
 	'android/util/Xml.java',
 	'android/util/XmlPullAttributes.java',
