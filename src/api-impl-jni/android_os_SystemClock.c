@@ -31,3 +31,11 @@ JNIEXPORT jlong JNICALL Java_android_os_SystemClock_currentThreadTimeMillis(JNIE
 	clock_gettime(CLOCK_THREAD_CPUTIME_ID, &now);
 	return now.tv_sec * 1000 + lround(now.tv_nsec / 1e6);
 }
+
+JNIEXPORT jboolean JNICALL Java_android_os_SystemClock_setCurrentTimeMillis(JNIEnv *env, jclass this, jlong millis)
+{
+	struct timespec ts;
+	ts.tv_sec = millis / 1000;
+	ts.tv_nsec = (millis % 1000) * 1000000;
+	return clock_settime(CLOCK_REALTIME, &ts) == 0;
+}
