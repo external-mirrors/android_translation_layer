@@ -9,7 +9,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 public class ContextWrapper extends Context {
-	private Context baseContext;
+	protected Context baseContext;
 
 	public ContextWrapper(Context baseContext) {
 		this.baseContext = baseContext;

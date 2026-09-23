@@ -33,6 +33,6 @@ public class MutableContextWrapper extends ContextWrapper {
 	* @param base The new base context for this wrapper.
 	*/
 	public void setBaseContext(Context base) {
-		attachBaseContext(base);
+		this.baseContext = base;
 	}
 }
