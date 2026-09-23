@@ -1,5 +1,9 @@
 package android.security.keystore;
 
+import java.math.BigInteger;
+import java.util.Date;
+import javax.security.auth.x500.X500Principal;
+
 public class KeyGenParameterSpec {
 
 	private String keystoreAlias;
@@ -34,6 +38,30 @@ public class KeyGenParameterSpec {
 
 		public Builder setUserAuthenticationRequired(boolean userAuthenticationRequired) {
 			spec.userAuthenticationRequired = userAuthenticationRequired;
+			return this;
+		}
+
+		public Builder setCertificateSerialNumber(BigInteger serialNumber) {
+			return this;
+		}
+
+		public Builder setCertificateSubject(X500Principal subject) {
+			return this;
+		}
+
+		public Builder setCertificateNotBefore(Date notBefore) {
+			return this;
+		}
+
+		public Builder setCertificateNotAfter(Date notAfter) {
+			return this;
+		}
+
+		public Builder setDigests(String[] digests) {
+			return this;
+		}
+
+		public Builder setSignaturePaddings(String[] signaturePaddings) {
 			return this;
 		}
 

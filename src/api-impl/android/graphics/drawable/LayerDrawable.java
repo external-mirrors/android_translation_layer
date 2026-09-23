@@ -21,6 +21,7 @@ import android.content.res.Resources.Theme;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
+import android.graphics.PixelFormat;
 //import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.util.AttributeSet;
@@ -636,6 +637,12 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 		}
 		super.setLayoutDirection(layoutDirection);
 	}*/
+
+	public void setLayerWidth(int index, int width) {}
+
+	public void setLayerHeight(int index, int height) {}
+
+	public void setLayerGravity(int index, int gravity) {}
 
 	static class ChildDrawable {
 		public Drawable mDrawable;

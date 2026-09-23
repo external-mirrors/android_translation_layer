@@ -1,5 +1,7 @@
 package android.transition;
 
+import android.view.View;
+
 public class Transition {
 
 	public interface TransitionListener {}
@@ -13,6 +15,10 @@ public class Transition {
 	}
 
 	public Transition excludeTarget(int targetId, boolean exclude) {
+		return this;
+	}
+
+	public Transition addTarget(View target) {
 		return this;
 	}
 }

@@ -191,6 +191,8 @@ public class Drawable {
 	}
 	public void setColorFilter(ColorFilter filter) {}
 
+	public ColorFilter getColorFilter() { return null; }
+
 	public Drawable mutate() {
 		return this;
 	}
