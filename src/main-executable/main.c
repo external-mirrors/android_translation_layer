@@ -456,8 +456,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		char *decoration_layout;
 		g_object_get(G_OBJECT(gtk_settings_get_default()), "gtk-decoration-layout", &decoration_layout, NULL);
 		GString *gstring = g_string_new_take(decoration_layout);
-		g_string_replace(gstring, "menu", "", 0); // ignore menu button
-		g_string_replace(gstring, ":", "", 0);    // ignore leading or trailing colon
+		g_string_replace(gstring, "appmenu", "", 0); // ignore appmenu button
+		g_string_replace(gstring, "menu", "", 0);    // ignore menu button
+		g_string_replace(gstring, ":", "", 0);       // ignore separation colon
 		decorated = gstring->len > 0;
 		g_string_free(gstring, TRUE);
 	}
