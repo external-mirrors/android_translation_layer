@@ -49,6 +49,33 @@ JNIEXPORT jlong JNICALL Java_com_google_android_gles_1jni_EGLImpl_native_1eglCre
 	jint *attrib_base = get_int_array_crit(env, attrib_list);
 
 	EGLContext egl_context = eglCreateContext(_PTR(egl_display), _PTR(egl_config), _PTR(share_context), attrib_base);
+
+	if (!egl_context) {
+		/* GLES1 (explicit EGL_CONTEXT_CLIENT_VERSION=1, or the legacy default of no
+		 * version at all) is no longer available: since Mesa 23.1.0 (May 2023) builds
+		 * with -Dgles1=disabled (all mainstream distros) drop the OpenGL ES 1.x code
+		 * entirely, eglCreateContext fails with EGL_BAD_CONFIG
+		 * (https://gitlab.freedesktop.org/mesa/mesa/-/issues/9038). Old apps still call
+		 * the ES1 fixed-function API, so for those requests create a desktop GL compatibility
+		 * context instead: it implements exactly that fixed-function pipeline. It is configless
+		 * (EGL_KHR_no_config_context), hence compatible with any config/surface */
+		int client_version = 1;
+		if (attrib_base) {
+			for (EGLint *a = attrib_base; *a != EGL_NONE; a += 2) {
+				if (a[0] == EGL_CONTEXT_CLIENT_VERSION) {
+					client_version = a[1];
+					break;
+				}
+			}
+		}
+		if (client_version == 1) {
+			printf("HACK: eglCreateContext failed for GLES1; Creating desktop GL compatibility context instead, which should be mostly compatible. If possible switch to a GLES1 supporting driver. (eg. Mesa build with '-D gles1=enabled')\n");
+			EGLenum prev_api = eglQueryAPI();
+			eglBindAPI(EGL_OPENGL_API);
+			egl_context = eglCreateContext(_PTR(egl_display), (EGLConfig)0, _PTR(share_context), NULL);
+			eglBindAPI(prev_api);
+		}
+	}
 	printf("egl_context: %p\n", egl_context);
 
 	release_int_array_crit(env, attrib_list, attrib_base);
