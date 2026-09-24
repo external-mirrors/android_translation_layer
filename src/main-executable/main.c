@@ -301,6 +301,40 @@ char *find_jar_or_die(char *builddir_path, char *installed_path, char *install_p
 	return path;
 }
 
+static gboolean install_dbus_service_file(const char *package_name, const char *exec_cmd)
+{
+	if (g_getenv("FLATPAK_ID"))
+		return FALSE;
+	const char *user_data_dir = g_get_user_data_dir();
+	char *service_dir = g_build_filename(user_data_dir, "dbus-1", "services", NULL);
+	if (g_mkdir_with_parents(service_dir, 0755)) {
+		fprintf(stderr, "could not create D-Bus service directory %s\n", service_dir);
+		g_free(service_dir);
+		return FALSE;
+	}
+	char *service_name = g_strdup_printf("%s.service", package_name);
+	char *service_path = g_build_filename(service_dir, service_name, NULL);
+	g_free(service_dir);
+	g_free(service_name);
+
+	GString *service_file = g_string_new("[D-BUS Service]\n");
+	g_string_append_printf(service_file, "Name=%s\n", package_name);
+	g_string_append_printf(service_file, "Exec=%s\n", exec_cmd);
+
+	GError *error = NULL;
+	if (!g_file_set_contents(service_path, service_file->str, -1, &error)) {
+		fprintf(stderr, "could not write D-Bus service file %s: %s\n", service_path, error->message);
+		g_error_free(error);
+		g_string_free(service_file, TRUE);
+		g_free(service_path);
+		return FALSE;
+	}
+	g_string_free(service_file, TRUE);
+	g_free(service_path);
+
+	return TRUE;
+}
+
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
 	// TODO: pass all files to classpath
@@ -615,31 +649,37 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		if ((*env)->ExceptionCheck(env))
 			(*env)->ExceptionDescribe(env);
 
-		GString *desktop_entry = g_string_new("[Desktop Entry]\n"
-		                                      "Type=Application\n"
-		                                      "DBusActivatable=true\n"
-		                                      "StartupNotify=true\n"
-		                                      "X-Purism-FormFactor=Workstation;Mobile;\n"
-		                                      "Exec=env ");
+		GString *exec_cmd = g_string_new("env ");
 		if (getenv("RUN_FROM_BUILDDIR")) {
 			printf("WARNING: RUN_FROM_BUILDDIR set and --install given: using current directory in desktop entry\n");
-			g_string_append_printf(desktop_entry, "-C %s ", g_get_current_dir());
+			g_string_append_printf(exec_cmd, "-C %s ", g_get_current_dir());
 		}
 		char *envs[] = {"RUN_FROM_BUILDDIR", "LD_LIBRARY_PATH", "ANDROID_APP_DATA_DIR", "ATL_UGLY_ENABLE_LOCATION", "ATL_UGLY_ENABLE_MICROPHONE", "ATL_UGLY_ENABLE_WEBVIEW", "ATL_DISABLE_WINDOW_DECORATIONS", "ATL_FORCE_FULLSCREEN", "ATL_IS_AUTOMOTIVE", "ATL_IS_TELEVISION", "ATL_IS_WATCH"};
 		for (int i = 0; i < ARRAY_SIZE(envs); i++) {
 			if (getenv(envs[i])) {
-				g_string_append_printf(desktop_entry, "%s=%s ", envs[i], getenv(envs[i]));
+				g_string_append_printf(exec_cmd, "%s=%s ", envs[i], getenv(envs[i]));
 			}
 		}
-		g_string_append_printf(desktop_entry, "%s ", d->prgname);
-		g_string_append_printf(desktop_entry, "--gapplication-app-id %s ", package_name);
+		g_string_append_printf(exec_cmd, "%s ", d->prgname);
+		g_string_append_printf(exec_cmd, "--gapplication-app-id %s ", package_name);
 		if (d->apk_main_activity_class)
-			g_string_append_printf(desktop_entry, "-l %s ", d->apk_main_activity_class);
+			g_string_append_printf(exec_cmd, "-l %s ", d->apk_main_activity_class);
 		if (d->window_width)
-			g_string_append_printf(desktop_entry, "-w %d ", d->window_width);
+			g_string_append_printf(exec_cmd, "-w %d ", d->window_width);
 		if (d->window_height)
-			g_string_append_printf(desktop_entry, "-h %d ", d->window_height);
-		g_string_append_printf(desktop_entry, "%s --uri %%u\n", g_file_get_path(dest));
+			g_string_append_printf(exec_cmd, "-h %d ", d->window_height);
+		g_string_append_printf(exec_cmd, "%s", g_file_get_path(dest));
+
+		gboolean dbus_activatable = install_dbus_service_file(package_name, exec_cmd->str);
+
+		GString *desktop_entry = g_string_new("[Desktop Entry]\n"
+		                                      "Type=Application\n"
+		                                      "StartupNotify=true\n"
+		                                      "X-Purism-FormFactor=Workstation;Mobile;\n");
+		if (dbus_activatable)
+			g_string_append(desktop_entry, "DBusActivatable=true\n");
+		g_string_append_printf(desktop_entry, "Exec=%s --uri %%u\n", exec_cmd->str);
+		g_string_free(exec_cmd, TRUE);
 		if (supported_mime_types)
 			g_string_append_printf(desktop_entry, "MimeType=%s\n", supported_mime_types);
 		struct dynamic_launcher_callback_data *cb_data = g_new(struct dynamic_launcher_callback_data, 1);
