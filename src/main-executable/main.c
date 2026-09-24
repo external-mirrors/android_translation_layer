@@ -664,8 +664,9 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	gtk_window_present(GTK_WINDOW(window));
 
 	// set package name as application id for window icon on Wayland. Needs a {package_name}.desktop file defining the icon
+	const char *app_id = g_application_get_application_id(G_APPLICATION(app));
 	GdkToplevel *toplevel = GDK_TOPLEVEL(gtk_native_get_surface(GTK_NATIVE(window)));
-	if (GDK_IS_WAYLAND_TOPLEVEL(toplevel) && !d->apk_instrumentation_class) {
+	if (GDK_IS_WAYLAND_TOPLEVEL(toplevel) && !d->apk_instrumentation_class && !strcmp(app_id, "com.example.demo_application")) {
 		gdk_wayland_toplevel_set_application_id(GDK_WAYLAND_TOPLEVEL(toplevel), package_name);
 	}
 
@@ -703,7 +704,6 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 			(*env)->ExceptionDescribe(env);
 	}
 
-	const char *app_id = g_application_get_application_id(G_APPLICATION(app));
 	if (strcmp(app_id, "com.example.demo_application")) {
 		// This would normally happen automatically, if the GApplication is not contructed with G_APPLICATION_NON_UNIQUE
 		g_dbus_connection_call(g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, NULL),
