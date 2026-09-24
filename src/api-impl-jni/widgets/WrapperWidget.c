@@ -545,6 +545,9 @@ static gboolean on_touch_event_consume(GtkEventControllerLegacy *controller, Gdk
 // Add default on touch listener, which just consumes all events to prevent bubbling to the parent
 void wrapper_widget_consume_touch_events(WrapperWidget *wrapper)
 {
+	GtkEventController *old_controller = g_object_get_data(G_OBJECT(wrapper), "on_touch_listener");
+	if (old_controller)
+		return;
 	GtkEventController *controller = GTK_EVENT_CONTROLLER(gtk_event_controller_legacy_new());
 	g_signal_connect(controller, "event", G_CALLBACK(on_touch_event_consume), NULL);
 	gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);

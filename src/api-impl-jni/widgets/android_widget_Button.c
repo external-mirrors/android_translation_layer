@@ -25,7 +25,6 @@ JNIEXPORT jlong JNICALL Java_android_widget_Button_native_1constructor(JNIEnv *e
 	gtk_button_set_child(GTK_BUTTON(button), box);
 	gtk_box_append(GTK_BOX(box), gtk_label_new(text));
 	wrapper_widget_set_child(WRAPPER_WIDGET(wrapper), button);
-	wrapper_widget_consume_touch_events(WRAPPER_WIDGET(wrapper)); // Android button consumes touch events
 	wrapper_widget_set_jobject(WRAPPER_WIDGET(wrapper), env, this);
 
 	return _INTPTR(button);
@@ -54,6 +53,8 @@ static void clicked_cb(GtkWidget *button, gpointer user_data)
 JNIEXPORT void JNICALL Java_android_widget_Button_nativeSetOnClickListener(JNIEnv *env, jobject this, jlong widget_ptr)
 {
 	GtkWidget *button = GTK_WIDGET(_PTR(widget_ptr));
+	WrapperWidget *wrapper = WRAPPER_WIDGET(gtk_widget_get_parent(button));
+	wrapper_widget_consume_touch_events(wrapper); // Android button consumes touch events
 	g_signal_handlers_disconnect_matched(button, G_SIGNAL_MATCH_FUNC, 0, 0, NULL, clicked_cb, NULL);
 
 	g_signal_connect(button, "clicked", G_CALLBACK(clicked_cb), NULL);
