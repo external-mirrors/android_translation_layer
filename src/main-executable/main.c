@@ -619,6 +619,7 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 		                                      "Type=Application\n"
 		                                      "DBusActivatable=true\n"
 		                                      "StartupNotify=true\n"
+		                                      "X-Purism-FormFactor=Workstation;Mobile;\n"
 		                                      "Exec=env ");
 		if (getenv("RUN_FROM_BUILDDIR")) {
 			printf("WARNING: RUN_FROM_BUILDDIR set and --install given: using current directory in desktop entry\n");
