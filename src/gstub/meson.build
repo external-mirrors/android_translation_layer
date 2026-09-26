@@ -1,4 +1,5 @@
 srcs = [
+	'com/google/android/gms/maps/internal/CreatorImpl.java',
 	'com/google/android/gms/providerinstaller/ProviderInstallerImpl.java',
 ]
 java_args = [
