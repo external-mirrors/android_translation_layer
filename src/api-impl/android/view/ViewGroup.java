@@ -718,4 +718,6 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 	}
 
 	public void scheduleLayoutAnimation() {}
+
+	public boolean addStatesFromChildren() { return false; }
 }

@@ -8,6 +8,10 @@ public class ColorDrawable extends Drawable {
 	private int color;
 	private Paint paint;
 
+	public ColorDrawable() {
+		this.paint = new Paint();
+	}
+
 	public ColorDrawable(int color) {
 		this.color = color;
 		this.paint = new Paint();

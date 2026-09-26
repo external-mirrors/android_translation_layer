@@ -2121,6 +2121,10 @@ public class View implements Drawable.Callback {
 		keepScreenOn = screenOn;
 	}
 
+	public boolean getKeepScreenOn() {
+		return keepScreenOn;
+	}
+
 	protected void onAttachedToWindow() {
 		if (onAttachStateChangeListener != null) {
 			onAttachStateChangeListener.onViewAttachedToWindow(this);
@@ -2580,4 +2584,12 @@ public class View implements Drawable.Callback {
 	public WindowInsets onApplyWindowInsets(WindowInsets insets) {
 		return insets;
 	}
+
+	public void setAccessibilityTraversalBefore(int id) {}
+
+	public int getLayerType() { return 0; /* LAYER_TYPE_NONE */ }
+
+	public boolean isAccessibilityFocused() { return false; }
+
+	public float getCameraDistance() { return 0; }
 }

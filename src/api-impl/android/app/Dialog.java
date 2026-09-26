@@ -14,6 +14,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 
@@ -59,6 +60,11 @@ public class Dialog implements Window.Callback, DialogInterface {
 
 	public void setContentView(int layoutResId) {
 		setContentView(LayoutInflater.from(context).inflate(layoutResId, null));
+	}
+
+	public void setContentView(View view, ViewGroup.LayoutParams lp) {
+		view.setLayoutParams(lp);
+		setContentView(view);
 	}
 
 	public void setTitle(CharSequence title) {
@@ -224,4 +230,8 @@ public class Dialog implements Window.Callback, DialogInterface {
 	}
 
 	public void setOnKeyListener(OnKeyListener onKeyListener) {}
+
+	public View getCurrentFocus() {
+		return null;
+	}
 }

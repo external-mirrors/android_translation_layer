@@ -915,4 +915,8 @@ public class Intent implements Parcelable {
 	public int[] getIntArrayExtra(String name) {
 		return extras.getIntArray(name);
 	}
+
+	public float getFloatExtra(String name, float def) {
+		return extras.getFloat(name, def);
+	}
 }

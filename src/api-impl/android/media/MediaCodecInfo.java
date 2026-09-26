@@ -56,7 +56,7 @@ public class MediaCodecInfo {
 		}
 
 		public int getMaxSupportedInstances() {
-			return 0;
+			return 1;
 		}
 	}
 

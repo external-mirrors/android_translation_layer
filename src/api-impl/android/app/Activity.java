@@ -660,4 +660,8 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	}
 
 	public void applyOverrideConfiguration(Configuration overrideConfiguration) {}
+
+	public ComponentName getCallingActivity() {
+		return resultActivity == null ? null : resultActivity.getComponentName();
+	}
 }

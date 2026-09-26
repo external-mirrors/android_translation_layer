@@ -59,6 +59,10 @@ public class Paint {
 	public void setAntiAlias(boolean aa) {
 	}
 
+	public boolean isAntiAlias() {
+		return true;
+	}
+
 	public boolean setFontVariationSettings(String fvs) {
 		return true;
 	}
@@ -123,7 +127,7 @@ public class Paint {
 		return colorFilter;
 	}
 
-	public Object getColorFilter() {
+	public ColorFilter getColorFilter() {
 		return color_filter;
 	}
 
