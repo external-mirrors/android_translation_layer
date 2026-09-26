@@ -483,6 +483,10 @@ public abstract class Context {
 		ATLLoadedApp.getPrimaryApplication().receiveBroadcast(this, intent);
 	}
 
+	public void sendBroadcast(Intent intent, String receiverPermission) {
+		sendBroadcast(intent);
+	}
+
 	public abstract boolean stopService(Intent intent);
 
 	public void unbindService(ServiceConnection serviceConnection) {}

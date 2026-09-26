@@ -68,4 +68,12 @@ public final class PowerManager {
 	public boolean isIgnoringBatteryOptimizations(String packageName) {
 		return true;
 	}
+
+	public boolean isDeviceIdleMode() {
+		return false;
+	}
+
+	public boolean isInteractive() {
+		return true;
+	}
 }

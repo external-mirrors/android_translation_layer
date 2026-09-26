@@ -658,4 +658,6 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 		super.atl_attach_base_context(baseContext);
 		this.window = new Window(this, this);
 	}
+
+	public void applyOverrideConfiguration(Configuration overrideConfiguration) {}
 }

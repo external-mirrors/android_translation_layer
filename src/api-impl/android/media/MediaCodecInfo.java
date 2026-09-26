@@ -54,6 +54,10 @@ public class MediaCodecInfo {
 		public VideoCapabilities getVideoCapabilities() {
 			return new VideoCapabilities();
 		}
+
+		public int getMaxSupportedInstances() {
+			return 0;
+		}
 	}
 
 	public static final class CodecProfileLevel {

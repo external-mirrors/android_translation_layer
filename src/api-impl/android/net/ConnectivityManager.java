@@ -48,4 +48,6 @@ public class ConnectivityManager {
 	public void registerDefaultNetworkCallback(NetworkCallback cb) {}
 
 	public ProxyInfo getDefaultProxy() { return null; }
+
+	public LinkProperties getLinkProperties(Network network) { return null; }
 }

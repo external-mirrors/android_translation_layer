@@ -1,6 +1,7 @@
 package android.graphics;
 
 import android.content.res.AssetManager;
+import java.io.File;
 
 public class Typeface {
 
@@ -49,6 +50,10 @@ public class Typeface {
 	}
 
 	public static Typeface createFromFile(String path) {
+		return DEFAULT;
+	}
+
+	public static Typeface createFromFile(File file) {
 		return DEFAULT;
 	}
 
