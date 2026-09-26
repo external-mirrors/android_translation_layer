@@ -108,7 +108,15 @@ public class Resources {
 	/*package*/ final Object mAccessLock = new Object();
 	/*package*/ final Configuration mTmpConfig = new Configuration();
 	/*package*/ TypedValue mTmpValue = new TypedValue();
-	/*package*/ Object mDrawableCache = new HashMap<Long, WeakReference<Drawable.ConstantState>>(0);
+	/*package*/ Object mDrawableCache = Build.VERSION.SDK_INT < 23
+	                                      ? new HashMap<Long, WeakReference<Drawable.ConstantState>>(0)
+	                                      : new ThemedResourceCache<Drawable>() {
+							@Override
+							protected boolean shouldInvalidateEntry(Drawable entry, int configChanges) {
+								// TODO Auto-generated method stub
+								throw new UnsupportedOperationException("Unimplemented method 'shouldInvalidateEntry'");
+							}
+						};
 	private final ConfigurationBoundResourceCache<ComplexColor> mComplexColorCache = new ConfigurationBoundResourceCache<>(this);
 	/*package*/ final LongSparseArray<WeakReference<Drawable.ConstantState>> mColorDrawableCache = new LongSparseArray<WeakReference<Drawable.ConstantState>>(0);
 	/*package*/ boolean mPreloading;
@@ -210,19 +218,6 @@ public class Resources {
 		mToken = new WeakReference<IBinder>(token);
 		updateConfiguration(config, metrics);
 		//        assets.ensureStringBlocks();
-	}
-
-	public void applyPackageQuirks(int minSdkVersion) {
-		// Apps that target >= 23 expect mDrawableCache to be a ThemedResourceCache while other apps expect a Map
-		if (Build.VERSION.SDK_INT >= 23 || minSdkVersion >= 23) {
-			mDrawableCache = new ThemedResourceCache<Drawable>() {
-				@Override
-				protected boolean shouldInvalidateEntry(Drawable entry, int configChanges) {
-					// TODO Auto-generated method stub
-					throw new UnsupportedOperationException("Unimplemented method 'shouldInvalidateEntry'");
-				}
-			};
-		}
 	}
 
 	/**

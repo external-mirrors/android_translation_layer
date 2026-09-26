@@ -138,7 +138,6 @@ public final class ATLLoadedApp {
 		if (configuration == null)
 			configuration = Context.sys_config;
 		Resources resources = new Resources(this.default_resources.getAssets(), displayMetrics, configuration);
-		resources.applyPackageQuirks(this.pkg.applicationInfo.minSdkVersion);
 		return resources;
 	}
 
