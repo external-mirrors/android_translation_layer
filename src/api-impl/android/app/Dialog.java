@@ -26,6 +26,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 	private native void nativeShow(long ptr);
 	private native void nativeClose(long ptr);
 	private native boolean nativeIsShowing(long ptr);
+	private native void nativeSetCanceledOnTouchOutside(long ptr, boolean cancel);
 
 	private Context context;
 	private Window window;
@@ -95,6 +96,8 @@ public class Dialog implements Window.Callback, DialogInterface {
 				getWindow().getDecorView().getWindowVisibleDisplayFrame(displayFrame);
 
 				TypedArray a = context.obtainStyledAttributes(R.styleable.Window);
+				if (a.hasValue(R.styleable.Window_windowCloseOnTouchOutside))
+					setCanceledOnTouchOutside(a.getBoolean(R.styleable.Window_windowCloseOnTouchOutside, true));
 				float windowWidthFraction = 1;
 				if (a.getBoolean(R.styleable.Window_windowIsFloating, false)) {
 					if (displayFrame.width() > displayFrame.height())
@@ -149,7 +152,9 @@ public class Dialog implements Window.Callback, DialogInterface {
 		return window;
 	}
 
-	public void setCanceledOnTouchOutside(boolean cancel) {}
+	public void setCanceledOnTouchOutside(boolean cancel) {
+		nativeSetCanceledOnTouchOutside(nativePtr, cancel);
+	}
 
 	public class Builder {
 		public Builder(Context context) {

@@ -55,6 +55,14 @@ JNIEXPORT void JNICALL Java_android_app_Dialog_nativeClose
 JNIEXPORT jboolean JNICALL Java_android_app_Dialog_nativeIsShowing
   (JNIEnv *, jobject, jlong);
 
+/*
+ * Class:     android_app_Dialog
+ * Method:    nativeSetCanceledOnTouchOutside
+ * Signature: (JZ)V
+ */
+JNIEXPORT void JNICALL Java_android_app_Dialog_nativeSetCanceledOnTouchOutside
+  (JNIEnv *, jobject, jlong, jboolean);
+
 #ifdef __cplusplus
 }
 #endif
