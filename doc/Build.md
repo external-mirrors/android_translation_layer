@@ -1,12 +1,12 @@
 ## Dependencies
 ### Debian
 ```sh
-sudo apt install libasound2-dev libavcodec-dev libcap-dev  libdrm-dev libglib2.0-dev libgtk-4-dev libgudev-1.0-dev libopenxr-dev libportal-dev libsqlite3-dev libwebkitgtk-6.0-dev
+sudo apt install libasound2-dev libavcodec-dev libcap-dev  libdrm-dev libglib2.0-dev libgtk-4-dev libgudev-1.0-dev libopenxr-dev libportal-dev libsqlite3-dev libwebkitgtk-6.0-dev libsecret-1-dev
 ```
 
 ### Fedora
 ```sh
-sudo dnf install java-17-openjdk-devel 'pkgconfig(gtk4)' 'pkgconfig(libbsd)' 'pkgconfig(libportal)' 'pkgconfig(sqlite3)' 'pkgconfig(libwebp)' 'pkgconfig(liblz4)' 'pkgconfig(openxr)' 'pkgconfig(webkitgtk-6.0)'
+sudo dnf install java-17-openjdk-devel 'pkgconfig(gtk4)' 'pkgconfig(libbsd)' 'pkgconfig(libportal)' 'pkgconfig(sqlite3)' 'pkgconfig(libwebp)' 'pkgconfig(liblz4)' 'pkgconfig(openxr)' 'pkgconfig(webkitgtk-6.0)' 'pkgconfig(libsecret-1)'
 ```
 
 ### Alpine Edge
@@ -41,7 +41,7 @@ If you want to build ATL from source, you can take advantage of the packages for
 ```sh
 sudo apk add build-base meson java-common openjdk8-jdk \
     pc:alsa pc:glib-2.0 pc:gtk4 pc:gudev-1.0 pc:libportal \
-    pc:openxr pc:vulkan pc:webkitgtk-6.0 ffmpeg-dev \
+    pc:openxr pc:vulkan pc:webkitgtk-6.0 pc:libsecret-1 ffmpeg-dev \
     bionic_translation-dev art_standalone-dev libandroidfw-dev
 ```
 

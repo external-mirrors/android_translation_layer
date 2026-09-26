@@ -136,6 +136,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                   	'src/api-impl-jni/os/android_atl_GVariantBuilderParcel.c',
                                                                   	'src/api-impl-jni/os/android_atl_GVariantIterParcel.c',
                                                                   	'src/api-impl-jni/os/android_os_Process.c',
+                                                                  	'src/api-impl-jni/security/android_security_keystore_AndroidKeyStore.c',
                                                                   	'src/api-impl-jni/sensors/android_hardware_SensorManager.c',
                                                                   	'src/api-impl-jni/text/android_text_Layout.c',
                                                                   	'src/api-impl-jni/util.c',
@@ -181,7 +182,7 @@ libtranslationlayer_so = shared_library('translation_layer_main', [
                                                                         extra_deps,
                                                                   	dependency('gtk4', version: '>=4.14'), dependency('gl'), dependency('egl'), dependency('wayland-client'), dependency('jni'),
                                                                   	dependency('libportal'), dependency('sqlite3'), dependency('libavcodec', version: '>=59'), dependency('libdrm'),
-                                                                  	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'),
+                                                                  	dependency('gudev-1.0'), dependency('libswscale'), dependency('webkitgtk-6.0'), dependency('libsecret-1'),
                                                                         libart_dep, wayland_protos_dep
                                                                   ],
                                                                   link_with: [ libandroid_so ],
