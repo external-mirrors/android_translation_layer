@@ -119,3 +119,8 @@ JNIEXPORT jlong JNICALL Java_android_view_RenderNode_nativeAddStubNode(JNIEnv *e
 	gsk_render_node_unref(stub_node);
 	return _INTPTR(stub_node);
 }
+
+JNIEXPORT jlong JNICALL Java_android_view_RenderNode_nativeCreateEmpyNode(JNIEnv *env, jobject this)
+{
+	return _INTPTR(gsk_container_node_new(NULL, 0));
+}

@@ -41,6 +41,7 @@ public class RenderNode {
 	private native long nativeClip(long node, float left, float top, float right, float bottom);
 	private native void nativeUnref(long node);
 	private native long nativeAddStubNode(long snapshot);
+	private native long nativeCreateEmpyNode();
 
 	public static RenderNode create(String name, View view) {
 		return new RenderNode();
@@ -239,6 +240,8 @@ public class RenderNode {
 		nativeUnref(transformed_node);
 		render_node = 0;
 		transformed_node = 0;
+		children.clear();
+		children_nodes.clear();
 	}
 
 	public void destroyDisplayListData() {
@@ -272,6 +275,8 @@ public class RenderNode {
 	}
 
 	public long getGskNode() {
+		if (render_node == 0)
+			render_node = nativeCreateEmpyNode();
 		long old_render_node = render_node;
 		for (int i = 0; i < children.size(); i++) {
 			long new_child_node = children.get(i).getGskNode();
