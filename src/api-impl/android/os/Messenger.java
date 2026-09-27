@@ -57,7 +57,24 @@ public final class Messenger implements Parcelable {
 	 * @return Returns the IBinder backing this Messenger.
 	 */
 	public IBinder getBinder() {
-		return null; // mTarget.asBinder();
+		// return mTarget.asBinder();
+		return new IBinder() {
+			@Override
+			public String getInterfaceDescriptor() {
+				return "android.os.IMessenger";
+			}
+			@Override
+			public IInterface queryLocalInterface(String descriptor) {
+				return null;
+			}
+			@Override
+			public boolean transact(int code, Parcel data, Parcel reply, int flags) {
+				mTarget.send(Message.CREATOR.createFromParcel(data));
+				reply.writeNoException();
+				reply.setDataPosition(0);
+				return true;
+			}
+		};
 	}
 
 	/**
@@ -94,6 +111,14 @@ public final class Messenger implements Parcelable {
 		mTarget = new IMessenger() {
 			@Override
 			public void send(Message msg) {
+				Parcel data = Parcel.obtain();
+				Parcel reply = Parcel.obtain();
+				msg.writeToParcel(data, 0);
+				data.setDataPosition(0);
+				target.transact(1, data, reply, 0);
+				reply.readException();
+				data.recycle();
+				reply.recycle();
 			}
 		};
 	}

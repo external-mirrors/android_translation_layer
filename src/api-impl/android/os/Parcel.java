@@ -29,6 +29,7 @@ public class Parcel {
 	private int pos;
 	private int size;
 	private boolean hasFileDescriptors;
+	private ArrayList<IBinder> binders;
 
 	protected Parcel() {
 		data = new byte[0];
@@ -706,8 +707,13 @@ public class Parcel {
 		writeSerializable(null);
 	}
 
-	public void readException() throws Exception {
-		Exception e = (Exception)readSerializable();
+	public void readException() {
+		RuntimeException e;
+		try {
+			e = (RuntimeException)readSerializable();
+		} catch (ReflectiveOperationException exception) {
+			throw new RuntimeException(exception);
+		}
 		if (e != null)
 			throw e;
 	}
@@ -737,13 +743,22 @@ public class Parcel {
 	}
 
 	public void writeStrongBinder(IBinder binder) {
-		writeInt(binder == null ? -1 : 0);
+		if (binder != null) {
+			if (binders == null)
+				binders = new ArrayList<>();
+			binders.add(binder);
+			writeInt(binders.size() - 1);
+		} else {
+			writeInt(-1);
+		}
 	}
 
 	public IBinder readStrongBinder() {
-		if (readInt() == -1)
+		int index = readInt();
+		if (index != -1)
+			return binders.get(index);
+		else
 			return null;
-		return new Binder();
 	}
 
 	public void writeStrongInterface(IInterface binder) {
