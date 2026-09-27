@@ -20,9 +20,11 @@ JNIEXPORT void JNICALL Java_android_atl_GVariantBuilderParcel_native_1writeStrin
 {
 	GVariantBuilder *builder = (GVariantBuilder *)builder_ptr;
 	if (builder) {
-		const char *value = value_jstr ? (*env)->GetStringUTFChars(env, value_jstr, NULL) : NULL;
-		g_variant_builder_add(builder, "ms", value);
-		if (value_jstr)
+		g_variant_builder_add(builder, "b", !!value_jstr);
+		if (value_jstr) {
+			const char *value = (*env)->GetStringUTFChars(env, value_jstr, NULL);
+			g_variant_builder_add(builder, "s", value);
 			(*env)->ReleaseStringUTFChars(env, value_jstr, value);
+		}
 	}
 }

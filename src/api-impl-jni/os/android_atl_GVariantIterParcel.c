@@ -25,8 +25,12 @@ JNIEXPORT jint JNICALL Java_android_atl_GVariantIterParcel_native_1readInt(JNIEn
 JNIEXPORT jstring JNICALL Java_android_atl_GVariantIterParcel_native_1readString(JNIEnv *env, jclass clazz, jlong iter_ptr)
 {
 	GVariantIter *iter = (GVariantIter *)iter_ptr;
+	gboolean b = FALSE;
 	const char *s = NULL;
-	if (iter)
-		g_variant_iter_next(iter, "ms", &s);
+	if (iter) {
+		g_variant_iter_next(iter, "b", &b);
+		if (b)
+			g_variant_iter_next(iter, "s", &s);
+	}
 	return s ? _JSTRING(s) : NULL;
 }
