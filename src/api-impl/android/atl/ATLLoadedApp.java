@@ -18,6 +18,7 @@ import android.util.DisplayMetrics;
 import android.util.Slog;
 import dalvik.system.BaseDexClassLoader;
 import dalvik.system.PathClassLoader;
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -99,6 +100,10 @@ public final class ATLLoadedApp {
 
 	@NonNull
 	public static ATLLoadedApp loadFromPath(String mainApk, String nativePath, String classLoaderPath) throws IOException {
+		if (ATLToggles.ATL_GHAX) {
+			// Always load ghax.jar as the first element to override application library classes
+			classLoaderPath = ATLPaths.ghax_jar.getPath() + File.pathSeparator + classLoaderPath;
+		}
 		BaseDexClassLoader classLoader = new PathClassLoader(
 		    classLoaderPath, nativePath, ATLLoadedApp.class.getClassLoader());
 		AssetManager assetManager = new AssetManager(classLoader);

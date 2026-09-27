@@ -7,13 +7,16 @@ public final class ATLPaths {
 	public static final File installed_apks_dir;
 	public static final File api_impl_jar;
 	public static final File gstub_jar;
+	public static final File ghax_jar;
 
 	static {
 		// The main executable set api-impl.jar as the first element of "java.class.path"
 		String cp = System.getProperty("java.class.path");
 		api_impl_jar = new File(cp.substring(0, cp.indexOf(':'))).getAbsoluteFile();
-		// gstub.jar is always next to api-impl.jar both when installed and when running from builddir
-		gstub_jar = new File(ATLPaths.api_impl_jar.getParentFile(), "gstub.jar");
+		// additional .jar files are always next to api-impl.jar both when installed and when running from builddir
+		File extraJarsDirectory = ATLPaths.api_impl_jar.getParentFile();
+		gstub_jar = new File(extraJarsDirectory, "gstub.jar");
+		ghax_jar = new File(extraJarsDirectory, "ghax.jar");
 		// Mirror how main.c calculates app_data_dir_base
 		String ANDROID_APP_DATA_DIR = System.getenv("ANDROID_APP_DATA_DIR");
 		if (ANDROID_APP_DATA_DIR != null && !ANDROID_APP_DATA_DIR.isEmpty()) {

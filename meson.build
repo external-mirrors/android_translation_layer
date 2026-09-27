@@ -237,6 +237,14 @@ custom_target('gstub.jar', build_by_default: true, input: [gstub_jar], output: [
               install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
               command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'gstub.jar'), gstub_jar.full_path()])
 
+# ghax.jar
+subdir('src/ghax')
+
+custom_target('ghax.jar', build_by_default: true, input: [ghax_jar], output: ['ghax.jar'],
+              install: true,
+              install_dir : get_option('libdir') / 'java/dex/android_translation_layer',
+              command: ['dx', '--dex', '--incremental', '--output='+join_paths(builddir_base, 'ghax.jar'), ghax_jar.full_path()])
+
 # test-runner.jar
 subdir('src/test-runner')
 
