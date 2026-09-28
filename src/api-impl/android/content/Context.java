@@ -117,7 +117,6 @@ public abstract class Context {
 		ApplicationInfo application_info = primary_application.pkg.applicationInfo;
 		application_info.dataDir = Environment.getExternalStorageDirectory().getAbsolutePath();
 		application_info.nativeLibraryDir = (new File(Environment.getExternalStorageDirectory(), "lib")).getAbsolutePath();
-		application_info.sourceDir = native_get_apk_path();
 		package_manager = new PackageManager();
 
 		Provider provider = new Provider("AndroidKeyStore", 1.0, "Android KeyStore provider") {};
@@ -138,7 +137,6 @@ public abstract class Context {
 		}
 	}
 
-	private static native String native_get_apk_path();
 	protected static native void native_updateConfig(Configuration config);
 	protected static native void nativeOpenFile(int fd);
 	protected static native void nativeShareFile(String text, int fd);
@@ -586,7 +584,7 @@ public abstract class Context {
 	}
 
 	public String getPackageResourcePath() {
-		return native_get_apk_path();
+		return get_atl_loaded_app().pkg.applicationInfo.sourceDir;
 	}
 
 	public abstract int getThemeResId();

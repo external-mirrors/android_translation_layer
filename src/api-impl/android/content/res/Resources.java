@@ -234,8 +234,7 @@ public class Resources {
 		synchronized (sSync) {
 			ret = mSystem;
 			if (ret == null) {
-				ret = new Resources(new AssetManager(Resources.class.getClassLoader()),
-				                    new DisplayMetrics(), Context.sys_config);
+				ret = new Resources(new AssetManager(), new DisplayMetrics(), Context.sys_config);
 				mSystem = ret;
 			}
 

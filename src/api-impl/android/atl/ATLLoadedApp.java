@@ -106,7 +106,7 @@ public final class ATLLoadedApp {
 		}
 		BaseDexClassLoader classLoader = new PathClassLoader(
 		    classLoaderPath, nativePath, ATLLoadedApp.class.getClassLoader());
-		AssetManager assetManager = new AssetManager(classLoader);
+		AssetManager assetManager = new AssetManager(classLoaderPath + ":" + System.getProperty("java.class.path"));
 		PackageParser packageParser = new PackageParser(mainApk);
 		Resources resources = new Resources(assetManager, new DisplayMetrics(), Context.sys_config);
 		String[] outError = new String[1];
@@ -125,6 +125,7 @@ public final class ATLLoadedApp {
 		if (play_services.contains(pkg.packageName)) {
 			ATLSigHelper.addGMSSignatures(pkg);
 		}
+		pkg.applicationInfo.sourceDir = mainApk;
 		return new ATLLoadedApp(resources, classLoader, pkg);
 	}
 

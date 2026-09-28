@@ -19,13 +19,6 @@
 
 #include "android_content_Context.h"
 
-extern char *apk_path;
-
-JNIEXPORT jstring JNICALL Java_android_content_Context_native_1get_1apk_1path(JNIEnv *env, jclass this)
-{
-	return _JSTRING(apk_path);
-}
-
 static void monitor_changed_cb(GdkSurface *surface, GdkMonitor *monitor, jobject configuration)
 {
 	JNIEnv *env = get_jni_env();

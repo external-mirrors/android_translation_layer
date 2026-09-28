@@ -337,13 +337,6 @@ static gboolean install_dbus_service_file(const char *package_name, const char *
 
 static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *hint, struct jni_callback_data *d)
 {
-	// TODO: pass all files to classpath
-	/*
-	printf("nfiles: %d\n", nfiles);
-	for(int i = 0; i < nfiles; i++) {
-		printf(">- [%s]\n", g_file_get_path(files[i]));
-	}
-*/
 	if (window) { // this is not the first launch, but a DBus request to open an URI in the running app
 		fprintf(stderr, "opening uri over DBus %p\n", files[0]);
 		char *uri = g_file_get_uri(files[0]);
@@ -366,18 +359,21 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	jobject activity_object;
 	jobject application_object;
 
-	char *apk_classpath = g_file_get_path(files[0]);
+	char **apk_classpaths = g_new0(gchar *, nfiles + 1); // +1 for NULL terminator for g_strjoinv
 	char *apk_name = g_file_get_basename(files[0]);
-
-	if (apk_classpath == NULL) {
-		fprintf(stderr, "error: the specified file path doesn't seem to be valid\n");
-		exit(1);
+	for (int i = 0; i < nfiles; i++) {
+		apk_classpaths[i] = g_file_get_path(files[i]);
+		if (apk_classpaths[i] == NULL) {
+			fprintf(stderr, "error: the specified file path (%s) doesn't seem to be valid\n", g_file_get_uri(files[i]));
+			exit(1);
+		}
+		if (access(apk_classpaths[i], F_OK) < 0) {
+			fprintf(stderr, "error: the specified file path (%s) doesn't seem to exist (%m)\n", apk_classpaths[i]);
+			exit(1);
+		}
 	}
-
-	if (access(apk_classpath, F_OK) < 0) {
-		fprintf(stderr, "error: the specified file path (%s) doesn't seem to exist (%m)\n", apk_classpath);
-		exit(1);
-	}
+	char *apk_classpath = g_strjoinv(":", apk_classpaths);
+	g_free(apk_classpaths);
 
 	Dl_info libart_so_dl_info;
 	// JNI_CreateJavaVM chosen arbitrarily, what matters is that it's a symbol exported by by libart.so
