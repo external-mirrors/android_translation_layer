@@ -463,10 +463,18 @@ public abstract class Context {
 	public abstract boolean isRestricted();
 
 	public File getDatabasePath(String dbName) {
-		File databaseDir = new File(getDataDirFile(), "databases");
+		File databaseFile;
+		File databaseDir;
+		if (dbName.startsWith("/")) {
+			databaseFile = new File(dbName);
+			databaseDir = databaseFile.getParentFile();
+		} else {
+			databaseDir = new File(getDataDirFile(), "databases");
+			databaseFile = new File(databaseDir, dbName);
+		}
 		if (!databaseDir.exists())
 			databaseDir.mkdirs();
-		return new File(databaseDir, dbName);
+		return databaseFile;
 	}
 
 	public void sendBroadcast(Intent intent) {
