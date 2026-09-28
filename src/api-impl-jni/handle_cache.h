@@ -179,6 +179,7 @@ struct handle_cache {
 	struct {
 		jclass class;
 		jmethodID dispatchOnGlobalLayout;
+		jmethodID dispatchOnPreDraw;
 	} view_tree_observer;
 	struct {
 		jclass class;

@@ -15,6 +15,14 @@ extern "C" {
 JNIEXPORT void JNICALL Java_android_view_ViewTreeObserver_native_1set_1have_1global_1layout_1listeners
   (JNIEnv *, jobject, jboolean);
 
+/*
+ * Class:     android_view_ViewTreeObserver
+ * Method:    native_set_have_predraw_listeners
+ * Signature: (Z)V
+ */
+JNIEXPORT void JNICALL Java_android_view_ViewTreeObserver_native_1set_1have_1predraw_1listeners
+  (JNIEnv *, jobject, jboolean);
+
 #ifdef __cplusplus
 }
 #endif
