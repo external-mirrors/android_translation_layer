@@ -1,6 +1,7 @@
 package android.provider;
 
 import android.content.ContentResolver;
+import android.content.Context;
 import android.net.Uri;
 import android.util.AndroidException;
 import android.util.Slog;
@@ -228,4 +229,8 @@ public class Settings {
 	}
 
 	public static class SettingNotFoundException extends AndroidException {}
+
+	public static boolean canDrawOverlays(Context context) {
+		return true;
+	}
 }

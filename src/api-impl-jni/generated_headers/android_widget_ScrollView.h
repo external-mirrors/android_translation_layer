@@ -241,6 +241,8 @@ extern "C" {
 #define android_widget_ScrollView_FLAG_IS_TRANSITION_GROUP_SET 33554432L
 #undef android_widget_ScrollView_FLAG_TOUCHSCREEN_BLOCKS_FOCUS
 #define android_widget_ScrollView_FLAG_TOUCHSCREEN_BLOCKS_FOCUS 67108864L
+#undef android_widget_ScrollView_DEFAULT_CHILD_GRAVITY
+#define android_widget_ScrollView_DEFAULT_CHILD_GRAVITY 8388659L
 /*
  * Class:     android_widget_ScrollView
  * Method:    native_constructor

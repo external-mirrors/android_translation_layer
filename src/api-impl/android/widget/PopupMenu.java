@@ -19,6 +19,7 @@ package android.widget;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 import android.view.Gravity;
 import android.view.Menu;
@@ -313,6 +314,12 @@ public class PopupMenu {
 		public int addIntentOptions(int groupId, int itemId, int order, ComponentName caller, Intent[] specifics, Intent intent, int flags, MenuItem[] outSpecificItems) {
 			return 0;
 		}
+
+		@Override
+		public void close() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'close'");
+		}
 	}
 
 	private class SubMenuImpl extends MenuImpl implements SubMenu {
@@ -568,6 +575,12 @@ public class PopupMenu {
 		public MenuItem setIntent(Intent intent) {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'setIntent'");
+		}
+
+		@Override
+		public MenuItem setIconTintList(ColorStateList tint) {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'setIconTintList'");
 		}
 	}
 }

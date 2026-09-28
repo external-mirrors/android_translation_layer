@@ -110,6 +110,8 @@ public class DisplayMetrics {
 	@Deprecated
 	public static int DENSITY_DEVICE = getDeviceDensity();
 
+	public static int DENSITY_DEVICE_STABLE = getDeviceDensity();
+
 	/**
 	 * The absolute width of the display in pixels.
 	 */

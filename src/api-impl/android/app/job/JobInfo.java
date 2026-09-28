@@ -29,6 +29,10 @@ public class JobInfo {
 		return id;
 	}
 
+	public static long getMinPeriodMillis() {
+		return 1000;
+	}
+
 	public String toString() {
 		return "JobInfo{"
 		     + "jobService=" + service

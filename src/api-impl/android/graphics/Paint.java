@@ -384,6 +384,10 @@ public class Paint {
 
 	public void setFontFeatureSettings(String settings) {}
 
+	public boolean getFillPath(Path src, Path dst) {
+		return false;
+	}
+
 	public void reset() {
 		native_recycle(paint);
 		paint = native_create();

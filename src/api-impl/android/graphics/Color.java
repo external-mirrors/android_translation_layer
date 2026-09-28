@@ -33,6 +33,20 @@ public class Color {
 	public static final int MAGENTA = 0xFFFF00FF;
 	public static final int TRANSPARENT = 0;
 
+	private int color;
+
+	public Color(int color) {
+		this.color = color;
+	}
+
+	public static Color valueOf(int color) {
+		return new Color(color);
+	}
+
+	public int toArgb() {
+		return color;
+	}
+
 	public static int argb(int alpha, int red, int green, int blue) {
 		return (alpha << 24) | (red << 16) | (green << 8) | (blue << 0);
 	}

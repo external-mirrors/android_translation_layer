@@ -31,6 +31,7 @@ import android.util.Log;
 import android.util.Slog;
 import android.view.Display;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
 import android.view.WindowManagerImpl;
 import android.view.accessibility.AccessibilityManager;
 import android.view.accessibility.CaptioningManager;
@@ -204,6 +205,8 @@ public final class ContextImpl extends Context {
 				return new SearchManager();
 			case "storage":
 				return new StorageManager();
+			case "batterymanager":
+				return new BatteryManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;
@@ -216,6 +219,8 @@ public final class ContextImpl extends Context {
 			return layout_inflater;
 		if (serviceClass == JobScheduler.class)
 			return job_scheduler;
+		if (serviceClass == WindowManager.class)
+			return new WindowManagerImpl();
 		return serviceClass.getConstructors()[0].newInstance();
 	}
 

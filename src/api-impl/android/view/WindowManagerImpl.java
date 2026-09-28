@@ -73,6 +73,12 @@ public class WindowManagerImpl implements WindowManager, ViewManager {
 			// TODO Auto-generated method stub
 			throw new UnsupportedOperationException("Unimplemented method 'onDescendantInvalidated'");
 		}
+
+		@Override
+		public void requestLayout() {
+			// TODO Auto-generated method stub
+			throw new UnsupportedOperationException("Unimplemented method 'requestLayout'");
+		}
 	}
 
 	public android.view.Display getDefaultDisplay() {

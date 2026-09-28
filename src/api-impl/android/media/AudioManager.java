@@ -109,4 +109,6 @@ public class AudioManager {
 	public void registerAudioDeviceCallback(AudioDeviceCallback callback, Handler handler) {}
 
 	public void unregisterAudioDeviceCallback(AudioDeviceCallback callback) {}
+
+	public void playSoundEffect(int effectType) {}
 }

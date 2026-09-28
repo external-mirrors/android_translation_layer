@@ -167,7 +167,7 @@ public class Drawable {
 	}
 
 	public boolean isVisible() {
-		return false;
+		return true;
 	}
 
 	public boolean setVisible(boolean visible, boolean restart) {
@@ -314,6 +314,9 @@ public class Drawable {
 				drawable.inflate(resources, parser, attrs, theme);
 				return drawable;
 			}
+			case "animated-vector": {
+				return new AnimatedVectorDrawable();
+			}
 		}
 
 		return null;
@@ -398,6 +401,10 @@ public class Drawable {
 	public void setFilterBitmap(boolean filter) {}
 
 	public void setHotspotBounds(int left, int top, int right, int bottom) {}
+
+	public Drawable getCurrent() {
+		return this;
+	}
 
 	@SuppressWarnings("removal")
 	protected void finalize() throws Throwable {

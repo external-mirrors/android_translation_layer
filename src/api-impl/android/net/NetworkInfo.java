@@ -31,7 +31,7 @@ public class NetworkInfo {
 	}
 
 	public boolean isConnectedOrConnecting() {
-		return false;
+		return state == State.CONNECTED;
 	}
 
 	public boolean isFailover() {

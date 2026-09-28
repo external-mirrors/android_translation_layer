@@ -796,6 +796,8 @@ JNIEXPORT jboolean JNICALL Java_android_view_View_native_1getGlobalVisibleRect(J
 	double off_y;
 	gboolean ret;
 	GtkWidget *window = GTK_WIDGET(gtk_widget_get_native(widget));
+	if (!window)
+		return false;
 	gtk_native_get_surface_transform(GTK_NATIVE(window), &off_x, &off_y);
 	ret = gtk_widget_compute_point(widget, window, &point_in, &point_out);
 	if (!ret)

@@ -27,4 +27,11 @@ public class URLUtil {
 	public static boolean isContentUrl(String url) {
 		return url.startsWith("content://");
 	}
+
+	public static boolean isValidUrl(String url) {
+		if (url == null)
+			return false;
+		return isHttpUrl(url) || isHttpsUrl(url) || url.startsWith("file://") || url.startsWith("about:")
+		    || url.startsWith("data:") || url.startsWith("javascript:");
+	}
 }

@@ -35,6 +35,11 @@ public interface WindowManager {
 			super(w, h);
 		}
 
+		public LayoutParams(int type) {
+			super(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+			this.type = type;
+		}
+
 		public LayoutParams() {}
 
 		public void setTitle(CharSequence title) {}

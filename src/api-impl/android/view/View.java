@@ -2592,4 +2592,8 @@ public class View implements Drawable.Callback {
 	public boolean isAccessibilityFocused() { return false; }
 
 	public float getCameraDistance() { return 0; }
+
+	public OnFocusChangeListener getOnFocusChangeListener() { return null; }
+
+	public int getTextDirection() { return 0; /* TEXT_DIRECTION_INHERIT */ }
 }

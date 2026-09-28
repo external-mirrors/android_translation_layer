@@ -45,6 +45,9 @@ public class CreatorImpl implements IBinder {
 			case 10: // logInitialization
 				reply.writeNoException();
 				break;
+			case 12: // unknown
+				reply.writeNoException();
+				break;
 			default:
 				try {
 					reply.writeException(new UnsupportedOperationException("not implemented"));

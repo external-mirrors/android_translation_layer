@@ -5,7 +5,7 @@ import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ScrollView extends ViewGroup {
+public class ScrollView extends FrameLayout {
 	public ScrollView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
@@ -17,7 +17,7 @@ public class ScrollView extends ViewGroup {
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	@Override
-	protected native void native_addView(long widget, long child, int index, LayoutParams params);
+	protected native void native_addView(long widget, long child, int index, ViewGroup.LayoutParams params);
 	@Override
 	protected native void native_removeView(long widget, long child);
 
@@ -27,7 +27,7 @@ public class ScrollView extends ViewGroup {
 		int height = 0;
 		if (getChildCount() > 0) {
 			View child = getChildAt(0);
-			LayoutParams lp = child.getLayoutParams();
+			ViewGroup.LayoutParams lp = child.getLayoutParams();
 			int childWidthMeasureSpec = getChildMeasureSpec(widthMeasureSpec, 0, lp.width);
 			int childHeightMeasureSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
 			child.measure(childWidthMeasureSpec, childHeightMeasureSpec);

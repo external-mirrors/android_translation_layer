@@ -23,6 +23,8 @@ public class AccessibilityNodeInfo {
 		public AccessibilityAction(int actionId, CharSequence label) {}
 
 		public int getId() { return 0; }
+
+		public CharSequence getLabel() { return null; }
 	}
 
 	public class RangeInfo {

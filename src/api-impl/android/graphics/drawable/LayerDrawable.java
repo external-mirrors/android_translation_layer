@@ -644,6 +644,8 @@ public class LayerDrawable extends Drawable implements Drawable.Callback {
 
 	public void setLayerGravity(int index, int gravity) {}
 
+	public void setPaddingMode(int paddingMode) {}
+
 	static class ChildDrawable {
 		public Drawable mDrawable;
 		public int mInsetL, mInsetT, mInsetR, mInsetB;

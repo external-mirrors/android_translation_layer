@@ -22,4 +22,6 @@ public interface ViewParent {
 	public void onStopNestedScroll(View target);
 
 	public void onDescendantInvalidated(View child, View target);
+
+	public void requestLayout();
 }

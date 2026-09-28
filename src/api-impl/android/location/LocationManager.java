@@ -74,4 +74,8 @@ public class LocationManager {
 
 	public void unregisterGnssStatusCallback(GnssStatus.Callback callback) {
 	}
+
+	public boolean isProviderEnabled(String provider) {
+		return System.getenv("ATL_UGLY_ENABLE_LOCATION") != null;
+	}
 }

@@ -4,6 +4,8 @@ import android.net.Uri;
 
 public class ContactsContract {
 
+	public static final Uri AUTHORITY_URI = Uri.parse("content://com.android.contacts");
+
 	public static final class CommonDataKinds {
 
 		public static final class Phone {

@@ -80,4 +80,6 @@ public class WebSettings {
 	public void setSaveFormData(boolean save) {}
 
 	public void setAllowContentAccess(boolean allow) {}
+
+	public void setAllowFileAccessFromFileURLs(boolean allow) {}
 }

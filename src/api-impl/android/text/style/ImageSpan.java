@@ -1,8 +1,11 @@
 package android.text.style;
 
+import android.content.Context;
 import android.graphics.drawable.Drawable;
 
 public class ImageSpan extends DynamicDrawableSpan {
+
+	public ImageSpan(Context context, int resId) {}
 
 	private Drawable drawable;
 

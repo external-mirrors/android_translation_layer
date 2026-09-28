@@ -488,6 +488,10 @@ public class TextView extends View {
 
 	public void setCustomInsertionActionModeCallback(ActionMode.Callback actionModeCallback) {}
 
+	public int getJustificationMode() {
+		return 0; // JUSTIFICATION_MODE_NONE
+	}
+
 	@UnsupportedAppUsage /* androidx ACTVAutoSizeHelper seems to love this */
 	/* Copyright (C) 2006 The Android Open Source Project */
 	private Layout.Alignment getLayoutAlignment() {

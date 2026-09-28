@@ -1,6 +1,7 @@
 package android.view;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.Drawable;
 
 public interface MenuItem {
@@ -81,4 +82,6 @@ public interface MenuItem {
 	public boolean isActionViewExpanded();
 
 	public MenuItem setIntent(Intent intent);
+
+	public MenuItem setIconTintList(ColorStateList tint);
 }

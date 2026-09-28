@@ -19,4 +19,13 @@ public class Formatter {
 			return String.format("%d B", size);
 		}
 	}
+
+	@Deprecated
+	public static String formatIpAddress(int ipv4Address) {
+		return String.format("%d.%d.%d.%d",
+		                     ipv4Address & 0xff,
+		                     (ipv4Address >> 8) & 0xff,
+		                     (ipv4Address >> 16) & 0xff,
+		                     (ipv4Address >> 24) & 0xff);
+	}
 }

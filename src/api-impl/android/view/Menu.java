@@ -41,4 +41,6 @@ public interface Menu {
 	public SubMenu addSubMenu(int groupId, int itemId, int order, int titleRes);
 
 	public int addIntentOptions(int groupId, int itemId, int order, ComponentName caller, Intent[] specifics, Intent intent, int flags, MenuItem[] outSpecificItems);
+
+	public void close();
 }
