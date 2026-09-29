@@ -961,6 +961,7 @@ public class View implements Drawable.Callback {
 	private boolean pressed = false;
 	private Drawable background;
 	private int backgroundTint = 0;
+	private int mForegroundGravity = Gravity.START | Gravity.TOP;
 
 	private int minWidth = 0;
 	private int minHeight = 0;
@@ -2097,6 +2098,10 @@ public class View implements Drawable.Callback {
 	public boolean isPaddingRelative() { return false; }
 
 	public void setForeground(Drawable foreground) {}
+
+	public int getForegroundGravity() { return mForegroundGravity; }
+
+	public void setForegroundGravity(int gravity) { mForegroundGravity = gravity; }
 
 	public boolean canScrollVertically(int value) { return false; }
 
