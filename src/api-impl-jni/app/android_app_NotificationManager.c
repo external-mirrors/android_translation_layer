@@ -124,12 +124,14 @@ JNIEXPORT void JNICALL Java_android_app_NotificationManager_nativeShowNotificati
 		extract_from_apk(icon_path, icon_path);
 		char *icon_path_full = g_strdup_printf("%s/%s", get_app_data_dir(), icon_path);
 		GMappedFile *icon_file = g_mapped_file_new(icon_path_full, FALSE, NULL);
-		GBytes *icon_bytes = g_mapped_file_get_bytes(icon_file);
-		GIcon *icon = g_bytes_icon_new(icon_bytes);
-		g_notification_set_icon(notification, icon);
-		g_object_unref(icon);
-		g_bytes_unref(icon_bytes);
-		g_mapped_file_unref(icon_file);
+		if (icon_file) {
+			GBytes *icon_bytes = g_mapped_file_get_bytes(icon_file);
+			GIcon *icon = g_bytes_icon_new(icon_bytes);
+			g_notification_set_icon(notification, icon);
+			g_object_unref(icon);
+			g_bytes_unref(icon_bytes);
+			g_mapped_file_unref(icon_file);
+		}
 		g_free(icon_path_full);
 		(*env)->ReleaseStringUTFChars(env, icon_jstr, icon_path);
 	}
