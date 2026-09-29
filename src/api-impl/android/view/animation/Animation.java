@@ -54,4 +54,6 @@ public class Animation {
 	public boolean hasStarted() {
 		return false;
 	}
+
+	public void setStartTime(long startTime) {}
 }

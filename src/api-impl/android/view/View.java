@@ -1042,11 +1042,7 @@ public class View implements Drawable.Callback {
 				Drawable background = a.getDrawable(com.android.internal.R.styleable.View_background);
 
 				if (background != null) {
-					if (background instanceof ColorDrawable) {
-						setBackgroundColor(((ColorDrawable)background).getColor());
-					} else {
-						setBackgroundDrawable(background);
-					}
+					setBackground(background);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1418,7 +1414,7 @@ public class View implements Drawable.Callback {
 	public native void native_setPadding(long widget, int left, int top, int right, int bottom);
 
 	public void setBackgroundResource(int resid) {
-		setBackgroundDrawable(resid == 0 ? null : getContext().getDrawable(resid));
+		setBackground(resid == 0 ? null : getContext().getDrawable(resid));
 	}
 
 	public void getHitRect(Rect outRect) {
@@ -1555,6 +1551,9 @@ public class View implements Drawable.Callback {
 			return on_long_click_listener.onLongClick(this);
 		}
 		return false;
+	}
+	public boolean performLongClick() {
+		return performLongClick(Float.NaN, Float.NaN);
 	}
 	public void setOnLongClickListener(OnLongClickListener listener) {
 		nativeSetOnLongClickListener(widget);
@@ -1708,6 +1707,10 @@ public class View implements Drawable.Callback {
 
 	public void setBackgroundDrawable(Drawable backgroundDrawable) {
 		this.background = backgroundDrawable;
+		if (backgroundDrawable instanceof ColorDrawable) {
+			native_setBackgroundColor(widget, ((ColorDrawable)backgroundDrawable).getColor());
+			return;
+		}
 		if (backgroundDrawable != null) {
 			backgroundDrawable.setCallback(this);
 			if (backgroundTint != 0)
@@ -2617,4 +2620,6 @@ public class View implements Drawable.Callback {
 	public OnFocusChangeListener getOnFocusChangeListener() { return null; }
 
 	public int getTextDirection() { return 0; /* TEXT_DIRECTION_INHERIT */ }
+
+	public TouchDelegate getTouchDelegate() { return null; }
 }

@@ -17,6 +17,10 @@ public class KeyguardManager {
 		return new KeyguardLock();
 	}
 
+	public boolean isDeviceSecure() {
+		return false;
+	}
+
 	public class KeyguardLock {
 		public void disableKeyguard() {}
 		public void reenableKeyguard() {}

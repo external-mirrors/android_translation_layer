@@ -10,9 +10,13 @@ public class LayoutTransition {
 
 	public void setDuration(long duration) {}
 
-	public Animator getAnimator(int transitionType) { return null; }
+	public Animator getAnimator(int transitionType) {
+		return new ObjectAnimator();
+	}
 
 	public void setDuration(int transitionType, long duration) {}
 
 	public void setInterpolator(int transitionType, TimeInterpolator interpolator) {}
+
+	public void disableTransitionType(int transitionType) {}
 }

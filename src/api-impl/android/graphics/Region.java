@@ -94,7 +94,8 @@ public class Region {
 	 * Set the region to the specified rectangle
 	 */
 	public boolean set(int left, int top, int right, int bottom) {
-		return nativeSetRect(mNativeRegion, left, top, right, bottom);
+		// return nativeSetRect(mNativeRegion, left, top, right, bottom);
+		return false;
 	}
 	/**
 	 * Set the region to the area described by the path and clip.

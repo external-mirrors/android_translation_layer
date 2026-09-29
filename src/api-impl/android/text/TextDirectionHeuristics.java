@@ -22,4 +22,11 @@ public class TextDirectionHeuristics {
 			return false;
 		}
 	};
+
+	public static final TextDirectionHeuristic FIRSTSTRONG_RTL = new TextDirectionHeuristic() {
+		@Override
+		public boolean isRtl(CharSequence text, int start, int end) {
+			return true;
+		}
+	};
 }

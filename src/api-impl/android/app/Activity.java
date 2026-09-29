@@ -664,4 +664,12 @@ public class Activity extends ContextThemeWrapper implements Window.Callback, La
 	public ComponentName getCallingActivity() {
 		return resultActivity == null ? null : resultActivity.getComponentName();
 	}
+
+	public boolean onNavigateUp() {
+		return false;
+	}
+
+	public void setExitSharedElementCallback(SharedElementCallback callback) {}
+
+	public void setEnterSharedElementCallback(SharedElementCallback callback) {}
 }

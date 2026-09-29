@@ -4,6 +4,7 @@ import android.atl.GskCanvas;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.text.style.ReplacementSpan;
 
 public class Layout {
 
@@ -25,12 +26,19 @@ public class Layout {
 	private Alignment align;
 
 	protected Layout(CharSequence text, TextPaint paint, int width, Layout.Alignment align, float spacingMult, float spacingAdd) {
-		this.text = text;
+		if (text instanceof Spanned) {
+			Spanned spanned = (Spanned)text;
+			// call every ReplacementSpan.getSize method to prevent "PlaceholderSpan is not laid out yet." errors in ComposeUI
+			for (ReplacementSpan span : spanned.getSpans(0, spanned.length(), ReplacementSpan.class))
+				span.getSize(paint, text, spanned.getSpanStart(span), spanned.getSpanEnd(span), paint.getFontMetricsInt());
+		}
+		String str = text != null ? text.toString() : "";
+		this.text = str;
 		this.paint = paint;
 		this.spacing_mult = spacingMult;
 		this.spacing_add = spacingAdd;
 		this.align = align;
-		layout = native_constructor(text != null ? text.toString() : "", paint.paint, width);
+		layout = native_constructor(str, paint.paint, width);
 	}
 
 	public int getLineCount() {

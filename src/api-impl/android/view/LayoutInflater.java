@@ -268,7 +268,7 @@ public class LayoutInflater {
 			final String name = parser.getName();
 
 			if (name.equals("requestFocus")) {
-				throw new Exception("<requestFocus /> not supported atm");
+				Slog.w(TAG, "<requestFocus /> not supported atm");
 				// parseRequestFocus(parser, parent);
 			} else if (name.equals("include")) {
 				if (parser.getDepth() == 0) {

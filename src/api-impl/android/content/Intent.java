@@ -763,6 +763,10 @@ public class Intent implements Parcelable {
 		return target;
 	}
 
+	public static Intent createChooser(Intent target, CharSequence title, IntentSender sender) {
+		return target;
+	}
+
 	public Intent setDataAndType(Uri uri, String type) {
 		this.data = uri;
 		this.type = type;
@@ -918,5 +922,17 @@ public class Intent implements Parcelable {
 
 	public float getFloatExtra(String name, float def) {
 		return extras.getFloat(name, def);
+	}
+
+	public boolean hasCategory(String category) {
+		return getCategories().contains(category);
+	}
+
+	public static String normalizeMimeType(String mimeType) {
+		return mimeType;
+	}
+
+	public CharSequence getCharSequenceExtra(String name) {
+		return extras.getCharSequence(name);
 	}
 }

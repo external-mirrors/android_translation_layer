@@ -1,6 +1,7 @@
 package android.media;
 
 import android.media.MediaCodec.BufferInfo;
+import android.os.Bundle;
 import android.view.Surface;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -197,6 +198,13 @@ public class MediaCodec {
 	}
 
 	public void setOutputSurface(Surface surface) {
+	}
+
+	public void setParameters(Bundle parameters) {}
+
+	public static MediaCodec createEncoderByType(String type) throws IOException {
+		System.out.println("MediaCodec.createEncoderByType(" + type + ")");
+		throw new IOException("encoder not yet implemented");
 	}
 
 	@Override

@@ -76,4 +76,8 @@ public final class PowerManager {
 	public boolean isInteractive() {
 		return true;
 	}
+
+	public boolean isWakeLockLevelSupported(int level) {
+		return false;
+	}
 }

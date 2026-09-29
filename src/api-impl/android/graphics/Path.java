@@ -235,6 +235,8 @@ public class Path {
 		Log.w("Path", "STUB: setLastPoint");
 	}
 
+	public void toggleInverseFillType() {}
+
 	@SuppressWarnings("deprecation")
 	@Override
 	protected void finalize() throws Throwable {

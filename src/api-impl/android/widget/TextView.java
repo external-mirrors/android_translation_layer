@@ -492,6 +492,12 @@ public class TextView extends View {
 		return 0; // JUSTIFICATION_MODE_NONE
 	}
 
+	public void setImeActionLabel(CharSequence label, int actionId) {}
+
+	public int getExtendedPaddingBottom() { return 0; }
+
+	public boolean hasSelection() { return false; }
+
 	@UnsupportedAppUsage /* androidx ACTVAutoSizeHelper seems to love this */
 	/* Copyright (C) 2006 The Android Open Source Project */
 	private Layout.Alignment getLayoutAlignment() {

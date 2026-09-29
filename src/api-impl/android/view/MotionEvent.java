@@ -1749,7 +1749,8 @@ public final class MotionEvent extends InputEvent {
 	 */
 	@Override
 	public final void setSource(int source) {
-		nativeSetSource(mNativePtr, source);
+		// nativeSetSource(mNativePtr, source);
+		this.source = source;
 	}
 
 	/**

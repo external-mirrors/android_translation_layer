@@ -26,4 +26,6 @@ public abstract class AbsSeekBar extends ProgressBar {
 	public int getThumbOffset() { return 0; }
 
 	public void setThumbTintList(ColorStateList tint) {}
+
+	public void setThumb(Drawable thumb) {}
 }

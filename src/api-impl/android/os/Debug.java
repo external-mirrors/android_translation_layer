@@ -8,6 +8,10 @@ public final class Debug {
 		public int getTotalPss() {
 			return 0;
 		}
+
+		public String getMemoryStat(String statName) {
+			return "fixme getMemoryStat";
+		}
 	}
 
 	private static int globalAllocCount;

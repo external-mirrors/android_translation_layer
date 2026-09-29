@@ -81,6 +81,8 @@ public class WebView extends ViewGroup {
 			System.out.println("loadUrl: " + url + " - not implemented yet");
 			return;
 		}
+		// webkit doesn't allow overwriting the file:// uri scheme. So we replace it with the android-asset:// scheme
+		url = url.replace("file:///android_asset/", "android-asset:///assets/");
 		native_loadUrl(widget, url);
 	}
 

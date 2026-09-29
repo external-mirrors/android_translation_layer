@@ -78,7 +78,7 @@ public final class DocumentsContract {
 	}
 
 	private static boolean isDocumentsProvider(Context context, String authority) {
-		throw new RuntimeException("DocumentsContract.isDocumentsProvider not implemented yet");
+		return false;
 	}
 
 	public static boolean isDocumentUri(Context context, Uri uri) {

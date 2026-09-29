@@ -101,6 +101,8 @@ public class ContentResolver {
 		if (provider != null) {
 			return provider.query(uri, projection, selection, selectionArgs, sortOrder);
 		} else if ("file".equals(uri.getScheme())) {
+			if (projection == null)
+				projection = new String[] {"_display_name", "mime_type"};
 			MatrixCursor cursor = new MatrixCursor(projection);
 			Object[] row = new Object[projection.length];
 			native_query_file_info(uri.getPath(), projection, row);

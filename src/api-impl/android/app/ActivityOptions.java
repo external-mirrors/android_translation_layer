@@ -18,6 +18,10 @@ public class ActivityOptions {
 		return new ActivityOptions();
 	}
 
+	public static ActivityOptions makeScaleUpAnimation(View source, int startX, int startY, int startWidth, int startHeight) {
+		return new ActivityOptions();
+	}
+
 	public Bundle toBundle() {
 		return null;
 	}

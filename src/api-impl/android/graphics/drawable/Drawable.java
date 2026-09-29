@@ -406,6 +406,10 @@ public class Drawable {
 		return this;
 	}
 
+	public Rect copyBounds() {
+		return new Rect(mBounds);
+	}
+
 	@SuppressWarnings("removal")
 	protected void finalize() throws Throwable {
 		try {

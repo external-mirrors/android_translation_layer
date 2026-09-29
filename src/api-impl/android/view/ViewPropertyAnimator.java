@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
 import android.animation.TimeInterpolator;
+import android.animation.ValueAnimator;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -167,6 +168,10 @@ public class ViewPropertyAnimator {
 	}
 
 	public ViewPropertyAnimator withLayer() {
+		return this;
+	}
+
+	public ViewPropertyAnimator setUpdateListener(ValueAnimator.AnimatorUpdateListener listener) {
 		return this;
 	}
 }

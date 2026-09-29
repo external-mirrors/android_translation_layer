@@ -6,7 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class MediaStore {
 
@@ -20,13 +20,17 @@ public class MediaStore {
 
 		public static class Thumbnails {
 
+			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/images/media");
+
 			public static Cursor queryMiniThumbnail(ContentResolver contentResolver, long id, int kind, String[] projection) {
 				return null;
 			}
 
-			public static Bitmap getThumbnail(ContentResolver contentResolver, long imageId, long groupId, int kind, BitmapFactory.Options options) throws FileNotFoundException {
-				ParcelFileDescriptor fd = contentResolver.openFileDescriptor(Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(String.valueOf(imageId)).build(), "r");
-				return BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, options);
+			public static Bitmap getThumbnail(ContentResolver contentResolver, long imageId, long groupId, int kind, BitmapFactory.Options options) throws IOException {
+				Uri uri = Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(String.valueOf(imageId)).build();
+				try (ParcelFileDescriptor fd = contentResolver.openFileDescriptor(uri, "r")) {
+					return BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, options);
+				}
 			}
 		}
 	}
@@ -37,6 +41,18 @@ public class MediaStore {
 
 			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/video/media");
 			public static final Uri INTERNAL_CONTENT_URI = Uri.parse("content://media/internal/video/media");
+		}
+
+		public static class Thumbnails {
+
+			public static final Uri EXTERNAL_CONTENT_URI = Uri.parse("content://media/external/video/media");
+
+			public static Bitmap getThumbnail(ContentResolver contentResolver, long videoId, int kind, BitmapFactory.Options options) throws IOException {
+				Uri uri = Media.EXTERNAL_CONTENT_URI.buildUpon().appendPath(String.valueOf(videoId)).build();
+				try (ParcelFileDescriptor fd = contentResolver.openFileDescriptor(uri, "r")) {
+					return BitmapFactory.decodeFileDescriptor(fd.getFileDescriptor(), null, options);
+				}
+			}
 		}
 	}
 

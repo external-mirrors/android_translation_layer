@@ -7,11 +7,15 @@ public class ClipData {
 	public static class Item {
 
 		public Item(Uri uri) {}
+
+		public Item(CharSequence text, String mimeType, Intent intent, Uri uri) {}
 	}
 
 	String text;
 
 	public ClipData(ClipDescription description, Item item) {}
+
+	public ClipData(CharSequence text, String[] mimeTypes, Item item) {}
 
 	public static ClipData newPlainText(CharSequence label, CharSequence text) {
 		ClipData clip = new ClipData(new ClipDescription(label, null), null);
@@ -20,6 +24,12 @@ public class ClipData {
 	}
 
 	public static ClipData newRawUri(CharSequence label, Uri uri) {
+		ClipData clip = new ClipData(new ClipDescription(label, null), new Item(uri));
+		clip.text = uri.toString();
+		return clip;
+	}
+
+	public static ClipData newUri(ContentResolver resolver, CharSequence label, Uri uri) {
 		ClipData clip = new ClipData(new ClipDescription(label, null), new Item(uri));
 		clip.text = uri.toString();
 		return clip;

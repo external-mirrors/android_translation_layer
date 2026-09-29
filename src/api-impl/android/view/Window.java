@@ -201,6 +201,8 @@ public class Window {
 
 	public void setWindowAnimations(int resId) {}
 
+	public void setDimAmount(float dimAmount) {}
+
 	public native void set_widget_as_root(long native_window, long widget);
 	private native void set_title(long native_window, String title);
 	public native void take_input_queue(long native_window, InputQueue.Callback callback, InputQueue queue);

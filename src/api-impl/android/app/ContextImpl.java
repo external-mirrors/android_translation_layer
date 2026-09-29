@@ -207,6 +207,8 @@ public final class ContextImpl extends Context {
 				return new StorageManager();
 			case "batterymanager":
 				return new BatteryManager();
+			case "download":
+				return new DownloadManager();
 			default:
 				Slog.e(TAG, "!!!!!!! getSystemService: case >" + name + "< is not implemented yet");
 				return null;

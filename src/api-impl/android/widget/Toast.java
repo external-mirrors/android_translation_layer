@@ -40,4 +40,6 @@ public class Toast {
 	public void setView(View view) {}
 
 	public void setGravity(int gravity, int xOffset, int yOffset) {}
+
+	public void cancel() {}
 }

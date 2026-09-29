@@ -3506,7 +3506,7 @@ public class PackageManager {
 	 * the manifest as found in {@link ComponentInfo}.
 	 */
 	public int getComponentEnabledSetting(ComponentName componentName) {
-		return -1;
+		return COMPONENT_ENABLED_STATE_DEFAULT;
 	}
 
 	/**

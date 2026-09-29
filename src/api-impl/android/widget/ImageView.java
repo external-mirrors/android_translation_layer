@@ -203,6 +203,10 @@ public class ImageView extends View {
 		return Matrix.IDENTITY_MATRIX;
 	}
 
+	public void clearColorFilter() {
+		colorFilter = null;
+	}
+
 	@Override
 	protected native long native_constructor(Context context, AttributeSet attrs);
 	protected native void native_setDrawable(long widget, long paintable);

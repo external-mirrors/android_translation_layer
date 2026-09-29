@@ -213,6 +213,12 @@ public final class Bitmap implements Parcelable {
 		native_get_pixels(getTexture(), pixels, offset, stride, x, y, width, height);
 	}
 
+	public int getPixel(int x, int y) {
+		int[] pixels = new int[1];
+		native_get_pixels(getTexture(), pixels, 0, 1, x, y, 1, 1);
+		return pixels[0];
+	}
+
 	public void copyPixelsToBuffer(Buffer buffer) {
 		if (config.gdk_memory_format == -1) {
 			System.out.println("copyPixelsToBuffer: format " + config.name() + " not implemented");
@@ -242,6 +248,11 @@ public final class Bitmap implements Parcelable {
 
 	public void setPixels(int[] pixels, int offset, int stride, int x, int y, int width, int height) {
 		native_set_pixels(getSnapshot(), pixels, offset, stride, x, y, width, height);
+	}
+
+	public void setPixel(int x, int y, int color) {
+		int[] pixels = new int[] {color};
+		native_set_pixels(getSnapshot(), pixels, 0, 1, x, y, 1, 1);
 	}
 
 	public void reconfigure(int width, int height, Bitmap.Config config) {}

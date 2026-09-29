@@ -2,7 +2,6 @@ package android.atl;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
-import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.database.MatrixCursor;
 import android.net.Uri;
@@ -53,8 +52,8 @@ public class ATLMediaContentProvider extends ContentProvider {
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
-		if (selectionArgs != null && selectionArgs.length > 0) {
-			selectedFile = new File(selectionArgs[0]);
+		if (selectionArgs != null && selectionArgs.length > 0 && selectedFile != null) {
+			// The app probably wants to query info about the specific file. Don't show a new file chooser
 			timestamp = System.currentTimeMillis();
 		}
 		// if we haven't selected a file, open the file chooser
@@ -82,7 +81,7 @@ public class ATLMediaContentProvider extends ContentProvider {
 						break;
 					case "_data":
 					case "title":
-						row[i] = selectedFile;
+						row[i] = selectedFile.getName();
 						break;
 					case "mime_type":
 						row[i] = getType(uri);
@@ -148,10 +147,4 @@ public class ATLMediaContentProvider extends ContentProvider {
 	}
 
 	private native void native_open_media_folder();
-
-	@Override
-	public AssetFileDescriptor openAssetFile(Uri uri, String mode) throws FileNotFoundException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'openAssetFile'");
-	}
 }

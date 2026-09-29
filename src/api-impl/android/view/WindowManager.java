@@ -30,6 +30,7 @@ public interface WindowManager {
 		public int format;
 		public int layoutInDisplayCutoutMode;
 		public String packageName;
+		public int rotationAnimation;
 
 		public LayoutParams(int w, int h, int type, int flags, int format) {
 			super(w, h);

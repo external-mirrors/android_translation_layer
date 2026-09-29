@@ -344,7 +344,9 @@ public class Paint {
 	public void setFontMetricsInt(FontMetricsInt fmi) {}
 
 	public FontMetricsInt getFontMetricsInt() {
-		return new FontMetricsInt();
+		FontMetricsInt fmi = new FontMetricsInt();
+		fmi.descent = (int)getTextSize();
+		return fmi;
 	}
 
 	public void set(Paint paint) {

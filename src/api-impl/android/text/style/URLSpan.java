@@ -1,6 +1,6 @@
 package android.text.style;
 
-public class URLSpan extends CharacterStyle {
+public class URLSpan extends ClickableSpan {
 
 	private String url;
 
