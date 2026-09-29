@@ -18,6 +18,8 @@ libc_bio_dep = [
 ]
 bootclasspath_dir = libart_dep.get_variable(pkgconfig: 'libdir') / 'java'
 
+art_incdir_dep = declare_dependency(include_directories: libart_dep.get_variable(pkgconfig: 'includedir'))
+
 bootclasspath = bootclasspath_dir / 'core-all_classes.jar' + ':' + bootclasspath_dir / 'core-junit_classes.jar' + ':' + bootclasspath_dir / 'junit-runner_classes.jar'
 
 marshal_files = gnome.genmarshal('marshal',
@@ -68,7 +70,8 @@ libandroid_so = shared_library('android', [
                                           install: true,
                                           soversion: 0,
                                           dependencies: [
-                                          	dependency('gtk4'), dependency('jni'), dependency('vulkan'), dependency('openxr').partial_dependency(includes: true)
+                                          	dependency('gtk4'), dependency('jni'), dependency('vulkan'), dependency('openxr').partial_dependency(includes: true),
+                                          	art_incdir_dep
                                           ],
                                           c_args: [
                                           	'-D_LARGEFILE64_SOURCE',
