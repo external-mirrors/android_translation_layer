@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 /**
  * Provides access to an application's raw asset files; see {@link Resources}
@@ -652,12 +653,16 @@ public final class AssetManager {
 			for (String apk_path : apk_paths) {
 				File apk_file = new File(apk_path);
 				if (!Files.exists(file) || Files.getLastModifiedTime(file).toMillis() < Files.getLastModifiedTime(apk_file.toPath()).toMillis()) {
-					try (JarFile apk = new JarFile(apk_file);
-					     InputStream inputStream = apk.getInputStream(apk.getEntry(path))) {
-						if (inputStream != null) {
-							Files.createDirectories(file.getParent());
-							Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
-							return;
+					try (JarFile apk = new JarFile(apk_file)) {
+						ZipEntry entry = apk.getEntry(path);
+						if (entry == null)
+							continue;
+						try (InputStream inputStream = apk.getInputStream(entry)) {
+							if (inputStream != null) {
+								Files.createDirectories(file.getParent());
+								Files.copy(inputStream, file, StandardCopyOption.REPLACE_EXISTING);
+								return;
+							}
 						}
 					}
 				}
