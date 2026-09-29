@@ -18,9 +18,12 @@ public class SystemProperties {
 			properties.put("ro.product.cpu.abi", "x86_64");
 			properties.put("ro.product.cpu.abi2", "x86");
 			properties.put("ro.product.cpu.abilist", "x86_64,x86");
+			properties.put("ro.product.cpu.abilist64", "x86_64");
+			properties.put("ro.product.cpu.abilist32", "x86");
 		} else if (System.getProperty("os.arch").equals("aarch64")) {
 			properties.put("ro.product.cpu.abi", "arm64-v8a");
 			properties.put("ro.product.cpu.abilist", "arm64-v8a");
+			properties.put("ro.product.cpu.abilist64", "arm64-v8a");
 		}
 	}
 

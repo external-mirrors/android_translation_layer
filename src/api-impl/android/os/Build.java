@@ -109,6 +109,10 @@ public class Build {
 
 	public static final String[] SUPPORTED_ABIS = getString("ro.product.cpu.abilist").split(",");
 
+	public static final String[] SUPPORTED_32_BIT_ABIS = getStringList("ro.product.cpu.abilist32", ",");
+
+	public static final String[] SUPPORTED_64_BIT_ABIS = getStringList("ro.product.cpu.abilist64", ",");
+
 	/**
 	 * Various version strings.
 	 */
@@ -1051,6 +1055,13 @@ public class Build {
 
 	private static String getString(String property) {
 		return SystemProperties.get(property, UNKNOWN);
+	}
+
+	private static String[] getStringList(String property, String separator) {
+		String value = getString(property);
+		if (UNKNOWN.equals(value))
+			return new String[0];
+		return value.split(separator);
 	}
 
 	private static long getLong(String property) {
