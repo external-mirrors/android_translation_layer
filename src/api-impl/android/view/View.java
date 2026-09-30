@@ -52,6 +52,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 class WindowId {}
@@ -720,7 +721,7 @@ public class View implements Drawable.Callback {
 	}
 
 	public interface OnLayoutChangeListener {
-		// TODO
+		public void onLayoutChange(View view, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom);
 	}
 
 	public interface OnUnhandledKeyEventListener {
@@ -975,6 +976,8 @@ public class View implements Drawable.Callback {
 	private boolean atl_focusable = true;
 
 	private Handler handler;
+
+	private CopyOnWriteArrayList<OnLayoutChangeListener> on_layout_change_listeners;
 
 	public static final Property<View, Float> TRANSLATION_X = new Property<View, Float>(Float.class, "translationX") {
 		@Override
@@ -1680,6 +1683,10 @@ public class View implements Drawable.Callback {
 					child.layout(child.left, child.top, child.right, child.bottom);
 			}
 		}
+		if (on_layout_change_listeners != null) {
+			for (OnLayoutChangeListener on_layout_change_listener : on_layout_change_listeners)
+				on_layout_change_listener.onLayoutChange(this, left, top, right, bottom, left, top, left + oldWidth, top + oldHeight);
+		}
 		oldWidth = width;
 		oldHeight = height;
 	}
@@ -1804,8 +1811,15 @@ public class View implements Drawable.Callback {
 		return tag;
 	}
 
-	public void addOnLayoutChangeListener(OnLayoutChangeListener listener) {}
-	public void removeOnLayoutChangeListener(OnLayoutChangeListener listener) {}
+	public void addOnLayoutChangeListener(OnLayoutChangeListener listener) {
+		if (on_layout_change_listeners == null)
+			on_layout_change_listeners = new CopyOnWriteArrayList<OnLayoutChangeListener>();
+		on_layout_change_listeners.add(listener);
+	}
+	public void removeOnLayoutChangeListener(OnLayoutChangeListener listener) {
+		if (on_layout_change_listeners != null)
+			on_layout_change_listeners.remove(listener);
+	}
 
 	public boolean isSelected() { return false; }
 
