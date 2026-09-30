@@ -510,7 +510,7 @@ public class Canvas {
 	public void drawColor(int color) {
 		Paint paint = new Paint();
 		paint.setColor(color);
-		drawRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, paint);
+		drawPaint(paint);
 	}
 
 	public void drawARGB(int a, int r, int g, int b) {
@@ -594,7 +594,9 @@ public class Canvas {
 	}
 
 	public void drawPaint(Paint paint) {
-		drawRect(0, 0, Integer.MAX_VALUE, Integer.MAX_VALUE, paint);
+		// GskColorNode needs a fixed size. Draw a large rectangle to fill the whole viewport.
+		// Values should not be near MAXINT to avoid overflow in the renderer.
+		drawRect(-100000, -100000, 100000, 100000, paint);
 	}
 
 	public void drawPicture(Picture picture) {
