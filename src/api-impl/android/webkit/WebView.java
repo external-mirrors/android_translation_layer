@@ -43,6 +43,13 @@ public class WebView extends ViewGroup {
 		}
 	}
 
+	boolean internalShouldOverrideUrlLoading(String url) {
+		if (webViewClient != null)
+			return webViewClient.shouldOverrideUrlLoading(this, url);
+		else
+			return false;
+	}
+
 	public void setVerticalScrollBarEnabled(boolean enabled) {}
 	public void setVerticalScrollbarOverlay(boolean overlay) {}
 	public void setInitialScale(int scaleInPercent) {}

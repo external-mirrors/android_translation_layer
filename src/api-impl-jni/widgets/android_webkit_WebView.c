@@ -36,6 +36,25 @@ static void web_view_load_changed(WebKitWebView *web_view, WebKitLoadEvent load_
 	(*env)->CallVoidMethod(env, wrapper->jobj, handle_cache.webview.internalLoadChanged, load_event, _JSTRING(webkit_web_view_get_uri(web_view)));
 }
 
+static gboolean decide_policy(WebKitWebView *web_view, WebKitPolicyDecision *decision, WebKitPolicyDecisionType type, WrapperWidget *wrapper)
+{
+	if (type == WEBKIT_POLICY_DECISION_TYPE_NAVIGATION_ACTION) {
+		WebKitNavigationPolicyDecision *nav = WEBKIT_NAVIGATION_POLICY_DECISION(decision);
+		WebKitNavigationAction *action = webkit_navigation_policy_decision_get_navigation_action(nav);
+		WebKitURIRequest *request = webkit_navigation_action_get_request(action);
+		const gchar *uri = webkit_uri_request_get_uri(request);
+
+		JNIEnv *env = get_jni_env();
+		jboolean result = (*env)->CallBooleanMethod(env, wrapper->jobj, handle_cache.webview.internalShouldOverrideUrlLoading, _JSTRING(uri));
+		if (result)
+			webkit_policy_decision_ignore(decision);
+		else
+			webkit_policy_decision_use(decision);
+		return result;
+	}
+	return FALSE;
+}
+
 JNIEXPORT jlong JNICALL Java_android_webkit_WebView_native_1constructor(JNIEnv *env, jobject this, jobject context, jobject attrs)
 {
 	/*
@@ -53,6 +72,7 @@ JNIEXPORT jlong JNICALL Java_android_webkit_WebView_native_1constructor(JNIEnv *
 	wrapper_widget_register_invalidation_listener(WRAPPER_WIDGET(wrapper));
 	webkit_web_context_register_uri_scheme(webkit_web_view_get_context(WEBKIT_WEB_VIEW(webview)), "android-asset", asset_uri_scheme_request_cb, NULL, NULL);
 	g_signal_connect(G_OBJECT(webview), "load-changed", G_CALLBACK(web_view_load_changed), NULL);
+	g_signal_connect(webview, "decide-policy", G_CALLBACK(decide_policy), wrapper);
 	return _INTPTR(webview);
 }
 

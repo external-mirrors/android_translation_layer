@@ -141,6 +141,7 @@ struct handle_cache {
 		jclass class;
 		jmethodID internalGetAssetManager;
 		jmethodID internalLoadChanged;
+		jmethodID internalShouldOverrideUrlLoading;
 	} webview;
 	struct {
 		jclass class;
