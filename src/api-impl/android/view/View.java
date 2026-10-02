@@ -1637,7 +1637,10 @@ public class View implements Drawable.Callback {
 
 	protected void onLayout(boolean changed, int l, int t, int r, int b) {}
 
+	boolean layouted = false;
+
 	public void layout(int l, int t, int r, int b) {
+		this.layouted = true;
 		this.left = l;
 		this.top = t;
 		this.right = r;
@@ -1657,7 +1660,18 @@ public class View implements Drawable.Callback {
 			onSizeChanged(width, height, oldWidth, oldHeight);
 		bottom = top + height;
 		right = left + width;
+		if (this instanceof ViewGroup) {
+			for (View child : ((ViewGroup)this).children)
+				child.layouted = false;
+		}
 		onLayout(changed, 0, 0, width, height);
+		// ReactViewGroup has onLayout implemented as no-op, so we need to walk children ourself in such cases
+		if (this instanceof ViewGroup) {
+			for (View child : ((ViewGroup)this).children) {
+				if (!child.layouted && child.visibility != GONE)
+					child.layout(child.left, child.top, child.right, child.bottom);
+			}
+		}
 		oldWidth = width;
 		oldHeight = height;
 	}
