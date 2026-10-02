@@ -574,10 +574,6 @@ public class BitmapFactory {
 			}
 
 			setDensityFromOptions(bm, opts);
-			if (bm != null && opts != null) {
-				opts.outWidth = bm.getWidth();
-				opts.outHeight = bm.getHeight();
-			}
 		} finally {
 			Trace.traceEnd(Trace.TRACE_TAG_GRAPHICS);
 		}
@@ -597,7 +593,23 @@ public class BitmapFactory {
 		if (tempStorage == null)
 			tempStorage = new byte[DECODE_BUFFER_SIZE];
 		final long texture = nativeDecodeStream(is, tempStorage, outPadding, opts);
-		return texture == 0 ? null : new Bitmap(texture);
+		if (texture == 0)
+			return null;
+		Bitmap decoded = new Bitmap(texture);
+		if (opts != null) {
+			opts.outWidth = decoded.getWidth();
+			opts.outHeight = decoded.getHeight();
+			opts.outConfig = decoded.getConfig();
+			if (opts.inJustDecodeBounds) {
+				decoded.recycle();
+				return null;
+			}
+			if (opts.inBitmap != null) {
+				opts.inBitmap.transferFrom(decoded);
+				return opts.inBitmap;
+			}
+		}
+		return decoded;
 	}
 
 	/**

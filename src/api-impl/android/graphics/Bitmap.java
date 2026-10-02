@@ -156,6 +156,23 @@ public final class Bitmap implements Parcelable {
 		return stride;
 	}
 
+	// used by BitmapFactory to satify Options.inBitmap if set
+	void transferFrom(Bitmap src) {
+		native_recycle(this.texture, this.snapshot);
+		this.texture = src.texture;
+		this.snapshot = src.snapshot;
+		this.width = src.width;
+		this.height = src.height;
+		this.stride = src.stride;
+		this.config = src.config;
+		this.hasAlpha = src.hasAlpha;
+		this.mutable = src.mutable;
+		this.recycled = false;
+		src.texture = 0;
+		src.snapshot = 0;
+		src.recycled = true;
+	}
+
 	public int getAllocationByteCount() {
 		return height * getRowBytes();
 	}
