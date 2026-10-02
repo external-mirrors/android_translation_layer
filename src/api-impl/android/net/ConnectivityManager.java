@@ -40,7 +40,19 @@ public class ConnectivityManager {
 	}
 
 	public NetworkCapabilities getNetworkCapabilities(Network network) {
-		return null;
+		// as in getActiveNetworkInfo, a null network means there is none to report on
+		if (network == null || !nativeGetNetworkAvailable())
+			return null;
+
+		NetworkCapabilities capabilities = new NetworkCapabilities();
+		capabilities.addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+
+		if (!isActiveNetworkMetered())
+			capabilities.addCapability(NetworkCapabilities.NET_CAPABILITY_NOT_METERED);
+
+		capabilities.addTransportType(NetworkCapabilities.TRANSPORT_WIFI);
+
+		return capabilities;
 	}
 
 	public void registerDefaultNetworkCallback(NetworkCallback cb, Handler hdl) {}
