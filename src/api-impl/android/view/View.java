@@ -974,6 +974,8 @@ public class View implements Drawable.Callback {
 	private boolean atl_enabled = true;
 	private boolean atl_focusable = true;
 
+	private Handler handler;
+
 	public static final Property<View, Float> TRANSLATION_X = new Property<View, Float>(Float.class, "translationX") {
 		@Override
 		public Float get(View view) {
@@ -1486,7 +1488,7 @@ public class View implements Drawable.Callback {
 	}
 
 	public void postInvalidate() {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
+		getHandler().post(new Runnable() {
 			@Override
 			public void run() {
 				invalidate();
@@ -1495,7 +1497,7 @@ public class View implements Drawable.Callback {
 	}
 
 	public void postInvalidate(final int left, final int top, final int right, final int bottom) {
-		new Handler(Looper.getMainLooper()).post(new Runnable() {
+		getHandler().post(new Runnable() {
 			@Override
 			public void run() {
 				invalidate(left, top, right, bottom);
@@ -1722,7 +1724,10 @@ public class View implements Drawable.Callback {
 
 	public void setScrollContainer(boolean isScrollContainer) {}
 
-	public boolean removeCallbacks(Runnable action) { return false; }
+	public boolean removeCallbacks(Runnable action) {
+		getHandler().removeCallbacks(action);
+		return true;
+	}
 
 	public void requestLayout() {
 		native_requestLayout(widget);
@@ -1764,12 +1769,12 @@ public class View implements Drawable.Callback {
 	}
 
 	public boolean postDelayed(Runnable action, long delayMillis) {
-		new Handler(Looper.getMainLooper()).postDelayed(action, delayMillis);
+		getHandler().postDelayed(action, delayMillis);
 		return true;
 	}
 
 	public boolean post(Runnable action) {
-		new Handler(Looper.getMainLooper()).post(action);
+		getHandler().post(action);
 		return true;
 	}
 
@@ -2196,7 +2201,7 @@ public class View implements Drawable.Callback {
 		if (Looper.myLooper() == Looper.getMainLooper()) {
 			requestLayout();
 		} else {
-			new Handler(Looper.getMainLooper()).post(new Runnable() {
+			getHandler().post(new Runnable() {
 				@Override
 				public void run() {
 					requestLayout();
@@ -2346,7 +2351,9 @@ public class View implements Drawable.Callback {
 	public void setHorizontalFadingEdgeEnabled(boolean horizontalFadingEdgeEnabled) {}
 
 	public Handler getHandler() {
-		return new Handler(Looper.getMainLooper());
+		if (handler == null)
+			handler = new Handler(Looper.getMainLooper());
+		return handler;
 	}
 
 	public boolean isHardwareAccelerated() {
