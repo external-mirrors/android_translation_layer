@@ -120,6 +120,9 @@ public class GskCanvas extends DisplayListCanvas {
 
 	@Override
 	public void drawRect(float left, float top, float right, float bottom, Paint paint) {
+		// TODO: implement xfermode using gtk_snapshot_push_composite in GTK >= 4.22
+		if (paint != null && paint.getXfermode() != null)
+			return;
 		native_drawRect(snapshot, left, top, right, bottom, paint != null ? paint.paint : default_paint.paint);
 	}
 
