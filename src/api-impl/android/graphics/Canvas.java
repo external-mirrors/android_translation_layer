@@ -555,13 +555,12 @@ public class Canvas {
 	}
 
 	public boolean clipPath(Path path) {
-		Log.w("Canvas", "STUB: clipPath");
-		return false;
+		gsk_canvas.snapshot = bitmap.getSnapshot();
+		return gsk_canvas.clipPath(path);
 	}
 
 	public boolean clipPath(Path path, Region.Op op) {
-		Log.w("Canvas", "STUB: clipPath");
-		return false;
+		return clipPath(path);
 	}
 
 	public boolean isHardwareAccelerated() {
