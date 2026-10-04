@@ -502,8 +502,14 @@ public class ViewGroup extends View implements ViewParent, ViewManager {
 		// FIXME
 	}
 
+	private native void native_offsetRect(long from_widget, long to_widget, Rect rect);
+
 	public final void offsetDescendantRectToMyCoords(View descendant, Rect rect) {
-		// FIXME
+		native_offsetRect(descendant.widget, widget, rect);
+	}
+
+	public final void offsetRectIntoDescendantCoords(View descendant, Rect rect) {
+		native_offsetRect(widget, descendant.widget, rect);
 	}
 
 	public boolean getClipToPadding() { return false; }

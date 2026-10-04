@@ -275,6 +275,14 @@ JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1drawChild
 
 /*
  * Class:     android_view_ViewGroup
+ * Method:    native_offsetRect
+ * Signature: (JJLandroid/graphics/Rect;)V
+ */
+JNIEXPORT void JNICALL Java_android_view_ViewGroup_native_1offsetRect
+  (JNIEnv *, jobject, jlong, jlong, jobject);
+
+/*
+ * Class:     android_view_ViewGroup
  * Method:    native_dispatchTouchEvent
  * Signature: (JLandroid/view/MotionEvent;DD)Z
  */
