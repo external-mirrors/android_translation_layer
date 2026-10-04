@@ -207,7 +207,8 @@ JNIEXPORT void JNICALL Java_android_view_SurfaceView_native_1postSnapshot(JNIEnv
 	GskRenderer *renderer = g_object_new(renderer_type, NULL);
 	gsk_renderer_realize(renderer, NULL, NULL);
 	GskRenderNode *node = gtk_snapshot_free_to_node(snapshot);
-	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, NULL);
+	graphene_rect_t bounds = GRAPHENE_RECT_INIT(0, 0, gtk_widget_get_width(view), gtk_widget_get_height(view));
+	GdkTexture *texture = gsk_renderer_render_texture(renderer, node, &bounds);
 	gsk_render_node_unref(node);
 	gsk_renderer_unrealize(renderer);
 	g_object_unref(renderer);
