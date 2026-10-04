@@ -556,6 +556,7 @@ srcs = [
 	'android/util/AndroidRuntimeException.java',
 	'android/util/ArrayMap.java',
 	'android/util/ArraySet.java',
+	'android/util/AtomicFile.java',
 	'android/util/AttributeSet.java',
 	'android/util/Base64.java',
 	'android/util/Base64DataException.java',
