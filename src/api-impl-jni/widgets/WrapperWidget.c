@@ -434,24 +434,19 @@ static gboolean on_key_released(GtkEventControllerKey *controller, guint keyval,
 	return ret;
 }
 
-static void map_cb(WrapperWidget *wrapper, jmethodID method)
-{
-	JNIEnv *env = get_jni_env();
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
-	if ((*env)->ExceptionCheck(env))
-		(*env)->ExceptionDescribe(env);
-}
-
 GtkWidget *currently_unmapping = NULL;
 
-static void unmap_cb(WrapperWidget *wrapper, jmethodID method)
+static void root_changed_cb(WrapperWidget *wrapper, GParamSpec *pspec, gpointer user_data)
 {
+	GtkRoot *root = gtk_widget_get_root(GTK_WIDGET(wrapper));
 	JNIEnv *env = get_jni_env();
-	currently_unmapping = wrapper->child;
-	(*env)->CallVoidMethod(env, wrapper->jobj, method);
+	if (!root)
+		currently_unmapping = wrapper->child;
+	(*env)->CallVoidMethod(env, wrapper->jobj, root ? handle_cache.view.onAttachedToWindow : handle_cache.view.onDetachedFromWindow);
 	if ((*env)->ExceptionCheck(env))
 		(*env)->ExceptionDescribe(env);
-	currently_unmapping = NULL;
+	if (!root)
+		currently_unmapping = NULL;
 }
 
 void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject jobj)
@@ -501,8 +496,7 @@ void wrapper_widget_set_jobject(WrapperWidget *wrapper, JNIEnv *env, jobject job
 		gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 		gtk_widget_set_focusable(GTK_WIDGET(wrapper), TRUE);
 	}
-	g_signal_connect(wrapper, "map", G_CALLBACK(map_cb), handle_cache.view.onAttachedToWindow);
-	g_signal_connect(wrapper, "unmap", G_CALLBACK(unmap_cb), handle_cache.view.onDetachedFromWindow);
+	g_signal_connect(wrapper, "notify::root", G_CALLBACK(root_changed_cb), NULL);
 }
 
 void wrapper_widget_set_layout_params(WrapperWidget *wrapper, int width, int height)

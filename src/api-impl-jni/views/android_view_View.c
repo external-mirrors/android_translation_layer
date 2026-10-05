@@ -1009,7 +1009,7 @@ JNIEXPORT void JNICALL Java_android_view_View_native_1keep_1screen_1on(JNIEnv *e
 JNIEXPORT jboolean JNICALL Java_android_view_View_nativeIsAttachedToWindow(JNIEnv *env, jobject this, jlong widget_ptr)
 {
 	GtkWidget *widget = GTK_WIDGET(_PTR(widget_ptr));
-	return currently_unmapping == widget || gtk_widget_get_mapped(widget);
+	return currently_unmapping == widget || gtk_widget_get_root(widget);
 }
 
 JNIEXPORT jobject JNICALL Java_android_view_View_native_1get_1window(JNIEnv *env, jobject this, jlong widget_ptr)
