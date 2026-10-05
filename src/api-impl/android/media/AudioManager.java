@@ -29,6 +29,24 @@ public class AudioManager {
 	public interface OnAudioFocusChangeListener {
 	}
 
+	public static final int AUDIOFOCUS_NONE = 0;
+	public static final int AUDIOFOCUS_GAIN = 1;
+	public static final int AUDIOFOCUS_GAIN_TRANSIENT = 2;
+	public static final int AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK = 3;
+	public static final int AUDIOFOCUS_GAIN_TRANSIENT_EXCLUSIVE = 4;
+
+	public static final int AUDIOFOCUS_LOSS = -1 * AUDIOFOCUS_GAIN;
+	public static final int AUDIOFOCUS_LOSS_TRANSIENT = -1 * AUDIOFOCUS_GAIN_TRANSIENT;
+	public static final int AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK = -1 * AUDIOFOCUS_GAIN_TRANSIENT_MAY_DUCK;
+
+	public static final int AUDIOFOCUS_FLAG_DELAY_OK = 1 << 0;
+	public static final int AUDIOFOCUS_FLAG_PAUSES_ON_DUCKABLE_LOSS = 1 << 1;
+	public static final int AUDIOFOCUS_FLAG_LOCK = 1 << 2;
+
+	public static final int AUDIOFOCUS_REQUEST_FAILED = 0;
+	public static final int AUDIOFOCUS_REQUEST_GRANTED = 1;
+	public static final int AUDIOFOCUS_REQUEST_DELAYED = 2;
+
 	public static final int GET_DEVICES_INPUTS = 0x0001;
 	public static final int GET_DEVICES_OUTPUTS = 0x0002;
 	public static final int GET_DEVICES_ALL = GET_DEVICES_OUTPUTS | GET_DEVICES_INPUTS;
@@ -51,6 +69,20 @@ public class AudioManager {
 
 	public int abandonAudioFocus(OnAudioFocusChangeListener listener) {
 		return /*AUDIOFOCUS_REQUEST_GRANTED*/ 1;
+	}
+
+	public int requestAudioFocus(AudioFocusRequest focusRequest) {
+		if (focusRequest == null) {
+			throw new NullPointerException("Illegal null AudioFocusRequest");
+		}
+		return AUDIOFOCUS_REQUEST_GRANTED;
+	}
+
+	public int abandonAudioFocusRequest(AudioFocusRequest focusRequest) {
+		if (focusRequest == null) {
+			throw new IllegalArgumentException("Illegal null AudioFocusRequest");
+		}
+		return AUDIOFOCUS_REQUEST_GRANTED;
 	}
 
 	public boolean isWiredHeadsetOn() {
