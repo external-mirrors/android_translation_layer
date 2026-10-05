@@ -336,6 +336,7 @@ srcs = [
 	'android/media/AudioAttributes.java',
 	'android/media/AudioDeviceCallback.java',
 	'android/media/AudioDeviceInfo.java',
+	'android/media/AudioFocusRequest.java',
 	'android/media/AudioFormat.java',
 	'android/media/AudioManager.java',
 	'android/media/AudioRecord.java',
