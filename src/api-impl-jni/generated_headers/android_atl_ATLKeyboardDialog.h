@@ -10,10 +10,10 @@ extern "C" {
 /*
  * Class:     android_atl_ATLKeyboardDialog
  * Method:    nativeInit
- * Signature: ()J
+ * Signature: (J)J
  */
 JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit
-  (JNIEnv *, jobject);
+  (JNIEnv *, jobject, jlong);
 
 #ifdef __cplusplus
 }

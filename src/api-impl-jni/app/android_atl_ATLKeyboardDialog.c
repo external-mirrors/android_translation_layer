@@ -159,8 +159,9 @@ static gboolean on_close_request(GtkWidget *dialog, jobject jobj)
 	return FALSE;
 }
 
-JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this)
+JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *env, jobject this, jlong decor_view_ptr)
 {
+	GtkWidget *decor_view = GTK_WIDGET(_PTR(decor_view_ptr));
 	GtkWidget *dialog = gtk_window_new();
 	GtkWindow *window = GTK_WINDOW(dialog);
 
@@ -175,7 +176,7 @@ JNIEXPORT jlong JNICALL Java_android_atl_ATLKeyboardDialog_nativeInit(JNIEnv *en
 
 	connect_osk_dbus_iface(dialog);
 
-	gtk_window_set_child(GTK_WINDOW(dialog), gtk_box_new(GTK_ORIENTATION_VERTICAL, 1));
+	gtk_window_set_child(GTK_WINDOW(dialog), gtk_widget_get_parent(decor_view));
 	g_signal_connect_swapped(dialog, "response", G_CALLBACK(gtk_window_destroy), dialog);
 	g_signal_connect(GTK_WINDOW(dialog), "close-request", G_CALLBACK(on_close_request), _REF(this));
 

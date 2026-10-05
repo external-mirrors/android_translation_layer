@@ -10,8 +10,18 @@
 #include "../../main-executable/back_button.h"
 #include "android_app_Activity.h"
 
+extern GtkWindow *window;
+
 static GList *activity_backlog = NULL;
 static jobject activity_current = NULL;
+
+static GtkWidget *get_decor_view(JNIEnv *env, jobject activity)
+{
+	jobject window_jobj = _GET_OBJ_FIELD(activity, "window", "Landroid/view/Window;");
+	jobject decor_view_jobj = _GET_OBJ_FIELD(window_jobj, "decorView", "Landroid/view/ViewGroup;");
+	GtkWidget *decor_view = GTK_WIDGET(_PTR(_GET_LONG_FIELD(decor_view_jobj, "widget")));
+	return gtk_widget_get_parent(decor_view);
+}
 
 static void activity_close(JNIEnv *env, jobject activity)
 {
@@ -20,6 +30,10 @@ static void activity_close(JNIEnv *env, jobject activity)
 		fprintf(stderr, "activity.onDestroy: seems there was a pending exception... :");
 		(*env)->ExceptionDescribe(env);
 	}
+
+	GtkWidget *decor_view = get_decor_view(env, activity);
+	GtkStack *stack = GTK_STACK(gtk_window_get_child(window));
+	gtk_stack_remove(stack, decor_view);
 
 	/* -- run the activity's onDestroy -- */
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onDestroy);
@@ -54,6 +68,10 @@ static void activity_focus(JNIEnv *env, jobject activity)
 		(*env)->ExceptionDescribe(env);
 	if (_GET_BOOL_FIELD(activity, "finishing"))
 		return;
+
+	GtkWidget *decor_view = get_decor_view(env, activity);
+	GtkStack *stack = GTK_STACK(gtk_window_get_child(window));
+	gtk_stack_set_visible_child(stack, decor_view);
 
 	(*env)->CallVoidMethod(env, activity, handle_cache.activity.onResume);
 	if ((*env)->ExceptionCheck(env))
@@ -176,6 +194,10 @@ void activity_start(JNIEnv *env, jobject activity_object)
 		(*env)->ExceptionDescribe(env);
 
 	activity_backlog = g_list_prepend(activity_backlog, _REF(activity_object));
+
+	GtkWidget *decor_view = get_decor_view(env, activity_object);
+	GtkStack *stack = GTK_STACK(gtk_window_get_child(window));
+	gtk_stack_add_child(stack, decor_view);
 
 	activity_update_current(env);
 }

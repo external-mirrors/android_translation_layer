@@ -13,14 +13,6 @@ extern "C" {
 #define android_view_Window_FEATURE_NO_TITLE 1L
 /*
  * Class:     android_view_Window
- * Method:    set_widget_as_root
- * Signature: (JJ)V
- */
-JNIEXPORT void JNICALL Java_android_view_Window_set_1widget_1as_1root
-  (JNIEnv *, jobject, jlong, jlong);
-
-/*
- * Class:     android_view_Window
  * Method:    set_title
  * Signature: (JLjava/lang/String;)V
  */

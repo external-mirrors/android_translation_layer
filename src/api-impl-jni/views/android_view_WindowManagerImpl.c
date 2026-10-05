@@ -22,10 +22,12 @@ JNIEXPORT void JNICALL Java_android_view_WindowManagerImpl_native_1addView(JNIEn
 	printf("::: x=%d, y=%d, width=%d, height=%d\n", x, y, width, height);
 	gtk_popover_set_autohide(popover, FALSE);
 	gtk_popover_set_pointing_to(popover, &(GdkRectangle){.x = x, .y = y});
-	gtk_widget_insert_before(GTK_WIDGET(popover), gtk_window_get_child(window), NULL);
+	GtkStack *stack = GTK_STACK(gtk_window_get_child(window));
+	GtkWidget *decor_view = gtk_stack_get_visible_child(stack);
+	gtk_widget_insert_before(GTK_WIDGET(popover), decor_view, NULL);
 	gtk_popover_present(popover);
 	gtk_popover_popup(popover);
-	gtk_widget_queue_allocate(gtk_widget_get_parent(gtk_window_get_child(window)));
+	gtk_widget_queue_allocate(decor_view);
 }
 
 JNIEXPORT void JNICALL Java_android_view_WindowManagerImpl_native_1updateViewLayout(JNIEnv *env, jclass clazz, jlong widget_ptr, jint x, jint y, jint width, jint height)

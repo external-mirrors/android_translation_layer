@@ -21,7 +21,7 @@ import android.view.WindowManager.LayoutParams;
 public class Dialog implements Window.Callback, DialogInterface {
 	protected long nativePtr;
 
-	protected native long nativeInit();
+	protected native long nativeInit(long decor_view);
 	private native void nativeSetTitle(long ptr, String title);
 	private native void nativeSetContentView(long ptr, long widget);
 	private native void nativeShow(long ptr);
@@ -37,7 +37,7 @@ public class Dialog implements Window.Callback, DialogInterface {
 	public Dialog(Context context, int themeResId) {
 		this.context = context;
 		window = new Window(context, this);
-		nativePtr = nativeInit();
+		nativePtr = nativeInit(window.getDecorView().widget);
 
 		window.set_native_window(nativePtr);
 	}

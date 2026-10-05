@@ -477,6 +477,8 @@ static void open(GtkApplication *app, GFile **files, gint nfiles, const gchar *h
 	/* -- misc -- */
 
 	window = gtk_application_window_new(app);
+	GtkWidget *stack = gtk_stack_new();
+	gtk_window_set_child(GTK_WINDOW(window), stack);
 
 	const char *disable_decoration_env = getenv("ATL_DISABLE_WINDOW_DECORATIONS");
 	gboolean decorated;

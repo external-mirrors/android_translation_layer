@@ -53,11 +53,12 @@ static void remove_touch_outside(GtkWindow *dialog)
 	g_object_set_data(G_OBJECT(dialog), "touch-outside", NULL);
 }
 
-JNIEXPORT jlong JNICALL Java_android_app_Dialog_nativeInit(JNIEnv *env, jobject this)
+JNIEXPORT jlong JNICALL Java_android_app_Dialog_nativeInit(JNIEnv *env, jobject this, jlong decor_view_ptr)
 {
+	GtkWidget *decor_view = GTK_WIDGET(_PTR(decor_view_ptr));
 	GtkWidget *dialog = gtk_window_new();
 	gtk_window_set_transient_for(GTK_WINDOW(dialog), window);
-	gtk_window_set_child(GTK_WINDOW(dialog), gtk_box_new(GTK_ORIENTATION_VERTICAL, 1));
+	gtk_window_set_child(GTK_WINDOW(dialog), gtk_widget_get_parent(decor_view));
 	g_signal_connect(GTK_WINDOW(dialog), "close-request", G_CALLBACK(on_close_request), _REF(this));
 	return _INTPTR(g_object_ref(dialog));
 }
