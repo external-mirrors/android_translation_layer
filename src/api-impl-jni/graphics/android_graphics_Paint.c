@@ -182,3 +182,41 @@ JNIEXPORT void JNICALL Java_android_graphics_Paint_native_1set_1text_1align(JNIE
 	struct AndroidPaint *paint = _PTR(paint_ptr);
 	paint->alignment = align;
 }
+
+JNIEXPORT jfloat JNICALL Java_android_graphics_Paint_native_1get_1font_1metrics(JNIEnv *env, jclass clazz, jlong paint_ptr, jobject metrics)
+{
+	struct AndroidPaint *paint = _PTR(paint_ptr);
+	PangoContext *context = gtk_widget_get_pango_context(window);
+	PangoFontMetrics *font_metrics = pango_context_get_metrics(context, paint->font, NULL);
+	float height = (float)pango_font_metrics_get_height(font_metrics) / PANGO_SCALE;
+	if (metrics) {
+		float ascent = (float)pango_font_metrics_get_ascent(font_metrics) / PANGO_SCALE;
+		float descent = (float)pango_font_metrics_get_descent(font_metrics) / PANGO_SCALE;
+		_SET_FLOAT_FIELD(metrics, "top", -ascent);
+		_SET_FLOAT_FIELD(metrics, "ascent", -ascent);
+		_SET_FLOAT_FIELD(metrics, "descent", descent);
+		_SET_FLOAT_FIELD(metrics, "bottom", descent);
+		_SET_FLOAT_FIELD(metrics, "leading", height - ascent - descent);
+	}
+	pango_font_metrics_unref(font_metrics);
+	return height;
+}
+
+JNIEXPORT jint JNICALL Java_android_graphics_Paint_native_1get_1font_1metrics_1int(JNIEnv *env, jclass clazz, jlong paint_ptr, jobject metrics)
+{
+	struct AndroidPaint *paint = _PTR(paint_ptr);
+	PangoContext *context = gtk_widget_get_pango_context(window);
+	PangoFontMetrics *font_metrics = pango_context_get_metrics(context, paint->font, NULL);
+	int height = ceil((float)pango_font_metrics_get_height(font_metrics) / PANGO_SCALE);
+	if (metrics) {
+		int ascent = ceil((float)pango_font_metrics_get_ascent(font_metrics) / PANGO_SCALE);
+		int descent = ceil((float)pango_font_metrics_get_descent(font_metrics) / PANGO_SCALE);
+		_SET_INT_FIELD(metrics, "top", -ascent);
+		_SET_INT_FIELD(metrics, "ascent", -ascent);
+		_SET_INT_FIELD(metrics, "descent", descent);
+		_SET_INT_FIELD(metrics, "bottom", descent);
+		_SET_INT_FIELD(metrics, "leading", height - ascent - descent);
+	}
+	pango_font_metrics_unref(font_metrics);
+	return height;
+}
