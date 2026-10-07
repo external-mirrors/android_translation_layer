@@ -51,6 +51,8 @@ int canceled_action = 0;
 
 static struct pointer pointers[MAX_POINTERS] = {};
 
+extern GdkEvent *synthetic_propagation_failed;
+
 bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagationPhase phase, jobject motion_event, gpointer event, int action)
 {
 	int ret;
@@ -66,9 +68,18 @@ bool view_dispatch_motionevent(JNIEnv *env, WrapperWidget *wrapper, GtkPropagati
 	}
 
 	if (wrapper->custom_dispatch_touch) {
-		ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
-		if ((*env)->ExceptionCheck(env))
-			(*env)->ExceptionDescribe(env);
+		if (synthetic_propagation_failed != event) { // New event. Try to handle again.
+			synthetic_propagation_failed = NULL;
+			ret = (*env)->CallBooleanMethod(env, this, handle_cache.view.dispatchTouchEvent, motion_event);
+			if ((*env)->ExceptionCheck(env))
+				(*env)->ExceptionDescribe(env);
+		}
+		if (synthetic_propagation_failed) {
+			// The app tried to synthetically propagate the event to a GTK widget, but that is not possible in GTK4,
+			// so just treat it as unhandled and let GTK propagate it the normal way.
+			synthetic_propagation_failed = event;
+			ret = false;
+		}
 	} else if (phase == GTK_PHASE_CAPTURE && _GET_BOOL_FIELD(this, "disallowIntercept")) {
 		if (action == ACTION_UP || action == ACTION_CANCEL)
 			_SET_BOOL_FIELD(this, "disallowIntercept", false);
