@@ -89,6 +89,7 @@ struct handle_cache {
 		jmethodID onAttachedToWindow;
 		jmethodID onDetachedFromWindow;
 		jmethodID dispatchHoverEvent;
+		jmethodID propagateInvalidation;
 	} view;
 	struct {
 		jclass class;

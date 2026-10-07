@@ -553,3 +553,31 @@ void wrapper_widget_consume_touch_events(WrapperWidget *wrapper)
 	gtk_widget_add_controller(GTK_WIDGET(wrapper), controller);
 	g_object_set_data(G_OBJECT(wrapper), "on_touch_listener", controller);
 }
+
+// ComposeUI layouts need to know when to redraw native widgets. There is no way in GTK to get
+// notified about invalidations on specific widgets, but we get that global invalidation from the
+// frame clock. Just flag it as invalidated on every global invalidation. The redraw will be a
+// no-op in GTK anyway if redraw was not needed for the specific widget.
+static void on_paint(GdkFrameClock *self, WrapperWidget *wrapper)
+{
+	JNIEnv *env = get_jni_env();
+	(*env)->CallVoidMethod(env, wrapper->jobj, handle_cache.view.propagateInvalidation);
+}
+
+static void on_realize(GtkWidget *wrapper, gpointer user_data)
+{
+	GdkFrameClock *clock = gtk_widget_get_frame_clock(wrapper);
+	g_signal_connect(clock, "paint", G_CALLBACK(on_paint), wrapper);
+}
+
+static void on_unrealize(GtkWidget *wrapper, gpointer user_data)
+{
+	GdkFrameClock *clock = gtk_widget_get_frame_clock(wrapper);
+	g_signal_handlers_disconnect_by_data(clock, wrapper);
+}
+
+void wrapper_widget_register_invalidation_listener(WrapperWidget *wrapper)
+{
+	g_signal_connect(wrapper, "realize", G_CALLBACK(on_realize), NULL);
+	g_signal_connect(wrapper, "unrealize", G_CALLBACK(on_unrealize), NULL);
+}

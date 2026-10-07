@@ -90,6 +90,7 @@ void set_up_handle_cache(JNIEnv *env)
 	handle_cache.view.onAttachedToWindow = _METHOD(handle_cache.view.class, "onAttachedToWindow", "()V");
 	handle_cache.view.onDetachedFromWindow = _METHOD(handle_cache.view.class, "onDetachedFromWindow", "()V");
 	handle_cache.view.dispatchHoverEvent = _METHOD(handle_cache.view.class, "dispatchHoverEvent", "(Landroid/view/MotionEvent;)Z");
+	handle_cache.view.propagateInvalidation = _METHOD(handle_cache.view.class, "propagateInvalidation", "()V");
 
 	handle_cache.view_group.class = _REF((*env)->FindClass(env, "android/view/ViewGroup"));
 	handle_cache.view_group.dispatchTouchEvent = _METHOD(handle_cache.view_group.class, "dispatchTouchEvent", "(Landroid/view/MotionEvent;)Z");

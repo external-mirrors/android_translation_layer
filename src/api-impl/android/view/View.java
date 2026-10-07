@@ -1354,7 +1354,7 @@ public class View implements Drawable.Callback {
 	protected void onFinishInflate() {}
 
 	public void invalidateDrawable(Drawable drawable) {
-		nativeInvalidate(widget);
+		invalidate();
 	}
 
 	public void scheduleDrawable(Drawable drawable, Runnable runnable, long time) {
@@ -1368,15 +1368,22 @@ public class View implements Drawable.Callback {
 	public void unscheduleDrawable(Drawable drawable) {}
 
 	public void invalidate(Rect dirty) {
-		nativeInvalidate(widget);
+		invalidate();
 	}
 	public void invalidate(int l, int t, int r, int b) {
-		nativeInvalidate(widget);
+		invalidate();
 	}
 	public void invalidate() {
+		propagateInvalidation();
 		nativeInvalidate(widget);
 	}
 	private static native void nativeInvalidate(long widget);
+
+	// called from native code for GTK widgets or from invalidate() for Java widgets
+	private void propagateInvalidation() {
+		for (View child = this; child.parent instanceof View; child = (View)child.parent)
+			child.parent.onDescendantInvalidated(child, this);
+	}
 
 	protected native void native_setBackgroundColor(long widget, int color);
 	public void setBackgroundColor(int color) {
