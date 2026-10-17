@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 // © Mis012 2025
 
+import gnu.getopt.Getopt;
+import gnu.getopt.LongOpt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -13,15 +15,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Stream;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
-
-import gnu.getopt.Getopt;
-import gnu.getopt.LongOpt;
-
+import java.util.stream.Stream;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
@@ -46,22 +44,22 @@ public class JNIUpcallWrapperGenerator {
 	private static HashSet<String> seenClasses = new HashSet<>();
 
 	private static void printUsage() {
-			System.err.println("Usage: jni_upcall_gen [-d output] [-c|--classpath TODO] --jar-file <path-to-jar> [extraExports.txt [moreExtraExports.txt [...]]]");
+		System.err.println("Usage: jni_upcall_gen [-d output] [-c|--classpath TODO] --jar-file <path-to-jar> [extraExports.txt [moreExtraExports.txt [...]]]");
 	}
 
 	private static void printHelp() {
 		printUsage();
-		System.err.printf("\n" +
-		                 "generates upcall wrappers for methods annotated with android/atl/annotation/Export in the --jar-file,\n" +
-		                 "as well as for methods specified in passed in text files (used for stdlib methods)\n" +
-		                 "\n" +
-		                 "The following options are accepted:\n" +
-		                 "-h --help              display this help\n" +
-		                 "-j --jar-file <file>   the jar file to process\n" +
-		                 "-s --short-class-names use unqualified class names and fail\n" +
-		                 "                       if there are multiple classes with the same name\n" +
-		                 "-c --classpath <cp>    all dependencies needed to correctly assign jstring/jclass/jthrowable\n" +
-		                 "-d <file>              instead of stdout, output into <file>\n");
+		System.err.printf("\n"
+		                  + "generates upcall wrappers for methods annotated with android/atl/annotation/Export in the --jar-file,\n"
+		                  + "as well as for methods specified in passed in text files (used for stdlib methods)\n"
+		                  + "\n"
+		                  + "The following options are accepted:\n"
+		                  + "-h --help              display this help\n"
+		                  + "-j --jar-file <file>   the jar file to process\n"
+		                  + "-s --short-class-names use unqualified class names and fail\n"
+		                  + "                       if there are multiple classes with the same name\n"
+		                  + "-c --classpath <cp>    all dependencies needed to correctly assign jstring/jclass/jthrowable\n"
+		                  + "-d <file>              instead of stdout, output into <file>\n");
 	}
 
 	public static void main(String[] argv) throws IOException {
@@ -81,7 +79,7 @@ public class JNIUpcallWrapperGenerator {
 
 		int c;
 		while ((c = g.getopt()) != -1) {
-			switch(c) {
+			switch (c) {
 				case 'h':
 					printHelp();
 					System.exit(1);
@@ -113,7 +111,7 @@ public class JNIUpcallWrapperGenerator {
 
 		classpath.add(new JarFile(jarPath));
 		if (rawClasspath != null) {
-			for(String classpathEntry : rawClasspath.split(":"))
+			for (String classpathEntry : rawClasspath.split(":"))
 				classpath.add(new JarFile(classpathEntry));
 		}
 
@@ -121,7 +119,7 @@ public class JNIUpcallWrapperGenerator {
 			out = new PrintStream(destPath);
 
 		ArrayList<String> extraExportsFiles = new ArrayList<String>();
-		for (int i = g.getOptind(); i < argv.length ; i++) {
+		for (int i = g.getOptind(); i < argv.length; i++) {
 			extraExportsFiles.add(argv[i]);
 		}
 
@@ -142,27 +140,29 @@ public class JNIUpcallWrapperGenerator {
 		for (String className : structMap.keySet()) {
 			String fullClassName = classNameToFullClassName.get(className);
 			String handleCacheClass = String.format("handle_cache.%s.class", className);
-			String s = ("__attribute__((always_inline)) inline jclass J_get_class__"+className+"(JNIEnv *env)\n" +
-				    "{\n" +
-				    "	if (__unlikely__(!"+handleCacheClass+"))\n" +
-				    "		"+handleCacheClass+" = _REF((*env)->FindClass(env, \""+fullClassName.replace('.', '/')+"\"));\n" +
-				    "\n" +
-				    "	return "+handleCacheClass+";\n" +
-				    "}\n");
+			String s = ("__attribute__((always_inline)) inline jclass J_get_class__" + className + "(JNIEnv *env)\n"
+			            + "{\n"
+			            + "	if (__unlikely__(!" + handleCacheClass + "))\n"
+			            + "		" + handleCacheClass + " = _REF((*env)->FindClass(env, \"" + fullClassName.replace('.', '/') + "\"));\n"
+			            + "\n"
+			            + "	return " + handleCacheClass + ";\n"
+			            + "}\n");
 
 			/* massage the sorting keys to get what we want (jclass getter should get sorted before first method of said class) */
-			generatedSections.put(fullClassName.replace("$", "~")+"!"+"!", s);
+			generatedSections.put(fullClassName.replace("$", "~") + "!"
+			                      + "!",
+			                      s);
 		}
 
 		/* start printing the file */
 
 		/* header guard and includes */
-		out.print("#ifndef _UPCALLS_H_\n" +
-		          "#define _UPCALLS_H_\n" +
-		          "\n" +
-		          "#include <jni.h>\n" +
-		          "#include \"defines.h\"\n" +
-		          "\n");
+		out.print("#ifndef _UPCALLS_H_\n"
+		          + "#define _UPCALLS_H_\n"
+		          + "\n"
+		          + "#include <jni.h>\n"
+		          + "#include \"defines.h\"\n"
+		          + "\n");
 
 		/* handle cache struct */
 		out.println("struct handle_cache {");
@@ -175,9 +175,9 @@ public class JNIUpcallWrapperGenerator {
 			out.println("\t\tjclass class;");
 			Set<String> methodNames = structMap.get(className);
 			for (String method : methodNames) {
-				out.println("\t\tjmethodID "+method+";");
+				out.println("\t\tjmethodID " + method + ";");
 			}
-			out.println("\t} "+className+";");
+			out.println("\t} " + className + ";");
 		}
 		out.println("};");
 		out.println("extern struct handle_cache handle_cache;");
@@ -198,11 +198,10 @@ public class JNIUpcallWrapperGenerator {
 		try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
 			stream.forEach(JNIUpcallWrapperGenerator::processExtraExportsFileLine);
 		} catch (IOException e) {
-			System.err.println("error: exception while processing \""+fileName+"\": "+e);
+			System.err.println("error: exception while processing \"" + fileName + "\": " + e);
 			System.exit(1);
 		}
 	}
-
 
 	/* only generate cached class getter (TODO: ideally would forbid mixing this with exporting methods of the same class) */
 	private static void insertBareClass(String fullClassName) {
@@ -227,7 +226,7 @@ public class JNIUpcallWrapperGenerator {
 			exportedName = parts[1];
 			line = parts[0];
 		} else {
-			throw new AssertionError("extra export line \""+line+"\" appears malformed (should contain at most one colon)");
+			throw new AssertionError("extra export line \"" + line + "\" appears malformed (should contain at most one colon)");
 		}
 
 		parts = line.split("\\.");
@@ -237,7 +236,7 @@ public class JNIUpcallWrapperGenerator {
 		} else if (parts.length == 2) {
 			/* normal flow */
 		} else {
-			throw new AssertionError("extra export line \""+line+"\" appears malformed (should contain at most one dot)");
+			throw new AssertionError("extra export line \"" + line + "\" appears malformed (should contain at most one dot)");
 		}
 
 		String className = parts[0];
@@ -306,11 +305,11 @@ public class JNIUpcallWrapperGenerator {
 						else if (annotation.values.size() == 2 && annotation.values.get(0).equals("value"))
 							exportedName = (String)annotation.values.get(1);
 						else
-							throw new AssertionError("method "+className+m.name+" has an invalid Export annotation (annotation.values: "+annotation.values+")");
+							throw new AssertionError("method " + className + m.name + " has an invalid Export annotation (annotation.values: " + annotation.values + ")");
 
 						if (overloadCounts.get(m.name) > 1 && exportedName == null) {
-							System.err.println("error: method "+className+m.name+" has multiple overloaded variants that are all exported, " +
-							                   "and yet "+className+m.name+m.desc+" doesn't specify the name to use for the C wrapper function");
+							System.err.println("error: method " + className + m.name + " has multiple overloaded variants that are all exported, "
+							                   + "and yet " + className + m.name + m.desc + " doesn't specify the name to use for the C wrapper function");
 							System.exit(1);
 						}
 
@@ -324,8 +323,8 @@ public class JNIUpcallWrapperGenerator {
 
 		if (short_class_names && hasExportedMethods) {
 			if (!seenClasses.add(className.substring(className.lastIndexOf(".") + 1))) {
-				System.err.println("error: --short-class-names specified but multiple classes with exported methods" +
-				                   " share the same name (conflict found with: "+className+")");
+				System.err.println("error: --short-class-names specified but multiple classes with exported methods"
+				                   + " share the same name (conflict found with: " + className + ")");
 				System.exit(1);
 			}
 		}
@@ -339,13 +338,13 @@ public class JNIUpcallWrapperGenerator {
 		String mangledClassName = prettyMangle(className);
 		if (exportedName.equals("<init>")) {
 			exportedName = "constructor";
-		} else if (name.equals("constructor")) { // not checking exportedName, manually specified override is allowed 
+		} else if (name.equals("constructor")) { // not checking exportedName, manually specified override is allowed
 			System.err.println("error: method name 'constructor' currently not allowed (conflicts with rename for <init>)");
 			System.exit(1);
 		}
 		String mangledMethodName = prettyMangle(exportedName);
 		String mangledName;
-		if(!name.equals("<init>")) {
+		if (!name.equals("<init>")) {
 			mangledName = String.format("J__%s__%s", mangledClassName, mangledMethodName);
 		} else {
 			/* we always call the constructor method `constructor` or 'constructor_<disambiguating-suffix>' */
@@ -364,7 +363,7 @@ public class JNIUpcallWrapperGenerator {
 		String callMethodFunc;
 		String returnString;
 
-		if(!name.equals("<init>")) {
+		if (!name.equals("<init>")) {
 			retType = toJniType(Type.getReturnType(descriptor));
 			callMethodFunc = toCallMethodFunc(Type.getReturnType(descriptor), isStatic);
 			returnString = (callMethodFunc != "CallVoidMethod") ? "return " : "";
@@ -383,29 +382,27 @@ public class JNIUpcallWrapperGenerator {
 		Type[] argTypes = Type.getArgumentTypes(descriptor);
 		if (argTypes.length > 0) {
 			/* null args means the jar was compiled without `-parameters` */
-			assert(args == null || argTypes.length == args.size());
+			assert (args == null || argTypes.length == args.size());
 			for (int i = 0; i < argTypes.length; i++) {
-				String argName = (args != null) ? args.get(i).name : "_arg"+i;
+				String argName = (args != null) ? args.get(i).name : "_arg" + i;
 				params.append(String.format(", %s %s", toJniType(argTypes[i]), argName));
 				passedParams.append(String.format(", %s", argName));
 			}
 		}
-		String g = ("__attribute__((always_inline)) inline jmethodID J_get_method__"+mangledClassName+"__"+mangledMethodName+"(JNIEnv *env)\n" +
-		            "{\n" +
-		            "	if (__unlikely__("+handleCacheMethod+" == 0))\n" +
-		            "		"+handleCacheMethod+" = (*env)->"+getMethodIdFunc+"(env, J_get_class__"+mangledClassName+"(env), \""+name+"\", \""+descriptor+"\");\n" +
-		            "\n" +
-		            "	return "+handleCacheMethod+";\n" +
-		            "}\n" +
-		            "\n" +
-		            "__attribute__((always_inline)) inline "+retType+" "+mangledName+"("+new String(params)+")\n" +
-		            "{\n" +
-		            (haveThis ? "" : "\tjclass class = J_get_class__"+className+"(env);\n") +
-		            "	"+returnString+"(*env)->"+callMethodFunc+"(env, "+(haveThis ? "this" : "class")+", J_get_method__"+mangledClassName+"__"+mangledMethodName+"(env)"+new String(passedParams)+");\n" +
-		            "}\n");
+		String g = ("__attribute__((always_inline)) inline jmethodID J_get_method__" + mangledClassName + "__" + mangledMethodName + "(JNIEnv *env)\n"
+		            + "{\n"
+		            + "	if (__unlikely__(" + handleCacheMethod + " == 0))\n"
+		            + "		" + handleCacheMethod + " = (*env)->" + getMethodIdFunc + "(env, J_get_class__" + mangledClassName + "(env), \"" + name + "\", \"" + descriptor + "\");\n"
+		            + "\n"
+		            + "	return " + handleCacheMethod + ";\n"
+		            + "}\n"
+		            + "\n"
+		            + "__attribute__((always_inline)) inline " + retType + " " + mangledName + "(" + new String(params) + ")\n"
+		            + "{\n" + (haveThis ? "" : "\tjclass class = J_get_class__" + className + "(env);\n") + "	" + returnString + "(*env)->" + callMethodFunc + "(env, " + (haveThis ? "this" : "class") + ", J_get_method__" + mangledClassName + "__" + mangledMethodName + "(env)" + new String(passedParams) + ");\n"
+		            + "}\n");
 
 		/* massage the sorting keys to get what we want (main class before inner classes and group methods by class) */
-		generatedSections.put(fullClassName.replace("$", "~")+"!"+String.format("J__%s__%s", mangledClassName, mangledMethodName), g);
+		generatedSections.put(fullClassName.replace("$", "~") + "!" + String.format("J__%s__%s", mangledClassName, mangledMethodName), g);
 	}
 
 	/* helpers */
@@ -423,13 +420,10 @@ public class JNIUpcallWrapperGenerator {
 					mangled.append("_");
 					break;
 				default:
-					if (c <= 0x7f &&
-					   ((c >= 'A' && c <= 'Z')
-					   || (c >= 'a' && c <= 'z')
-					   || (c >= '0' && c <= '9'))) {
+					if (c <= 0x7f && ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9'))) {
 						mangled.append(c);
 					} else {
-						System.err.println("error: prettyMangle: name '"+orig+"' seems to contain invalid characters");
+						System.err.println("error: prettyMangle: name '" + orig + "' seems to contain invalid characters");
 						System.exit(1);
 					}
 
@@ -442,32 +436,52 @@ public class JNIUpcallWrapperGenerator {
 
 	private static String toCallMethodFunc(Type t, boolean isStatic) {
 		if (isStatic) {
-			switch(t.getSort()) {
-				case Type.VOID:    return "CallStaticVoidMethod";
-				case Type.BOOLEAN: return "CallStaticBooleanMethod";
-				case Type.BYTE:    return "CallStaticByteMethod";
-				case Type.CHAR:    return "CallStaticCharMethod";
-				case Type.SHORT:   return "CallStaticShortMethod";
-				case Type.INT:     return "CallStaticIntMethod";
-				case Type.LONG:    return "CallStaticLongMethod";
-				case Type.FLOAT:   return "CallStaticFloatMethod";
-				case Type.DOUBLE:  return "CallStaticDoubleMethod";
-				case Type.ARRAY:   /* fallthrough */
-				case Type.OBJECT:  return "CallStaticObjectMethod";
+			switch (t.getSort()) {
+				case Type.VOID:
+					return "CallStaticVoidMethod";
+				case Type.BOOLEAN:
+					return "CallStaticBooleanMethod";
+				case Type.BYTE:
+					return "CallStaticByteMethod";
+				case Type.CHAR:
+					return "CallStaticCharMethod";
+				case Type.SHORT:
+					return "CallStaticShortMethod";
+				case Type.INT:
+					return "CallStaticIntMethod";
+				case Type.LONG:
+					return "CallStaticLongMethod";
+				case Type.FLOAT:
+					return "CallStaticFloatMethod";
+				case Type.DOUBLE:
+					return "CallStaticDoubleMethod";
+				case Type.ARRAY: /* fallthrough */
+				case Type.OBJECT:
+					return "CallStaticObjectMethod";
 			}
 		} else {
-			switch(t.getSort()) {
-				case Type.VOID:    return "CallVoidMethod";
-				case Type.BOOLEAN: return "CallBooleanMethod";
-				case Type.BYTE:    return "CallByteMethod";
-				case Type.CHAR:    return "CallCharMethod";
-				case Type.SHORT:   return "CallShortMethod";
-				case Type.INT:     return "CallIntMethod";
-				case Type.LONG:    return "CallLongMethod";
-				case Type.FLOAT:   return "CallFloatMethod";
-				case Type.DOUBLE:  return "CallDoubleMethod";
-				case Type.ARRAY:   /* fallthrough */
-				case Type.OBJECT:  return "CallObjectMethod";
+			switch (t.getSort()) {
+				case Type.VOID:
+					return "CallVoidMethod";
+				case Type.BOOLEAN:
+					return "CallBooleanMethod";
+				case Type.BYTE:
+					return "CallByteMethod";
+				case Type.CHAR:
+					return "CallCharMethod";
+				case Type.SHORT:
+					return "CallShortMethod";
+				case Type.INT:
+					return "CallIntMethod";
+				case Type.LONG:
+					return "CallLongMethod";
+				case Type.FLOAT:
+					return "CallFloatMethod";
+				case Type.DOUBLE:
+					return "CallDoubleMethod";
+				case Type.ARRAY: /* fallthrough */
+				case Type.OBJECT:
+					return "CallObjectMethod";
 			}
 		}
 		/* should be unreachable */
@@ -478,36 +492,55 @@ public class JNIUpcallWrapperGenerator {
 		switch (t.getSort()) {
 			case Type.ARRAY: {
 				Type e = t.getElementType();
-				switch(e.getSort()) {
-					case Type.VOID:    throw new AssertionError("[V encountered in toJniType");
-					case Type.BOOLEAN: return "jbooleanArray";
-					case Type.BYTE:    return "jbyteArray";
-					case Type.CHAR:    return "jcharArray";
-					case Type.SHORT:   return "jshortArray";
-					case Type.INT:     return "jintArray";
-					case Type.LONG:    return "jlongArray";
-					case Type.FLOAT:   return "jfloatArray";
-					case Type.DOUBLE:  return "jdoubleArray";
-					case Type.ARRAY:   /* fallthrough */
-					case Type.OBJECT:  return "jobjectArray";
+				switch (e.getSort()) {
+					case Type.VOID:
+						throw new AssertionError("[V encountered in toJniType");
+					case Type.BOOLEAN:
+						return "jbooleanArray";
+					case Type.BYTE:
+						return "jbyteArray";
+					case Type.CHAR:
+						return "jcharArray";
+					case Type.SHORT:
+						return "jshortArray";
+					case Type.INT:
+						return "jintArray";
+					case Type.LONG:
+						return "jlongArray";
+					case Type.FLOAT:
+						return "jfloatArray";
+					case Type.DOUBLE:
+						return "jdoubleArray";
+					case Type.ARRAY: /* fallthrough */
+					case Type.OBJECT:
+						return "jobjectArray";
 				}
 			}
 
-			case Type.VOID:    return "void";
-			case Type.BOOLEAN: return "jboolean";
-			case Type.BYTE:    return "jbyte";
-			case Type.CHAR:    return "jchar";
-			case Type.SHORT:   return "jshort";
-			case Type.INT:     return "jint";
-			case Type.LONG:    return "jlong";
-			case Type.FLOAT:   return "jfloat";
-			case Type.DOUBLE:  return "jdouble";
+			case Type.VOID:
+				return "void";
+			case Type.BOOLEAN:
+				return "jboolean";
+			case Type.BYTE:
+				return "jbyte";
+			case Type.CHAR:
+				return "jchar";
+			case Type.SHORT:
+				return "jshort";
+			case Type.INT:
+				return "jint";
+			case Type.LONG:
+				return "jlong";
+			case Type.FLOAT:
+				return "jfloat";
+			case Type.DOUBLE:
+				return "jdouble";
 			case Type.OBJECT:
 				String className = t.getClassName();
 				/* String is final */
 				if (className.equals("java.lang.String")) {
 					return "jstring";
-				/* so is Class */
+					/* so is Class */
 				} else if (className.equals("java.lang.Class")) {
 					return "jclass";
 				} else if (isSubtypeOf(className, "java.lang.Throwable")) {
@@ -528,7 +561,8 @@ public class JNIUpcallWrapperGenerator {
 			Class<?> cls = Class.forName(className.replace('$', '.'), false, JNIUpcallWrapperGenerator.class.getClassLoader());
 			Class<?> anc = Class.forName(ancestor, false, JNIUpcallWrapperGenerator.class.getClassLoader());
 			return anc.isAssignableFrom(cls);
-		} catch (ClassNotFoundException | NoClassDefFoundError e) {}
+		} catch (ClassNotFoundException | NoClassDefFoundError e) {
+		}
 
 		/* for classes that are not part of the stdlib, we allow passing a classpath of jars
 		 * the first entry is implicitly the jar file that we are generating headers for */
