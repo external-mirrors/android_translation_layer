@@ -28,10 +28,21 @@ public class Binder implements IBinder {
 	public static void restoreCallingIdentity(long identityToken) {}
 
 	@Override
-	public IInterface queryLocalInterface(String descriptor) { return null; }
+	public IInterface queryLocalInterface(String descriptor) {
+		return (mDescriptor != null && mDescriptor.equals(descriptor)) ? mOwner : null;
+	}
 
 	@Override
-	public boolean transact(int code, Parcel data, Parcel reply, int flags) { return false; }
+	public final boolean transact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+		if (data != null)
+			data.setDataPosition(0);
+		boolean r = onTransact(code, data, reply, flags);
+		if (reply != null)
+			reply.setDataPosition(0);
+		return r;
+	}
+
+	protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException { return false; }
 
 	public static int getCallingUid() { return ATLLoadedApp.getPrimaryApplication().pkg.applicationInfo.uid; }
 

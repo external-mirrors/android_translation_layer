@@ -68,7 +68,7 @@ public final class Messenger implements Parcelable {
 				return null;
 			}
 			@Override
-			public boolean transact(int code, Parcel data, Parcel reply, int flags) {
+			public boolean transact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
 				mTarget.send(Message.CREATOR.createFromParcel(data));
 				reply.writeNoException();
 				reply.setDataPosition(0);
@@ -110,7 +110,7 @@ public final class Messenger implements Parcelable {
 	public Messenger(IBinder target) {
 		mTarget = new IMessenger() {
 			@Override
-			public void send(Message msg) {
+			public void send(Message msg) throws RemoteException {
 				Parcel data = Parcel.obtain();
 				Parcel reply = Parcel.obtain();
 				msg.writeToParcel(data, 0);

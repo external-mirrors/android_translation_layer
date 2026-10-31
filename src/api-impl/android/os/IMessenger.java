@@ -23,5 +23,5 @@ import android.os.Message;
  * @hide
  */
 interface IMessenger {
-	void send(Message msg);
+	void send(Message msg) throws RemoteException;
 }
