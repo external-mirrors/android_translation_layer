@@ -81,6 +81,7 @@ public abstract class Context {
 	private final static String TAG = "Context";
 
 	public static final int MODE_PRIVATE = 0;
+	public static final String ACCOUNT_SERVICE = "account";
 	public static final String ACTIVITY_SERVICE = "activity";
 	public static final String AUDIO_SERVICE = "audio";
 	public static final String CLIPBOARD_SERVICE = "clipboard";

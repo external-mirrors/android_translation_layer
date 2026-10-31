@@ -1,5 +1,6 @@
 package android.app;
 
+import android.accounts.AccountManager;
 import android.annotation.Nullable;
 import android.annotation.UnsupportedAppUsage;
 import android.app.SearchManager;
@@ -157,6 +158,8 @@ public final class ContextImpl extends Context {
 				return new AudioManager();
 			case "activity":
 				return new ActivityManager();
+			case "account":
+				return AccountManager.get(this);
 			case "usb":
 				return new UsbManager();
 			case "vibrator":
