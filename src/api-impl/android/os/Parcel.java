@@ -65,8 +65,9 @@ public class Parcel {
 	public byte readByte() {
 		if (pos < size)
 			return data[pos++];
-		else
-			throw new ParcelFormatException("Reading past end of Parcel data");
+		// like AOSP, reading past the end yields zeros. Apps rely on this, e.g. when a newer client
+		// reads trailing fields which an older implementation of the other side doesn't write
+		return 0;
 	}
 
 	public void writeInt(int value) {
@@ -367,6 +368,8 @@ public class Parcel {
 	}
 
 	public String readString() {
+		if (pos + 2 > size)
+			return null; // past the end, like AOSP
 		try {
 			int len = is.readShort();
 			if (len == -1)
@@ -711,6 +714,8 @@ public class Parcel {
 	}
 
 	public void readException() {
+		if (pos >= size)
+			return;
 		RuntimeException e;
 		try {
 			e = (RuntimeException)readSerializable();
