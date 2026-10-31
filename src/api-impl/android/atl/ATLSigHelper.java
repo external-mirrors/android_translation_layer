@@ -3,8 +3,6 @@ package android.atl;
 import android.content.pm.PackageParser;
 import android.content.pm.Signature;
 import android.util.Base64;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public final class ATLSigHelper {
 	private static final Signature[] gmsSignatures = new Signature[] {
@@ -29,19 +27,8 @@ public final class ATLSigHelper {
 	};
 
 	public static void addGMSSignatures(PackageParser.Package pkg) {
-		if (pkg.mSignatures == null || pkg.mSignatures.length == 0) {
-			// If no signatures are present, we can just use the original signature array.
-			pkg.mSignatures = gmsSignatures;
-		} else {
-			ArrayList<Signature> arrayList = new ArrayList<>(Arrays.asList(gmsSignatures));
-			for (Signature signature : pkg.mSignatures) {
-				if (!arrayList.contains(signature)) {
-					arrayList.add(signature);
-				}
-			}
-			if (pkg.mSignatures.length != arrayList.size()) {
-				pkg.mSignatures = arrayList.toArray(new Signature[0]);
-			}
-		}
+		// Like signature spoofing on Android, report only the GMS signature. Apps verify that
+		// Play Services has exactly one signature, so the package's own one must not be kept.
+		pkg.mSignatures = gmsSignatures;
 	}
 }
