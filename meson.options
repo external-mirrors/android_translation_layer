@@ -1,2 +1,5 @@
 # set this to true if your distro doesn't have xmvn or doesn't (properly) package asm and getopt
 option('download_tool_deps', type : 'boolean', value : false)
+option('asm_jar_path', type : 'string')
+option('asm_tree_jar_path', type : 'string')
+option('getopt_jar_path', type : 'string')

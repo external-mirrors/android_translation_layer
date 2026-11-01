@@ -103,13 +103,20 @@ on a system (pkgconfig solves this for C/C++). To work around this very annoying
 two modes:
 - With `-Ddownload_tool_deps=false` (the default), we attempt to use xmvn-resolve to locate and
   use distro-installed dependencies, and if we fail to do so the meson configuration doesn't complete.
+  You can also pass a manual override for each dependency if it's present but can't be located
+  automatically, in which case the meson configuration will complete and these paths will be passed
+  to `build.py`.
 - With `-Ddownload_tool_deps=true`, dependencies that we are not able to resolve will be automagically
 downloaded from maven central using `mvn`. If `mvn` is not found, the configuration doesn't complete.
 
 With this:
-- on most distros, `-Ddownload_tool_deps=true` is necessary because `xmvn-resolve` doesn't exist
-- on OpenSuse, `-Ddownload_tool_deps=true` is necessary because the java-getopt package doesn't
-  properly register with the `xmvn` database
+- on many distros, `-Ddownload_tool_deps=true` is necessary because `xmvn-resolve` doesn't exist
+  and no proper system for packaging java libraries exists.
+- on Debian, `-Ddownload_tool_deps=true` is not necessary, but you need to use
+  `-Dasm_jar_path=/usr/share/java/asm.jar -Dasm_tree_jar_path=/usr/share/java/asm-tree.jar -Dgetopt_jar_path=/usr/share/java/gnu-getopt.jar`.
+- on OpenSuse, `-Ddownload_tool_deps=true` is not necessary, but you need to use
+  `-Dgetopt_jar_path=/usr/share/java/gnu.getopt.jar` because the java-getopt package doesn't
+  properly register with the `xmvn` database.
 - on Fedora, `-Ddownload_tool_deps=true` is necessary because the java-getopt package doesn't exist
   at all anymore (unmaintained and failed to build at some point)
 
@@ -117,8 +124,23 @@ One issue is that `xmvn` is technically somewhat rpm-specific and maintained by 
 similarly a suite of tools Debian uses to maintain their java packages, however that suite doesn't
 include any tool that could be used instead of `xmvn-resolve`.
 
-While being forced to download dependencies from maven-central in all known cases is quite depressing,
-thankfully these are only needed for compilation.
+These dependencies are only needed for compilation.
+
+### Debian
+```sh
+sudo apt install libasm-java libgetopt-java
+```
+
+### Fedora
+```sh
+sudo dnf install objectweb-asm
+```
+getopt is not packaged
+
+### OpenSuse
+```sh
+sudo zypper install objectweb-asm gnu-getopt
+```
 
 ## Build
 ```sh
